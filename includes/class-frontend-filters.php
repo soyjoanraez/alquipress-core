@@ -67,13 +67,16 @@ class Alquipress_Frontend_Filters
 
             foreach ($taxonomies as $tax) {
                 if (isset($_GET[$tax]) && !empty($_GET[$tax])) {
-                    $terms = explode(',', $_GET[$tax]);
-                    $tax_query[] = [
-                        'taxonomy' => $tax,
-                        'field' => 'slug',
-                        'terms' => $terms,
-                        'operator' => ($tax === 'caracteristicas') ? 'AND' : 'IN',
-                    ];
+                    $raw = wp_unslash($_GET[$tax]);
+                    $terms = array_filter(array_unique(array_map('sanitize_title', explode(',', $raw))));
+                    if (!empty($terms)) {
+                        $tax_query[] = [
+                            'taxonomy' => $tax,
+                            'field' => 'slug',
+                            'terms' => $terms,
+                            'operator' => ($tax === 'caracteristicas') ? 'AND' : 'IN',
+                        ];
+                    }
                 }
             }
 
@@ -112,7 +115,12 @@ class Alquipress_Taxonomy_Filter_Widget extends WP_Widget
         ]);
 
         if (!empty($terms)) {
-            $selected = isset($_GET[$taxonomy]) ? explode(',', $_GET[$taxonomy]) : [];
+            if (isset($_GET[$taxonomy])) {
+                $raw = wp_unslash($_GET[$taxonomy]);
+                $selected = array_filter(array_unique(array_map('sanitize_title', explode(',', $raw))));
+            } else {
+                $selected = [];
+            }
             echo '<div class="alquipress-filter-group" data-taxonomy="' . esc_attr($taxonomy) . '">';
             echo '<ul class="alquipress-filter-list">';
             foreach ($terms as $term) {

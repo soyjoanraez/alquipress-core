@@ -15,6 +15,38 @@ class Alquipress_CRM_Owners
         add_action('acf/init', [$this, 'load_acf_fields']);
         add_filter('manage_propietario_posts_columns', [$this, 'add_custom_columns']);
         add_action('manage_propietario_posts_custom_column', [$this, 'populate_custom_columns'], 10, 2);
+        add_action('acf/input/admin_footer', [$this, 'enqueue_iban_mask']);
+    }
+
+    /**
+     * Enqueue assets para IBAN enmascarado
+     */
+    public function enqueue_iban_mask()
+    {
+        global $post;
+
+        // Solo cargar en páginas de edición de propietarios
+        if ($post && $post->post_type === 'propietario') {
+            wp_enqueue_script(
+                'alquipress-iban-mask',
+                ALQUIPRESS_URL . 'includes/modules/crm-owners/assets/iban-mask.js',
+                ['jquery'],
+                ALQUIPRESS_VERSION,
+                true
+            );
+
+            wp_enqueue_style(
+                'alquipress-iban-mask',
+                ALQUIPRESS_URL . 'includes/modules/crm-owners/assets/iban-mask.css',
+                [],
+                ALQUIPRESS_VERSION
+            );
+
+            // Pasar datos al JS
+            wp_localize_script('alquipress-iban-mask', 'ibanMaskData', [
+                'userLogin' => wp_get_current_user()->user_login
+            ]);
+        }
     }
 
     public function load_acf_fields()

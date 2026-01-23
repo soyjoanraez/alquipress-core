@@ -23,6 +23,14 @@ class Alquipress_Owner_Revenue
 
         // Shortcode para mostrar panel de propietario
         add_shortcode('owner_dashboard', [$this, 'render_owner_dashboard']);
+
+        // Invalidación de cache en cambios relevantes
+        add_action('save_post_propietario', [$this, 'invalidate_owner_cache_on_save'], 20, 3);
+        add_action('acf/save_post', [$this, 'invalidate_owner_cache_on_acf_save'], 20);
+        add_action('woocommerce_order_status_changed', [$this, 'invalidate_cache_for_order'], 10, 4);
+        add_action('woocommerce_new_order', [$this, 'invalidate_cache_for_order_id'], 10, 1);
+        add_action('woocommerce_update_order', [$this, 'invalidate_cache_for_order_id'], 10, 1);
+        add_action('save_post_shop_order', [$this, 'invalidate_cache_for_order_post'], 20, 3);
     }
 
     /**
@@ -36,69 +44,103 @@ class Alquipress_Owner_Revenue
         if (empty($properties)) {
             return [
                 'total' => 0,
+                'commission' => 0,
+                'net' => 0,
                 'count' => 0,
                 'properties' => []
             ];
         }
 
+        $property_ids = array_values(array_unique(array_filter(array_map('intval', (array) $properties))));
+        if (empty($property_ids)) {
+            return [
+                'total' => 0,
+                'commission' => 0,
+                'net' => 0,
+                'count' => 0,
+                'properties' => []
+            ];
+        }
+
+        $cache_key = $this->get_revenue_cache_key($owner_id, $start_date, $end_date, $property_ids);
+        $cached = $this->cache_get($cache_key);
+        if ($cached !== false) {
+            $this->log_cache_event('cache_hit', [
+                'owner_id' => (int) $owner_id,
+                'cache_key' => $cache_key
+            ]);
+            return $cached;
+        }
+
+        $this->log_cache_event('cache_miss', [
+            'owner_id' => (int) $owner_id,
+            'cache_key' => $cache_key
+        ]);
+
         $total_revenue = 0;
         $total_bookings = 0;
         $property_breakdown = [];
 
-        foreach ($properties as $property_id) {
-            // Buscar pedidos completados de esta propiedad
-            $args = [
-                'post_type' => 'shop_order',
-                'posts_per_page' => -1,
-                'post_status' => ['wc-completed', 'wc-processing'],
-                'meta_query' => [
-                    [
-                        'key' => '_order_key',
-                        'compare' => 'EXISTS'
-                    ]
-                ]
-            ];
-
-            if ($start_date) {
-                $args['date_query'][] = [
-                    'after' => $start_date,
-                    'inclusive' => true
-                ];
-            }
-
-            if ($end_date) {
-                $args['date_query'][] = [
-                    'before' => $end_date,
-                    'inclusive' => true
-                ];
-            }
-
-            $orders = get_posts($args);
-            $property_revenue = 0;
-            $property_bookings = 0;
-
-            foreach ($orders as $order_post) {
-                $order = wc_get_order($order_post->ID);
-
-                // Verificar si el pedido contiene este producto
-                foreach ($order->get_items() as $item) {
-                    $product = $item->get_product();
-                    if ($product && $product->get_id() == $property_id) {
-                        $property_revenue += $order->get_total();
-                        $property_bookings++;
-                        $total_bookings++;
-                        break;
-                    }
-                }
-            }
-
-            $total_revenue += $property_revenue;
-
+        foreach ($property_ids as $property_id) {
             $property_breakdown[$property_id] = [
                 'name' => get_the_title($property_id),
-                'revenue' => $property_revenue,
-                'bookings' => $property_bookings
+                'revenue' => 0,
+                'bookings' => 0
             ];
+        }
+
+        // Buscar pedidos una sola vez para todas las propiedades
+        $args = [
+            'status' => ['completed', 'processing'],
+            'limit' => -1,
+            'type' => 'shop_order',
+            'return' => 'objects'
+        ];
+
+        if ($start_date || $end_date) {
+            $from = $start_date ? gmdate('Y-m-d H:i:s', strtotime($start_date)) : '';
+            $to = $end_date ? gmdate('Y-m-d H:i:s', strtotime($end_date . ' 23:59:59')) : '';
+            if ($from && $to) {
+                $args['date_created'] = $from . '...' . $to;
+            } elseif ($from) {
+                $args['date_created'] = '>=' . $from;
+            } elseif ($to) {
+                $args['date_created'] = '<=' . $to;
+            }
+        }
+
+        $orders = wc_get_orders($args);
+        $property_set = array_fill_keys($property_ids, true);
+
+        foreach ($orders as $order) {
+            $matched_revenue = [];
+            foreach ($order->get_items() as $item) {
+                $product = $item->get_product();
+                if (!$product) {
+                    continue;
+                }
+                $product_id = $product->get_id();
+                if (!isset($property_set[$product_id])) {
+                    continue;
+                }
+
+                $line_total = (float) $item->get_total();
+                if (!isset($matched_revenue[$product_id])) {
+                    $matched_revenue[$product_id] = 0;
+                }
+                $matched_revenue[$product_id] += $line_total;
+            }
+
+            if (empty($matched_revenue)) {
+                continue;
+            }
+
+            foreach ($matched_revenue as $property_id => $revenue) {
+                $property_breakdown[$property_id]['revenue'] += $revenue;
+                $property_breakdown[$property_id]['bookings']++;
+                $total_revenue += $revenue;
+                $total_bookings++;
+            }
         }
 
         // Aplicar comisión
@@ -111,13 +153,278 @@ class Alquipress_Owner_Revenue
             $net_revenue = $total_revenue - $commission;
         }
 
-        return [
+        $result = [
             'total' => $total_revenue,
             'commission' => $commission,
             'net' => $net_revenue,
             'count' => $total_bookings,
             'properties' => $property_breakdown
         ];
+
+        $this->cache_set($cache_key, $result, $this->get_cache_ttl());
+        $this->log_cache_event('cache_set', [
+            'owner_id' => (int) $owner_id,
+            'cache_key' => $cache_key
+        ]);
+
+        return $result;
+    }
+
+    private function get_revenue_cache_key($owner_id, $start_date, $end_date, $property_ids)
+    {
+        $version = $this->get_revenue_cache_version($owner_id);
+        $payload = [
+            'owner' => (int) $owner_id,
+            'start' => $start_date ?: '',
+            'end' => $end_date ?: '',
+            'properties' => $property_ids,
+            'v' => $version
+        ];
+
+        return 'alq_owner_revenue_' . md5(wp_json_encode($payload));
+    }
+
+    private function get_cache_ttl()
+    {
+        return (int) apply_filters('alquipress_owner_revenue_cache_ttl', 10 * MINUTE_IN_SECONDS);
+    }
+
+    private function get_invalidation_statuses()
+    {
+        $statuses = apply_filters('alquipress_owner_revenue_invalidation_statuses', ['processing', 'completed']);
+        if (!is_array($statuses)) {
+            return ['processing', 'completed'];
+        }
+
+        return array_values(array_unique(array_map('sanitize_key', $statuses)));
+    }
+
+    private function should_use_object_cache()
+    {
+        $use = wp_using_ext_object_cache();
+        return (bool) apply_filters('alquipress_owner_revenue_use_object_cache', $use);
+    }
+
+    private function cache_get($key)
+    {
+        if ($this->should_use_object_cache()) {
+            return wp_cache_get($key, 'alquipress_owner_revenue');
+        }
+
+        return get_transient($key);
+    }
+
+    private function cache_set($key, $value, $ttl)
+    {
+        if ($this->should_use_object_cache()) {
+            wp_cache_set($key, $value, 'alquipress_owner_revenue', $ttl);
+            return;
+        }
+
+        set_transient($key, $value, $ttl);
+    }
+
+    private function is_cache_logging_enabled()
+    {
+        return (bool) apply_filters('alquipress_owner_revenue_cache_log', false);
+    }
+
+    private function log_cache_event($event, array $context = [])
+    {
+        if (!$this->is_cache_logging_enabled()) {
+            return;
+        }
+
+        $context['event'] = $event;
+        $context['timestamp'] = time();
+        $context['datetime'] = current_time('mysql');
+
+        do_action('alquipress_owner_revenue_cache_event', $event, $context);
+
+        $log_line = 'ALQUIPRESS revenue cache: ' . wp_json_encode($context) . PHP_EOL;
+        $log_file = $this->get_cache_log_file();
+        if ($log_file) {
+            $this->rotate_cache_log_if_needed($log_file);
+            error_log($log_line, 3, $log_file);
+            return;
+        }
+
+        error_log($log_line);
+    }
+
+    private function get_cache_log_file()
+    {
+        $upload_dir = wp_upload_dir();
+        if (empty($upload_dir['basedir'])) {
+            return '';
+        }
+
+        $dir = trailingslashit($upload_dir['basedir']) . 'alquipress-logs';
+        if (!is_dir($dir)) {
+            wp_mkdir_p($dir);
+        }
+
+        if (!is_dir($dir) || !is_writable($dir)) {
+            return '';
+        }
+
+        $file = trailingslashit($dir) . 'owner-revenue-cache.log';
+
+        return apply_filters('alquipress_owner_revenue_cache_log_file', $file);
+    }
+
+    private function rotate_cache_log_if_needed($file)
+    {
+        if (!file_exists($file)) {
+            return;
+        }
+
+        $max_bytes = (int) apply_filters('alquipress_owner_revenue_cache_log_max_bytes', 5 * 1024 * 1024);
+        $max_files = (int) apply_filters('alquipress_owner_revenue_cache_log_max_files', 3);
+
+        if ($max_bytes <= 0 || $max_files <= 0) {
+            return;
+        }
+
+        $size = filesize($file);
+        if ($size === false || $size < $max_bytes) {
+            return;
+        }
+
+        for ($i = $max_files - 1; $i >= 1; $i--) {
+            $src = $file . '.' . $i;
+            $dest = $file . '.' . ($i + 1);
+            if (file_exists($src)) {
+                @rename($src, $dest);
+            }
+        }
+
+        @rename($file, $file . '.1');
+    }
+
+    private function get_revenue_cache_version($owner_id)
+    {
+        return (int) get_post_meta($owner_id, '_alq_owner_revenue_cache_v', true);
+    }
+
+    private function bump_revenue_cache_version($owner_id)
+    {
+        $owner_id = (int) $owner_id;
+        if ($owner_id <= 0) {
+            return;
+        }
+
+        $current = $this->get_revenue_cache_version($owner_id);
+        update_post_meta($owner_id, '_alq_owner_revenue_cache_v', $current + 1);
+    }
+
+    public function invalidate_owner_cache_on_save($post_id, $post, $update)
+    {
+        if (!is_admin()) {
+            return;
+        }
+
+        if ($post && $post->post_type === 'propietario') {
+            $this->bump_revenue_cache_version($post_id);
+        }
+    }
+
+    public function invalidate_owner_cache_on_acf_save($post_id)
+    {
+        if (is_numeric($post_id) && get_post_type((int) $post_id) === 'propietario') {
+            $this->bump_revenue_cache_version((int) $post_id);
+        }
+    }
+
+    public function invalidate_cache_for_order($order_id, $old_status, $new_status, $order)
+    {
+        if (!$order || !is_a($order, 'WC_Order')) {
+            $order = wc_get_order($order_id);
+        }
+
+        if (!$order) {
+            return;
+        }
+
+        $allowed_statuses = $this->get_invalidation_statuses();
+        $current_status = $order->get_status();
+
+        if ($new_status === null && $old_status === null) {
+            if (!in_array($current_status, $allowed_statuses, true)) {
+                return;
+            }
+        } else {
+            if (
+                !in_array((string) $new_status, $allowed_statuses, true) &&
+                !in_array((string) $old_status, $allowed_statuses, true)
+            ) {
+                return;
+            }
+        }
+
+        $owner_ids = $this->get_owner_ids_for_order($order);
+        foreach ($owner_ids as $owner_id) {
+            $this->bump_revenue_cache_version($owner_id);
+            $this->log_cache_event('cache_invalidate', [
+                'owner_id' => (int) $owner_id,
+                'order_id' => (int) $order_id,
+                'order_status' => $current_status
+            ]);
+        }
+    }
+
+    public function invalidate_cache_for_order_id($order_id)
+    {
+        if (!$order_id) {
+            return;
+        }
+
+        $this->invalidate_cache_for_order($order_id, null, null, null);
+    }
+
+    public function invalidate_cache_for_order_post($post_id, $post, $update)
+    {
+        if ($post && $post->post_type === 'shop_order') {
+            $this->invalidate_cache_for_order($post_id, null, null, null);
+        }
+    }
+
+    private function get_owner_ids_for_order($order)
+    {
+        $owner_ids = [];
+        foreach ($order->get_items() as $item) {
+            $product = $item->get_product();
+            if (!$product) {
+                continue;
+            }
+            $product_id = $product->get_id();
+            $owner_ids = array_merge($owner_ids, $this->get_owner_ids_for_product($product_id));
+        }
+
+        return array_values(array_unique(array_filter(array_map('intval', $owner_ids))));
+    }
+
+    private function get_owner_ids_for_product($product_id)
+    {
+        $product_id = (int) $product_id;
+        if ($product_id <= 0) {
+            return [];
+        }
+
+        return get_posts([
+            'post_type' => 'propietario',
+            'post_status' => 'any',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+            'no_found_rows' => true,
+            'meta_query' => [
+                [
+                    'key' => 'owner_properties',
+                    'value' => '"' . $product_id . '"',
+                    'compare' => 'LIKE'
+                ]
+            ]
+        ]);
     }
 
     /**

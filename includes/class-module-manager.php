@@ -75,6 +75,66 @@ class Alquipress_Module_Manager
                 'description' => 'Obliga a que todos los inmuebles sean reservables y virtuales',
                 'file' => 'booking-enforcer/booking-enforcer.php',
                 'dependencies' => []
+            ],
+            'order-columns' => [
+                'name' => 'Columnas de Pedidos',
+                'description' => 'Añade columnas personalizadas en listado de pedidos WooCommerce: Propiedad, Fechas, Propietario, Semáforo',
+                'file' => 'order-columns/order-columns.php',
+                'dependencies' => []
+            ],
+            'dashboard-widgets' => [
+                'name' => 'Dashboard Widgets',
+                'description' => 'Widgets informativos en el dashboard: Movimientos, Ingresos, Estado de Propiedades, Alertas',
+                'file' => 'dashboard-widgets/dashboard-widgets.php',
+                'dependencies' => []
+            ],
+            'pipeline-kanban' => [
+                'name' => 'Pipeline Kanban',
+                'description' => 'Vista tablero tipo Kanban para gestionar reservas visualmente por estado',
+                'file' => 'pipeline-kanban/pipeline-kanban.php',
+                'dependencies' => ['booking-pipeline']
+            ],
+            'guest-profile' => [
+                'name' => 'Perfil de Huésped',
+                'description' => 'Vista detallada read-only del perfil de cliente con historial de reservas',
+                'file' => 'guest-profile/guest-profile.php',
+                'dependencies' => ['crm-guests']
+            ],
+            'guest-editor' => [
+                'name' => 'Editor de Huésped',
+                'description' => 'Formulario mejorado para editar datos del huésped',
+                'file' => 'guest-editor/guest-editor.php',
+                'dependencies' => ['crm-guests']
+            ],
+            'ui-enhancements' => [
+                'name' => 'Mejoras UI',
+                'description' => 'Mejoras visuales para CPTs y páginas de edición (propietarios, huéspedes)',
+                'file' => 'ui-enhancements/ui-enhancements.php',
+                'dependencies' => []
+            ],
+            'advanced-preferences' => [
+                'name' => 'Preferencias Avanzadas',
+                'description' => 'Sistema mejorado de preferencias con estadísticas y análisis',
+                'file' => 'advanced-preferences/advanced-preferences.php',
+                'dependencies' => ['crm-guests']
+            ],
+            'quick-actions' => [
+                'name' => 'Acciones Rápidas',
+                'description' => 'Atajos de teclado, admin bar mejorado y acciones rápidas',
+                'file' => 'quick-actions/quick-actions.php',
+                'dependencies' => []
+            ],
+            'crm-notifications' => [
+                'name' => 'Notificaciones CRM',
+                'description' => 'Sistema de alertas y recordatorios automáticos',
+                'file' => 'crm-notifications/crm-notifications.php',
+                'dependencies' => []
+            ],
+            'advanced-reports' => [
+                'name' => 'Informes y Analíticas',
+                'description' => 'Reportes avanzados con Chart.js: ingresos, ocupación, top clientes y propiedades',
+                'file' => 'advanced-reports/advanced-reports.php',
+                'dependencies' => []
             ]
         ];
     }

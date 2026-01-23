@@ -15,6 +15,7 @@ class Alquipress_Taxonomies
         add_action('acf/init', [$this, 'load_acf_fields']);
         add_action('init', [$this, 'populate_caracteristicas'], 99);
         add_action('init', [$this, 'populate_marina_alta'], 99);
+        add_action('init', [$this, 'populate_tipo_vivienda'], 99);
     }
 
     public function load_acf_fields()
@@ -235,6 +236,75 @@ class Alquipress_Taxonomies
 
         update_option('alquipress_marina_alta_populated', true);
     }
+
+    public function populate_tipo_vivienda()
+    {
+        $types = apply_filters('alquipress_tipo_vivienda_list', [
+            'Villa',
+            'Apartamento',
+            'Ático',
+            'Casa de Pueblo',
+            'Bungalow',
+            'Chalet',
+            'Casa',
+            'Piso',
+            'Estudio',
+            'Dúplex',
+            'Tríplex',
+            'Loft',
+            'Casa adosada',
+            'Pareado',
+            'Casa rural',
+            'Casa rústica',
+            'Masía',
+            'Cortijo',
+            'Casona',
+            'Finca rústica',
+            'Planta baja'
+        ]);
+
+        $parent_name = apply_filters('alquipress_tipo_vivienda_parent', false);
+        $parent_id = 0;
+
+        if ($parent_name) {
+            $parent_slug = sanitize_title($parent_name);
+            $existing_parent = term_exists($parent_slug, 'product_cat');
+            if (!$existing_parent) {
+                $result = wp_insert_term($parent_name, 'product_cat', ['slug' => $parent_slug]);
+                if (!is_wp_error($result)) {
+                    $parent_id = (int) $result['term_id'];
+                }
+            } else {
+                $parent_id = is_array($existing_parent) ? (int) $existing_parent['term_id'] : (int) $existing_parent;
+            }
+        }
+
+        $hash = md5(wp_json_encode([$types, $parent_name]));
+        $stored_hash = get_option('alquipress_tipo_vivienda_populated_hash');
+        if ($stored_hash === $hash) {
+            return;
+        }
+
+        foreach ((array) $types as $type) {
+            $type = trim((string) $type);
+            if ($type === '') {
+                continue;
+            }
+
+            if (!term_exists($type, 'product_cat')) {
+                $args = [];
+                if ($parent_id) {
+                    $args['parent'] = $parent_id;
+                }
+                wp_insert_term($type, 'product_cat', $args);
+            }
+        }
+
+        update_option('alquipress_tipo_vivienda_populated_hash', $hash);
+    }
 }
 
 new Alquipress_Taxonomies();
+
+// Cargar gestión de iconos FontAwesome
+require_once dirname(__FILE__) . '/icon-selector.php';

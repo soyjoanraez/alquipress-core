@@ -1,0 +1,318 @@
+/**
+ * Estilos para Pipeline Kanban
+ */
+
+.alquipress-pipeline-wrap {
+    margin: 20px 20px 20px 0;
+}
+
+.alquipress-pipeline-wrap .wp-heading-inline {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.alquipress-pipeline-wrap .subtitle {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+/* ========== Filtros ========== */
+
+.alquipress-pipeline-filters {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-group label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.filter-group select {
+    min-width: 200px;
+}
+
+#refresh-pipeline {
+    margin-left: auto;
+}
+
+/* ========== Tablero Kanban ========== */
+
+.alquipress-pipeline-board {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 10px 0;
+    min-height: 600px;
+}
+
+/* ========== Columnas ========== */
+
+.pipeline-column {
+    flex: 0 0 280px;
+    min-width: 280px;
+    background: #f9fafb;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 280px);
+}
+
+.column-header {
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.column-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.column-icon {
+    font-size: 20px;
+}
+
+.column-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #2c3338;
+}
+
+.column-count {
+    background: #e5e7eb;
+    color: #2c3338;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    min-width: 28px;
+    text-align: center;
+}
+
+.column-cards {
+    padding: 10px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.empty-column {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+/* ========== Tarjetas de Pedido ========== */
+
+.order-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #2271b1;
+}
+
+.order-card.urgent {
+    border-left: 4px solid #dc3232;
+    background: #fff8f8;
+}
+
+.urgent-badge {
+    position: absolute;
+    top: -8px;
+    right: 10px;
+    background: #dc3232;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Header de la tarjeta */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f1;
+}
+
+.order-number {
+    font-size: 14px;
+    color: #2271b1;
+    font-weight: 700;
+}
+
+.order-total {
+    font-size: 15px;
+    font-weight: 700;
+    color: #00a32a;
+}
+
+/* Info del cliente */
+.card-customer {
+    font-size: 14px;
+    color: #2c3338;
+    margin-bottom: 8px;
+}
+
+.card-customer strong {
+    font-weight: 600;
+}
+
+/* Propiedad */
+.card-property {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    padding: 8px 10px;
+    background: #f9fafb;
+    border-radius: 4px;
+}
+
+/* Fechas */
+.card-dates {
+    background: #fffbeb;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    border-left: 3px solid #f0b849;
+}
+
+.date-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.date-row:last-of-type {
+    margin-bottom: 0;
+}
+
+.date-label {
+    color: #92400e;
+    font-weight: 500;
+}
+
+.date-value {
+    color: #2c3338;
+    font-weight: 700;
+}
+
+.card-nights {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #fbbf24;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #92400e;
+}
+
+/* Footer de la tarjeta */
+.card-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.card-footer .button {
+    font-size: 12px;
+    height: 30px;
+    line-height: 28px;
+    padding: 0 12px;
+}
+
+/* ========== Scrollbar personalizado ========== */
+
+.column-cards::-webkit-scrollbar {
+    width: 6px;
+}
+
+.column-cards::-webkit-scrollbar-track {
+    background: #f9fafb;
+}
+
+.column-cards::-webkit-scrollbar-thumb {
+    background: #c3c4c7;
+    border-radius: 3px;
+}
+
+.column-cards::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* ========== Responsive ========== */
+
+@media screen and (max-width: 1400px) {
+    .pipeline-column {
+        flex: 0 0 260px;
+        min-width: 260px;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .alquipress-pipeline-filters {
+        flex-wrap: wrap;
+    }
+
+    .filter-group {
+        flex: 1 1 200px;
+    }
+
+    #refresh-pipeline {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .alquipress-pipeline-board {
+        flex-direction: column;
+    }
+
+    .pipeline-column {
+        flex: 1 1 auto;
+        min-width: 100%;
+        max-height: none;
+    }
+
+    .column-cards {
+        max-height: 400px;
+    }
+}

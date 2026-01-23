@@ -1,0 +1,28 @@
+/**
+ * Estilos para Iconos de Características
+ */
+
+/* Columna de iconos */
+.column-icon {
+    width: 80px;
+    text-align: center;
+}
+
+/* Input de icono con preview */
+.feature-icon-input {
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+}
+
+/* Mejorar espacio del campo */
+.term-icon-wrap {
+    margin-bottom: 10px;
+}
+
+/* Vista previa del icono */
+.term-icon-wrap .description code {
+    background: #f0f0f1;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+}

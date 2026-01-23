@@ -1,0 +1,331 @@
+/**
+ * Estilos para Dashboard Widgets CRM
+ */
+
+/* ========== Widget: Movimientos de Hoy ========== */
+
+.alquipress-movements-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.movement-card {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.movement-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.checkin-card {
+    border-color: #2ea2cc;
+    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+}
+
+.checkout-card {
+    border-color: #d63638;
+    background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+}
+
+.movement-number {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.checkin-card .movement-number {
+    color: #1d4ed8;
+}
+
+.checkout-card .movement-number {
+    color: #b45309;
+}
+
+.movement-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Tabla de movimientos */
+.alquipress-movements-table {
+    margin-top: 15px;
+    border: 1px solid #e5e7eb;
+}
+
+.alquipress-movements-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #666;
+    padding: 10px 12px;
+}
+
+.alquipress-movements-table td {
+    padding: 10px 12px;
+    font-size: 13px;
+}
+
+.badge-checkin,
+.badge-checkout {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-checkin {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.badge-checkout {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+/* ========== Widget: Ingresos del Mes ========== */
+
+.revenue-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    color: white;
+    margin-bottom: 15px;
+}
+
+.revenue-amount {
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.revenue-period {
+    font-size: 14px;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.revenue-comparison {
+    padding: 12px 15px;
+    background: #f9fafb;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+}
+
+.revenue-up {
+    color: #00a32a;
+    font-weight: 700;
+}
+
+.revenue-down {
+    color: #dc3232;
+    font-weight: 700;
+}
+
+.revenue-neutral {
+    color: #666;
+    font-weight: 700;
+}
+
+/* Desglose por estado */
+.revenue-breakdown {
+    margin-top: 15px;
+}
+
+.revenue-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.revenue-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #f9fafb;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.status-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.status-amount {
+    font-weight: 700;
+    color: #2271b1;
+}
+
+/* ========== Widget: Estado de Propiedades ========== */
+
+.property-status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.property-stat {
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+}
+
+.property-stat.occupied {
+    border-color: #d63638;
+    background: #fef2f2;
+}
+
+.property-stat.available {
+    border-color: #00a32a;
+    background: #f0fdf4;
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 6px;
+    color: #2c3338;
+}
+
+.property-stat.occupied .stat-number {
+    color: #dc3232;
+}
+
+.property-stat.available .stat-number {
+    color: #00a32a;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Barra de ocupación */
+.occupancy-bar-container {
+    width: 100%;
+    height: 24px;
+    background: #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.occupancy-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #2ea2cc 0%, #135e96 100%);
+    transition: width 0.3s ease;
+    border-radius: 12px;
+}
+
+.occupancy-label {
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+}
+
+/* ========== Widget: Alertas ========== */
+
+.alquipress-alerts-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.alquipress-alerts-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 15px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.alert-info {
+    background: #dbeafe;
+    border-left: 4px solid #2ea2cc;
+}
+
+.alert-warning {
+    background: #fef3c7;
+    border-left: 4px solid #f0b849;
+}
+
+.alert-error {
+    background: #fef2f2;
+    border-left: 4px solid #dc3232;
+}
+
+.alert-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.alert-message {
+    color: #2c3338;
+    flex: 1;
+}
+
+/* ========== Responsive ========== */
+
+@media screen and (max-width: 782px) {
+    .alquipress-movements-grid,
+    .property-status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .movement-number,
+    .revenue-amount {
+        font-size: 32px;
+    }
+
+    .stat-number {
+        font-size: 24px;
+    }
+}
+
+/* Mejoras generales de widgets */
+#alquipress_todays_movements .inside,
+#alquipress_monthly_revenue .inside,
+#alquipress_property_status .inside,
+#alquipress_alerts .inside {
+    margin: 0;
+    padding: 15px;
+}
+
+#alquipress_todays_movements h2,
+#alquipress_monthly_revenue h2,
+#alquipress_property_status h2,
+#alquipress_alerts h2 {
+    font-size: 15px;
+    font-weight: 600;
+}

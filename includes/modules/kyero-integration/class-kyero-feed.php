@@ -9,24 +9,30 @@ class Alquipress_Kyero_Feed
 {
 
     private $xml;
-    private $properties_node;
+    private $root_node;
 
     public function __construct()
     {
         $this->xml = new DOMDocument('1.0', 'UTF-8');
         $this->xml->formatOutput = true;
 
-        // Crear nodo raíz
+        // Crear nodo raíz <root>
+        $this->root_node = $this->xml->createElement('root');
+        $this->xml->appendChild($this->root_node);
+
+        // Nodo <kyero>
         $kyero = $this->xml->createElement('kyero');
-        $this->xml->appendChild($kyero);
+        $this->root_node->appendChild($kyero);
 
         // Versión del feed
         $version = $this->xml->createElement('feed_version', '3');
         $kyero->appendChild($version);
 
-        // Contenedor de propiedades
-        $this->properties_node = $this->xml->createElement('properties');
-        $kyero->appendChild($this->properties_node);
+        // Fecha de generación del feed
+        $generated = $this->xml->createElement('feed_generated', date('Y-m-d H:i:s'));
+        $kyero->appendChild($generated);
+
+        $this->add_agent_node();
     }
 
     /**
@@ -55,20 +61,31 @@ class Alquipress_Kyero_Feed
      */
     private function get_property_type($product_id)
     {
-        // Aquí puedes usar una taxonomía custom o un campo ACF
-        $type_mapping = [
-            'villa' => 'Villa',
-            'apartamento' => 'Apartment',
-            'casa' => 'House',
-            'atico' => 'Penthouse',
-            'chalet' => 'Chalet'
-        ];
+        $preferred = apply_filters('alquipress_tipo_vivienda_list', [
+            'Villa',
+            'Apartamento',
+            'Ático',
+            'Casa de Pueblo',
+            'Bungalow',
+            'Chalet'
+        ]);
 
-        // Ejemplo: desde una taxonomía 'tipo_propiedad'
-        $terms = wp_get_post_terms($product_id, 'tipo_propiedad', ['fields' => 'slugs']);
-        $slug = !empty($terms) ? $terms[0] : 'villa';
+        $terms = wp_get_post_terms($product_id, 'product_cat', ['fields' => 'names']);
+        if (!is_wp_error($terms) && !empty($terms)) {
+            foreach ($terms as $term_name) {
+                if (in_array($term_name, $preferred, true)) {
+                    return $this->normalize_kyero_type($term_name);
+                }
+            }
+        }
 
-        return $type_mapping[$slug] ?? 'House';
+        // Fallback: taxonomía legacy si existiera
+        $legacy_terms = wp_get_post_terms($product_id, 'tipo_propiedad', ['fields' => 'names']);
+        if (!is_wp_error($legacy_terms) && !empty($legacy_terms)) {
+            return $this->normalize_kyero_type($legacy_terms[0]);
+        }
+
+        return 'House';
     }
 
     /**
@@ -135,11 +152,12 @@ class Alquipress_Kyero_Feed
         $property_node = $this->xml->createElement('property');
 
         // ID único
-        $id = $this->xml->createElement('id', sanitize_title($post->post_name));
+        $id_val = substr(sanitize_title($post->post_name), 0, 50);
+        $id = $this->xml->createElement('id', $id_val);
         $property_node->appendChild($id);
 
         // Fecha de última modificación
-        $date = $this->xml->createElement('date', get_the_modified_date('Y-m-d', $post->ID));
+        $date = $this->xml->createElement('date', get_the_modified_date('Y-m-d H:i:s', $post->ID));
         $property_node->appendChild($date);
 
         // Referencia interna
@@ -167,24 +185,30 @@ class Alquipress_Kyero_Feed
         // Coordenadas GPS
         $coordenadas = get_field('coordenadas_gps', $post->ID);
         if ($coordenadas) {
-            $lat = $this->xml->createElement('latitude', $coordenadas['lat']);
-            $property_node->appendChild($lat);
-
+            $location = $this->xml->createElement('location');
             $lng = $this->xml->createElement('longitude', $coordenadas['lng']);
-            $property_node->appendChild($lng);
+            $lat = $this->xml->createElement('latitude', $coordenadas['lat']);
+            $location->appendChild($lng);
+            $location->appendChild($lat);
+            $property_node->appendChild($location);
         }
 
         // Precio (desde WooCommerce)
         $price_val = $product->get_regular_price();
+        if ($price_val === '' || $price_val === null) {
+            $price_val = 'x';
+        } else {
+            $price_val = (string) (int) round((float) $price_val);
+        }
         $price = $this->xml->createElement('price', $price_val);
         $property_node->appendChild($price);
 
         $currency = $this->xml->createElement('currency', 'EUR');
         $property_node->appendChild($currency);
 
-        // Frecuencia de alquiler
-        $frequency = $this->xml->createElement('frequency', 'weekly');
-        $property_node->appendChild($frequency);
+        // Frecuencia de precio (Kyero: sale/week/month)
+        $price_freq = $this->xml->createElement('price_freq', $this->get_price_freq($post->ID, $product));
+        $property_node->appendChild($price_freq);
 
         // Dormitorios y baños
         $beds = $this->xml->createElement('beds', $this->count_bedrooms($post->ID));
@@ -208,15 +232,11 @@ class Alquipress_Kyero_Feed
         // Imágenes
         $this->add_images($property_node, $product);
 
-        // URL de la propiedad
-        $url = $this->xml->createElement('url', get_permalink($post->ID));
-        $property_node->appendChild($url);
+        // URL multi-idioma
+        $this->add_urls($property_node, $post);
 
         // Características
         $this->add_features($property_node, $post->ID);
-
-        // Disponibilidad (desde Bookings)
-        $this->add_availability($property_node, $product);
 
         // Energía (Optional defaults)
         $energy_node = $this->xml->createElement('energy_rating');
@@ -227,7 +247,7 @@ class Alquipress_Kyero_Feed
         $property_node->appendChild($energy_node);
 
         // Añadir al feed
-        $this->properties_node->appendChild($property_node);
+        $this->root_node->appendChild($property_node);
     }
 
     /**
@@ -235,37 +255,20 @@ class Alquipress_Kyero_Feed
      */
     private function add_descriptions($property_node, $post)
     {
-        // Descripción en inglés
-        $desc_en = $this->xml->createElement('desc');
-        $lang_en = $this->xml->createElement('language', 'en');
-        $desc_en->appendChild($lang_en);
+        $desc = $this->xml->createElement('desc');
 
-        $title_en = $this->xml->createElement('title', get_the_title($post->ID));
-        $desc_en->appendChild($title_en);
+        $text = trim(wp_strip_all_tags($post->post_content));
+        if ($text === '') {
+            $text = get_the_title($post->ID);
+        }
 
-        $description_en = $this->xml->createElement('description');
-        $description_en->appendChild($this->xml->createCDATASection(
-            wp_strip_all_tags($post->post_content)
-        ));
-        $desc_en->appendChild($description_en);
+        $en = $this->xml->createElement('en', $text);
+        $es = $this->xml->createElement('es', $text);
 
-        $property_node->appendChild($desc_en);
+        $desc->appendChild($en);
+        $desc->appendChild($es);
 
-        // Descripción en español (duplicar si no tienes traducción)
-        $desc_es = $this->xml->createElement('desc');
-        $lang_es = $this->xml->createElement('language', 'es');
-        $desc_es->appendChild($lang_es);
-
-        $title_es = $this->xml->createElement('title', get_the_title($post->ID));
-        $desc_es->appendChild($title_es);
-
-        $description_es = $this->xml->createElement('description');
-        $description_es->appendChild($this->xml->createCDATASection(
-            wp_strip_all_tags($post->post_content)
-        ));
-        $desc_es->appendChild($description_es);
-
-        $property_node->appendChild($desc_es);
+        $property_node->appendChild($desc);
     }
 
     /**
@@ -279,12 +282,16 @@ class Alquipress_Kyero_Feed
         $featured_id = $product->get_image_id();
         if ($featured_id) {
             $image_node = $this->xml->createElement('image');
-            $url = wp_get_attachment_image_url($featured_id, 'full');
-            $url_node = $this->xml->createElement('url', $url);
-            $image_node->appendChild($url_node);
-            $id_node = $this->xml->createElement('id', '1');
-            $image_node->appendChild($id_node);
-            $images_node->appendChild($image_node);
+            $image_node->setAttribute('id', '1');
+            $url = $this->get_attachment_original_url($featured_id);
+            if (!$this->is_valid_image_url($url)) {
+                $url = '';
+            }
+            if ($url !== '') {
+                $url_node = $this->xml->createElement('url', $url);
+                $image_node->appendChild($url_node);
+                $images_node->appendChild($image_node);
+            }
         }
 
         // Galería
@@ -292,11 +299,14 @@ class Alquipress_Kyero_Feed
         $counter = 2;
         foreach ($gallery_ids as $img_id) {
             $image_node = $this->xml->createElement('image');
-            $url = wp_get_attachment_image_url($img_id, 'full');
+            $image_node->setAttribute('id', (string) $counter);
+            $url = $this->get_attachment_original_url($img_id);
+            if (!$this->is_valid_image_url($url)) {
+                $counter++;
+                continue;
+            }
             $url_node = $this->xml->createElement('url', $url);
             $image_node->appendChild($url_node);
-            $id_node = $this->xml->createElement('id', $counter);
-            $image_node->appendChild($id_node);
             $images_node->appendChild($image_node);
             $counter++;
         }
@@ -305,37 +315,144 @@ class Alquipress_Kyero_Feed
     }
 
     /**
+     * URLs multi-idioma
+     */
+    private function add_urls($property_node, $post)
+    {
+        $url_node = $this->xml->createElement('url');
+        $permalink = get_permalink($post->ID);
+        $url_node->appendChild($this->xml->createElement('en', $permalink));
+        $url_node->appendChild($this->xml->createElement('es', $permalink));
+        $property_node->appendChild($url_node);
+    }
+
+    private function get_price_freq($post_id, $product)
+    {
+        $allowed = ['sale', 'week', 'month'];
+        $freq = '';
+
+        if (function_exists('get_field')) {
+            $freq = get_field('kyero_price_freq', $post_id);
+        }
+        if (!$freq) {
+            $freq = get_post_meta($post_id, 'kyero_price_freq', true);
+        }
+        if (!$freq) {
+            $freq = get_post_meta($post_id, 'price_freq', true);
+        }
+        if (!$freq) {
+            $freq = get_post_meta($post_id, '_kyero_price_freq', true);
+        }
+
+        $freq = strtolower(trim((string) $freq));
+        if ($freq && in_array($freq, $allowed, true)) {
+            return $freq;
+        }
+
+        $default = apply_filters('alquipress_kyero_price_freq', 'week', $post_id, $product);
+        $default = strtolower(trim((string) $default));
+        if (in_array($default, $allowed, true)) {
+            return $default;
+        }
+
+        return 'week';
+    }
+
+    private function normalize_kyero_type($type)
+    {
+        $type = remove_accents((string) $type);
+        $type = preg_replace('/[^a-zA-Z&\\s()\\/-]/', '', $type);
+        $type = trim($type);
+
+        if ($type === '') {
+            return 'House';
+        }
+
+        return $type;
+    }
+
+    /**
+     * Obtener URL original del adjunto (evita WebP)
+     */
+    private function get_attachment_original_url($attachment_id)
+    {
+        $meta = wp_get_attachment_metadata($attachment_id);
+        $upload_dir = wp_upload_dir();
+        if (!empty($meta['file']) && !empty($upload_dir['baseurl'])) {
+            return trailingslashit($upload_dir['baseurl']) . $meta['file'];
+        }
+
+        return wp_get_attachment_url($attachment_id);
+    }
+
+    private function is_valid_image_url($url)
+    {
+        if (!$url) {
+            return false;
+        }
+
+        $url = strtolower((string) $url);
+        return (bool) preg_match('/\\.(gif|jpe?g|png)$/', $url);
+    }
+
+    private function add_agent_node()
+    {
+        $agent = apply_filters('alquipress_kyero_agent', [
+            'id' => '',
+            'name' => get_bloginfo('name'),
+            'email' => get_bloginfo('admin_email'),
+            'tel' => '',
+            'fax' => '',
+            'mob' => '',
+            'addr1' => '',
+            'addr2' => '',
+            'town' => '',
+            'region' => '',
+            'postcode' => '',
+            'country' => ''
+        ]);
+
+        if (!is_array($agent)) {
+            return;
+        }
+
+        $agent = array_filter($agent, function ($value) {
+            return $value !== null && $value !== '';
+        });
+
+        if (empty($agent)) {
+            return;
+        }
+
+        $agent_node = $this->xml->createElement('agent');
+        foreach ($agent as $key => $value) {
+            if ($key === 'id' && !is_numeric($value)) {
+                continue;
+            }
+            $agent_node->appendChild($this->xml->createElement($key, $value));
+        }
+
+        $this->root_node->appendChild($agent_node);
+    }
+
+    /**
      * Añadir características
      */
     private function add_features($property_node, $product_id)
     {
-        $features_node = $this->xml->createElement('features');
         $features = $this->get_features_in_english($product_id);
 
+        if (empty($features)) {
+            return;
+        }
+
+        $features_node = $this->xml->createElement('features');
         foreach ($features as $feature_name) {
             $feature = $this->xml->createElement('feature', $feature_name);
             $features_node->appendChild($feature);
         }
 
         $property_node->appendChild($features_node);
-    }
-
-    /**
-     * Añadir disponibilidad (integrado con Bookings)
-     */
-    private function add_availability($property_node, $product)
-    {
-        $availability_node = $this->xml->createElement('availability');
-
-        // Disponible desde hoy
-        $available_from = $this->xml->createElement('available_from', date('Y-m-d'));
-        $availability_node->appendChild($available_from);
-
-        // Disponible hasta fin de año (o el rango que tengas)
-        $available_to = $this->xml->createElement('available_to', date('Y') . '-12-31');
-        $availability_node->appendChild($available_to);
-
-        $property_node->appendChild($availability_node);
     }
 
     /**

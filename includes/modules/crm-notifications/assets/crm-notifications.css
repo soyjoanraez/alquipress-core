@@ -1,0 +1,204 @@
+/**
+ * Estilos para Notificaciones CRM
+ */
+
+/* ========== Notificaciones Mejoradas ========== */
+
+.alquipress-notification {
+    border-left-width: 4px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    margin: 15px 15px 15px 0;
+    padding: 15px 20px;
+}
+
+.alquipress-notification.notice-info {
+    border-left-color: #2ea2cc;
+    background: #f0f6fc;
+}
+
+.alquipress-notification.notice-warning {
+    border-left-color: #f0b849;
+    background: #fffbeb;
+}
+
+.alquipress-notification.notice-error {
+    border-left-color: #dc3232;
+    background: #fef2f2;
+}
+
+.alquipress-notification.notice-success {
+    border-left-color: #00a32a;
+    background: #f0fdf4;
+}
+
+/* ========== Contenido de Notificación ========== */
+
+.notification-content {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.notification-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.notification-body {
+    flex: 1;
+}
+
+.notification-title {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2c3338;
+}
+
+.notice-info .notification-title {
+    color: #135e96;
+}
+
+.notice-warning .notification-title {
+    color: #92400e;
+}
+
+.notice-error .notification-title {
+    color: #991b1b;
+}
+
+.notice-success .notification-title {
+    color: #008a00;
+}
+
+.notification-message {
+    margin: 0 0 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #666;
+}
+
+.notification-action {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 13px;
+    height: auto;
+    line-height: 1.4;
+    padding: 6px 14px;
+    font-weight: 600;
+    text-decoration: none !important;
+}
+
+.notice-info .notification-action {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: white;
+}
+
+.notice-info .notification-action:hover {
+    background: #135e96;
+    border-color: #135e96;
+}
+
+.notice-warning .notification-action {
+    background: #f0b849;
+    border-color: #f0b849;
+    color: #2c3338;
+}
+
+.notice-warning .notification-action:hover {
+    background: #d9a134;
+    border-color: #d9a134;
+}
+
+.notice-error .notification-action {
+    background: #dc3232;
+    border-color: #dc3232;
+    color: white;
+}
+
+.notice-error .notification-action:hover {
+    background: #b32d2e;
+    border-color: #b32d2e;
+}
+
+/* ========== Animación de Entrada ========== */
+
+.alquipress-notification {
+    animation: slideInDown 0.4s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ========== Badge de Contador en Menú ========== */
+
+#adminmenu .awaiting-mod {
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+    margin: 0 0 0 7px;
+    padding: 0 5px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    background-color: #d63638;
+    color: #fff;
+    font-size: 11px;
+    line-height: 1.6;
+    text-align: center;
+}
+
+#adminmenu .awaiting-mod .plugin-count {
+    font-weight: 600;
+}
+
+/* ========== Responsive ========== */
+
+@media screen and (max-width: 782px) {
+    .alquipress-notification {
+        margin: 10px 10px 10px 0;
+        padding: 12px 15px;
+    }
+
+    .notification-content {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .notification-icon {
+        font-size: 24px;
+    }
+
+    .notification-title {
+        font-size: 14px;
+    }
+
+    .notification-message {
+        font-size: 12px;
+    }
+
+    .notification-action {
+        display: block;
+        text-align: center;
+        width: 100%;
+    }
+}
+
+/* ========== Hover Effects ========== */
+
+.alquipress-notification:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s;
+}
