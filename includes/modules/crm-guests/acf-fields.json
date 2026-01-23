@@ -1,0 +1,80 @@
+[
+    {
+        "key": "group_crm_cliente",
+        "title": "CRM - Ficha del Huésped (Admin)",
+        "fields": [
+            {
+                "key": "field_guest_status",
+                "label": "Estado del Cliente",
+                "name": "guest_status",
+                "type": "select",
+                "choices": {
+                    "standard": "Estándar",
+                    "vip": "⭐ VIP",
+                    "blacklist": "🚫 LISTA NEGRA"
+                },
+                "default_value": "standard"
+            },
+            {
+                "key": "field_guest_rating",
+                "label": "Valoración Interna",
+                "name": "guest_rating",
+                "type": "button_group",
+                "choices": {
+                    "1": "1",
+                    "2": "2",
+                    "3": "3",
+                    "4": "4",
+                    "5": "5"
+                }
+            },
+            {
+                "key": "field_guest_notes",
+                "label": "Notas Internas (Privado)",
+                "name": "guest_internal_notes",
+                "type": "textarea"
+            },
+            {
+                "key": "field_guest_prefs",
+                "label": "Preferencias",
+                "name": "guest_preferences",
+                "type": "checkbox",
+                "choices": {
+                    "mascotas": "Mascotas",
+                    "fumador": "Fumador",
+                    "ninos": "Niños/Familia",
+                    "accesibilidad": "Movilidad Reducida"
+                }
+            },
+            {
+                "key": "field_guest_docs",
+                "label": "Documentación (DNI/Pasaporte)",
+                "name": "guest_documents",
+                "type": "repeater",
+                "sub_fields": [
+                    {
+                        "key": "field_doc_name",
+                        "label": "Nombre Documento",
+                        "name": "nombre_doc",
+                        "type": "text"
+                    },
+                    {
+                        "key": "field_doc_file",
+                        "label": "Archivo",
+                        "name": "archivo_doc",
+                        "type": "file"
+                    }
+                ]
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "user_form",
+                    "operator": "==",
+                    "value": "all"
+                }
+            ]
+        ]
+    }
+]

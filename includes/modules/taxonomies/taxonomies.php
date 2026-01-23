@@ -1,0 +1,240 @@
+<?php
+/**
+ * Módulo: Taxonomías Personalizadas
+ */
+
+if (!defined('ABSPATH'))
+    exit;
+
+class Alquipress_Taxonomies
+{
+
+    public function __construct()
+    {
+        add_action('init', [$this, 'register_taxonomies']);
+        add_action('acf/init', [$this, 'load_acf_fields']);
+        add_action('init', [$this, 'populate_caracteristicas'], 99);
+        add_action('init', [$this, 'populate_marina_alta'], 99);
+    }
+
+    public function load_acf_fields()
+    {
+        $json_file = dirname(__FILE__) . '/acf-fields.json';
+        if (file_exists($json_file)) {
+            $json = file_get_contents($json_file);
+            $fields = json_decode($json, true);
+            if (function_exists('acf_add_local_field_group') && is_array($fields)) {
+                foreach ($fields as $field_group) {
+                    acf_add_local_field_group($field_group);
+                }
+            }
+        }
+    }
+
+    public function register_taxonomies()
+    {
+        // Población (Jerárquica)
+        register_taxonomy('poblacion', 'product', [
+            'label' => 'Población',
+            'labels' => [
+                'name' => 'Poblaciones',
+                'singular_name' => 'Población',
+                'search_items' => 'Buscar Poblaciones',
+                'all_items' => 'Todas las Poblaciones',
+                'parent_item' => 'Población Padre',
+                'parent_item_colon' => 'Población Padre:',
+                'edit_item' => 'Editar Población',
+                'update_item' => 'Actualizar Población',
+                'add_new_item' => 'Añadir Nueva Población',
+                'new_item_name' => 'Nombre de Nueva Población',
+                'menu_name' => 'Población',
+            ],
+            'hierarchical' => true,
+            'show_ui' => true,
+            'show_admin_column' => true,
+            'query_var' => true,
+            'rewrite' => ['slug' => 'poblacion'],
+            'show_in_rest' => true,
+        ]);
+
+        // Zona (No jerárquica)
+        register_taxonomy('zona', 'product', [
+            'label' => 'Zona / Barrio',
+            'labels' => [
+                'name' => 'Zonas',
+                'singular_name' => 'Zona',
+                'search_items' => 'Buscar Zonas',
+                'all_items' => 'Todas las Zonas',
+                'edit_item' => 'Editar Zona',
+                'update_item' => 'Actualizar Zona',
+                'add_new_item' => 'Añadir Nueva Zona',
+                'new_item_name' => 'Nombre de Nueva Zona',
+                'menu_name' => 'Zonas',
+            ],
+            'hierarchical' => false,
+            'show_ui' => true,
+            'show_admin_column' => true,
+            'rewrite' => ['slug' => 'zona'],
+            'show_in_rest' => true,
+        ]);
+
+        // Características (No jerárquica)
+        register_taxonomy('caracteristicas', 'product', [
+            'label' => 'Características',
+            'labels' => [
+                'name' => 'Características',
+                'singular_name' => 'Característica',
+                'search_items' => 'Buscar Características',
+                'all_items' => 'Todas las Características',
+                'edit_item' => 'Editar Característica',
+                'update_item' => 'Actualizar Característica',
+                'add_new_item' => 'Añadir Nueva Característica',
+                'new_item_name' => 'Nombre de Nueva Característica',
+                'menu_name' => 'Características',
+            ],
+            'hierarchical' => false,
+            'show_ui' => true,
+            'show_admin_column' => true,
+            'rewrite' => ['slug' => 'caracteristicas'],
+            'show_in_rest' => true,
+        ]);
+    }
+
+    public function populate_caracteristicas()
+    {
+        // Solo ejecutar una vez
+        if (get_option('alquipress_caracteristicas_populated')) {
+            return;
+        }
+
+        $caracteristicas = [
+            // Cocina
+            'Cocina Equipada',
+            'Lavavajillas',
+            'Horno',
+            'Microondas',
+            'Cafetera Nespresso',
+            'Tostadora',
+            'Nevera Combi',
+            // Clima
+            'Aire Acondicionado',
+            'Calefacción',
+            'Chimenea',
+            // Tech
+            'WiFi Fibra',
+            'Smart TV',
+            'TV Satélite',
+            // Exterior
+            'Piscina Privada',
+            'Piscina Comunitaria',
+            'Barbacoa',
+            'Jardín',
+            'Terraza',
+            'Vistas al Mar',
+            'Primera Línea',
+            // Servicios
+            'Parking Privado',
+            'Ascensor',
+            'Admite Mascotas',
+            'Lavadora',
+            'Secadora',
+            'Cuna de viaje',
+            'Plancha'
+        ];
+
+        foreach ($caracteristicas as $item) {
+            if (!term_exists($item, 'caracteristicas')) {
+                wp_insert_term($item, 'caracteristicas');
+            }
+        }
+
+        update_option('alquipress_caracteristicas_populated', true);
+    }
+
+    public function populate_marina_alta()
+    {
+        // Solo ejecutar una vez
+        if (get_option('alquipress_marina_alta_populated')) {
+            return;
+        }
+
+        // Crear Alicante como provincia padre
+        $alicante_id = null;
+        if (!term_exists('Alicante', 'poblacion')) {
+            $result = wp_insert_term('Alicante', 'poblacion');
+            if (!is_wp_error($result)) {
+                $alicante_id = $result['term_id'];
+            }
+        } else {
+            $term = get_term_by('name', 'Alicante', 'poblacion');
+            $alicante_id = $term ? $term->term_id : null;
+        }
+
+        // Poblaciones de la Marina Alta
+        if ($alicante_id) {
+            $poblaciones = [
+                'Dénia',
+                'Jávea (Xàbia)',
+                'Calpe (Calp)',
+                'Altea',
+                'Benissa',
+                'Teulada-Moraira',
+                'Benidorm',
+                'Pedreguer',
+                'Gata de Gorgos',
+                'Beniarbeig',
+                'Els Poblets',
+                'Ondara',
+                'Pego',
+                'Vergel',
+                'El Verger',
+                'Jesús Pobre'
+            ];
+
+            foreach ($poblaciones as $poblacion) {
+                if (!term_exists($poblacion, 'poblacion')) {
+                    wp_insert_term($poblacion, 'poblacion', ['parent' => $alicante_id]);
+                }
+            }
+        }
+
+        // Zonas/Barrios
+        $zonas = [
+            'Centro',
+            'Playa',
+            'Puerto',
+            'Casco Antiguo',
+            'Residencial',
+            'Montaña',
+            'Las Rotas',
+            'Les Marines',
+            'La Marineta Casiana',
+            'Les Deveses',
+            'Arenal',
+            'Puerto de Jávea',
+            'Cabo de la Nao',
+            'Granadella',
+            'Levante',
+            'La Fossa',
+            'Peñón de Ifach',
+            'Altea Hills',
+            'Pueblo de Altea',
+            'Cala Moraira',
+            'El Portet',
+            'Benissa Costa',
+            'Golf',
+            'Vista Mar',
+            'Primera Línea'
+        ];
+
+        foreach ($zonas as $zona) {
+            if (!term_exists($zona, 'zona')) {
+                wp_insert_term($zona, 'zona');
+            }
+        }
+
+        update_option('alquipress_marina_alta_populated', true);
+    }
+}
+
+new Alquipress_Taxonomies();

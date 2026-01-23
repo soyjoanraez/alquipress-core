@@ -1,0 +1,184 @@
+[
+    {
+        "key": "group_alojamiento_detalles",
+        "title": "Alojamiento: Detalles y Configuración",
+        "fields": [
+            {
+                "key": "field_licencia_turistica",
+                "label": "Licencia Turística (Obligatorio)",
+                "name": "licencia_turistica",
+                "type": "text",
+                "instructions": "Código EGVT o VT",
+                "required": 1
+            },
+            {
+                "key": "field_referencia_interna",
+                "label": "Referencia Interna",
+                "name": "referencia_interna",
+                "type": "text",
+                "width": "50%"
+            },
+            {
+                "key": "field_superficie_m2",
+                "label": "Superficie (m²)",
+                "name": "superficie_m2",
+                "type": "number",
+                "wrapper": {
+                    "width": "33%"
+                }
+            },
+            {
+                "key": "field_numero_banos",
+                "label": "Número de Baños",
+                "name": "numero_banos",
+                "type": "number",
+                "min": 1,
+                "max": 10,
+                "default_value": 1,
+                "wrapper": {
+                    "width": "33%"
+                }
+            },
+            {
+                "key": "field_distancias_tab",
+                "label": "Ubicación y Distancias",
+                "type": "tab"
+            },
+            {
+                "key": "field_distancia_playa",
+                "label": "Distancia a la Playa (metros)",
+                "name": "distancia_playa",
+                "type": "number"
+            },
+            {
+                "key": "field_distancia_centro",
+                "label": "Distancia al Centro (metros)",
+                "name": "distancia_centro",
+                "type": "number"
+            },
+            {
+                "key": "field_coordenadas_gps",
+                "label": "Coordenadas GPS",
+                "name": "coordenadas_gps",
+                "type": "google_map"
+            },
+            {
+                "key": "field_distribucion_tab",
+                "label": "Distribución Dormitorios",
+                "type": "tab"
+            },
+            {
+                "key": "field_habitaciones_repeater",
+                "label": "Configuración de Habitaciones",
+                "name": "distribucion_habitaciones",
+                "type": "repeater",
+                "sub_fields": [
+                    {
+                        "key": "field_nombre_hab",
+                        "label": "Nombre Habitación",
+                        "name": "nombre_hab",
+                        "type": "text"
+                    },
+                    {
+                        "key": "field_tipo_cama",
+                        "label": "Tipo de Cama",
+                        "name": "tipo_cama",
+                        "type": "select",
+                        "choices": {
+                            "matrimonio": "Cama Matrimonio",
+                            "individual": "Camas Individuales",
+                            "litera": "Litera",
+                            "sofa": "Sofá Cama"
+                        }
+                    },
+                    {
+                        "key": "field_bano_suite",
+                        "label": "Baño en Suite",
+                        "name": "bano_en_suite",
+                        "type": "true_false",
+                        "ui": 1
+                    }
+                ]
+            },
+            {
+                "key": "field_normas_tab",
+                "label": "Normas y Horarios",
+                "type": "tab"
+            },
+            {
+                "key": "field_checkin_time",
+                "label": "Hora Check-in",
+                "name": "hora_checkin",
+                "type": "time_picker",
+                "display_format": "H:i",
+                "return_format": "H:i"
+            },
+            {
+                "key": "field_checkout_time",
+                "label": "Hora Check-out",
+                "name": "hora_checkout",
+                "type": "time_picker",
+                "display_format": "H:i",
+                "return_format": "H:i"
+            },
+            {
+                "key": "field_fianza_texto",
+                "label": "Info Fianza",
+                "name": "fianza_texto",
+                "type": "text",
+                "instructions": "Ej: 300€ mediante retención en tarjeta"
+            },
+            {
+                "key": "field_propietario_tab",
+                "label": "👤 Propietario",
+                "type": "tab"
+            },
+            {
+                "key": "field_propietario_asignado",
+                "label": "Propietario de la Propiedad",
+                "name": "propietario_asignado",
+                "type": "relationship",
+                "post_type": [
+                    "propietario"
+                ],
+                "filters": [
+                    "search"
+                ],
+                "max": 1,
+                "return_format": "id",
+                "instructions": "Selecciona el propietario de esta propiedad para vincular ingresos y pagos."
+            },
+            {
+                "key": "field_seo_tab",
+                "label": "🔍 SEO Meta Data",
+                "type": "tab"
+            },
+            {
+                "key": "field_seo_title",
+                "label": "Título SEO Custom",
+                "name": "seo_title_override",
+                "type": "text",
+                "maxlength": 60,
+                "instructions": "Deja en blanco para usar el título automático"
+            },
+            {
+                "key": "field_seo_description",
+                "label": "Meta Description Custom",
+                "name": "seo_description_override",
+                "type": "textarea",
+                "maxlength": 160,
+                "rows": 3,
+                "instructions": "Deja en blanco para usar la descripción automática"
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "post_type",
+                    "operator": "==",
+                    "value": "product"
+                }
+            ]
+        ]
+    }
+]

@@ -1,0 +1,89 @@
+[
+    {
+        "key": "group_crm_propietario",
+        "title": "CRM - Gestión Propietario",
+        "fields": [
+            {
+                "key": "field_owner_tab_contact",
+                "label": "Contacto",
+                "type": "tab"
+            },
+            {
+                "key": "field_owner_phone",
+                "label": "Teléfono Móvil",
+                "name": "owner_phone",
+                "type": "text"
+            },
+            {
+                "key": "field_owner_email",
+                "label": "Email Gestión",
+                "name": "owner_email_management",
+                "type": "email"
+            },
+            {
+                "key": "field_owner_whatsapp",
+                "label": "Enlace WhatsApp Directo",
+                "name": "owner_whatsapp",
+                "type": "url",
+                "instructions": "https://wa.me/34600000000"
+            },
+            {
+                "key": "field_owner_tab_finance",
+                "label": "Financiero",
+                "type": "tab"
+            },
+            {
+                "key": "field_owner_commission",
+                "label": "% Comisión Agencia",
+                "name": "owner_commission_rate",
+                "type": "number",
+                "append": "%"
+            },
+            {
+                "key": "field_owner_iban",
+                "label": "IBAN",
+                "name": "owner_iban",
+                "type": "text"
+            },
+            {
+                "key": "field_owner_properties",
+                "label": "Propiedades Asignadas",
+                "name": "owner_properties",
+                "type": "relationship",
+                "post_type": [
+                    "product"
+                ],
+                "filters": [
+                    "search"
+                ]
+            },
+            {
+                "key": "field_owner_tab_docs",
+                "label": "Documentación (NUBE)",
+                "type": "tab"
+            },
+            {
+                "key": "field_owner_cloud_folder",
+                "label": "📂 Carpeta Drive/Dropbox",
+                "name": "owner_cloud_folder",
+                "type": "url",
+                "instructions": "Enlace a la carpeta compartida con toda la documentación."
+            },
+            {
+                "key": "field_owner_contract_link",
+                "label": "📄 Enlace Contrato PDF",
+                "name": "owner_contract_link",
+                "type": "url"
+            }
+        ],
+        "location": [
+            [
+                {
+                    "param": "post_type",
+                    "operator": "==",
+                    "value": "propietario"
+                }
+            ]
+        ]
+    }
+]
