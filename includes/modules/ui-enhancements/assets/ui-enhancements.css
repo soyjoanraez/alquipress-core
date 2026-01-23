@@ -1,0 +1,288 @@
+/**
+ * Mejoras UI Globales
+ * Estilos generales para mejorar la experiencia de usuario en admin
+ */
+
+/* ========== Mejoras Generales ACF ========== */
+
+/* Mejorar espaciado de campos ACF */
+.acf-field {
+    margin-bottom: 20px;
+}
+
+.acf-field .acf-label {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.acf-field .acf-label label {
+    font-size: 13px;
+    color: #1d2327;
+}
+
+.acf-field .acf-input {
+    margin-top: 0;
+}
+
+/* Mejorar inputs */
+.acf-field input[type="text"],
+.acf-field input[type="email"],
+.acf-field input[type="url"],
+.acf-field input[type="tel"],
+.acf-field input[type="number"],
+.acf-field textarea,
+.acf-field select {
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+/* ========== Tabs ACF Mejorados ========== */
+
+.acf-tab-wrap {
+    margin: 0 0 30px;
+}
+
+.acf-tab-wrap .acf-tab-group {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.acf-tab-wrap .acf-tab-group li {
+    margin: 0 5px 0 0;
+    padding: 12px 20px;
+    border: none;
+    background: #f0f0f1;
+    color: #50575e;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.acf-tab-wrap .acf-tab-group li:hover {
+    background: #e0e0e1;
+}
+
+.acf-tab-wrap .acf-tab-group li.active {
+    background: #2271b1;
+    color: white;
+    font-weight: 600;
+}
+
+.acf-tab-wrap .acf-tab-group li a {
+    color: inherit;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* ========== Campo de Comisión ========== */
+
+.acf-field[data-name="owner_commission_rate"] {
+    background: #f0fdf4;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 3px solid #00a32a;
+}
+
+.acf-field[data-name="owner_commission_rate"] .acf-label label {
+    color: #00a32a;
+    font-weight: 700;
+}
+
+/* ========== Campos de Relación (Propiedades Asignadas) ========== */
+
+.acf-field[data-name="owner_properties"] .acf-relationship {
+    background: white;
+    border-radius: 6px;
+}
+
+.acf-field[data-name="owner_properties"] .acf-relationship .list {
+    border: 2px solid #e5e7eb;
+    border-radius: 4px;
+}
+
+.acf-field[data-name="owner_properties"] .acf-relationship .list .acf-rel-item {
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f1;
+    transition: background 0.2s;
+}
+
+.acf-field[data-name="owner_properties"] .acf-relationship .list .acf-rel-item:hover {
+    background: #f9fafb;
+}
+
+/* ========== Rating Visual ========== */
+
+.acf-field[data-name="guest_rating"] input[type="number"] {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fbbf24;
+    width: 80px;
+    text-align: center;
+}
+
+/* ========== Documentos ========== */
+
+.acf-field[data-name="guest_documents"] .acf-file-uploader {
+    background: #f9fafb;
+    padding: 20px;
+    border-radius: 6px;
+    border: 2px dashed #c3c4c7;
+}
+
+/* ========== Mejoras para Metaboxes ========== */
+
+.postbox {
+    border-radius: 8px;
+    border: 1px solid #c3c4c7;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.postbox .postbox-header {
+    border-bottom: 1px solid #f0f0f1;
+    background: #f9fafb;
+}
+
+.postbox .postbox-header h2 {
+    font-weight: 600;
+}
+
+/* ========== Sidebar Mejorado ========== */
+
+#side-sortables .postbox {
+    background: #f9fafb;
+}
+
+#submitdiv .submitbox {
+    padding: 15px;
+}
+
+#publishing-action {
+    text-align: right;
+    padding-top: 12px;
+}
+
+#publishing-action .button-primary {
+    padding: 8px 20px;
+    height: auto;
+    font-weight: 600;
+}
+
+/* ========== Botones Mejorados ========== */
+
+.button {
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.button-primary {
+    background: #2271b1;
+    border-color: #2271b1;
+    box-shadow: 0 2px 4px rgba(34, 113, 177, 0.2);
+}
+
+.button-primary:hover {
+    background: #135e96;
+    border-color: #135e96;
+    box-shadow: 0 4px 8px rgba(34, 113, 177, 0.3);
+}
+
+/* ========== Notices Mejoradas ========== */
+
+.notice {
+    border-radius: 6px;
+    padding: 12px 15px;
+}
+
+.notice.notice-success {
+    border-left-color: #00a32a;
+}
+
+.notice.notice-warning {
+    border-left-color: #f0b849;
+}
+
+.notice.notice-error {
+    border-left-color: #dc3232;
+}
+
+/* ========== Tablas en Admin ========== */
+
+.wp-list-table {
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.wp-list-table thead th {
+    background: #f9fafb;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: #666;
+}
+
+.wp-list-table tbody tr {
+    transition: background 0.2s;
+}
+
+.wp-list-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* ========== Cards en Admin ========== */
+
+.card {
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ========== Responsive ========== */
+
+@media screen and (max-width: 782px) {
+    .acf-field[data-name="guest_preferences"] .acf-checkbox-list {
+        grid-template-columns: 1fr;
+    }
+
+    .acf-tab-wrap .acf-tab-group li {
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+}
+
+/* ========== Helpers ========== */
+
+.alquipress-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.alquipress-badge.success {
+    background: #d5f4e6;
+    color: #00a32a;
+}
+
+.alquipress-badge.warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.alquipress-badge.error {
+    background: #fef2f2;
+    color: #dc3232;
+}
+
+.alquipress-badge.info {
+    background: #dbeafe;
+    color: #1d4ed8;
+}

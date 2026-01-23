@@ -52,6 +52,10 @@ class Alquipress_Property_Renaming
         $args['rewrite']['slug'] = 'inmueble';
         $args['has_archive'] = 'inmuebles';
 
+        // Asegurar que la papelera funciona
+        $args['map_meta_cap'] = true;
+        $args['capability_type'] = 'product';
+
         return $args;
     }
 

@@ -17,6 +17,7 @@ define('ALQUIPRESS_URL', plugin_dir_url(__FILE__));
 
 require_once ALQUIPRESS_PATH . 'includes/class-module-manager.php';
 require_once ALQUIPRESS_PATH . 'includes/class-frontend-filters.php';
+require_once ALQUIPRESS_PATH . 'includes/class-performance-optimizer.php';
 
 function alquipress_init()
 {
@@ -37,6 +38,7 @@ function alquipress_activate()
             'email-automation' => true,
             'seo-master' => true,
             'booking-enforcer' => true,
+            'order-columns' => true,
             'payments' => false,
             'alquipress-tester' => false
         ]);

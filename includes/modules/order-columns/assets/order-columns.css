@@ -1,0 +1,58 @@
+/**
+ * Estilos para Columnas Personalizadas de Pedidos
+ */
+
+/* Anchos de columnas */
+.column-property {
+    width: 200px;
+}
+
+.column-check_dates {
+    width: 150px;
+}
+
+.column-owner {
+    width: 160px;
+}
+
+.column-booking_status {
+    width: 110px;
+    text-align: center;
+}
+
+/* Enlaces en columnas */
+.column-property a,
+.column-owner a {
+    text-decoration: none;
+    color: #2271b1;
+    transition: color 0.2s;
+}
+
+.column-property a:hover,
+.column-owner a:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+/* Mejorar legibilidad en columnas */
+.column-check_dates div {
+    line-height: 1.4;
+}
+
+.column-booking_status {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+/* Responsive: ocultar columnas en pantallas pequeñas */
+@media screen and (max-width: 1400px) {
+    .column-owner {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .column-check_dates {
+        display: none;
+    }
+}

@@ -20,9 +20,10 @@ class Alquipress_Kyero_Importer
      */
     public function fetch_xml()
     {
+        $sslverify = (bool) apply_filters('alquipress_kyero_sslverify', true);
         $response = wp_remote_get($this->xml_url, [
             'timeout' => 30,
-            'sslverify' => false
+            'sslverify' => $sslverify
         ]);
 
         if (is_wp_error($response)) {
@@ -51,7 +52,15 @@ class Alquipress_Kyero_Importer
     {
         $xml = $this->fetch_xml();
 
-        if (!$xml || !isset($xml->properties->property)) {
+        if (!$xml) {
+            return ['success' => false, 'message' => 'XML inválido'];
+        }
+
+        if (isset($xml->property)) {
+            $properties = $xml->property;
+        } elseif (isset($xml->properties->property)) {
+            $properties = $xml->properties->property;
+        } else {
             return ['success' => false, 'message' => 'XML inválido'];
         }
 
@@ -59,7 +68,7 @@ class Alquipress_Kyero_Importer
         $updated = 0;
         $errors = 0;
 
-        foreach ($xml->properties->property as $property) {
+        foreach ($properties as $property) {
             $result = $this->import_single_property($property);
 
             if ($result === 'new') {
@@ -102,9 +111,12 @@ class Alquipress_Kyero_Importer
         $post_id = !empty($existing) ? $existing[0]->ID : 0;
 
         // Preparar datos del producto
+        $title = $this->extract_title($property);
+        $description = $this->extract_description($property);
+
         $post_data = [
-            'post_title' => (string) $property->desc[0]->title, // Primera descripción
-            'post_content' => (string) $property->desc[0]->description,
+            'post_title' => $title,
+            'post_content' => $description,
             'post_status' => 'publish',
             'post_type' => 'product',
         ];
@@ -162,7 +174,13 @@ class Alquipress_Kyero_Importer
         }
 
         // Coordenadas GPS
-        if (isset($property->latitude) && isset($property->longitude)) {
+        if (isset($property->location->latitude) && isset($property->location->longitude)) {
+            $coordenadas = [
+                'lat' => (float) $property->location->latitude,
+                'lng' => (float) $property->location->longitude
+            ];
+            update_field('coordenadas_gps', $coordenadas, $post_id);
+        } elseif (isset($property->latitude) && isset($property->longitude)) {
             $coordenadas = [
                 'lat' => (float) $property->latitude,
                 'lng' => (float) $property->longitude
@@ -291,5 +309,59 @@ class Alquipress_Kyero_Importer
         }
 
         return $attachment_id;
+    }
+
+    private function extract_description($property)
+    {
+        if (isset($property->desc->description)) {
+            return (string) $property->desc->description;
+        }
+
+        if (isset($property->desc)) {
+            $desc = $property->desc;
+            $langs = ['es', 'en', 'fr', 'de', 'it', 'pt'];
+            foreach ($langs as $lang) {
+                if (isset($desc->{$lang}) && (string) $desc->{$lang} !== '') {
+                    return (string) $desc->{$lang};
+                }
+            }
+        }
+
+        if (isset($property->desc[0]->description)) {
+            return (string) $property->desc[0]->description;
+        }
+
+        return '';
+    }
+
+    private function extract_title($property)
+    {
+        if (isset($property->desc->title) && (string) $property->desc->title !== '') {
+            return (string) $property->desc->title;
+        }
+
+        if (isset($property->desc[0]->title) && (string) $property->desc[0]->title !== '') {
+            return (string) $property->desc[0]->title;
+        }
+
+        $type = isset($property->type) ? (string) $property->type : '';
+        $town = isset($property->town) ? (string) $property->town : '';
+        $ref = isset($property->ref) ? (string) $property->ref : '';
+
+        if ($type || $town) {
+            $parts = array_filter([$type, $town]);
+            return implode(' en ', $parts);
+        }
+
+        if ($ref) {
+            return 'Ref ' . $ref;
+        }
+
+        $desc = $this->extract_description($property);
+        if ($desc) {
+            return wp_trim_words($desc, 6, '');
+        }
+
+        return 'Propiedad importada';
     }
 }

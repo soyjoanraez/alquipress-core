@@ -1,0 +1,109 @@
+/**
+ * Estilos para IBAN Enmascarado
+ */
+
+/* Contenedor del IBAN */
+.iban-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 5px;
+}
+
+/* Valor enmascarado */
+.iban-masked {
+    display: inline-block;
+    padding: 10px 14px;
+    background: #f0f0f1;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: #2c3338;
+    min-width: 300px;
+}
+
+/* Input oculto */
+.iban-wrapper input.iban-hidden {
+    display: none;
+}
+
+/* Input visible */
+.iban-wrapper input[type="text"] {
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}
+
+/* Botón toggle */
+.iban-toggle {
+    margin: 0 !important;
+    height: 38px;
+    padding: 0 16px !important;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.iban-toggle:hover {
+    background: #2271b1;
+    border-color: #2271b1;
+    color: #fff;
+}
+
+.iban-toggle.iban-visible {
+    background: #d63638;
+    border-color: #d63638;
+    color: #fff;
+}
+
+.iban-toggle.iban-visible:hover {
+    background: #b32d2e;
+    border-color: #b32d2e;
+}
+
+/* Warning notice */
+.iban-warning {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 4px 10px;
+    background: #fbbf24;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Mejorar el campo de ACF */
+[data-name="datos_bancarios_iban"] {
+    background: #fffbeb;
+    border: 2px solid #fbbf24;
+    padding: 20px;
+    border-radius: 6px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+[data-name="datos_bancarios_iban"] .acf-label label {
+    color: #92400e;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+    .iban-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .iban-masked {
+        width: 100%;
+        font-size: 12px;
+    }
+
+    .iban-toggle {
+        width: 100%;
+    }
+}

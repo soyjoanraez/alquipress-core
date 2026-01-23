@@ -11,6 +11,25 @@ require_once __DIR__ . '/class-kyero-feed.php';
 require_once __DIR__ . '/class-kyero-importer.php';
 
 /**
+ * Archivo del feed Kyero (cache en uploads)
+ */
+function alquipress_kyero_feed_file_path() {
+    $upload_dir = wp_upload_dir();
+    return trailingslashit($upload_dir['basedir']) . 'kyero-feed.xml';
+}
+
+/**
+ * Determina si el feed cacheado sigue fresco
+ */
+function alquipress_kyero_feed_is_fresh($file_path) {
+    $ttl = (int) apply_filters('alquipress_kyero_feed_ttl', 6 * HOUR_IN_SECONDS);
+    if ($ttl <= 0) {
+        return false;
+    }
+    return file_exists($file_path) && (time() - filemtime($file_path) < $ttl);
+}
+
+/**
  * ================================================
  * TAXONOMÍA: Exportar a Kyero (Checkbox)
  * ================================================
@@ -42,6 +61,7 @@ function alquipress_kyero_metabox($post) {
     }
     
     ?>
+    <?php wp_nonce_field('alquipress_kyero_export', 'alquipress_kyero_export_nonce'); ?>
     <div id="kyero-export-box" style="padding: 10px; background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 4px;">
         <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <input type="checkbox" 
@@ -67,7 +87,11 @@ add_action('save_post_product', 'alquipress_save_kyero_export');
 
 function alquipress_save_kyero_export($post_id) {
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) return;
     if (!current_user_can('edit_post', $post_id)) return;
+    if (empty($_POST['alquipress_kyero_export_nonce']) || !wp_verify_nonce($_POST['alquipress_kyero_export_nonce'], 'alquipress_kyero_export')) {
+        return;
+    }
     
     if (isset($_POST['kyero_export_checkbox']) && $_POST['kyero_export_checkbox'] == '1') {
         $export_term = get_term_by('slug', 'exportar', 'kyero_export');
@@ -99,9 +123,20 @@ add_action('template_redirect', 'alquipress_serve_kyero_feed');
 function alquipress_serve_kyero_feed() {
     if (get_query_var('kyero_feed')) {
         header('Content-Type: application/xml; charset=utf-8');
-        
-        $feed = new Alquipress_Kyero_Feed();
-        echo $feed->generate();
+
+        $feed_file = alquipress_kyero_feed_file_path();
+        if (!alquipress_kyero_feed_is_fresh($feed_file)) {
+            $feed = new Alquipress_Kyero_Feed();
+            $feed->save_to_file();
+            clearstatcache(true, $feed_file);
+        }
+
+        if (file_exists($feed_file)) {
+            readfile($feed_file);
+        } else {
+            $feed = new Alquipress_Kyero_Feed();
+            echo $feed->generate();
+        }
         
         exit;
     }

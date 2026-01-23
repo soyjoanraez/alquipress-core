@@ -1,0 +1,363 @@
+/**
+ * Estilos para Editor de Huésped
+ */
+
+.alquipress-edit-guest-wrap {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* ========== Header ========== */
+
+.edit-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.header-left h1 {
+    font-size: 28px;
+    margin: 0 0 8px;
+    color: #2c3338;
+}
+
+.header-left .subtitle {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+}
+
+.header-right {
+    display: flex;
+    gap: 10px;
+}
+
+/* ========== Form Layout ========== */
+
+.edit-guest-form {
+    background: #f9fafb;
+    padding: 30px;
+    border-radius: 12px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+/* ========== Form Cards ========== */
+
+.form-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.form-card .card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f1;
+    color: #2c3338;
+}
+
+.form-card .card-title .dashicons {
+    font-size: 22px;
+    color: #2271b1;
+}
+
+/* ========== Form Fields ========== */
+
+.form-field {
+    margin-bottom: 20px;
+}
+
+.form-field:last-child {
+    margin-bottom: 0;
+}
+
+.form-field label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    color: #1d2327;
+    margin-bottom: 8px;
+}
+
+.form-field input[type="text"],
+.form-field input[type="email"],
+.form-field input[type="tel"],
+.form-field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+    border-color: #2271b1;
+    outline: none;
+    box-shadow: 0 0 0 1px #2271b1;
+}
+
+.form-field .description {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    margin-top: 6px;
+}
+
+/* ========== Rating Input ========== */
+
+.rating-input {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.rating-input input[type="number"] {
+    width: 80px;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    padding: 8px;
+}
+
+#rating-stars-display {
+    display: flex;
+    gap: 4px;
+    font-size: 20px;
+}
+
+#rating-stars-display .star.filled {
+    opacity: 1;
+}
+
+#rating-stars-display .star.half {
+    opacity: 0.6;
+}
+
+#rating-stars-display .star.empty {
+    opacity: 0.3;
+    filter: grayscale(100%);
+}
+
+/* ========== Preferencias Checkboxes ========== */
+
+.preferences-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.preference-checkbox {
+    cursor: pointer;
+}
+
+.preference-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.checkbox-card:hover {
+    background: #f0f6fc;
+    border-color: #2ea2cc;
+}
+
+.preference-checkbox input:checked + .checkbox-card {
+    background: #dbeafe;
+    border-color: #2271b1;
+    box-shadow: 0 2px 8px rgba(34, 113, 177, 0.2);
+}
+
+.checkbox-card .pref-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.checkbox-card .pref-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3338;
+}
+
+.preference-checkbox input:checked + .checkbox-card .pref-label {
+    color: #1d4ed8;
+}
+
+/* ========== Notas Privadas ========== */
+
+.notes-card {
+    background: #fffbeb;
+    border: 2px solid #fbbf24;
+}
+
+.notes-card .card-title {
+    color: #92400e;
+    border-bottom-color: #fbbf24;
+}
+
+.notes-card .card-title .dashicons {
+    color: #fbbf24;
+}
+
+.notes-card .wp-editor-container {
+    border: 1px solid #fbbf24;
+    border-radius: 4px;
+}
+
+/* ========== Botones de Acción ========== */
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    padding: 30px 0 0;
+    border-top: 2px solid #e5e7eb;
+}
+
+.form-actions .button-large {
+    padding: 12px 30px;
+    height: auto;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.form-actions .button-primary {
+    background: #00a32a;
+    border-color: #00a32a;
+    box-shadow: 0 2px 8px rgba(0, 163, 42, 0.3);
+}
+
+.form-actions .button-primary:hover {
+    background: #008a00;
+    border-color: #008a00;
+    box-shadow: 0 4px 12px rgba(0, 163, 42, 0.4);
+}
+
+/* ========== Select Mejorado ========== */
+
+#guest_status {
+    font-size: 15px;
+    padding: 12px;
+    font-weight: 600;
+}
+
+#guest_status option[value="vip"] {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+#guest_status option[value="blacklist"] {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+/* ========== Responsive ========== */
+
+@media screen and (max-width: 1200px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .preferences-checkboxes {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .edit-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .header-right {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .header-right .button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .form-grid {
+        padding: 15px;
+    }
+
+    .form-card {
+        padding: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .button {
+        width: 100%;
+        text-align: center;
+    }
+
+    .rating-input {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* ========== Notice de Éxito ========== */
+
+.notice-success {
+    background: #d5f4e6;
+    border-left-color: #00a32a;
+    padding: 15px;
+    margin: 0 0 20px;
+}
+
+.notice-success p {
+    margin: 0;
+    font-size: 14px;
+}
+
+/* ========== WP Editor Styling ========== */
+
+.wp-editor-wrap {
+    background: white;
+    border-radius: 4px;
+}
+
+.mce-toolbar-grp {
+    background: #f9fafb;
+}
+
+/* ========== Loading State ========== */
+
+.form-actions .button-primary:active {
+    transform: scale(0.98);
+}

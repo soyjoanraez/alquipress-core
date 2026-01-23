@@ -1,0 +1,404 @@
+/**
+ * Estilos para Perfil de Huésped
+ */
+
+.alquipress-guest-profile-wrap {
+    max-width: 1400px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* ========== Header ========== */
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #2271b1;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    color: #135e96;
+}
+
+/* ========== Profile Card ========== */
+
+.profile-card {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.header-card {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 30px;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+}
+
+/* ========== Avatar ========== */
+
+.profile-avatar {
+    flex-shrink: 0;
+}
+
+.avatar-circle {
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ========== Info ========== */
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-name {
+    margin: 0 0 12px;
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.profile-meta {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    opacity: 0.95;
+}
+
+.meta-item .dashicons {
+    font-size: 18px;
+}
+
+/* ========== Rating ========== */
+
+.profile-rating {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.star-rating-display {
+    display: flex;
+    gap: 4px;
+}
+
+.star-rating-display .star {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.star-rating-display .star.filled {
+    opacity: 1;
+}
+
+.star-rating-display .star.half {
+    opacity: 0.6;
+}
+
+.star-rating-display .star.empty {
+    opacity: 0.3;
+    filter: grayscale(100%);
+}
+
+.rating-text {
+    font-size: 16px;
+    font-weight: 600;
+    opacity: 0.95;
+}
+
+/* ========== Badges ========== */
+
+.profile-badges {
+    flex-shrink: 0;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 24px;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.badge-icon {
+    font-size: 20px;
+}
+
+.badge-label {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ========== Stats Grid ========== */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card.highlight {
+    background: linear-gradient(135deg, #00a32a 0%, #008a00 100%);
+    color: white;
+    border: none;
+}
+
+.stat-icon {
+    font-size: 36px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.stat-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.stat-card.highlight .stat-label {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2c3338;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-card.highlight .stat-value {
+    color: white;
+}
+
+/* ========== Card Title ========== */
+
+.card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f1;
+    color: #2c3338;
+}
+
+.card-title .dashicons {
+    font-size: 24px;
+    color: #2271b1;
+}
+
+/* ========== Preferencias ========== */
+
+.preferences-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.preference-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background: #f0f6fc;
+    border: 2px solid #2ea2cc;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.preference-item:hover {
+    background: #dbeafe;
+    transform: translateX(4px);
+}
+
+.pref-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.pref-label {
+    font-size: 14px;
+    color: #2c3338;
+}
+
+/* ========== Notas Privadas ========== */
+
+.notes-card {
+    background: #fffbeb;
+    border: 2px solid #fbbf24;
+}
+
+.notes-card .card-title {
+    color: #92400e;
+}
+
+.notes-card .card-title .dashicons {
+    color: #fbbf24;
+}
+
+.notes-content {
+    padding: 15px;
+    background: white;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #2c3338;
+}
+
+.notes-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* ========== Tabla de Reservas ========== */
+
+.bookings-table {
+    margin-top: 20px;
+}
+
+.bookings-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.bookings-table td {
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.bookings-table a {
+    text-decoration: none;
+    color: #2271b1;
+    font-weight: 600;
+}
+
+.bookings-table a:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+/* ========== Responsive ========== */
+
+@media screen and (max-width: 1200px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .preferences-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 782px) {
+    .header-card {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        margin: 0 auto;
+    }
+
+    .profile-meta {
+        justify-content: center;
+    }
+
+    .profile-rating {
+        justify-content: center;
+    }
+
+    .profile-badges {
+        margin: 0 auto;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .preferences-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-name {
+        font-size: 24px;
+    }
+
+    .bookings-table {
+        font-size: 12px;
+    }
+}
+
+/* ========== Print Styles ========== */
+
+@media print {
+    .profile-header,
+    .notes-card {
+        display: none;
+    }
+
+    .profile-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
