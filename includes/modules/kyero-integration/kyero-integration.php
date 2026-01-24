@@ -86,23 +86,43 @@ function alquipress_kyero_metabox($post) {
 add_action('save_post_product', 'alquipress_save_kyero_export');
 
 function alquipress_save_kyero_export($post_id) {
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-    if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) return;
-    if (!current_user_can('edit_post', $post_id)) return;
-    if (empty($_POST['alquipress_kyero_export_nonce']) || !wp_verify_nonce($_POST['alquipress_kyero_export_nonce'], 'alquipress_kyero_export')) {
+    // Validaciones básicas
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return;
     }
-    
+
+    if (wp_is_post_autosave($post_id) || wp_is_post_revision($post_id)) {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+        error_log('ALQUIPRESS Kyero: Usuario sin permisos intentó editar export (Post ID: ' . $post_id . ')');
+        return;
+    }
+
+    // Validación de nonce con logging
+    if (empty($_POST['alquipress_kyero_export_nonce'])) {
+        error_log('ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: ' . $post_id . ')');
+        return;
+    }
+
+    if (!wp_verify_nonce($_POST['alquipress_kyero_export_nonce'], 'alquipress_kyero_export')) {
+        error_log('ALQUIPRESS Kyero: Nonce inválido en save_post_product (Post ID: ' . $post_id . ')');
+        return;
+    }
+
+    // Procesar el formulario
+    $export_term = get_term_by('slug', 'exportar', 'kyero_export');
+
+    if (!$export_term) {
+        error_log('ALQUIPRESS Kyero: Término "exportar" no encontrado en taxonomía kyero_export');
+        return;
+    }
+
     if (isset($_POST['kyero_export_checkbox']) && $_POST['kyero_export_checkbox'] == '1') {
-        $export_term = get_term_by('slug', 'exportar', 'kyero_export');
-        if ($export_term) {
-            wp_set_post_terms($post_id, [$export_term->term_id], 'kyero_export', false);
-        }
+        wp_set_post_terms($post_id, [$export_term->term_id], 'kyero_export', false);
     } else {
-        $export_term = get_term_by('slug', 'exportar', 'kyero_export');
-        if ($export_term) {
-            wp_remove_object_terms($post_id, $export_term->term_id, 'kyero_export');
-        }
+        wp_remove_object_terms($post_id, $export_term->term_id, 'kyero_export');
     }
 }
 
@@ -127,12 +147,33 @@ function alquipress_serve_kyero_feed() {
         $feed_file = alquipress_kyero_feed_file_path();
         if (!alquipress_kyero_feed_is_fresh($feed_file)) {
             $feed = new Alquipress_Kyero_Feed();
-            $feed->save_to_file();
+            $result = $feed->save_to_file();
+
+            if ($result === false) {
+                error_log('ALQUIPRESS Kyero: Error generando feed');
+            }
+
             clearstatcache(true, $feed_file);
         }
 
         if (file_exists($feed_file)) {
-            readfile($feed_file);
+            // Verificar permisos de lectura
+            if (!is_readable($feed_file)) {
+                error_log('ALQUIPRESS Kyero: Feed file exists but is not readable - ' . $feed_file);
+                header('HTTP/1.1 500 Internal Server Error');
+                echo '<?xml version="1.0" encoding="UTF-8"?><error>Feed file not accessible</error>';
+                exit;
+            }
+
+            // Intentar leer con error handling
+            $result = @readfile($feed_file);
+
+            if ($result === false) {
+                error_log('ALQUIPRESS Kyero: Failed to read feed file - ' . $feed_file);
+                header('HTTP/1.1 500 Internal Server Error');
+                echo '<?xml version="1.0" encoding="UTF-8"?><error>Failed to read feed</error>';
+                exit;
+            }
         } else {
             $feed = new Alquipress_Kyero_Feed();
             echo $feed->generate();
@@ -165,11 +206,19 @@ function alquipress_kyero_admin_page() {
     // Guardar configuración
     if (isset($_POST['kyero_save_settings'])) {
         check_admin_referer('kyero_settings');
-        
-        update_option('kyero_import_url', sanitize_url($_POST['kyero_import_url']));
-        update_option('kyero_auto_import', isset($_POST['kyero_auto_import']) ? 1 : 0);
-        
-        echo '<div class="notice notice-success is-dismissible"><p>✅ Configuración guardada</p></div>';
+
+        // Validar y sanitizar URL de importación
+        $import_url = isset($_POST['kyero_import_url']) ? esc_url_raw($_POST['kyero_import_url']) : '';
+
+        // Validar que sea una URL válida si no está vacía
+        if (!empty($import_url) && !filter_var($import_url, FILTER_VALIDATE_URL)) {
+            echo '<div class="notice notice-error is-dismissible"><p>❌ La URL proporcionada no es válida</p></div>';
+        } else {
+            update_option('kyero_import_url', $import_url);
+            update_option('kyero_auto_import', isset($_POST['kyero_auto_import']) ? 1 : 0);
+
+            echo '<div class="notice notice-success is-dismissible"><p>✅ Configuración guardada</p></div>';
+        }
     }
     
     // Ejecutar exportación manual

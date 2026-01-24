@@ -199,18 +199,44 @@ class Alquipress_Advanced_Reports
      */
     public function ajax_get_report_data()
     {
+        // Rate limiting: 30 requests por minuto
+        Alquipress_Rate_Limiter::check_and_exit('get_report_data', 30, 60);
+
         check_ajax_referer('alquipress_reports', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'Permisos insuficientes']);
+            wp_send_json_error(['message' => 'Permisos insuficientes'], 403);
         }
 
-        $report_type = isset($_POST['report_type']) ? sanitize_text_field($_POST['report_type']) : '';
-        $year = isset($_POST['year']) ? intval($_POST['year']) : date('Y');
+        $report_type = isset($_POST['report_type']) ? sanitize_key($_POST['report_type']) : '';
+        $year = isset($_POST['year']) ? absint($_POST['year']) : date('Y');
+
+        // Validar report_type
+        $allowed_reports = [
+            'overview',
+            'revenue_monthly',
+            'revenue_season',
+            'occupancy_monthly',
+            'occupancy_comparison',
+            'top_clients',
+            'clients_rating',
+            'top_properties',
+            'properties_comparison'
+        ];
+
+        if (!in_array($report_type, $allowed_reports, true)) {
+            wp_send_json_error(['message' => 'Tipo de reporte inválido'], 400);
+        }
+
+        // Validar año
+        if ($year < 2000 || $year > 2100) {
+            wp_send_json_error(['message' => 'Año inválido'], 400);
+        }
 
         $data = [];
 
-        switch ($report_type) {
+        try {
+            switch ($report_type) {
             case 'overview':
                 $data = $this->get_overview_stats($year);
                 break;
@@ -239,10 +265,14 @@ class Alquipress_Advanced_Reports
                 $data = $this->get_properties_revenue_comparison($year);
                 break;
             default:
-                wp_send_json_error(['message' => 'Tipo de reporte no válido']);
-        }
+                wp_send_json_error(['message' => 'Tipo de reporte no válido'], 400);
+            }
 
-        wp_send_json_success($data);
+            wp_send_json_success($data);
+        } catch (Exception $e) {
+            error_log('ALQUIPRESS Reports Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Error al generar el reporte'], 500);
+        }
     }
 
     // ========== Métodos de Análisis de Datos ==========
