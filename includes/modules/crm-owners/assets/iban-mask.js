@@ -45,8 +45,13 @@ jQuery(document).ready(function ($) {
                     toggleBtn.html('🔒 Ocultar IBAN');
                     toggleBtn.addClass('iban-visible');
 
-                    // Log de auditoría en consola
-                    console.log('[AUDIT] IBAN revelado - Usuario: ' + window.userLogin + ' - Fecha: ' + new Date().toISOString());
+                    // Log de auditoría SERVER-SIDE
+                    $.post(ibanMaskData.ajaxUrl, {
+                        action: 'alquipress_log_iban_access',
+                        nonce: ibanMaskData.nonce,
+                        owner_id: ibanMaskData.ownerId,
+                        action_type: 'reveal_iban'
+                    });
 
                 } else {
                     // Ocultar IBAN

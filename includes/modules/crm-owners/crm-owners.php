@@ -44,7 +44,10 @@ class Alquipress_CRM_Owners
 
             // Pasar datos al JS
             wp_localize_script('alquipress-iban-mask', 'ibanMaskData', [
-                'userLogin' => wp_get_current_user()->user_login
+                'userLogin' => wp_get_current_user()->user_login,
+                'ownerId' => $post->ID,
+                'nonce' => wp_create_nonce('alquipress_iban_nonce'),
+                'ajaxUrl' => admin_url('admin-ajax.php')
             ]);
         }
     }
@@ -130,3 +133,6 @@ new Alquipress_CRM_Owners();
 
 // Cargar módulo de cálculo de ingresos
 require_once dirname(__FILE__) . '/owner-revenue.php';
+
+// Cargar sistema de auditoría
+require_once dirname(__FILE__) . '/audit-logger.php';
