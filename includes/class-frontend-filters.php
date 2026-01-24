@@ -69,11 +69,21 @@ class Alquipress_Frontend_Filters
                 if (isset($_GET[$tax]) && !empty($_GET[$tax])) {
                     $raw = wp_unslash($_GET[$tax]);
                     $terms = array_filter(array_unique(array_map('sanitize_title', explode(',', $raw))));
-                    if (!empty($terms)) {
+
+                    // Validar que los términos existen en la taxonomía
+                    $valid_terms = [];
+                    foreach ($terms as $term_slug) {
+                        $term = get_term_by('slug', $term_slug, $tax);
+                        if ($term && !is_wp_error($term)) {
+                            $valid_terms[] = $term_slug;
+                        }
+                    }
+
+                    if (!empty($valid_terms)) {
                         $tax_query[] = [
                             'taxonomy' => $tax,
                             'field' => 'slug',
-                            'terms' => $terms,
+                            'terms' => $valid_terms,
                             'operator' => ($tax === 'caracteristicas') ? 'AND' : 'IN',
                         ];
                     }

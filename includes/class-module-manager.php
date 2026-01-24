@@ -185,24 +185,6 @@ class Alquipress_Module_Manager
 
     public function render_settings_page()
     {
-        // Guardar cambios
-        if (isset($_POST['alquipress_save_modules'])) {
-            check_admin_referer('alquipress_modules_nonce');
-            $new_modules = [];
-            foreach ($this->modules as $id => $module) {
-                $new_modules[$id] = isset($_POST['modules'][$id]);
-            }
-            update_option('alquipress_modules', $new_modules);
-            $this->active_modules = $new_modules;
-
-            add_settings_error(
-                'alquipress_messages',
-                'alquipress_message',
-                '✓ Módulos actualizados correctamente.',
-                'success'
-            );
-        }
-
         // Mostrar mensajes
         settings_errors('alquipress_messages');
 

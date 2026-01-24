@@ -138,7 +138,9 @@ class Alquipress_Performance_Optimizer
             AND p.post_status IN ('wc-completed', 'wc-in-progress', 'wc-checkout-review')
             AND p.post_date >= %s
             AND p.post_date <= %s
+            AND pm_customer.meta_value REGEXP '^[0-9]+$'
             AND CAST(pm_customer.meta_value AS UNSIGNED) > 0
+            AND pm_total.meta_value REGEXP '^[0-9]+\.?[0-9]*$'
             GROUP BY customer_id
             ORDER BY total_spent DESC
             LIMIT %d",
@@ -274,6 +276,7 @@ class Alquipress_Performance_Optimizer
             AND p.post_status IN ('wc-completed', 'wc-in-progress', 'wc-checkout-review')
             AND p.post_date >= %s
             AND p.post_date <= %s
+            AND pm.meta_value REGEXP '^[0-9]+\.?[0-9]*$'
             GROUP BY MONTH(p.post_date)
             ORDER BY month ASC",
             $start_date,
