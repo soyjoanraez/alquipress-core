@@ -199,6 +199,9 @@ class Alquipress_Advanced_Reports
      */
     public function ajax_get_report_data()
     {
+        // Rate limiting: 30 requests por minuto
+        Alquipress_Rate_Limiter::check_and_exit('get_report_data', 30, 60);
+
         check_ajax_referer('alquipress_reports', 'nonce');
 
         if (!current_user_can('manage_options')) {

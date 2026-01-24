@@ -476,9 +476,41 @@ class Alquipress_Kyero_Feed
     {
         $xml_content = $this->generate();
         $upload_dir = wp_upload_dir();
+
+        // Verificar errores en upload_dir
+        if (!empty($upload_dir['error'])) {
+            error_log('ALQUIPRESS Kyero: Error en wp_upload_dir - ' . $upload_dir['error']);
+            return false;
+        }
+
         $file_path = $upload_dir['basedir'] . '/kyero-feed.xml';
 
-        file_put_contents($file_path, $xml_content);
+        // Verificar que el directorio existe
+        if (!file_exists($upload_dir['basedir'])) {
+            if (!wp_mkdir_p($upload_dir['basedir'])) {
+                error_log('ALQUIPRESS Kyero: No se pudo crear directorio - ' . $upload_dir['basedir']);
+                return false;
+            }
+        }
+
+        // Verificar permisos de escritura
+        if (file_exists($file_path) && !is_writable($file_path)) {
+            error_log('ALQUIPRESS Kyero: Archivo no escribible - ' . $file_path);
+            return false;
+        }
+
+        if (!is_writable($upload_dir['basedir'])) {
+            error_log('ALQUIPRESS Kyero: Directorio no escribible - ' . $upload_dir['basedir']);
+            return false;
+        }
+
+        // Escribir archivo con error handling
+        $result = file_put_contents($file_path, $xml_content);
+
+        if ($result === false) {
+            error_log('ALQUIPRESS Kyero: No se pudo escribir archivo - ' . $file_path);
+            return false;
+        }
 
         return $upload_dir['baseurl'] . '/kyero-feed.xml';
     }

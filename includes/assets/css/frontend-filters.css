@@ -1,0 +1,35 @@
+/**
+ * Estilos para Filtros de Taxonomía Frontend
+ * ALQUIPRESS Core
+ */
+
+.alquipress-filter-group {
+    margin-bottom: 30px;
+}
+
+.alquipress-filter-group h4 {
+    margin-bottom: 10px;
+    font-weight: 700;
+    border-bottom: 2px solid #f0f0f1;
+    padding-bottom: 5px;
+}
+
+.alquipress-filter-list {
+    list-style: none;
+    padding: 0;
+}
+
+.alquipress-filter-list li {
+    margin-bottom: 5px;
+}
+
+.alquipress-filter-list label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alquipress-filter-list input {
+    margin: 0;
+}

@@ -6,6 +6,12 @@
 if (!defined('ABSPATH'))
     exit;
 
+// Verificar que ACF esté disponible
+if (!function_exists('get_field')) {
+    alquipress_log('CRM Guests: ACF no está disponible, módulo no cargado');
+    return;
+}
+
 class Alquipress_CRM_Guests
 {
 

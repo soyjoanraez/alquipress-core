@@ -22,6 +22,9 @@ class Alquipress_Audit_Logger
      */
     public static function log_iban_access()
     {
+        // Rate limiting: 10 accesos por minuto (prevenir spam)
+        Alquipress_Rate_Limiter::check_and_exit('log_iban_access', 10, 60);
+
         check_ajax_referer('alquipress_iban_nonce', 'nonce');
 
         if (!current_user_can('edit_posts')) {

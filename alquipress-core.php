@@ -15,6 +15,15 @@ define('ALQUIPRESS_VERSION', '1.0.0');
 define('ALQUIPRESS_PATH', plugin_dir_path(__FILE__));
 define('ALQUIPRESS_URL', plugin_dir_url(__FILE__));
 
+// Cargar helpers primero
+require_once ALQUIPRESS_PATH . 'includes/helpers.php';
+
+// Verificar dependencias antes de inicializar
+if (!alquipress_check_dependencies()) {
+    return; // No cargar el plugin si faltan dependencias críticas
+}
+
+require_once ALQUIPRESS_PATH . 'includes/class-rate-limiter.php';
 require_once ALQUIPRESS_PATH . 'includes/class-module-manager.php';
 require_once ALQUIPRESS_PATH . 'includes/class-frontend-filters.php';
 require_once ALQUIPRESS_PATH . 'includes/class-performance-optimizer.php';

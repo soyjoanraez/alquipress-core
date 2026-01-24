@@ -147,12 +147,33 @@ function alquipress_serve_kyero_feed() {
         $feed_file = alquipress_kyero_feed_file_path();
         if (!alquipress_kyero_feed_is_fresh($feed_file)) {
             $feed = new Alquipress_Kyero_Feed();
-            $feed->save_to_file();
+            $result = $feed->save_to_file();
+
+            if ($result === false) {
+                error_log('ALQUIPRESS Kyero: Error generando feed');
+            }
+
             clearstatcache(true, $feed_file);
         }
 
         if (file_exists($feed_file)) {
-            readfile($feed_file);
+            // Verificar permisos de lectura
+            if (!is_readable($feed_file)) {
+                error_log('ALQUIPRESS Kyero: Feed file exists but is not readable - ' . $feed_file);
+                header('HTTP/1.1 500 Internal Server Error');
+                echo '<?xml version="1.0" encoding="UTF-8"?><error>Feed file not accessible</error>';
+                exit;
+            }
+
+            // Intentar leer con error handling
+            $result = @readfile($feed_file);
+
+            if ($result === false) {
+                error_log('ALQUIPRESS Kyero: Failed to read feed file - ' . $feed_file);
+                header('HTTP/1.1 500 Internal Server Error');
+                echo '<?xml version="1.0" encoding="UTF-8"?><error>Failed to read feed</error>';
+                exit;
+            }
         } else {
             $feed = new Alquipress_Kyero_Feed();
             echo $feed->generate();
