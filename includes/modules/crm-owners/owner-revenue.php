@@ -11,8 +11,17 @@ if (!defined('ABSPATH'))
 
 class Alquipress_Owner_Revenue
 {
+    private static $instance = null;
 
-    public function __construct()
+    public static function get_instance()
+    {
+        if (null === self::$instance) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct()
     {
         // Añadir metabox en la página de edición de propietario
         add_action('add_meta_boxes', [$this, 'add_revenue_metabox']);
@@ -547,4 +556,4 @@ class Alquipress_Owner_Revenue
     }
 }
 
-new Alquipress_Owner_Revenue();
+Alquipress_Owner_Revenue::get_instance();

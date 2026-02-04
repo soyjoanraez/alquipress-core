@@ -14,6 +14,9 @@ class Alquipress_Pipeline_Kanban
     {
         add_action('admin_menu', [$this, 'add_menu_page'], 25);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
+
+        // AJAX para actualizar estado
+        add_action('wp_ajax_alquipress_update_order_status', [$this, 'ajax_update_order_status']);
     }
 
     /**
@@ -149,14 +152,14 @@ class Alquipress_Pipeline_Kanban
         </div>
 
         <script>
-            jQuery(document).ready(function($) {
+            jQuery(document).ready(function ($) {
                 // Actualizar pipeline al cambiar filtros
-                $('#filter-date, #filter-property, #refresh-pipeline').on('change click', function() {
+                $('#filter-date, #filter-property, #refresh-pipeline').on('change click', function () {
                     location.reload();
                 });
 
                 // Hacer click en tarjeta abre el pedido
-                $('.order-card').on('click', function(e) {
+                $('.order-card').on('click', function (e) {
                     if (!$(e.target).is('a')) {
                         const orderUrl = $(this).data('order-url');
                         if (orderUrl) {
@@ -236,7 +239,7 @@ class Alquipress_Pipeline_Kanban
                     </div>
                     <?php if ($nights > 0): ?>
                         <div class="card-nights">
-                            <?php echo $nights; ?> <?php echo $nights === 1 ? 'noche' : 'noches'; ?>
+                            <?php echo $nights; ?>                 <?php echo $nights === 1 ? 'noche' : 'noches'; ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -281,14 +284,49 @@ class Alquipress_Pipeline_Kanban
     }
 
     /**
+     * AJAX: Actualizar estado de pedido desde el pipeline
+     */
+    public function ajax_update_order_status()
+    {
+        check_ajax_referer('alquipress-pipeline-nonce', 'nonce');
+
+        if (!current_user_can('edit_shop_orders')) {
+            wp_send_json_error('Permisos insuficientes');
+        }
+
+        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $new_status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+
+        if (!$order_id || !$new_status) {
+            wp_send_json_error('Datos incompletos');
+        }
+
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            wp_send_json_error('Pedido no encontrado');
+        }
+
+        // Actualizar estado
+        $order->update_status($new_status, 'Actualizado desde el Pipeline CRM');
+
+        wp_send_json_success([
+            'message' => 'Estado actualizado correctamente',
+            'order_id' => $order_id,
+            'new_status' => $new_status
+        ]);
+    }
+
+    /**
      * Cargar assets CSS y JS
      */
     public function enqueue_assets($hook)
     {
-        // Solo cargar en la página del pipeline
         if ($hook !== 'alquipress_page_alquipress-pipeline') {
             return;
         }
+
+        // SortableJS desde CDN
+        wp_enqueue_script('sortable-js', 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js', [], '1.15.0', true);
 
         wp_enqueue_style(
             'alquipress-pipeline-kanban',
@@ -300,10 +338,15 @@ class Alquipress_Pipeline_Kanban
         wp_enqueue_script(
             'alquipress-pipeline-kanban',
             ALQUIPRESS_URL . 'includes/modules/pipeline-kanban/assets/pipeline-kanban.js',
-            ['jquery'],
+            ['jquery', 'sortable-js'],
             ALQUIPRESS_VERSION,
             true
         );
+
+        wp_localize_script('alquipress-pipeline-kanban', 'alquipressPipeline', [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('alquipress-pipeline-nonce')
+        ]);
     }
 }
 

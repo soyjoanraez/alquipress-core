@@ -16,6 +16,10 @@ class Alquipress_CRM_Owners
         add_filter('manage_propietario_posts_columns', [$this, 'add_custom_columns']);
         add_action('manage_propietario_posts_custom_column', [$this, 'populate_custom_columns'], 10, 2);
         add_action('acf/input/admin_footer', [$this, 'enqueue_iban_mask']);
+        add_filter('post_row_actions', [$this, 'add_row_actions'], 10, 2);
+
+        // Cargar vista detallada
+        require_once dirname(__FILE__) . '/owner-profile.php';
     }
 
     /**
@@ -123,6 +127,17 @@ class Alquipress_CRM_Owners
                 echo '-';
             }
         }
+    }
+
+    /**
+     * Añadir acción "Ver Ficha" en la lista de propietarios
+     */
+    public function add_row_actions($actions, $post)
+    {
+        if ($post->post_type === 'propietario') {
+            $actions['view_profile'] = '<a href="' . admin_url('admin.php?page=alquipress-owner-profile&owner_id=' . $post->ID) . '" style="color: #3b82f6; font-weight: 600;">Ver Ficha CRM</a>';
+        }
+        return $actions;
     }
 }
 

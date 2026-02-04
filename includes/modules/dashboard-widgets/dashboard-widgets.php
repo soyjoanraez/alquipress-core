@@ -56,77 +56,80 @@ class Alquipress_Dashboard_Widgets
     public function render_todays_movements()
     {
         $today = date('Y-m-d');
-        $tomorrow = date('Y-m-d', strtotime('+1 day'));
 
-        // Obtener check-ins de hoy
+        // Obtener datos
         $checkins_today = $this->get_bookings_by_checkin_date($today);
-
-        // Obtener check-outs de hoy
         $checkouts_today = $this->get_bookings_by_checkout_date($today);
 
-        echo '<div class="alquipress-movements-grid">';
+        ?>
+        <div class="alquipress-dashboard-container">
+            <div class="alquipress-movements-grid">
+                <div class="movement-card checkin-card">
+                    <div class="movement-icon"><span class="dashicons dashicons-calendar-alt"></span></div>
+                    <div class="movement-data">
+                        <div class="movement-number"><?php echo count($checkins_today); ?></div>
+                        <div class="movement-label">Check-ins Hoy</div>
+                    </div>
+                </div>
 
-        // Check-ins
-        echo '<div class="movement-card checkin-card">';
-        echo '<div class="movement-number">' . count($checkins_today) . '</div>';
-        echo '<div class="movement-label">Check-ins Hoy</div>';
-        echo '</div>';
+                <div class="movement-card checkout-card">
+                    <div class="movement-icon"><span class="dashicons dashicons-exit"></span></div>
+                    <div class="movement-data">
+                        <div class="movement-number"><?php echo count($checkouts_today); ?></div>
+                        <div class="movement-label">Check-outs Hoy</div>
+                    </div>
+                </div>
+            </div>
 
-        // Check-outs
-        echo '<div class="movement-card checkout-card">';
-        echo '<div class="movement-number">' . count($checkouts_today) . '</div>';
-        echo '<div class="movement-label">Check-outs Hoy</div>';
-        echo '</div>';
+            <?php if (!empty($checkins_today) || !empty($checkouts_today)): ?>
+                <table class="widefat alquipress-dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Huésped</th>
+                            <th>Propiedad</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        foreach ($checkins_today as $order_id) {
+                            $this->render_movement_row($order_id, 'checkin');
+                        }
+                        foreach ($checkouts_today as $order_id) {
+                            $this->render_movement_row($order_id, 'checkout');
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <div class="alquipress-empty-state">
+                    <span class="dashicons dashicons-calendar"></span>
+                    <p>No hay movimientos programados para hoy.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+        <?php
+    }
 
-        echo '</div>';
+    /**
+     * Renderiza una fila de movimiento
+     */
+    private function render_movement_row($order_id, $type)
+    {
+        $order = wc_get_order($order_id);
+        if (!$order)
+            return;
 
-        // Listado detallado
-        if (!empty($checkins_today) || !empty($checkouts_today)) {
-            echo '<table class="widefat alquipress-movements-table">';
-            echo '<thead>';
-            echo '<tr>';
-            echo '<th>Huésped</th>';
-            echo '<th>Propiedad</th>';
-            echo '<th>Tipo</th>';
-            echo '</tr>';
-            echo '</thead>';
-            echo '<tbody>';
+        $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+        $property_name = $this->get_order_property_name($order);
+        $badge_class = ($type === 'checkin') ? 'badge-checkin' : 'badge-checkout';
+        $badge_label = ($type === 'checkin') ? '✅ Check-in' : '🚪 Check-out';
 
-            // Check-ins
-            foreach ($checkins_today as $order_id) {
-                $order = wc_get_order($order_id);
-                if ($order) {
-                    $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-                    $property_name = $this->get_order_property_name($order);
-
-                    echo '<tr>';
-                    echo '<td><strong>' . esc_html($customer_name) . '</strong></td>';
-                    echo '<td>' . esc_html($property_name) . '</td>';
-                    echo '<td><span class="badge-checkin">✅ Check-in</span></td>';
-                    echo '</tr>';
-                }
-            }
-
-            // Check-outs
-            foreach ($checkouts_today as $order_id) {
-                $order = wc_get_order($order_id);
-                if ($order) {
-                    $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-                    $property_name = $this->get_order_property_name($order);
-
-                    echo '<tr>';
-                    echo '<td><strong>' . esc_html($customer_name) . '</strong></td>';
-                    echo '<td>' . esc_html($property_name) . '</td>';
-                    echo '<td><span class="badge-checkout">🚪 Check-out</span></td>';
-                    echo '</tr>';
-                }
-            }
-
-            echo '</tbody>';
-            echo '</table>';
-        } else {
-            echo '<p style="text-align: center; color: #666; padding: 20px 0;">No hay movimientos programados para hoy.</p>';
-        }
+        echo '<tr>';
+        echo '<td><strong>' . esc_html($customer_name) . '</strong></td>';
+        echo '<td>' . esc_html($property_name) . '</td>';
+        echo '<td><span class="' . esc_attr($badge_class) . '">' . esc_html($badge_label) . '</span></td>';
+        echo '</tr>';
     }
 
     /**
@@ -139,61 +142,53 @@ class Alquipress_Dashboard_Widgets
         $last_month_start = date('Y-m-01', strtotime('-1 month'));
         $last_month_end = date('Y-m-t', strtotime('-1 month'));
 
-        // Ingresos del mes actual
         $current_revenue = $this->get_revenue_between_dates($current_month_start, $current_month_end);
-
-        // Ingresos del mes pasado
         $last_revenue = $this->get_revenue_between_dates($last_month_start, $last_month_end);
 
-        // Calcular cambio porcentual
         $change_percentage = 0;
         if ($last_revenue > 0) {
             $change_percentage = (($current_revenue - $last_revenue) / $last_revenue) * 100;
         }
 
-        echo '<div class="revenue-card">';
-        echo '<div class="revenue-amount">' . wc_price($current_revenue) . '</div>';
-        echo '<div class="revenue-period">' . date_i18n('F Y') . '</div>';
-        echo '</div>';
+        ?>
+        <div class="alquipress-dashboard-container">
+            <div class="revenue-hero-card">
+                <div class="revenue-amount"><?php echo wc_price($current_revenue); ?></div>
+                <div class="revenue-period"><?php echo date_i18n('F Y'); ?></div>
 
-        echo '<div class="revenue-comparison">';
-        if ($change_percentage > 0) {
-            echo '<span class="revenue-up">📈 +' . number_format($change_percentage, 1) . '%</span>';
-        } elseif ($change_percentage < 0) {
-            echo '<span class="revenue-down">📉 ' . number_format($change_percentage, 1) . '%</span>';
-        } else {
-            echo '<span class="revenue-neutral">➡️ Sin cambios</span>';
-        }
-        echo ' respecto al mes anterior';
-        echo '</div>';
+                <div class="revenue-trend <?php echo ($change_percentage >= 0) ? 'trend-up' : 'trend-down'; ?>">
+                    <span
+                        class="dashicons <?php echo ($change_percentage >= 0) ? 'dashicons-trending-up' : 'dashicons-trending-down'; ?>"></span>
+                    <?php echo number_format(abs($change_percentage), 1); ?>% vs mes pasado
+                </div>
+            </div>
 
-        // Desglose por estado
-        $revenue_by_status = $this->get_revenue_by_status($current_month_start, $current_month_end);
-
-        if (!empty($revenue_by_status)) {
-            echo '<div class="revenue-breakdown">';
-            echo '<h4 style="margin: 15px 0 10px; font-size: 13px; color: #666;">Desglose por Estado:</h4>';
-            echo '<ul class="revenue-list">';
-
-            foreach ($revenue_by_status as $status => $amount) {
-                $status_labels = [
-                    'completed' => 'Completado',
-                    'processing' => 'Procesando',
-                    'deposito-ok' => 'Depósito OK',
-                    'in-progress' => 'En Curso',
-                ];
-
-                $label = $status_labels[$status] ?? ucfirst($status);
-
-                echo '<li>';
-                echo '<span class="status-label">' . esc_html($label) . '</span>';
-                echo '<span class="status-amount">' . wc_price($amount) . '</span>';
-                echo '</li>';
-            }
-
-            echo '</ul>';
-            echo '</div>';
-        }
+            <?php
+            $revenue_by_status = $this->get_revenue_by_status($current_month_start, $current_month_end);
+            if (!empty($revenue_by_status)): ?>
+                <div class="revenue-breakdown">
+                    <h4>Desglose por Estado</h4>
+                    <ul class="revenue-list">
+                        <?php foreach ($revenue_by_status as $status => $amount):
+                            $status_labels = [
+                                'completed' => 'Completado',
+                                'processing' => 'Procesando',
+                                'deposito-ok' => 'Depósito OK',
+                                'in-progress' => 'En Curso',
+                            ];
+                            $label = $status_labels[$status] ?? ucfirst($status);
+                            ?>
+                            <li>
+                                <span class="status-dot status-<?php echo esc_attr($status); ?>"></span>
+                                <span class="status-label"><?php echo esc_html($label); ?></span>
+                                <span class="status-amount"><?php echo wc_price($amount); ?></span>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+        </div>
+        <?php
     }
 
     /**
@@ -201,49 +196,45 @@ class Alquipress_Dashboard_Widgets
      */
     public function render_property_status()
     {
-        // Total de propiedades (productos publicados)
         $total_properties = wp_count_posts('product')->publish;
-
-        // Propiedades ocupadas hoy
         $today = date('Y-m-d');
         $occupied_today = $this->get_occupied_properties_count($today);
 
-        // Calcular tasa de ocupación
         $occupancy_rate = 0;
         if ($total_properties > 0) {
             $occupancy_rate = ($occupied_today / $total_properties) * 100;
         }
 
-        echo '<div class="property-status-grid">';
+        ?>
+        <div class="alquipress-dashboard-container">
+            <div class="property-status-summary">
+                <div class="stat-main">
+                    <div class="stat-value"><?php echo round($occupancy_rate); ?>%</div>
+                    <div class="stat-label">Ocupación Hoy</div>
+                </div>
+                <div class="stat-details">
+                    <div class="detail-item">
+                        <span class="dot occupied"></span>
+                        <span class="label">Ocupadas:</span>
+                        <span class="value"><?php echo $occupied_today; ?></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="dot available"></span>
+                        <span class="label">Disponibles:</span>
+                        <span class="value"><?php echo ($total_properties - $occupied_today); ?></span>
+                    </div>
+                </div>
+            </div>
 
-        // Total de propiedades
-        echo '<div class="property-stat">';
-        echo '<div class="stat-number">' . $total_properties . '</div>';
-        echo '<div class="stat-label">Total Propiedades</div>';
-        echo '</div>';
+            <div class="occupancy-progress-wrapper">
+                <div class="occupancy-progress-bar">
+                    <div class="progress-fill" style="width: <?php echo $occupancy_rate; ?>%"></div>
+                </div>
+            </div>
 
-        // Propiedades ocupadas
-        echo '<div class="property-stat occupied">';
-        echo '<div class="stat-number">' . $occupied_today . '</div>';
-        echo '<div class="stat-label">Ocupadas Hoy</div>';
-        echo '</div>';
-
-        // Propiedades disponibles
-        $available_today = $total_properties - $occupied_today;
-        echo '<div class="property-stat available">';
-        echo '<div class="stat-number">' . $available_today . '</div>';
-        echo '<div class="stat-label">Disponibles</div>';
-        echo '</div>';
-
-        echo '</div>';
-
-        // Barra de ocupación
-        echo '<div class="occupancy-bar-container">';
-        echo '<div class="occupancy-bar" style="width: ' . round($occupancy_rate) . '%"></div>';
-        echo '</div>';
-        echo '<div class="occupancy-label">';
-        echo 'Tasa de ocupación: <strong>' . number_format($occupancy_rate, 1) . '%</strong>';
-        echo '</div>';
+            <p class="stat-footer">Total de propiedades: <strong><?php echo $total_properties; ?></strong></p>
+        </div>
+        <?php
     }
 
     /**
@@ -301,21 +292,27 @@ class Alquipress_Dashboard_Widgets
         }
 
         // Renderizar alertas
-        if (!empty($alerts)) {
-            echo '<ul class="alquipress-alerts-list">';
-            foreach ($alerts as $alert) {
-                $class = 'alert-' . $alert['type'];
-                echo '<li class="' . esc_attr($class) . '">';
-                echo '<span class="alert-icon">' . $alert['icon'] . '</span>';
-                echo '<span class="alert-message">' . esc_html($alert['message']) . '</span>';
-                echo '</li>';
-            }
-            echo '</ul>';
-        } else {
-            echo '<p style="text-align: center; color: #46b450; padding: 20px 0; font-weight: 600;">';
-            echo '✅ No hay alertas pendientes';
-            echo '</p>';
-        }
+        ?>
+        <div class="alquipress-dashboard-container">
+            <?php if (!empty($alerts)): ?>
+                <ul class="alquipress-alerts-list">
+                    <?php foreach ($alerts as $alert):
+                        $class = 'alert-' . $alert['type'];
+                        ?>
+                        <li class="<?php echo esc_attr($class); ?>">
+                            <span class="alert-icon"><?php echo $alert['icon']; ?></span>
+                            <span class="alert-message"><?php echo esc_html($alert['message']); ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <div class="alquipress-empty-state">
+                    <span class="dashicons dashicons-yes-alt"></span>
+                    <p>No tienes alertas pendientes.</p>
+                </div>
+            <?php endif; ?>
+        </div>
+        <?php
     }
 
     // ========== Métodos auxiliares ==========

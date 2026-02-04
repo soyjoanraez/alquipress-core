@@ -1,331 +1,295 @@
 /**
- * Estilos para Dashboard Widgets CRM
+ * Estilos Premium para Dashboard Widgets CRM Alquipress
+ * Siguiendo el roadmap de ux_ui.md
  */
 
-/* ========== Widget: Movimientos de Hoy ========== */
+:root {
+    --ap-primary: #3b82f6;
+    --ap-success: #10b981;
+    --ap-warning: #f59e0b;
+    --ap-danger: #ef4444;
+    --ap-text-main: #1e293b;
+    --ap-text-muted: #64748b;
+    --ap-bg-soft: #f8fafc;
+    --ap-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --ap-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
 
+.alquipress-dashboard-container {
+    padding: 5px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+/* ========== Grids y Layouts ========== */
 .alquipress-movements-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    gap: 12px;
     margin-bottom: 20px;
 }
 
+/* ========== Cards ========== */
 .movement-card {
-    background: #f9fafb;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    border: 2px solid transparent;
-    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 16px;
+    border-radius: 12px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    box-shadow: var(--ap-shadow-sm);
+    transition: all 0.2s ease;
 }
 
 .movement-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--ap-shadow);
 }
 
-.checkin-card {
-    border-color: #2ea2cc;
-    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+.movement-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--ap-bg-soft);
 }
 
-.checkout-card {
-    border-color: #d63638;
-    background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+.movement-icon .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.checkin-card .movement-icon {
+    color: var(--ap-primary);
+    background: #eff6ff;
+}
+
+.checkout-card .movement-icon {
+    color: var(--ap-warning);
+    background: #fffbeb;
 }
 
 .movement-number {
-    font-size: 36px;
-    font-weight: 900;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ap-text-main);
     line-height: 1;
-    margin-bottom: 8px;
-}
-
-.checkin-card .movement-number {
-    color: #1d4ed8;
-}
-
-.checkout-card .movement-number {
-    color: #b45309;
 }
 
 .movement-label {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 600;
-    color: #666;
+    color: var(--ap-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.025em;
+    margin-top: 4px;
 }
 
-/* Tabla de movimientos */
-.alquipress-movements-table {
-    margin-top: 15px;
-    border: 1px solid #e5e7eb;
-}
-
-.alquipress-movements-table th {
-    background: #f9fafb;
-    font-weight: 600;
-    font-size: 12px;
-    text-transform: uppercase;
-    color: #666;
-    padding: 10px 12px;
-}
-
-.alquipress-movements-table td {
-    padding: 10px 12px;
-    font-size: 13px;
-}
-
-.badge-checkin,
-.badge-checkout {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.badge-checkin {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
-
-.badge-checkout {
-    background: #fef3c7;
-    color: #b45309;
-}
-
-/* ========== Widget: Ingresos del Mes ========== */
-
-.revenue-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 30px;
+/* ========== Tablas ========== */
+.alquipress-dashboard-table {
+    border: 1px solid #e2e8f0 !important;
     border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--ap-shadow-sm);
+}
+
+.alquipress-dashboard-table thead th {
+    background: var(--ap-bg-soft);
+    font-weight: 600;
+    color: var(--ap-text-muted);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    padding: 12px !important;
+}
+
+.alquipress-dashboard-table td {
+    padding: 12px !important;
+    vertical-align: middle;
+    color: var(--ap-text-main);
+}
+
+/* ========== Badges ========== */
+.badge-checkin, .badge-checkout {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.badge-checkin { background: #dcfce7; color: #166534; }
+.badge-checkout { background: #fee2e2; color: #991b1b; }
+
+/* ========== Empty State ========== */
+.alquipress-empty-state {
     text-align: center;
-    color: white;
-    margin-bottom: 15px;
+    padding: 40px 20px;
+    background: var(--ap-bg-soft);
+    border-radius: 12px;
+    border: 2px dashed #e2e8f0;
 }
 
-.revenue-amount {
-    font-size: 48px;
-    font-weight: 900;
-    line-height: 1;
-    margin-bottom: 8px;
+.alquipress-empty-state .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: var(--ap-text-muted);
+    margin-bottom: 12px;
 }
 
-.revenue-period {
-    font-size: 14px;
-    opacity: 0.9;
-    font-weight: 500;
-}
-
-.revenue-comparison {
-    padding: 12px 15px;
-    background: #f9fafb;
-    border-radius: 6px;
-    text-align: center;
-    font-size: 13px;
-    color: #666;
-}
-
-.revenue-up {
-    color: #00a32a;
-    font-weight: 700;
-}
-
-.revenue-down {
-    color: #dc3232;
-    font-weight: 700;
-}
-
-.revenue-neutral {
-    color: #666;
-    font-weight: 700;
-}
-
-/* Desglose por estado */
-.revenue-breakdown {
-    margin-top: 15px;
-}
-
-.revenue-list {
-    list-style: none;
+.alquipress-empty-state p {
     margin: 0;
-    padding: 0;
-}
-
-.revenue-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 12px;
-    background: #f9fafb;
-    border-radius: 4px;
-    margin-bottom: 6px;
-    font-size: 13px;
-}
-
-.status-label {
-    color: #666;
+    color: var(--ap-text-muted);
     font-weight: 500;
 }
 
-.status-amount {
-    font-weight: 700;
-    color: #2271b1;
-}
-
-/* ========== Widget: Estado de Propiedades ========== */
-
-.property-status-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+/* ========== Revenue Hero Card ========== */
+.revenue-hero-card {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: white;
+    padding: 24px;
+    border-radius: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     margin-bottom: 20px;
 }
 
-.property-stat {
-    background: #f9fafb;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 15px;
-    text-align: center;
+.revenue-hero-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
 }
 
-.property-stat.occupied {
-    border-color: #d63638;
-    background: #fef2f2;
+.revenue-amount {
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
 }
 
-.property-stat.available {
-    border-color: #00a32a;
-    background: #f0fdf4;
-}
-
-.stat-number {
-    font-size: 32px;
-    font-weight: 900;
-    line-height: 1;
-    margin-bottom: 6px;
-    color: #2c3338;
-}
-
-.property-stat.occupied .stat-number {
-    color: #dc3232;
-}
-
-.property-stat.available .stat-number {
-    color: #00a32a;
-}
-
-.stat-label {
-    font-size: 11px;
-    font-weight: 600;
-    color: #666;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Barra de ocupación */
-.occupancy-bar-container {
-    width: 100%;
-    height: 24px;
-    background: #e5e7eb;
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 10px;
-}
-
-.occupancy-bar {
-    height: 100%;
-    background: linear-gradient(90deg, #2ea2cc 0%, #135e96 100%);
-    transition: width 0.3s ease;
-    border-radius: 12px;
-}
-
-.occupancy-label {
-    text-align: center;
+.revenue-period {
     font-size: 13px;
-    color: #666;
+    opacity: 0.6;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
 }
 
-/* ========== Widget: Alertas ========== */
-
-.alquipress-alerts-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.revenue-trend {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 16px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
 }
 
-.alquipress-alerts-list li {
+.trend-up { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+.trend-down { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+.revenue-trend .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+/* ========== Revenue Breakdown ========== */
+.revenue-breakdown h4 {
+    margin: 0 0 12px;
+    font-size: 12px;
+    color: var(--ap-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.revenue-list { margin: 0; padding: 0; list-style: none; }
+.revenue-list li {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 15px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    font-size: 13px;
-    font-weight: 500;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
 }
 
-.alert-info {
-    background: #dbeafe;
-    border-left: 4px solid #2ea2cc;
+.revenue-list li:last-child { border: 0; }
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 12px;
 }
 
-.alert-warning {
-    background: #fef3c7;
-    border-left: 4px solid #f0b849;
+.status-completed { background: var(--ap-success); }
+.status-processing { background: var(--ap-primary); }
+.status-deposito-ok { background: var(--ap-warning); }
+.status-in-progress { background: #8b5cf6; }
+
+.status-label { flex: 1; font-weight: 600; font-size: 13px; }
+.status-amount { font-weight: 700; color: var(--ap-text-main); }
+
+/* ========== Property Status ========== */
+.property-status-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
-.alert-error {
-    background: #fef2f2;
-    border-left: 4px solid #dc3232;
+.stat-main { text-align: left; }
+.stat-value { font-size: 32px; font-weight: 800; color: var(--ap-primary); line-height: 1; }
+.stat-main .stat-label { font-size: 12px; color: var(--ap-text-muted); font-weight: 600; }
+
+.stat-details { text-align: right; }
+.detail-item { font-size: 11px; margin-bottom: 4px; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+.detail-item .dot { width: 6px; height: 6px; border-radius: 50%; }
+.dot.occupied { background: var(--ap-danger); }
+.dot.available { background: var(--ap-success); }
+.detail-item .label { color: var(--ap-text-muted); }
+.detail-item .value { font-weight: 700; color: var(--ap-text-main); width: 20px; }
+
+.occupancy-progress-wrapper {
+    height: 10px;
+    background: #f1f5f9;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    overflow: hidden;
 }
 
-.alert-icon {
-    font-size: 20px;
-    flex-shrink: 0;
+.occupancy-progress-bar { height: 100%; width: 100%; position: relative; }
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--ap-primary) 0%, #2563eb 100%);
+    border-radius: 20px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.alert-message {
-    color: #2c3338;
-    flex: 1;
+.stat-footer {
+    margin: 0;
+    text-align: center;
+    font-size: 11px;
+    color: var(--ap-text-muted);
 }
 
-/* ========== Responsive ========== */
+/* ========== WP Admin Overrides ========== */
+.wp-dashboard #alquipress_todays_movements .inside,
+.wp-dashboard #alquipress_monthly_revenue .inside,
+.wp-dashboard #alquipress_property_status .inside {
+    margin-top: 0;
+    padding: 12px;
+}
 
 @media screen and (max-width: 782px) {
-    .alquipress-movements-grid,
-    .property-status-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .movement-number,
-    .revenue-amount {
-        font-size: 32px;
-    }
-
-    .stat-number {
-        font-size: 24px;
-    }
-}
-
-/* Mejoras generales de widgets */
-#alquipress_todays_movements .inside,
-#alquipress_monthly_revenue .inside,
-#alquipress_property_status .inside,
-#alquipress_alerts .inside {
-    margin: 0;
-    padding: 15px;
-}
-
-#alquipress_todays_movements h2,
-#alquipress_monthly_revenue h2,
-#alquipress_property_status h2,
-#alquipress_alerts h2 {
-    font-size: 15px;
-    font-weight: 600;
+    .alquipress-movements-grid { grid-template-columns: 1fr; }
 }

@@ -42,20 +42,20 @@ class Alquipress_CRM_Guests
         if ($column_name == 'guest_status') {
             $status = get_field('guest_status', 'user_' . $user_id);
             $badges = [
-                'standard' => '<span style="color: #666;">Estándar</span>',
-                'vip' => '<span style="color: #F39C12; font-weight: bold;">⭐ VIP</span>',
-                'blacklist' => '<span style="color: #E74C3C; font-weight: bold;">🚫 LISTA NEGRA</span>'
+                'standard' => '<span style="color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700;">ESTÁNDAR</span>',
+                'vip' => '<span style="color: #92400e; background: #fef3c7; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700;">⭐ VIP</span>',
+                'blacklist' => '<span style="color: #991b1b; background: #fee2e2; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700;">🚫 LISTA NEGRA</span>'
             ];
-            return $badges[$status] ?? '<span style="color: #999;">-</span>';
+            return $badges[$status] ?? '<span style="color: #94a3b8;">-</span>';
         }
 
         if ($column_name == 'guest_rating') {
             $rating = get_field('guest_rating', 'user_' . $user_id);
             if ($rating) {
                 $stars = str_repeat('⭐', (int) $rating);
-                return $stars . ' (' . $rating . '/5)';
+                return '<span title="' . $rating . '/5">' . $stars . '</span>';
             }
-            return '<span style="color: #999;">-</span>';
+            return '<span style="color: #94a3b8;">-</span>';
         }
 
         return $value;
