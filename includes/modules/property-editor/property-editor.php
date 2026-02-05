@@ -48,8 +48,6 @@ class Alquipress_Property_Editor
             self::PAGE_SLUG,
             [$this, 'render_editor_page']
         );
-
-        remove_submenu_page('alquipress-settings', self::PAGE_SLUG);
     }
 
     /**
@@ -61,9 +59,20 @@ class Alquipress_Property_Editor
             return;
         }
 
+        $post_id = isset($_GET['post_id']) ? (int) $_GET['post_id'] : 0;
+        if ($post_id) {
+            $post = get_post($post_id);
+            if ($post && $post->post_type === 'product') {
+                $GLOBALS['post'] = $post;
+                $GLOBALS['post_type'] = $post->post_type;
+                $GLOBALS['typenow'] = $post->post_type;
+            }
+        }
+
         $screen->id = 'product';
         $screen->base = 'post';
         $screen->post_type = 'product';
+        $screen->action = 'edit';
     }
 
     /**
@@ -221,6 +230,18 @@ class Alquipress_Property_Editor
      */
     public function render_editor_page()
     {
+        // Verificar permisos básicos primero
+        if (!current_user_can('edit_posts')) {
+            wp_die(
+                __('Lo siento, no tienes permisos para acceder a esta página.', 'alquipress'),
+                __('Permisos insuficientes', 'alquipress'),
+                [
+                    'back_link' => true,
+                    'response' => 403
+                ]
+            );
+        }
+
         $post_id = isset($_GET['post_id']) ? (int) $_GET['post_id'] : 0;
         if (!$post_id) {
             echo '<div class="wrap"><h1>' . esc_html__('Error', 'alquipress') . '</h1><p>' . esc_html__('Propiedad no encontrada.', 'alquipress') . '</p></div>';

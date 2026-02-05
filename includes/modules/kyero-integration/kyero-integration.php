@@ -162,6 +162,9 @@ function alquipress_kyero_admin_menu() {
 }
 
 function alquipress_kyero_admin_page() {
+    // Cargar assets del dashboard antes de renderizar
+    do_action('alquipress_enqueue_section_assets', 'alquipress-kyero');
+    
     // Guardar configuración
     if (isset($_POST['kyero_save_settings'])) {
         check_admin_referer('kyero_settings');
@@ -218,97 +221,127 @@ function alquipress_kyero_admin_page() {
         $export_count = $export_term->count;
     }
     
+    require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
     ?>
-    <div class="wrap">
-        <h1>🏠 Kyero Import/Export Manager</h1>
-        
-        <div class="card" style="max-width: 800px; margin-top: 20px;">
-            <h2>📤 Exportación a Kyero</h2>
-            
-            <p>Propiedades marcadas para exportar: <strong><?php echo $export_count; ?></strong></p>
-            <p>URL del Feed XML: <code><?php echo home_url('/kyero-feed.xml'); ?></code></p>
-            
-            <form method="post">
-                <?php wp_nonce_field('kyero_export'); ?>
-                <button type="submit" name="kyero_manual_export" class="button button-primary">
-                    🚀 Generar Feed Ahora
-                </button>
-            </form>
-            
-            <hr>
-            
-            <h3>📋 Instrucciones para Kyero</h3>
-            <ol>
-                <li>Inicia sesión en tu cuenta de Kyero</li>
-                <li>Ve a <strong>Settings > Data Feed</strong></li>
-                <li>Pega esta URL: <code><?php echo home_url('/kyero-feed.xml'); ?></code></li>
-                <li>Kyero sincronizará automáticamente cada 24h</li>
-            </ol>
-        </div>
-        
-        <div class="card" style="max-width: 800px; margin-top: 20px;">
-            <h2>📥 Importación desde Kyero</h2>
-            
-            <form method="post">
-                <?php wp_nonce_field('kyero_settings'); ?>
+    <div class="wrap alquipress-dashboard-page ap-has-sidebar">
+        <div class="ap-owners-layout">
+            <?php alquipress_render_sidebar('kyero'); ?>
+            <main class="ap-owners-main">
+                <header class="ap-header">
+                    <div class="ap-header-left">
+                        <h1 class="ap-header-title"><?php esc_html_e('Feed Kyero', 'alquipress'); ?></h1>
+                        <p class="ap-header-subtitle"><?php esc_html_e('Importación y exportación de propiedades mediante XML Kyero', 'alquipress'); ?></p>
+                    </div>
+                </header>
                 
-                <table class="form-table">
-                    <tr>
-                        <th scope="row">URL del Feed XML</th>
-                        <td>
-                            <input type="url" 
-                                   name="kyero_import_url" 
-                                   value="<?php echo esc_attr($import_url); ?>" 
-                                   class="regular-text"
-                                   placeholder="https://ejemplo.com/kyero-feed.xml">
-                            <p class="description">URL del feed XML de la agencia desde la que importar</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Importación Automática</th>
-                        <td>
-                            <label>
-                                <input type="checkbox" 
-                                       name="kyero_auto_import" 
-                                       value="1" 
-                                       <?php checked($auto_import, 1); ?>>
-                                Importar automáticamente cada 24h
-                            </label>
-                        </td>
-                    </tr>
-                </table>
-                
-                <p class="submit">
-                    <button type="submit" name="kyero_save_settings" class="button button-primary">
-                        💾 Guardar Configuración
-                    </button>
-                </p>
-            </form>
-            
-            <hr>
-            
-            <form method="post">
-                <?php wp_nonce_field('kyero_import'); ?>
-                <button type="submit" name="kyero_manual_import" class="button button-secondary">
-                    ⬇️ Importar Ahora
-                </button>
-            </form>
-        </div>
-        
-        <div class="card" style="max-width: 800px; margin-top: 20px;">
-            <h2>✅ Validar Feed</h2>
-            <p>Valida tu feed antes de enviarlo a Kyero:</p>
-            <a href="https://www.kyero.com/xml-validator" target="_blank" class="button">
-                🔍 Abrir Validador de Kyero
-            </a>
+                <div class="ap-content-row">
+                    <div class="ap-content-left" style="flex: 1;">
+                        <section class="ap-recent-bookings">
+                            <div class="ap-recent-bookings-header">
+                                <h2 class="ap-recent-bookings-title"><?php esc_html_e('📤 Exportación a Kyero', 'alquipress'); ?></h2>
+                            </div>
+                            <div style="padding: 20px;">
+                                <div class="ap-metric-card" style="margin-bottom: 20px;">
+                                    <span class="ap-metric-label"><?php esc_html_e('Propiedades marcadas para exportar', 'alquipress'); ?></span>
+                                    <div class="ap-metric-value-row">
+                                        <span class="ap-metric-value"><?php echo esc_html($export_count); ?></span>
+                                    </div>
+                                </div>
+                                
+                                <div style="background: var(--ap-surface); border: 1px solid var(--ap-border); border-radius: var(--ap-radius-md); padding: 16px; margin-bottom: 20px;">
+                                    <p style="margin: 0 0 8px 0; font-weight: 600; color: var(--ap-text-primary);"><?php esc_html_e('URL del Feed XML:', 'alquipress'); ?></p>
+                                    <code style="background: var(--ap-bg-light); padding: 8px 12px; border-radius: var(--ap-radius-sm); display: block; word-break: break-all;"><?php echo esc_url(home_url('/kyero-feed.xml')); ?></code>
+                                </div>
+                                
+                                <form method="post" style="margin-bottom: 24px;">
+                                    <?php wp_nonce_field('kyero_export'); ?>
+                                    <button type="submit" name="kyero_manual_export" class="button button-primary button-large">
+                                        🚀 <?php esc_html_e('Generar Feed Ahora', 'alquipress'); ?>
+                                    </button>
+                                </form>
+                                
+                                <div style="background: var(--ap-bg-light); border-left: 3px solid var(--ap-primary); padding: 16px; border-radius: var(--ap-radius-md);">
+                                    <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 600;"><?php esc_html_e('📋 Instrucciones para Kyero', 'alquipress'); ?></h3>
+                                    <ol style="margin: 0; padding-left: 20px; color: var(--ap-text-secondary);">
+                                        <li><?php esc_html_e('Inicia sesión en tu cuenta de Kyero', 'alquipress'); ?></li>
+                                        <li><?php esc_html_e('Ve a Settings > Data Feed', 'alquipress'); ?></li>
+                                        <li><?php esc_html_e('Pega la URL del feed XML mostrada arriba', 'alquipress'); ?></li>
+                                        <li><?php esc_html_e('Kyero sincronizará automáticamente cada 24h', 'alquipress'); ?></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                    
+                    <div class="ap-content-right" style="flex: 1;">
+                        <section class="ap-recent-bookings">
+                            <div class="ap-recent-bookings-header">
+                                <h2 class="ap-recent-bookings-title"><?php esc_html_e('📥 Importación desde Kyero', 'alquipress'); ?></h2>
+                            </div>
+                            <div style="padding: 20px;">
+                                <form method="post">
+                                    <?php wp_nonce_field('kyero_settings'); ?>
+                                    
+                                    <div style="margin-bottom: 20px;">
+                                        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--ap-text-primary);">
+                                            <?php esc_html_e('URL del Feed XML', 'alquipress'); ?>
+                                        </label>
+                                        <input type="url" 
+                                               name="kyero_import_url" 
+                                               value="<?php echo esc_attr($import_url); ?>" 
+                                               class="regular-text"
+                                               style="width: 100%; padding: 10px 12px; border: 1px solid var(--ap-border); border-radius: var(--ap-radius-md);"
+                                               placeholder="https://ejemplo.com/kyero-feed.xml">
+                                        <p class="description" style="margin-top: 6px; color: var(--ap-text-secondary);">
+                                            <?php esc_html_e('URL del feed XML de la agencia desde la que importar', 'alquipress'); ?>
+                                        </p>
+                                    </div>
+                                    
+                                    <div style="margin-bottom: 24px;">
+                                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                                            <input type="checkbox" 
+                                                   name="kyero_auto_import" 
+                                                   value="1" 
+                                                   <?php checked($auto_import, 1); ?>
+                                                   style="width: 18px; height: 18px;">
+                                            <span style="font-weight: 500; color: var(--ap-text-primary);">
+                                                <?php esc_html_e('Importar automáticamente cada 24h', 'alquipress'); ?>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    
+                                    <button type="submit" name="kyero_save_settings" class="button button-primary button-large" style="width: 100%; margin-bottom: 16px;">
+                                        💾 <?php esc_html_e('Guardar Configuración', 'alquipress'); ?>
+                                    </button>
+                                </form>
+                                
+                                <form method="post">
+                                    <?php wp_nonce_field('kyero_import'); ?>
+                                    <button type="submit" name="kyero_manual_import" class="button button-secondary" style="width: 100%;">
+                                        ⬇️ <?php esc_html_e('Importar Ahora', 'alquipress'); ?>
+                                    </button>
+                                </form>
+                            </div>
+                        </section>
+                        
+                        <section class="ap-recent-bookings" style="margin-top: 24px;">
+                            <div class="ap-recent-bookings-header">
+                                <h2 class="ap-recent-bookings-title"><?php esc_html_e('✅ Validar Feed', 'alquipress'); ?></h2>
+                            </div>
+                            <div style="padding: 20px;">
+                                <p style="margin: 0 0 16px 0; color: var(--ap-text-secondary);">
+                                    <?php esc_html_e('Valida tu feed antes de enviarlo a Kyero:', 'alquipress'); ?>
+                                </p>
+                                <a href="https://www.kyero.com/xml-validator" target="_blank" class="button button-secondary" style="width: 100%; text-align: center;">
+                                    🔍 <?php esc_html_e('Abrir Validador de Kyero', 'alquipress'); ?>
+                                </a>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
-    
-    <style>
-        .card { background: #fff; border: 1px solid #ccd0d4; border-radius: 4px; padding: 20px; box-shadow: 0 1px 1px rgba(0,0,0,.04); }
-        .card h2 { margin-top: 0; }
-        .card code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; }
-    </style>
     <?php
 }
 

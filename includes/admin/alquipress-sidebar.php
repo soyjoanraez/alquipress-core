@@ -137,9 +137,19 @@ function alquipress_render_sidebar($current_page)
             'label' => __('Comunicación', 'alquipress'),
             'icon' => 'mail',
         ],
+        'kyero' => [
+            'url' => admin_url('admin.php?page=alquipress-kyero'),
+            'label' => __('Feed Kyero', 'alquipress'),
+            'icon' => 'building',
+        ],
         'settings' => [
             'url' => admin_url('admin.php?page=alquipress-settings'),
             'label' => __('Ajustes', 'alquipress'),
+            'icon' => 'settings',
+        ],
+        'performance' => [
+            'url' => admin_url('admin.php?page=alquipress-suite'),
+            'label' => __('Performance & Security', 'alquipress'),
             'icon' => 'settings',
         ],
     ];

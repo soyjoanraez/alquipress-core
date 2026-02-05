@@ -30,6 +30,9 @@ class Alquipress_UI_Enhancements
         // Ocultar metaboxes innecesarios en la edición de clientes
         add_action('admin_init', [$this, 'remove_unnecessary_user_meta_boxes'], 999);
         add_action('admin_head', [$this, 'hide_meta_boxes_css'], 999);
+        
+        // Cargar estilos del dashboard para páginas específicas
+        add_action('alquipress_enqueue_section_assets', [$this, 'enqueue_dashboard_styles_for_pages']);
     }
 
     /**
@@ -98,6 +101,34 @@ class Alquipress_UI_Enhancements
             [],
             ALQUIPRESS_VERSION
         );
+    }
+
+    /**
+     * Cargar estilos del dashboard para páginas específicas (Kyero, Performance/Security)
+     */
+    public function enqueue_dashboard_styles_for_pages($page)
+    {
+        $dashboard_pages = ['alquipress-kyero', 'alquipress-suite'];
+        
+        if (!in_array($page, $dashboard_pages, true)) {
+            return;
+        }
+        
+        // Cargar CSS del layout del dashboard
+        wp_enqueue_style(
+            'alquipress-admin-layout',
+            ALQUIPRESS_URL . 'includes/admin/assets/alquipress-admin-layout.css',
+            [],
+            ALQUIPRESS_VERSION
+        );
+        
+        // Estilos críticos del layout
+        $critical_layout = '#wpcontent,#wpbody-content{background:#f8fafb!important;}'
+            . '.wrap.ap-has-sidebar{min-height:80vh!important;width:100%!important;position:relative!important;z-index:999998!important;max-width:none!important;margin-top:12px!important;padding:0!important;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-layout{display:flex!important;min-height:calc(100vh - 140px)!important;background:#f8fafb!important;border:1px solid #e8eef3!important;border-radius:16px!important;overflow:hidden!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-sidebar{width:256px!important;min-width:256px!important;background:#ffffff!important;border-right:1px solid #e8eef3!important;display:flex!important;flex-direction:column!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-main{flex:1!important;min-width:0!important;padding:32px!important;background:#f8fafb!important;}';
+        wp_add_inline_style('alquipress-admin-layout', $critical_layout);
     }
 
     /**
@@ -685,7 +716,9 @@ class Alquipress_UI_Enhancements
         // Obtener todos los metaboxes registrados
         global $wp_meta_boxes;
         $screen = get_current_screen();
-        if (!$screen) {
+        
+        // Verificación adicional: asegurarse de que estamos en la página correcta
+        if (!$screen || !in_array($screen->id, ['user-edit', 'profile'])) {
             return;
         }
 
@@ -745,82 +778,6 @@ class Alquipress_UI_Enhancements
         }
         ?>
         <style>
-            /* Ocultar TODOS los campos excepto los permitidos */
-            body.user-edit .form-table tr:not([id*="first_name"]):not([id*="last_name"]):not([id*="user_email"]),
-            body.profile .form-table tr:not([id*="first_name"]):not([id*="last_name"]):not([id*="user_email"]) {
-                display: none !important;
-            }
-            
-            /* Mantener solo campos básicos: Nombre, Apellidos, Email (solo para identificación) */
-            body.user-edit .form-table tr[id*="first_name"],
-            body.user-edit .form-table tr[id*="last_name"],
-            body.profile .form-table tr[id*="first_name"],
-            body.profile .form-table tr[id*="last_name"] {
-                display: table-row !important;
-            }
-            
-            /* Ocultar campos de WordPress que no necesitamos */
-            body.user-edit .form-table tr[id*="nickname"],
-            body.user-edit .form-table tr[id*="display_name"],
-            body.user-edit .form-table tr[id*="description"],
-            body.user-edit .form-table tr[id*="url"],
-            body.user-edit .form-table tr[id*="user_login"],
-            body.user-edit .form-table tr[id*="user_pass"],
-            body.profile .form-table tr[id*="nickname"],
-            body.profile .form-table tr[id*="display_name"],
-            body.profile .form-table tr[id*="description"],
-            body.profile .form-table tr[id*="url"],
-            body.profile .form-table tr[id*="user_login"],
-            body.profile .form-table tr[id*="user_pass"] {
-                display: none !important;
-            }
-            
-            /* Ocultar todos los metaboxes excepto ACF CRM y WooCommerce */
-            body.user-edit .postbox:not([id*="acf-group_crm_cliente"]):not([id*="woocommerce-customer-data"]),
-            body.profile .postbox:not([id*="acf-group_crm_cliente"]):not([id*="woocommerce-customer-data"]) {
-                display: none !important;
-            }
-            
-            /* Ocultar campos de perfil personalizados */
-            body.user-edit .form-table tr[id*="rich_editing"],
-            body.user-edit .form-table tr[id*="comment_shortcuts"],
-            body.user-edit .form-table tr[id*="admin_color"],
-            body.user-edit .form-table tr[id*="show_admin_bar"],
-            body.profile .form-table tr[id*="rich_editing"],
-            body.profile .form-table tr[id*="comment_shortcuts"],
-            body.profile .form-table tr[id*="admin_color"],
-            body.profile .form-table tr[id*="show_admin_bar"] {
-                display: none !important;
-            }
-            
-            /* Ocultar esquema de color */
-            body.user-edit #show_user_color_scheme,
-            body.profile #show_user_color_scheme,
-            body.user-edit .user-color-scheme-wrap,
-            body.profile .user-color-scheme-wrap,
-            body.user-edit .user-color-scheme-wrap ~ *,
-            body.profile .user-color-scheme-wrap ~ * {
-                display: none !important;
-            }
-            
-            /* Ocultar atajos de teclado */
-            body.user-edit #keyboard_shortcuts,
-            body.profile #keyboard_shortcuts,
-            body.user-edit .keyboard-shortcuts-wrap,
-            body.profile .keyboard-shortcuts-wrap,
-            body.user-edit .keyboard-shortcuts-wrap ~ *,
-            body.profile .keyboard-shortcuts-wrap ~ * {
-                display: none !important;
-            }
-            
-            /* Ocultar contraseñas de aplicación */
-            body.user-edit #application_passwords,
-            body.profile #application_passwords,
-            body.user-edit #application_passwords ~ *,
-            body.profile #application_passwords ~ * {
-                display: none !important;
-            }
-            
             /* Ocultar TODOS los campos de WordPress excepto Nombre y Apellidos */
             body.user-edit .form-table tr:not([id*="first_name"]):not([id*="last_name"]),
             body.profile .form-table tr:not([id*="first_name"]):not([id*="last_name"]) {
