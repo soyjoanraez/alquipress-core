@@ -139,6 +139,7 @@ function alquipress_log($message, $context = [])
 
 /**
  * Obtener IP del cliente de forma segura
+ * Maneja correctamente proxies y múltiples IPs en X-Forwarded-For
  *
  * @return string IP sanitizada
  */
@@ -149,12 +150,21 @@ function alquipress_get_client_ip()
     if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
         $ip = $_SERVER['HTTP_CLIENT_IP'];
     } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        // X-Forwarded-For puede contener múltiples IPs: "client, proxy1, proxy2"
+        // Tomamos la primera (IP del cliente real)
+        $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        $ip = trim($ips[0]);
     } elseif (!empty($_SERVER['REMOTE_ADDR'])) {
         $ip = $_SERVER['REMOTE_ADDR'];
     }
 
-    return sanitize_text_field($ip);
+    // Validar que sea una IP válida
+    $ip = sanitize_text_field($ip);
+    if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+        $ip = '0.0.0.0'; // IP por defecto si la validación falla
+    }
+
+    return $ip;
 }
 
 /**
@@ -190,7 +200,7 @@ function alquipress_is_editing_post_type($post_type)
         return true;
     }
 
-    if (isset($_GET['post_type']) && $_GET['post_type'] === $post_type) {
+    if (isset($_GET['post_type']) && sanitize_key($_GET['post_type']) === $post_type) {
         return true;
     }
 
