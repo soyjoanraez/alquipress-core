@@ -36,7 +36,18 @@
          */
         function updateOrderStatus(orderId, status, cardElement) {
             const $card = $(cardElement);
-            $card.addClass('updating');
+            const $originalContent = $card.html();
+            
+            // Agregar estado de carga
+            $card.addClass('updating').css('opacity', '0.6');
+            $card.html('<div style="text-align: center; padding: 20px;"><span class="spinner is-active" style="float: none; margin: 0;"></span><p style="margin: 10px 0 0; font-size: 12px; color: #666;">Actualizando...</p></div>');
+            
+            // Deshabilitar drag & drop temporalmente
+            const column = $card.closest('.column-cards')[0];
+            const sortableInstance = Sortable.get(column);
+            if (sortableInstance) {
+                sortableInstance.option('disabled', true);
+            }
 
             $.ajax({
                 url: alquipressPipeline.ajaxUrl,
@@ -50,17 +61,59 @@
                 success: function (response) {
                     if (response.success) {
                         updateColumnCounts();
-                        // Notificación visual simple
-                        $card.removeClass('updating').addClass('update-success');
-                        setTimeout(() => $card.removeClass('update-success'), 1000);
+                        // Restaurar contenido y mostrar éxito
+                        $card.html($originalContent).removeClass('updating').addClass('update-success').css('opacity', '1');
+                        
+                        // Mostrar toast de éxito
+                        if (typeof AlquipressToast !== 'undefined') {
+                            AlquipressToast.success(
+                                response.data && response.data.message 
+                                    ? response.data.message 
+                                    : 'Estado actualizado correctamente'
+                            );
+                        }
+                        
+                        setTimeout(() => {
+                            $card.removeClass('update-success');
+                        }, 2000);
                     } else {
-                        alert('Error: ' + response.data);
-                        location.reload(); // Recargar para volver al estado anterior
+                        // Restaurar contenido y mostrar error
+                        $card.html($originalContent).removeClass('updating').addClass('update-error').css('opacity', '1');
+                        
+                        // Mostrar toast de error
+                        if (typeof AlquipressToast !== 'undefined') {
+                            AlquipressToast.error(
+                                response.data && response.data.message 
+                                    ? response.data.message 
+                                    : 'Error al actualizar el estado'
+                            );
+                        }
+                        
+                        setTimeout(() => {
+                            $card.removeClass('update-error');
+                            location.reload(); // Recargar para volver al estado anterior
+                        }, 2000);
                     }
                 },
-                error: function () {
-                    alert('Error de conexión al actualizar el estado.');
-                    location.reload();
+                error: function (xhr, status, error) {
+                    // Restaurar contenido y mostrar error
+                    $card.html($originalContent).removeClass('updating').addClass('update-error').css('opacity', '1');
+                    
+                    // Mostrar toast de error
+                    if (typeof AlquipressToast !== 'undefined') {
+                        AlquipressToast.error('Error de conexión al actualizar el estado. Por favor, intenta de nuevo.');
+                    }
+                    
+                    setTimeout(() => {
+                        $card.removeClass('update-error');
+                        location.reload();
+                    }, 2000);
+                },
+                complete: function() {
+                    // Rehabilitar drag & drop
+                    if (sortableInstance) {
+                        sortableInstance.option('disabled', false);
+                    }
                 }
             });
         }

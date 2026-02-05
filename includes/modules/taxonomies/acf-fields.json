@@ -60,7 +60,14 @@
                 "key": "field_coordenadas_gps",
                 "label": "Coordenadas GPS",
                 "name": "coordenadas_gps",
-                "type": "google_map"
+                "type": "google_map",
+                "instructions": "Busca una dirección o haz clic en el mapa para establecer las coordenadas",
+                "required": 0,
+                "center_lat": "38.8408",
+                "center_lng": "0.1056",
+                "zoom": 13,
+                "height": 400,
+                "return_format": "array"
             },
             {
                 "key": "field_distribucion_tab",

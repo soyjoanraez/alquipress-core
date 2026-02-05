@@ -29,6 +29,11 @@ class Alquipress_Performance_Optimizer
         add_action('save_post', [$this, 'clear_reports_cache']);
         add_action('woocommerce_order_status_changed', [$this, 'clear_reports_cache']);
         add_action('profile_update', [$this, 'clear_preferences_cache']);
+        
+        // Invalidación específica por tipo de dato
+        add_action('save_post_product', [$this, 'clear_properties_cache'], 10, 2);
+        add_action('save_post_shop_order', [$this, 'clear_orders_cache'], 10, 2);
+        add_action('woocommerce_order_status_changed', [$this, 'clear_dashboard_cache']);
 
         // Optimizar carga de scripts
         add_action('admin_enqueue_scripts', [$this, 'optimize_script_loading'], 1);
@@ -295,13 +300,87 @@ class Alquipress_Performance_Optimizer
     public function clear_reports_cache($post_id = null)
     {
         // Limpiar todos los transients relacionados con informes
+        self::clear_cache_group('reports');
+    }
+
+    /**
+     * Limpiar todo el caché de Alquipress
+     * 
+     * @return int Número de transients eliminados
+     */
+    public static function clear_all_alquipress_cache()
+    {
         global $wpdb;
 
-        $wpdb->query(
+        $deleted = $wpdb->query(
             "DELETE FROM {$wpdb->options}
             WHERE option_name LIKE '_transient_alquipress_%'
             OR option_name LIKE '_transient_timeout_alquipress_%'"
         );
+
+        // Limpiar también el caché de Property Helper
+        if (class_exists('Alquipress_Property_Helper')) {
+            Alquipress_Property_Helper::clear_cache();
+        }
+
+        return (int) $deleted;
+    }
+
+    /**
+     * Limpiar caché por grupo
+     * 
+     * @param string $group Grupo de caché: 'reports', 'dashboard', 'properties', 'orders'
+     * @return int Número de transients eliminados
+     */
+    public static function clear_cache_group($group)
+    {
+        global $wpdb;
+
+        // Validar grupo usando Alquipress_Config si está disponible
+        if (class_exists('Alquipress_Config') && !Alquipress_Config::is_valid_cache_group($group)) {
+            return 0;
+        }
+
+        $patterns = [
+            'reports' => [
+                '_transient_alquipress_reports_%',
+                '_transient_alquipress_preferences_stats',
+                '_transient_alquipress_monthly_revenue_%',
+            ],
+            'dashboard' => [
+                '_transient_alquipress_dashboard_%',
+                '_transient_alquipress_widget_%',
+                '_transient_alquipress_activity_%',
+            ],
+            'properties' => [
+                '_transient_alquipress_occupied_count_%',
+                '_transient_alquipress_property_%',
+            ],
+            'orders' => [
+                '_transient_alquipress_order_%',
+                '_transient_alquipress_bookings_%',
+            ],
+        ];
+
+        if (!isset($patterns[$group])) {
+            return 0;
+        }
+
+        $deleted = 0;
+        foreach ($patterns[$group] as $pattern) {
+            $result = $wpdb->query(
+                $wpdb->prepare(
+                    "DELETE FROM {$wpdb->options}
+                    WHERE option_name LIKE %s
+                    OR option_name LIKE %s",
+                    $pattern,
+                    str_replace('_transient_', '_transient_timeout_', $pattern)
+                )
+            );
+            $deleted += (int) $result;
+        }
+
+        return $deleted;
     }
 
     /**
@@ -310,6 +389,39 @@ class Alquipress_Performance_Optimizer
     public function clear_preferences_cache($user_id)
     {
         delete_transient('alquipress_preferences_stats');
+    }
+
+    /**
+     * Limpiar caché de propiedades cuando se actualiza una propiedad
+     */
+    public function clear_properties_cache($post_id, $post)
+    {
+        if ($post->post_type === 'product') {
+            self::clear_cache_group('properties');
+            // Limpiar también el caché del Property Helper
+            if (class_exists('Alquipress_Property_Helper')) {
+                Alquipress_Property_Helper::clear_cache($post_id);
+            }
+        }
+    }
+
+    /**
+     * Limpiar caché de órdenes cuando se actualiza una orden
+     */
+    public function clear_orders_cache($post_id, $post)
+    {
+        if ($post->post_type === 'shop_order') {
+            self::clear_cache_group('orders');
+            self::clear_cache_group('dashboard');
+        }
+    }
+
+    /**
+     * Limpiar caché del dashboard cuando cambia el estado de una orden
+     */
+    public function clear_dashboard_cache()
+    {
+        self::clear_cache_group('dashboard');
     }
 
     // ========== Optimización de Scripts ==========
@@ -401,10 +513,44 @@ class Alquipress_Performance_Optimizer
         // Limpiar caché de WordPress
         wp_cache_flush();
     }
+
+    /**
+     * OPTIMIZACIÓN BD: Crear índices para búsquedas de reservas
+     * Debe ejecutarse al activar el plugin o manualmente desde herramientas
+     */
+    public static function install_booking_indexes()
+    {
+        global $wpdb;
+
+        $indices = [
+            'idx_booking_checkin' => '_booking_checkin_date',
+            'idx_booking_checkout' => '_booking_checkout_date',
+            'idx_apm_booking_total' => '_apm_booking_total'
+        ];
+
+        foreach ($indices as $index_name => $meta_key) {
+            // Comprobar si el índice existe (forma ligera)
+            $exists = $wpdb->get_results("SHOW INDEX FROM {$wpdb->postmeta} WHERE Key_name = '{$index_name}'");
+            
+            if (empty($exists)) {
+                // Crear índice en meta_value especificando longitud para TEXT
+                // NOTA: meta_value es LONGTEXT, requiere prefijo de longitud (ej. 20 chars es suficiente para fechas)
+                $wpdb->query("CREATE INDEX {$index_name} ON {$wpdb->postmeta} (meta_key(30), meta_value(20))");
+            }
+        }
+    }
 }
 
 // Inicializar
 Alquipress_Performance_Optimizer::get_instance();
+
+// Ejecutar indexación en admin init (una sola vez, verificando opción)
+add_action('admin_init', function() {
+    if (!get_option('alquipress_db_indexes_created')) {
+        Alquipress_Performance_Optimizer::install_booking_indexes();
+        update_option('alquipress_db_indexes_created', true);
+    }
+});
 
 // Programar limpieza diaria de caché
 if (!wp_next_scheduled('alquipress_clear_daily_cache')) {

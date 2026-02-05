@@ -1,16 +1,28 @@
 /**
- * Estilos Premium para Dashboard Widgets CRM Alquipress
- * Siguiendo el roadmap de ux_ui.md
+ * Estilos Dashboard CRM Alquipress - Diseño Pencil
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
-    --ap-primary: #3b82f6;
+    /* Pencil design tokens */
+    --ap-background: #f8fafb;
+    --ap-surface: #ffffff;
+    --ap-border: #e8eef3;
+    --ap-primary: #2c99e2;
+    --ap-text-primary: #0e161b;
+    --ap-text-secondary: #507a95;
     --ap-success: #10b981;
+    --ap-info: #3b82f6;
     --ap-warning: #f59e0b;
+    --ap-radius-lg: 12px;
+    --ap-radius-md: 8px;
+    --ap-radius-sm: 4px;
+    /* Legacy aliases for WP dashboard widgets */
     --ap-danger: #ef4444;
-    --ap-text-main: #1e293b;
-    --ap-text-muted: #64748b;
-    --ap-bg-soft: #f8fafc;
+    --ap-text-main: #0e161b;
+    --ap-text-muted: #507a95;
+    --ap-bg-soft: #f8fafb;
     --ap-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --ap-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
@@ -292,4 +304,663 @@
 
 @media screen and (max-width: 782px) {
     .alquipress-movements-grid { grid-template-columns: 1fr; }
+}
+
+/* ========== Alertas (lista) ========== */
+.alquipress-alerts-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.alquipress-alerts-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    border-left: 4px solid transparent;
+}
+
+.alquipress-alerts-list li.alert-info {
+    background: #eff6ff;
+    border-left-color: var(--ap-primary);
+    color: var(--ap-text-main);
+}
+
+.alquipress-alerts-list li.alert-warning {
+    background: #fffbeb;
+    border-left-color: var(--ap-warning);
+    color: var(--ap-text-main);
+}
+
+.alquipress-alerts-list li .alert-icon { font-size: 1.1em; }
+.alquipress-alerts-list li .alert-message { flex: 1; }
+
+/* ========== Página Dashboard ALQUIPRESS (admin.php?page=alquipress-dashboard) - Pencil layout ========== */
+.alquipress-dashboard-page {
+    max-width: 1400px;
+    margin-top: 12px;
+    padding: 32px;
+    background: var(--ap-background);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Restaurar padding en el wrap cuando es dashboard (ap-has-sidebar lo quita) */
+.wrap.alquipress-dashboard-page {
+    padding: 24px 20px 32px;
+}
+
+/* Main: flex column y fondo explícito para no heredar fondo oscuro del admin/tema */
+.alquipress-dashboard-page .ap-owners-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-height: 0;
+    overflow: auto;
+    background: #f8fafb;
+    background: var(--ap-background);
+}
+
+/* Content row ocupa el espacio restante */
+.alquipress-dashboard-page .ap-content-row {
+    flex: 1;
+    min-height: 0;
+}
+
+/* Header (Pencil: title + subtitle + search + bell) */
+.ap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.ap-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ap-header-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ap-text-primary);
+    font-family: Inter, sans-serif;
+}
+
+.ap-header-subtitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ap-text-secondary);
+}
+
+.ap-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ap-search-form {
+    display: block;
+}
+
+.ap-search-bar {
+    width: 280px;
+    height: 40px;
+    padding: 0 12px;
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-md);
+    font-size: 14px;
+    color: var(--ap-text-primary);
+    font-family: Inter, sans-serif;
+}
+
+.ap-search-bar::placeholder {
+    color: var(--ap-text-secondary);
+}
+
+.ap-notif-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-md);
+    color: var(--ap-text-secondary);
+    text-decoration: none;
+}
+
+.ap-notif-btn .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* Metrics Row (4 cards) */
+.ap-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+}
+
+.ap-metric-card {
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ap-metric-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ap-text-secondary);
+}
+
+.ap-metric-value-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.ap-metric-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--ap-text-primary);
+    line-height: 1.2;
+}
+
+.ap-metric-change {
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.ap-metric-change.ap-change-success { color: var(--ap-success); }
+.ap-metric-change.ap-change-info { color: var(--ap-info); }
+
+/* Content Row (two columns: Recent Bookings | Recent Activity) */
+.ap-content-row {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+}
+
+.ap-content-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.ap-content-right {
+    width: 380px;
+    flex-shrink: 0;
+}
+
+/* Recent Bookings card */
+.ap-recent-bookings {
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.ap-recent-bookings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ap-recent-bookings-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ap-text-primary);
+}
+
+.ap-recent-bookings-view-all {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ap-primary);
+    text-decoration: none;
+}
+
+.ap-recent-bookings-view-all:hover {
+    text-decoration: underline;
+}
+
+/* Recent Bookings table */
+.ap-bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ap-bookings-table thead th {
+    height: 44px;
+    padding: 0 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ap-text-secondary);
+    border-bottom: 1px solid var(--ap-border);
+}
+
+.ap-bookings-table thead th:last-child {
+    text-align: right;
+}
+
+.ap-bookings-table tbody tr {
+    height: 56px;
+    border-bottom: 1px solid var(--ap-border);
+}
+
+.ap-bookings-table tbody tr:last-child {
+    border-bottom: 0;
+}
+
+.ap-bookings-table td {
+    padding: 0 16px;
+    vertical-align: middle;
+    font-size: 14px;
+    color: var(--ap-text-primary);
+}
+
+.ap-bookings-table td:last-child {
+    text-align: right;
+}
+
+.ap-booking-prop {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ap-booking-prop-thumb {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--ap-radius-md);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.ap-booking-prop-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--ap-radius-md);
+    flex-shrink: 0;
+    background: #E8F4FD;
+}
+
+.ap-booking-prop-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ap-booking-prop-name {
+    font-weight: 500;
+    color: var(--ap-text-primary);
+}
+
+.ap-booking-prop-loc {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ap-text-secondary);
+}
+
+.ap-booking-guest,
+.ap-booking-dates {
+    font-weight: 400;
+}
+
+.ap-booking-dates {
+    color: var(--ap-text-secondary);
+}
+
+.ap-booking-status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: var(--ap-radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.ap-booking-status.status-confirmed { background: rgba(16, 185, 129, 0.1); color: var(--ap-success); }
+.ap-booking-status.status-pending { background: rgba(245, 158, 11, 0.1); color: var(--ap-warning); }
+.ap-booking-status.status-checkin { background: rgba(59, 130, 246, 0.1); color: var(--ap-info); }
+.ap-booking-status.status-processing { background: rgba(59, 130, 246, 0.1); color: var(--ap-info); }
+
+/* Recent Activity card */
+.ap-recent-activity {
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.ap-recent-activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ap-recent-activity-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ap-text-primary);
+}
+
+.ap-recent-activity-view-all {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ap-primary);
+    text-decoration: none;
+}
+
+.ap-recent-activity-view-all:hover {
+    text-decoration: underline;
+}
+
+.ap-activity-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.ap-activity-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--ap-border);
+}
+
+.ap-activity-item:last-child {
+    border-bottom: 0;
+}
+
+.ap-activity-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--ap-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ap-activity-icon .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.ap-activity-icon.icon-success { background: rgba(16, 185, 129, 0.1); color: var(--ap-success); }
+.ap-activity-icon.icon-info { background: rgba(59, 130, 246, 0.1); color: var(--ap-info); }
+.ap-activity-icon.icon-warning { background: rgba(245, 158, 11, 0.1); color: var(--ap-warning); }
+
+.ap-activity-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ap-activity-item-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ap-text-primary);
+}
+
+.ap-activity-item-sub {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ap-text-secondary);
+}
+
+.ap-activity-time {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--ap-text-secondary);
+    flex-shrink: 0;
+}
+
+/* Legacy dashboard header (keep for any other uses) */
+.ap-dashboard-header {
+    margin-bottom: 0;
+}
+
+.ap-dashboard-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ap-text-main);
+    margin: 0 0 4px 0;
+}
+
+.ap-dashboard-title .dashicons {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: var(--ap-primary);
+}
+
+.ap-dashboard-subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--ap-text-muted);
+}
+
+/* KPIs (legacy - kept for WP index.php widgets if needed) */
+.ap-dashboard-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 0;
+}
+
+.ap-kpi-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: var(--ap-shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ap-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ap-shadow);
+}
+
+.ap-kpi-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+}
+
+.ap-kpi-movements .ap-kpi-icon { background: #eff6ff; color: var(--ap-primary); }
+.ap-kpi-revenue .ap-kpi-icon { background: #ecfdf5; color: var(--ap-success); }
+.ap-kpi-occupancy .ap-kpi-icon { background: #f5f3ff; color: #6366f1; }
+.ap-kpi-alerts .ap-kpi-icon { background: #fffbeb; color: var(--ap-warning); }
+
+.ap-kpi-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ap-kpi-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--ap-text-main);
+    line-height: 1.2;
+}
+
+.ap-kpi-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ap-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* Grid de secciones */
+.ap-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.ap-dashboard-section {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: var(--ap-shadow-sm);
+    padding: 20px;
+}
+
+.ap-section-title {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ap-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Accesos rápidos */
+.ap-quick-links {
+    grid-column: 1 / -1;
+}
+
+.ap-quick-links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+}
+
+.ap-quick-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px 16px;
+    background: var(--ap-bg-soft);
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    color: var(--ap-text-main);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.ap-quick-link:hover {
+    background: #fff;
+    border-color: var(--ap-primary);
+    color: var(--ap-primary);
+}
+
+.ap-quick-link .dashicons {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    color: var(--ap-primary);
+}
+
+/* Estado del sistema */
+.ap-system-status {
+    grid-column: 1 / -1;
+}
+
+.ap-system-status-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.ap-status-item {
+    padding: 14px 16px;
+    background: var(--ap-bg-soft);
+    border-radius: 8px;
+    border-left: 4px solid var(--ap-primary);
+}
+
+.ap-status-label {
+    display: block;
+    font-size: 11px;
+    color: var(--ap-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.ap-status-item strong {
+    font-size: 14px;
+    color: var(--ap-text-main);
+}
+
+@media screen and (max-width: 1200px) {
+    .ap-metrics-row { grid-template-columns: repeat(2, 1fr); }
+    .ap-content-row { flex-direction: column; }
+    .ap-content-right { width: 100%; }
+    .ap-dashboard-kpis { grid-template-columns: repeat(2, 1fr); }
+    .ap-system-status-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media screen and (max-width: 782px) {
+    .alquipress-dashboard-page { padding: 16px; gap: 20px; }
+    .ap-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .ap-header-right { width: 100%; }
+    .ap-search-bar { flex: 1; min-width: 0; }
+    .ap-metrics-row { grid-template-columns: 1fr; }
+    .ap-content-row { flex-direction: column; }
+    .ap-content-right { width: 100%; }
+    .ap-dashboard-kpis { grid-template-columns: 1fr; }
+    .ap-dashboard-grid { grid-template-columns: 1fr; }
+    .ap-quick-links-grid { grid-template-columns: repeat(2, 1fr); }
+    .ap-system-status-grid { grid-template-columns: 1fr; }
 }

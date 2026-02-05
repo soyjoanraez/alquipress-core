@@ -12,183 +12,224 @@ class Alquipress_Advanced_Reports
 
     public function __construct()
     {
-        // Añadir página de informes
-        add_action('admin_menu', [$this, 'add_reports_page'], 25);
+        add_action('alquipress_render_section', [$this, 'maybe_render_section']);
+        add_action('alquipress_enqueue_section_assets', [$this, 'enqueue_section_assets']);
 
-        // AJAX handlers
         add_action('wp_ajax_alquipress_get_report_data', [$this, 'ajax_get_report_data']);
-
-        // Cargar assets
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
     }
 
-    /**
-     * Añadir página de informes al menú
-     */
-    public function add_reports_page()
+    public function maybe_render_section($page)
     {
-        add_submenu_page(
-            'alquipress-settings',
-            'Informes y Analíticas',
-            '📊 Informes',
-            'manage_options',
-            'alquipress-reports',
-            [$this, 'render_reports_page']
-        );
+        if ($page === 'alquipress-reports') {
+            $this->render_reports_page();
+        }
     }
 
     /**
-     * Renderizar página de informes
+     * Renderizar página de informes (diseño Pencil: Reports Dashboard)
      */
     public function render_reports_page()
     {
+        $current_year = date('Y');
+        require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
         ?>
-        <div class="wrap alquipress-reports-wrap">
-            <h1>📊 Informes y Analíticas</h1>
-
-            <!-- Filtros Generales -->
-            <div class="reports-filters">
-                <div class="filter-group">
-                    <label for="report-year">Año:</label>
-                    <select id="report-year">
-                        <?php
-                        $current_year = date('Y');
-                        for ($year = $current_year; $year >= $current_year - 5; $year--) {
-                            echo '<option value="' . $year . '">' . $year . '</option>';
-                        }
-                        ?>
-                    </select>
+        <div class="wrap alquipress-reports-page ap-has-sidebar">
+            <div class="ap-owners-layout">
+                <?php alquipress_render_sidebar('reports'); ?>
+                <main class="ap-owners-main">
+            <header class="ap-reports-header">
+                <div class="ap-reports-header-left">
+                    <h1 class="ap-reports-title"><?php esc_html_e('Informes', 'alquipress'); ?></h1>
+                    <p class="ap-reports-subtitle"><?php esc_html_e('Ingresos, rendimiento de reservas y analíticas', 'alquipress'); ?></p>
                 </div>
-                <button id="refresh-reports" class="button button-primary">🔄 Actualizar Informes</button>
+                <div class="ap-reports-header-right">
+                    <div class="ap-reports-year-wrap">
+                        <label for="report-year" class="screen-reader-text"><?php esc_html_e('Año', 'alquipress'); ?></label>
+                        <select id="report-year">
+                            <?php for ($y = $current_year; $y >= $current_year - 5; $y--) : ?>
+                                <option value="<?php echo (int) $y; ?>"><?php echo (int) $y; ?></option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+                    <button type="button" id="refresh-reports" class="ap-reports-refresh"><?php esc_html_e('Actualizar', 'alquipress'); ?></button>
+                </div>
+            </header>
+
+            <!-- Métricas (Pencil: Total Revenue, Total Bookings, Occupancy Rate, Avg Daily Rate) -->
+            <div class="ap-reports-metrics-row">
+                <div class="ap-reports-metric-card">
+                    <span class="ap-reports-metric-label"><?php esc_html_e('Ingresos totales', 'alquipress'); ?></span>
+                    <div class="ap-reports-metric-value-row">
+                        <span class="ap-reports-metric-value" id="stat-revenue-year">—</span>
+                        <span class="ap-reports-metric-change ap-reports-change-positive" id="stat-revenue-change">—</span>
+                    </div>
+                </div>
+                <div class="ap-reports-metric-card">
+                    <span class="ap-reports-metric-label"><?php esc_html_e('Reservas totales', 'alquipress'); ?></span>
+                    <div class="ap-reports-metric-value-row">
+                        <span class="ap-reports-metric-value" id="stat-bookings-year">—</span>
+                        <span class="ap-reports-metric-change ap-reports-change-positive" id="stat-bookings-change">—</span>
+                    </div>
+                </div>
+                <div class="ap-reports-metric-card">
+                    <span class="ap-reports-metric-label"><?php esc_html_e('Tasa de ocupación', 'alquipress'); ?></span>
+                    <div class="ap-reports-metric-value-row">
+                        <span class="ap-reports-metric-value" id="stat-occupancy-rate">—</span>
+                        <span class="ap-reports-metric-change ap-reports-change-positive" id="stat-occupancy-change">—</span>
+                    </div>
+                </div>
+                <div class="ap-reports-metric-card">
+                    <span class="ap-reports-metric-label"><?php esc_html_e('Precio medio diario', 'alquipress'); ?></span>
+                    <div class="ap-reports-metric-value-row">
+                        <span class="ap-reports-metric-value" id="stat-avg-daily-rate">—</span>
+                        <span class="ap-reports-metric-change ap-reports-change-positive" id="stat-adr-change">—</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Estadísticas Rápidas -->
-            <div class="stats-overview">
-                <div class="stat-card">
-                    <div class="stat-icon">💰</div>
-                    <div class="stat-content">
-                        <h3 id="stat-revenue-year">Cargando...</h3>
-                        <p>Ingresos del Año</p>
+            <div class="ap-reports-content-row">
+                <div class="ap-reports-left-col">
+                    <!-- Revenue Breakdown (chart) -->
+                    <div class="ap-reports-card ap-reports-card-chart">
+                        <div class="ap-reports-card-head">
+                            <h3 class="ap-reports-card-title"><?php esc_html_e('Desglose de ingresos', 'alquipress'); ?></h3>
+                            <div class="ap-reports-chart-filters">
+                                <button type="button" class="ap-reports-filter-pill active" data-view="property"><?php esc_html_e('Por propiedad', 'alquipress'); ?></button>
+                                <button type="button" class="ap-reports-filter-pill" data-view="month"><?php esc_html_e('Por mes', 'alquipress'); ?></button>
+                            </div>
+                        </div>
+                        <div class="ap-reports-chart-wrap">
+                            <canvas id="chart-revenue-monthly" style="max-height: 320px;"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Booking Performance (tabla) -->
+                    <div class="ap-reports-card ap-reports-card-table">
+                        <h3 class="ap-reports-card-title"><?php esc_html_e('Rendimiento por propiedad', 'alquipress'); ?></h3>
+                        <div class="ap-reports-table-wrap">
+                            <table class="ap-reports-perf-table" id="table-booking-performance">
+                                <thead>
+                                    <tr>
+                                        <th><?php esc_html_e('Propiedad', 'alquipress'); ?></th>
+                                        <th class="ap-reports-th-num"><?php esc_html_e('Reservas', 'alquipress'); ?></th>
+                                        <th class="ap-reports-th-num"><?php esc_html_e('Ingresos', 'alquipress'); ?></th>
+                                        <th class="ap-reports-th-num"><?php esc_html_e('Ocupación', 'alquipress'); ?></th>
+                                        <th class="ap-reports-th-trend"><?php esc_html_e('Tendencia', 'alquipress'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td colspan="5" class="ap-reports-loading"><?php esc_html_e('Cargando...', 'alquipress'); ?></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📦</div>
-                    <div class="stat-content">
-                        <h3 id="stat-bookings-year">Cargando...</h3>
-                        <p>Reservas del Año</p>
+
+                <div class="ap-reports-right-col">
+                    <!-- Export Reports -->
+                    <div class="ap-reports-card ap-reports-export-card">
+                        <h3 class="ap-reports-card-title"><?php esc_html_e('Exportar informes', 'alquipress'); ?></h3>
+                        <div class="ap-reports-export-buttons">
+                            <button type="button" class="ap-reports-btn ap-reports-btn-primary" id="export-excel"><?php esc_html_e('Exportar a Excel', 'alquipress'); ?></button>
+                            <button type="button" class="ap-reports-btn ap-reports-btn-outline" id="export-pdf"><?php esc_html_e('Exportar a PDF', 'alquipress'); ?></button>
+                            <button type="button" class="ap-reports-btn ap-reports-btn-outline" id="email-report"><?php esc_html_e('Enviar por email', 'alquipress'); ?></button>
+                        </div>
                     </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📈</div>
-                    <div class="stat-content">
-                        <h3 id="stat-avg-booking">Cargando...</h3>
-                        <p>Valor Medio por Reserva</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🏠</div>
-                    <div class="stat-content">
-                        <h3 id="stat-occupancy-rate">Cargando...</h3>
-                        <p>Tasa de Ocupación</p>
+
+                    <!-- Report Filters -->
+                    <div class="ap-reports-card ap-reports-filters-card">
+                        <h3 class="ap-reports-card-title"><?php esc_html_e('Filtros del informe', 'alquipress'); ?></h3>
+                        <dl class="ap-reports-filter-list">
+                            <div class="ap-reports-filter-row">
+                                <dt><?php esc_html_e('Período', 'alquipress'); ?></dt>
+                                <dd id="filter-date-range"><?php echo esc_html(sprintf(__('Últimos 12 meses (%s)', 'alquipress'), $current_year)); ?></dd>
+                            </div>
+                            <div class="ap-reports-filter-row">
+                                <dt><?php esc_html_e('Tipo de propiedad', 'alquipress'); ?></dt>
+                                <dd><?php esc_html_e('Todas', 'alquipress'); ?></dd>
+                            </div>
+                        </dl>
                     </div>
                 </div>
             </div>
 
-            <!-- Tabs de Informes -->
-            <div class="reports-tabs">
-                <button class="tab-button active" data-tab="revenue">💰 Ingresos</button>
-                <button class="tab-button" data-tab="occupancy">📊 Ocupación</button>
-                <button class="tab-button" data-tab="clients">👥 Clientes</button>
-                <button class="tab-button" data-tab="properties">🏠 Propiedades</button>
+            <!-- Tabs de informes detallados -->
+            <div class="ap-reports-tabs-wrap">
+                <div class="reports-tabs">
+                    <button class="tab-button active" data-tab="revenue"><?php esc_html_e('Ingresos', 'alquipress'); ?></button>
+                    <button class="tab-button" data-tab="occupancy"><?php esc_html_e('Ocupación', 'alquipress'); ?></button>
+                    <button class="tab-button" data-tab="clients"><?php esc_html_e('Clientes', 'alquipress'); ?></button>
+                    <button class="tab-button" data-tab="properties"><?php esc_html_e('Propiedades', 'alquipress'); ?></button>
+                </div>
+
+                <div class="reports-content">
+                    <div id="tab-revenue" class="tab-content active">
+                        <div class="report-section">
+                            <h2><?php esc_html_e('Ingresos Mensuales', 'alquipress'); ?></h2>
+                            <canvas id="chart-revenue-monthly-tab" style="max-height: 400px;"></canvas>
+                        </div>
+                        <div class="report-section">
+                            <h2><?php esc_html_e('Ingresos por Temporada', 'alquipress'); ?></h2>
+                            <canvas id="chart-revenue-season" style="max-height: 350px;"></canvas>
+                        </div>
+                    </div>
+                    <div id="tab-occupancy" class="tab-content">
+                        <div class="report-section">
+                            <h2><?php esc_html_e('Tasa de Ocupación Mensual', 'alquipress'); ?></h2>
+                            <canvas id="chart-occupancy-monthly" style="max-height: 400px;"></canvas>
+                        </div>
+                        <div class="report-section">
+                            <h2><?php esc_html_e('Noches Reservadas vs Disponibles', 'alquipress'); ?></h2>
+                            <canvas id="chart-occupancy-comparison" style="max-height: 350px;"></canvas>
+                        </div>
+                    </div>
+                    <div id="tab-clients" class="tab-content">
+                        <div class="report-section">
+                            <h2><?php esc_html_e('Top 5 Clientes por Gasto Total', 'alquipress'); ?></h2>
+                            <table class="wp-list-table widefat fixed striped" id="table-top-clients">
+                                <thead>
+                                    <tr>
+                                        <th><?php esc_html_e('Posición', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Cliente', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Email', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Total Reservas', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Gasto Total', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Última Reserva', 'alquipress'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody><tr><td colspan="6"><?php esc_html_e('Cargando...', 'alquipress'); ?></td></tr></tbody>
+                            </table>
+                        </div>
+                        <div class="report-section">
+                            <h2><?php esc_html_e('Distribución por Valoración', 'alquipress'); ?></h2>
+                            <canvas id="chart-clients-rating" style="max-height: 300px;"></canvas>
+                        </div>
+                    </div>
+                    <div id="tab-properties" class="tab-content">
+                        <div class="report-section">
+                            <h2><?php esc_html_e('Top 5 Propiedades Más Rentables', 'alquipress'); ?></h2>
+                            <table class="wp-list-table widefat fixed striped" id="table-top-properties">
+                                <thead>
+                                    <tr>
+                                        <th><?php esc_html_e('Posición', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Propiedad', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Total Reservas', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Noches', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Ingresos', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Ocupación', 'alquipress'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody><tr><td colspan="6"><?php esc_html_e('Cargando...', 'alquipress'); ?></td></tr></tbody>
+                            </table>
+                        </div>
+                        <div class="report-section">
+                            <h2><?php esc_html_e('Comparativa por Propiedad', 'alquipress'); ?></h2>
+                            <canvas id="chart-properties-comparison" style="max-height: 400px;"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Contenido de Tabs -->
-            <div class="reports-content">
-
-                <!-- Tab: Ingresos -->
-                <div id="tab-revenue" class="tab-content active">
-                    <div class="report-section">
-                        <h2>Ingresos Mensuales</h2>
-                        <canvas id="chart-revenue-monthly" style="max-height: 400px;"></canvas>
-                    </div>
-
-                    <div class="report-section">
-                        <h2>Ingresos por Temporada</h2>
-                        <canvas id="chart-revenue-season" style="max-height: 350px;"></canvas>
-                    </div>
-                </div>
-
-                <!-- Tab: Ocupación -->
-                <div id="tab-occupancy" class="tab-content">
-                    <div class="report-section">
-                        <h2>Tasa de Ocupación Mensual</h2>
-                        <canvas id="chart-occupancy-monthly" style="max-height: 400px;"></canvas>
-                    </div>
-
-                    <div class="report-section">
-                        <h2>Noches Reservadas vs Disponibles</h2>
-                        <canvas id="chart-occupancy-comparison" style="max-height: 350px;"></canvas>
-                    </div>
-                </div>
-
-                <!-- Tab: Clientes -->
-                <div id="tab-clients" class="tab-content">
-                    <div class="report-section">
-                        <h2>Top 5 Clientes por Gasto Total</h2>
-                        <table class="wp-list-table widefat fixed striped" id="table-top-clients">
-                            <thead>
-                                <tr>
-                                    <th>Posición</th>
-                                    <th>Cliente</th>
-                                    <th>Email</th>
-                                    <th>Total Reservas</th>
-                                    <th>Gasto Total</th>
-                                    <th>Última Reserva</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="6" style="text-align: center;">Cargando datos...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="report-section">
-                        <h2>Distribución de Clientes por Valoración</h2>
-                        <canvas id="chart-clients-rating" style="max-height: 300px;"></canvas>
-                    </div>
-                </div>
-
-                <!-- Tab: Propiedades -->
-                <div id="tab-properties" class="tab-content">
-                    <div class="report-section">
-                        <h2>Top 5 Propiedades Más Rentables</h2>
-                        <table class="wp-list-table widefat fixed striped" id="table-top-properties">
-                            <thead>
-                                <tr>
-                                    <th>Posición</th>
-                                    <th>Propiedad</th>
-                                    <th>Total Reservas</th>
-                                    <th>Noches Reservadas</th>
-                                    <th>Ingresos Totales</th>
-                                    <th>Tasa Ocupación</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="6" style="text-align: center;">Cargando datos...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="report-section">
-                        <h2>Comparativa de Ingresos por Propiedad</h2>
-                        <canvas id="chart-properties-comparison" style="max-height: 400px;"></canvas>
-                    </div>
-                </div>
-
+                </main>
             </div>
         </div>
         <?php
@@ -208,11 +249,50 @@ class Alquipress_Advanced_Reports
         $report_type = isset($_POST['report_type']) ? sanitize_text_field($_POST['report_type']) : '';
         $year = isset($_POST['year']) ? intval($_POST['year']) : date('Y');
 
+        // Whitelist de tipos de reporte válidos
+        $valid_report_types = [
+            'overview',
+            'overview_yoy',
+            'revenue_monthly',
+            'revenue_season',
+            'occupancy_monthly',
+            'occupancy_comparison',
+            'top_clients',
+            'clients_rating',
+            'top_properties',
+            'properties_comparison'
+        ];
+
+        // Validar tipo de reporte
+        if (empty($report_type) || !in_array($report_type, $valid_report_types, true)) {
+            wp_send_json_error([
+                'message' => __('Tipo de reporte no válido', 'alquipress')
+            ]);
+            return;
+        }
+
+        // Validar año (rango razonable: 2020-2100)
+        if ($year < 2020 || $year > 2100) {
+            wp_send_json_error([
+                'message' => __('Año fuera del rango válido', 'alquipress')
+            ]);
+            return;
+        }
+
         $data = [];
 
         switch ($report_type) {
             case 'overview':
-                $data = $this->get_overview_stats($year);
+                $raw = $this->get_overview_stats($year);
+                $data = [
+                    'total_revenue' => wc_price($raw['total_revenue']),
+                    'total_bookings' => $raw['total_bookings'],
+                    'avg_booking' => wc_price($raw['avg_booking']),
+                    'occupancy_rate' => number_format($raw['occupancy_rate'], 1) . '%'
+                ];
+                break;
+            case 'overview_yoy':
+                $data = $this->get_overview_with_yoy($year);
                 break;
             case 'revenue_monthly':
                 $data = $this->get_revenue_monthly($year);
@@ -248,28 +328,54 @@ class Alquipress_Advanced_Reports
     // ========== Métodos de Análisis de Datos ==========
 
     /**
-     * Estadísticas generales del año
+     * Estadísticas generales del año (Optimizado con SQL directo)
      */
     private function get_overview_stats($year)
     {
-        $orders = wc_get_orders([
-            'limit' => -1,
-            'status' => ['completed', 'in-progress', 'checkout-review'],
-            'date_created' => $year . '-01-01...' . $year . '-12-31',
-        ]);
+        global $wpdb;
 
-        $total_revenue = 0;
-        $total_bookings = count($orders);
+        $start_date = $year . '-01-01 00:00:00';
+        $end_date = $year . '-12-31 23:59:59';
+        $status_string = "'wc-completed', 'wc-in-progress', 'wc-checkout-review'";
+
+        // 1. Ingresos Totales (Usando la lógica de COALESCE para soportar pagos escalonados)
+        $sql_revenue = "
+            SELECT SUM(COALESCE(CAST(pm_real.meta_value AS DECIMAL(12,2)), CAST(pm_wc.meta_value AS DECIMAL(12,2))))
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm_wc ON p.ID = pm_wc.post_id AND pm_wc.meta_key = '_order_total'
+            LEFT JOIN {$wpdb->postmeta} pm_real ON p.ID = pm_real.post_id AND pm_real.meta_key = '_apm_booking_total'
+            WHERE p.post_type = 'shop_order'
+            AND p.post_status IN ($status_string)
+            AND p.post_date >= %s AND p.post_date <= %s
+        ";
+        $total_revenue = (float) $wpdb->get_var($wpdb->prepare($sql_revenue, $start_date, $end_date));
+
+        // 2. Total Reservas
+        $sql_count = "
+            SELECT COUNT(ID) FROM {$wpdb->posts}
+            WHERE post_type = 'shop_order'
+            AND post_status IN ($status_string)
+            AND post_date >= %s AND post_date <= %s
+        ";
+        $total_bookings = (int) $wpdb->get_var($wpdb->prepare($sql_count, $start_date, $end_date));
+
+        // 3. Total Noches (Este es más complejo de optimizar puramente en SQL sin lógica de negocio,
+        // pero podemos optimizar la carga de datos para solo traer fechas)
+        $sql_nights = "
+            SELECT pm1.meta_value as checkin, pm2.meta_value as checkout
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id AND pm1.meta_key = '_booking_checkin_date'
+            INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id AND pm2.meta_key = '_booking_checkout_date'
+            WHERE p.post_type = 'shop_order'
+            AND p.post_status IN ($status_string)
+            AND p.post_date >= %s AND p.post_date <= %s
+        ";
+        $nights_data = $wpdb->get_results($wpdb->prepare($sql_nights, $start_date, $end_date));
+        
         $total_nights = 0;
-
-        foreach ($orders as $order) {
-            $total_revenue += $order->get_total();
-
-            $checkin = $order->get_meta('_booking_checkin_date');
-            $checkout = $order->get_meta('_booking_checkout_date');
-
-            if ($checkin && $checkout) {
-                $diff = strtotime($checkout) - strtotime($checkin);
+        foreach ($nights_data as $row) {
+            $diff = strtotime($row->checkout) - strtotime($row->checkin);
+            if ($diff > 0) {
                 $total_nights += floor($diff / (60 * 60 * 24));
             }
         }
@@ -278,34 +384,85 @@ class Alquipress_Advanced_Reports
 
         // Calcular tasa de ocupación (simplificado)
         $total_properties = wp_count_posts('product')->publish;
-        $days_in_year = ($year == date('Y')) ? date('z') : 365;
+        $days_in_year = ($year == date('Y')) ? (int)date('z') + 1 : (int)date('z', mktime(0,0,0,12,31,$year)) + 1;
         $available_nights = $total_properties * $days_in_year;
         $occupancy_rate = $available_nights > 0 ? ($total_nights / $available_nights) * 100 : 0;
 
         return [
-            'total_revenue' => wc_price($total_revenue),
+            'total_revenue' => $total_revenue,
             'total_bookings' => $total_bookings,
-            'avg_booking' => wc_price($avg_booking),
-            'occupancy_rate' => number_format($occupancy_rate, 1) . '%'
+            'avg_booking' => $avg_booking,
+            'occupancy_rate' => $occupancy_rate,
+            'total_nights' => $total_nights,
+            'days_in_year' => $days_in_year,
         ];
     }
 
     /**
-     * Ingresos mensuales
+     * Overview con cambios YoY para el dashboard Pencil
+     */
+    private function get_overview_with_yoy($year)
+    {
+        $curr = $this->get_overview_stats($year);
+        $prev = $this->get_overview_stats($year - 1);
+
+        $rev_change = $prev['total_revenue'] > 0
+            ? round((($curr['total_revenue'] - $prev['total_revenue']) / $prev['total_revenue']) * 100, 1)
+            : 0;
+        $book_change = $prev['total_bookings'] > 0
+            ? round((($curr['total_bookings'] - $prev['total_bookings']) / $prev['total_bookings']) * 100, 1)
+            : ($curr['total_bookings'] > 0 ? 100 : 0);
+        $occ_change = $prev['occupancy_rate'] > 0
+            ? round($curr['occupancy_rate'] - $prev['occupancy_rate'], 1)
+            : 0;
+        $avg_daily = $curr['total_nights'] > 0 ? $curr['total_revenue'] / $curr['total_nights'] : 0;
+        $avg_daily_prev = $prev['total_nights'] > 0 ? $prev['total_revenue'] / $prev['total_nights'] : 0;
+        $adr_change = $avg_daily_prev > 0 ? round((($avg_daily - $avg_daily_prev) / $avg_daily_prev) * 100, 1) : 0;
+
+        return [
+            'total_revenue' => wc_price($curr['total_revenue']),
+            'total_revenue_raw' => $curr['total_revenue'],
+            'revenue_change' => $rev_change,
+            'total_bookings' => $curr['total_bookings'],
+            'bookings_change' => $book_change,
+            'occupancy_rate' => number_format($curr['occupancy_rate'], 1) . '%',
+            'occupancy_change' => $occ_change,
+            'avg_daily_rate' => wc_price($avg_daily),
+            'avg_daily_rate_change' => $adr_change,
+            'avg_booking' => wc_price($curr['avg_booking']),
+        ];
+    }
+
+    /**
+     * Ingresos mensuales (Optimizado con SQL directo)
      */
     private function get_revenue_monthly($year)
     {
+        global $wpdb;
         $monthly_data = array_fill(1, 12, 0);
 
-        $orders = wc_get_orders([
-            'limit' => -1,
-            'status' => ['completed', 'in-progress', 'checkout-review'],
-            'date_created' => $year . '-01-01...' . $year . '-12-31',
-        ]);
+        $start_date = $year . '-01-01 00:00:00';
+        $end_date = $year . '-12-31 23:59:59';
+        $status_string = "'wc-completed', 'wc-in-progress', 'wc-checkout-review'";
 
-        foreach ($orders as $order) {
-            $month = intval($order->get_date_created()->format('n'));
-            $monthly_data[$month] += $order->get_total();
+        // Query agrupada por mes
+        $sql = "
+            SELECT 
+                MONTH(p.post_date) as month,
+                SUM(COALESCE(CAST(pm_real.meta_value AS DECIMAL(12,2)), CAST(pm_wc.meta_value AS DECIMAL(12,2)))) as total
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm_wc ON p.ID = pm_wc.post_id AND pm_wc.meta_key = '_order_total'
+            LEFT JOIN {$wpdb->postmeta} pm_real ON p.ID = pm_real.post_id AND pm_real.meta_key = '_apm_booking_total'
+            WHERE p.post_type = 'shop_order'
+            AND p.post_status IN ($status_string)
+            AND p.post_date >= %s AND p.post_date <= %s
+            GROUP BY month
+        ";
+
+        $results = $wpdb->get_results($wpdb->prepare($sql, $start_date, $end_date));
+
+        foreach ($results as $row) {
+            $monthly_data[intval($row->month)] = (float) $row->total;
         }
 
         return [
@@ -315,34 +472,23 @@ class Alquipress_Advanced_Reports
     }
 
     /**
-     * Ingresos por temporada
+     * Ingresos por temporada (Optimizado)
      */
     private function get_revenue_by_season($year)
     {
+        $monthly_data = $this->get_revenue_monthly($year); // Reutilizamos la query optimizada mensual
+        $values = $monthly_data['data']; // Array indexado 0-11 (Ene-Dic)
+
+        // Mapeo de índices (0 = Enero)
+        // Baja: Ene(0), Feb(1), Nov(10), Dic(11)
+        // Media: Mar(2), Abr(3), May(4), Oct(9)
+        // Alta: Jun(5), Jul(6), Ago(7), Sep(8)
+
         $seasons = [
-            'Temporada Baja' => 0,      // Ene, Feb, Nov, Dic
-            'Temporada Media' => 0,     // Mar, Abr, May, Oct
-            'Temporada Alta' => 0,      // Jun, Jul, Ago, Sep
+            'Temporada Baja' => $values[0] + $values[1] + $values[10] + $values[11],
+            'Temporada Media' => $values[2] + $values[3] + $values[4] + $values[9],
+            'Temporada Alta' => $values[5] + $values[6] + $values[7] + $values[8],
         ];
-
-        $orders = wc_get_orders([
-            'limit' => -1,
-            'status' => ['completed', 'in-progress', 'checkout-review'],
-            'date_created' => $year . '-01-01...' . $year . '-12-31',
-        ]);
-
-        foreach ($orders as $order) {
-            $month = intval($order->get_date_created()->format('n'));
-            $total = $order->get_total();
-
-            if (in_array($month, [1, 2, 11, 12])) {
-                $seasons['Temporada Baja'] += $total;
-            } elseif (in_array($month, [3, 4, 5, 10])) {
-                $seasons['Temporada Media'] += $total;
-            } else {
-                $seasons['Temporada Alta'] += $total;
-            }
-        }
 
         return [
             'labels' => array_keys($seasons),
@@ -605,16 +751,12 @@ class Alquipress_Advanced_Reports
         ];
     }
 
-    /**
-     * Cargar assets
-     */
-    public function enqueue_assets($hook)
+    public function enqueue_section_assets($page)
     {
-        if ($hook !== 'alquipress_page_alquipress-reports') {
+        if ($page !== 'alquipress-reports') {
             return;
         }
 
-        // Chart.js
         wp_enqueue_script(
             'chartjs',
             'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
@@ -623,7 +765,6 @@ class Alquipress_Advanced_Reports
             true
         );
 
-        // Custom CSS
         wp_enqueue_style(
             'alquipress-advanced-reports',
             ALQUIPRESS_URL . 'includes/modules/advanced-reports/assets/advanced-reports.css',
@@ -631,7 +772,6 @@ class Alquipress_Advanced_Reports
             ALQUIPRESS_VERSION
         );
 
-        // Custom JS
         wp_enqueue_script(
             'alquipress-advanced-reports',
             ALQUIPRESS_URL . 'includes/modules/advanced-reports/assets/advanced-reports.js',
@@ -643,7 +783,11 @@ class Alquipress_Advanced_Reports
         wp_localize_script('alquipress-advanced-reports', 'alquipressReports', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('alquipress_reports'),
-            'currentYear' => date('Y')
+            'currentYear' => date('Y'),
+            'i18n' => [
+                'vsLastYear' => __('vs año ant.', 'alquipress'),
+                'vsAvg' => __('vs media', 'alquipress'),
+            ]
         ]);
     }
 }

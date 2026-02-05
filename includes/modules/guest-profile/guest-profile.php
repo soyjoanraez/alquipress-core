@@ -84,108 +84,94 @@ class Alquipress_Guest_Profile
         // Obtener historial de reservas
         $bookings = $this->get_user_bookings($user_id);
 
+        require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
         ?>
-        <div class="wrap alquipress-guest-profile-wrap">
-            <div class="profile-header">
-                <a href="<?php echo admin_url('users.php'); ?>" class="back-link">← Volver a Usuarios</a>
-                <a href="<?php echo get_edit_user_link($user_id); ?>" class="button button-primary">✏️ Editar Usuario</a>
-            </div>
+        <div class="wrap alquipress-guest-profile-wrap ap-has-sidebar">
+            <div class="ap-owners-layout">
+                <?php alquipress_render_sidebar('clients'); ?>
+                <main class="ap-owners-main">
+                    <header class="ap-clients-header">
+                        <div class="ap-clients-header-left">
+                            <h1 class="ap-clients-title"><?php echo esc_html($user->display_name); ?></h1>
+                            <p class="ap-clients-subtitle"><?php esc_html_e('Perfil del cliente', 'alquipress'); ?></p>
+                        </div>
+                        <div class="ap-clients-header-right">
+                            <a href="<?php echo admin_url('admin.php?page=alquipress-clients'); ?>" class="ap-clients-btn"><?php esc_html_e('Volver a Clientes', 'alquipress'); ?></a>
+                            <a href="<?php echo get_edit_user_link($user_id); ?>" class="ap-clients-btn ap-clients-btn-primary"><?php esc_html_e('Editar cliente', 'alquipress'); ?></a>
+                        </div>
+                    </header>
 
-            <!-- Header Card -->
-            <div class="profile-card header-card">
-                <div class="profile-avatar">
-                    <?php echo get_avatar($user_id, 100, '', '', ['class' => 'avatar-circle']); ?>
-                </div>
-
-                <div class="profile-info">
-                    <h1 class="profile-name"><?php echo esc_html($user->display_name); ?></h1>
-
-                    <div class="profile-meta">
-                        <span class="meta-item">
-                            <span class="dashicons dashicons-email"></span>
-                            <?php echo esc_html($user->user_email); ?>
-                        </span>
-                        <?php if ($phone): ?>
-                            <span class="meta-item">
-                                <span class="dashicons dashicons-phone"></span>
-                                <?php echo esc_html($phone); ?>
-                            </span>
-                        <?php endif; ?>
-                        <?php if ($nationality): ?>
-                            <span class="meta-item">
-                                <span class="dashicons dashicons-admin-site"></span>
-                                <?php echo esc_html($nationality); ?>
-                            </span>
-                        <?php endif; ?>
+                    <!-- Profile hero card -->
+                    <div class="ap-guest-profile-hero">
+                        <div class="ap-guest-profile-avatar">
+                            <?php echo get_avatar($user_id, 80, '', '', ['class' => 'ap-guest-avatar-circle']); ?>
+                        </div>
+                        <div class="ap-guest-profile-info">
+                            <div class="ap-guest-profile-meta">
+                                <span class="ap-guest-meta-item">
+                                    <span class="dashicons dashicons-email"></span>
+                                    <?php echo esc_html($user->user_email); ?>
+                                </span>
+                                <?php if ($phone): ?>
+                                    <span class="ap-guest-meta-item">
+                                        <span class="dashicons dashicons-phone"></span>
+                                        <?php echo esc_html($phone); ?>
+                                    </span>
+                                <?php endif; ?>
+                                <?php if ($nationality): ?>
+                                    <span class="ap-guest-meta-item">
+                                        <span class="dashicons dashicons-admin-site"></span>
+                                        <?php echo esc_html($nationality); ?>
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="ap-guest-profile-rating">
+                                <?php $this->render_stars($rating); ?>
+                                <span class="ap-guest-rating-text"><?php echo number_format_i18n($rating, 1); ?> / 5.0</span>
+                            </div>
+                        </div>
+                        <div class="ap-guest-profile-badges">
+                            <?php
+                            $badge_config = [
+                                'vip' => ['label' => 'VIP', 'class' => 'ap-guest-badge-vip'],
+                                'blacklist' => ['label' => 'Lista Negra', 'class' => 'ap-guest-badge-blacklist'],
+                                'standard' => ['label' => 'Estándar', 'class' => 'ap-guest-badge-standard']
+                            ];
+                            $badge = $badge_config[$status] ?? $badge_config['standard'];
+                            ?>
+                            <span class="ap-guest-status-badge <?php echo esc_attr($badge['class']); ?>"><?php echo esc_html($badge['label']); ?></span>
+                        </div>
                     </div>
 
-                    <div class="profile-rating">
-                        <?php $this->render_stars($rating); ?>
-                        <span class="rating-text"><?php echo number_format($rating, 1); ?> / 5.0</span>
+                    <!-- Stats Grid -->
+                    <div class="ap-guest-stats-grid">
+                        <div class="ap-clients-metric-card">
+                            <span class="ap-clients-metric-label"><?php esc_html_e('Email', 'alquipress'); ?></span>
+                            <span class="ap-clients-metric-value ap-guest-stat-value"><?php echo esc_html($user->user_email); ?></span>
+                        </div>
+                        <div class="ap-clients-metric-card">
+                            <span class="ap-clients-metric-label"><?php esc_html_e('Teléfono', 'alquipress'); ?></span>
+                            <span class="ap-clients-metric-value ap-guest-stat-value"><?php echo $phone ? esc_html($phone) : '—'; ?></span>
+                        </div>
+                        <div class="ap-clients-metric-card">
+                            <span class="ap-clients-metric-label"><?php esc_html_e('Nacionalidad', 'alquipress'); ?></span>
+                            <span class="ap-clients-metric-value ap-guest-stat-value"><?php echo $nationality ? esc_html($nationality) : '—'; ?></span>
+                        </div>
+                        <div class="ap-clients-metric-card">
+                            <span class="ap-clients-metric-label"><?php esc_html_e('Gasto total', 'alquipress'); ?></span>
+                            <span class="ap-clients-metric-value"><?php echo function_exists('wc_price') ? wc_price($total_spent) : number_format_i18n($total_spent, 2) . ' €'; ?></span>
+                        </div>
                     </div>
-                </div>
-
-                <div class="profile-badges">
-                    <?php
-                    $badge_config = [
-                        'vip' => ['label' => 'VIP', 'color' => '#f39c12', 'icon' => '⭐'],
-                        'blacklist' => ['label' => 'Lista Negra', 'color' => '#e74c3c', 'icon' => '🚫'],
-                        'standard' => ['label' => 'Estándar', 'color' => '#95a5a6', 'icon' => '👤']
-                    ];
-
-                    $badge = $badge_config[$status] ?? $badge_config['standard'];
-                    ?>
-                    <div class="status-badge" style="background: <?php echo $badge['color']; ?>">
-                        <span class="badge-icon"><?php echo $badge['icon']; ?></span>
-                        <span class="badge-label"><?php echo $badge['label']; ?></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">📧</div>
-                    <div class="stat-content">
-                        <div class="stat-label">Email</div>
-                        <div class="stat-value"><?php echo esc_html($user->user_email); ?></div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">📱</div>
-                    <div class="stat-content">
-                        <div class="stat-label">Teléfono</div>
-                        <div class="stat-value"><?php echo $phone ? esc_html($phone) : '-'; ?></div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">🌍</div>
-                    <div class="stat-content">
-                        <div class="stat-label">Nacionalidad</div>
-                        <div class="stat-value"><?php echo $nationality ? esc_html($nationality) : '-'; ?></div>
-                    </div>
-                </div>
-
-                <div class="stat-card highlight">
-                    <div class="stat-icon">💰</div>
-                    <div class="stat-content">
-                        <div class="stat-label">Gasto Total</div>
-                        <div class="stat-value"><?php echo wc_price($total_spent); ?></div>
-                    </div>
-                </div>
-            </div>
 
             <!-- Preferencias -->
             <?php if (!empty($preferences)): ?>
-                <div class="profile-card">
-                    <h2 class="card-title">
+                <div class="ap-guest-profile-card">
+                    <h2 class="ap-guest-card-title">
                         <span class="dashicons dashicons-admin-generic"></span>
-                        Preferencias del Huésped
+                        <?php esc_html_e('Preferencias del huésped', 'alquipress'); ?>
                     </h2>
 
-                    <div class="preferences-grid">
+                    <div class="ap-guest-preferences-grid">
                         <?php
                         $pref_icons = [
                             'mascotas' => ['icon' => '🐾', 'label' => 'Admite Mascotas'],
@@ -200,47 +186,148 @@ class Alquipress_Guest_Profile
                         foreach ($preferences as $pref) {
                             $config = $pref_icons[$pref] ?? ['icon' => '✓', 'label' => ucfirst($pref)];
                             ?>
-                            <div class="preference-item">
-                                <span class="pref-icon"><?php echo $config['icon']; ?></span>
-                                <span class="pref-label"><?php echo esc_html($config['label']); ?></span>
+                            <div class="ap-guest-preference-item">
+                                <span class="ap-guest-pref-icon"><?php echo $config['icon']; ?></span>
+                                <span class="ap-guest-pref-label"><?php echo esc_html($config['label']); ?></span>
                             </div>
                         <?php } ?>
                     </div>
                 </div>
             <?php endif; ?>
 
+            <!-- Documentación -->
+            <div class="ap-guest-profile-card">
+                <h2 class="ap-guest-card-title">
+                    <span class="dashicons dashicons-media-document"></span>
+                    <?php esc_html_e('Documentación (DNI/Pasaporte)', 'alquipress'); ?>
+                    <?php if (!empty($documents)): ?>
+                        <span class="ap-guest-doc-count-badge"><?php echo count($documents); ?></span>
+                    <?php endif; ?>
+                </h2>
+
+                <?php if (!empty($documents)): ?>
+                    <div class="ap-guest-documents-grid">
+                        <?php
+                        $tipo_labels = [
+                            'dni' => 'DNI',
+                            'pasaporte' => 'Pasaporte',
+                            'nie' => 'NIE',
+                            'otro' => 'Otro'
+                        ];
+                        $today = strtotime('today');
+                        $expiring_threshold = strtotime('+30 days');
+
+                        foreach ($documents as $doc):
+                            $tipo = isset($doc['tipo_doc']) ? $doc['tipo_doc'] : '';
+                            $numero = isset($doc['numero_doc']) ? $doc['numero_doc'] : '';
+                            $fecha_vencimiento = isset($doc['fecha_vencimiento']) ? $doc['fecha_vencimiento'] : '';
+                            $nombre = isset($doc['nombre_doc']) ? $doc['nombre_doc'] : '';
+                            $archivo = isset($doc['archivo_doc']) ? $doc['archivo_doc'] : null;
+                            
+                            $is_expired = false;
+                            $is_expiring_soon = false;
+                            $status_class = 'doc-status-ok';
+                            $status_text = '';
+                            
+                            if ($fecha_vencimiento) {
+                                $expiry_timestamp = strtotime($fecha_vencimiento);
+                                if ($expiry_timestamp < $today) {
+                                    $is_expired = true;
+                                    $status_class = 'doc-status-expired';
+                                    $status_text = 'Vencido';
+                                } elseif ($expiry_timestamp <= $expiring_threshold) {
+                                    $is_expiring_soon = true;
+                                    $status_class = 'doc-status-expiring';
+                                    $status_text = 'Próximo a vencer';
+                                } else {
+                                    $status_text = 'Vigente';
+                                }
+                            }
+                            
+                            $tipo_label = !empty($tipo) ? ($tipo_labels[$tipo] ?? ucfirst($tipo)) : ($nombre ?: 'Documento');
+                            ?>
+                            <div class="ap-guest-document-item <?php echo esc_attr($status_class); ?>">
+                                <div class="ap-guest-doc-header">
+                                    <span class="ap-guest-doc-type-icon">📄</span>
+                                    <div class="ap-guest-doc-info">
+                                        <div class="ap-guest-doc-type"><?php echo esc_html($tipo_label); ?></div>
+                                        <?php if ($numero): ?>
+                                            <div class="ap-guest-doc-number"><?php echo esc_html($numero); ?></div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php if ($status_text): ?>
+                                        <span class="ap-guest-doc-status-badge <?php echo esc_attr($status_class); ?>">
+                                            <?php echo esc_html($status_text); ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <?php if ($fecha_vencimiento): ?>
+                                    <div class="ap-guest-doc-expiry">
+                                        <span class="dashicons dashicons-calendar-alt"></span>
+                                        <span><?php esc_html_e('Vence:', 'alquipress'); ?> <?php echo date_i18n('d/m/Y', strtotime($fecha_vencimiento)); ?></span>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <?php if ($nombre && $nombre !== $tipo_label): ?>
+                                    <div class="ap-guest-doc-description"><?php echo esc_html($nombre); ?></div>
+                                <?php endif; ?>
+                                
+                                <?php if ($archivo): ?>
+                                    <?php
+                                    $file_url = is_array($archivo) && isset($archivo['url']) ? $archivo['url'] : (is_numeric($archivo) ? wp_get_attachment_url($archivo) : $archivo);
+                                    ?>
+                                    <a href="<?php echo esc_url($file_url); ?>" target="_blank" class="ap-guest-doc-view-link">
+                                        <span class="dashicons dashicons-external"></span>
+                                        <?php esc_html_e('Ver documento', 'alquipress'); ?>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <p class="ap-guest-empty-text"><?php esc_html_e('No hay documentos registrados para este cliente.', 'alquipress'); ?></p>
+                    <p class="ap-guest-empty-actions">
+                        <a href="<?php echo get_edit_user_link($user_id); ?>" class="ap-clients-btn ap-clients-btn-primary">
+                            <?php esc_html_e('Añadir documentos', 'alquipress'); ?>
+                        </a>
+                    </p>
+                <?php endif; ?>
+            </div>
+
             <!-- Notas Privadas -->
             <?php if ($internal_notes): ?>
-                <div class="profile-card notes-card">
-                    <h2 class="card-title">
+                <div class="ap-guest-profile-card ap-guest-notes-card">
+                    <h2 class="ap-guest-card-title">
                         <span class="dashicons dashicons-lock"></span>
-                        Notas Privadas (Solo Staff)
+                        <?php esc_html_e('Notas privadas (solo staff)', 'alquipress'); ?>
                     </h2>
-                    <div class="notes-content">
+                    <div class="ap-guest-notes-content">
                         <?php echo wpautop($internal_notes); ?>
                     </div>
                 </div>
             <?php endif; ?>
 
             <!-- Historial de Reservas -->
-            <div class="profile-card">
-                <h2 class="card-title">
+            <div class="ap-guest-profile-card">
+                <h2 class="ap-guest-card-title">
                     <span class="dashicons dashicons-calendar-alt"></span>
-                    Historial de Reservas (<?php echo count($bookings); ?>)
+                    <?php echo esc_html(sprintf(__('Historial de reservas (%d)', 'alquipress'), count($bookings))); ?>
                 </h2>
 
                 <?php if (!empty($bookings)): ?>
-                    <table class="wp-list-table widefat fixed striped bookings-table">
+                    <div class="ap-clients-table-wrap">
+                    <table class="ap-clients-table ap-guest-bookings-table">
                         <thead>
                             <tr>
-                                <th>Pedido</th>
-                                <th>Propiedad</th>
-                                <th>Check-in</th>
-                                <th>Check-out</th>
-                                <th>Noches</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
+                                <th><?php esc_html_e('Pedido', 'alquipress'); ?></th>
+                                <th><?php esc_html_e('Propiedad', 'alquipress'); ?></th>
+                                <th><?php esc_html_e('Check-in', 'alquipress'); ?></th>
+                                <th><?php esc_html_e('Check-out', 'alquipress'); ?></th>
+                                <th><?php esc_html_e('Noches', 'alquipress'); ?></th>
+                                <th><?php esc_html_e('Total', 'alquipress'); ?></th>
+                                <th><?php esc_html_e('Estado', 'alquipress'); ?></th>
+                                <th><?php esc_html_e('Acciones', 'alquipress'); ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -273,18 +360,18 @@ class Alquipress_Guest_Profile
                                     <td><strong><?php echo wc_price($order->get_total()); ?></strong></td>
                                     <td><?php echo esc_html($status_label); ?></td>
                                     <td>
-                                        <a href="<?php echo get_edit_post_link($order_id); ?>" class="button button-small"
-                                            target="_blank">Ver</a>
+                                        <a href="<?php echo get_edit_post_link($order_id); ?>" class="ap-clients-link" target="_blank"><?php esc_html_e('Ver', 'alquipress'); ?></a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                    </div>
                 <?php else: ?>
-                    <p style="text-align: center; color: #666; padding: 40px 0;">
-                        Este huésped aún no tiene reservas registradas.
-                    </p>
+                    <p class="ap-guest-empty-text ap-guest-empty-reservas"><?php esc_html_e('Este cliente aún no tiene reservas registradas.', 'alquipress'); ?></p>
                 <?php endif; ?>
+            </div>
+                </main>
             </div>
         </div>
         <?php
@@ -375,9 +462,23 @@ class Alquipress_Guest_Profile
         }
 
         wp_enqueue_style(
+            'alquipress-admin-layout',
+            ALQUIPRESS_URL . 'includes/admin/assets/alquipress-admin-layout.css',
+            [],
+            ALQUIPRESS_VERSION
+        );
+
+        $critical_layout = '#wpcontent,#wpbody-content{background:#f8fafb!important;}'
+            . '.wrap.ap-has-sidebar{min-height:80vh!important;width:100%!important;position:relative!important;z-index:999998!important;max-width:none!important;margin-top:12px!important;padding:0!important;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-layout{display:flex!important;min-height:calc(100vh - 140px)!important;background:#f8fafb!important;border:1px solid #e8eef3!important;border-radius:16px!important;overflow:hidden!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-sidebar{width:256px!important;min-width:256px!important;background:#ffffff!important;border-right:1px solid #e8eef3!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-main{flex:1!important;min-width:0!important;padding:32px!important;background:#f8fafb!important;}';
+        wp_add_inline_style('alquipress-admin-layout', $critical_layout);
+
+        wp_enqueue_style(
             'alquipress-guest-profile',
             ALQUIPRESS_URL . 'includes/modules/guest-profile/assets/guest-profile.css',
-            [],
+            ['alquipress-admin-layout'],
             ALQUIPRESS_VERSION
         );
     }

@@ -43,41 +43,36 @@ class Alquipress_Owner_Revenue
     }
 
     /**
-     * Calcula los ingresos totales de un propietario
+     * Calcula los ingresos totales de un propietario (Altamente Optimizado)
      */
     public function calculate_owner_revenue($owner_id, $start_date = null, $end_date = null)
     {
+        if (is_object($owner_id)) {
+            $owner_id = isset($owner_id->ID) ? $owner_id->ID : 0;
+        }
+        $owner_id = (int) $owner_id;
+
         // Obtener las propiedades del propietario
         $properties = get_field('owner_properties', $owner_id);
-
         if (empty($properties)) {
-            return [
-                'total' => 0,
-                'commission' => 0,
-                'net' => 0,
-                'count' => 0,
-                'properties' => []
-            ];
+            return ['total' => 0, 'commission' => 0, 'net' => 0, 'count' => 0, 'properties' => []];
         }
 
-        $property_ids = array_values(array_unique(array_filter(array_map('intval', (array) $properties))));
+        // ACF puede devolver IDs o objetos WP_Post; normalizar siempre a IDs.
+        $property_ids = array_values(array_unique(array_filter(array_map(function ($p) {
+            if (is_object($p) && isset($p->ID)) {
+                return (int) $p->ID;
+            }
+            return (int) $p;
+        }, (array) $properties))));
+
         if (empty($property_ids)) {
-            return [
-                'total' => 0,
-                'commission' => 0,
-                'net' => 0,
-                'count' => 0,
-                'properties' => []
-            ];
+            return ['total' => 0, 'commission' => 0, 'net' => 0, 'count' => 0, 'properties' => []];
         }
 
         $cache_key = $this->get_revenue_cache_key($owner_id, $start_date, $end_date, $property_ids);
         $cached = $this->cache_get($cache_key);
         if ($cached !== false) {
-            $this->log_cache_event('cache_hit', [
-                'owner_id' => (int) $owner_id,
-                'cache_key' => $cache_key
-            ]);
             return $cached;
         }
 
@@ -86,96 +81,62 @@ class Alquipress_Owner_Revenue
             'cache_key' => $cache_key
         ]);
 
+        global $wpdb;
+        $property_list = implode(',', $property_ids);
+        $status_string = "'wc-completed', 'wc-processing', 'wc-deposito-ok', 'wc-in-progress'";
+
+        // QUERY MAESTRA: Calcula total, conteo y desglose por propiedad en una sola pasada.
+        // Soporta pagos escalonados usando COALESCE para priorizar el total real de Alquipress.
+        $sql = "
+            SELECT 
+                pm_prod.meta_value as product_id,
+                COUNT(DISTINCT p.ID) as bookings_count,
+                SUM(COALESCE(CAST(pm_real.meta_value AS DECIMAL(12,2)), CAST(pm_wc.meta_value AS DECIMAL(12,2)))) as total_revenue
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm_wc ON p.ID = pm_wc.post_id AND pm_wc.meta_key = '_order_total'
+            INNER JOIN {$wpdb->postmeta} pm_prod ON p.ID = pm_prod.post_id AND pm_prod.meta_key = '_booking_product_id'
+            LEFT JOIN {$wpdb->postmeta} pm_real ON p.ID = pm_real.post_id AND pm_real.meta_key = '_apm_booking_total'
+            WHERE p.post_type = 'shop_order'
+            AND p.post_status IN ($status_string)
+            AND pm_prod.meta_value IN ($property_list)
+        ";
+
+        if ($start_date && $end_date) {
+            $sql .= $wpdb->prepare(" AND p.post_date >= %s AND p.post_date <= %s", $start_date . ' 00:00:00', $end_date . ' 23:59:59');
+        }
+
+        $sql .= " GROUP BY product_id";
+        
+        $results = $wpdb->get_results($sql);
+
         $total_revenue = 0;
         $total_bookings = 0;
         $property_breakdown = [];
 
-        foreach ($property_ids as $property_id) {
-            $property_breakdown[$property_id] = [
-                'name' => get_the_title($property_id),
-                'revenue' => 0,
-                'bookings' => 0
+        foreach ($results as $row) {
+            $pid = (int) $row->product_id;
+            $property_breakdown[$pid] = [
+                'name' => get_the_title($pid),
+                'revenue' => (float) $row->total_revenue,
+                'bookings' => (int) $row->bookings_count
             ];
-        }
-
-        // Buscar pedidos una sola vez para todas las propiedades
-        $args = [
-            'status' => ['completed', 'processing'],
-            'limit' => -1,
-            'type' => 'shop_order',
-            'return' => 'objects'
-        ];
-
-        if ($start_date || $end_date) {
-            $from = $start_date ? gmdate('Y-m-d H:i:s', strtotime($start_date)) : '';
-            $to = $end_date ? gmdate('Y-m-d H:i:s', strtotime($end_date . ' 23:59:59')) : '';
-            if ($from && $to) {
-                $args['date_created'] = $from . '...' . $to;
-            } elseif ($from) {
-                $args['date_created'] = '>=' . $from;
-            } elseif ($to) {
-                $args['date_created'] = '<=' . $to;
-            }
-        }
-
-        $orders = wc_get_orders($args);
-        $property_set = array_fill_keys($property_ids, true);
-
-        foreach ($orders as $order) {
-            $matched_revenue = [];
-            foreach ($order->get_items() as $item) {
-                $product = $item->get_product();
-                if (!$product) {
-                    continue;
-                }
-                $product_id = $product->get_id();
-                if (!isset($property_set[$product_id])) {
-                    continue;
-                }
-
-                $line_total = (float) $item->get_total();
-                if (!isset($matched_revenue[$product_id])) {
-                    $matched_revenue[$product_id] = 0;
-                }
-                $matched_revenue[$product_id] += $line_total;
-            }
-
-            if (empty($matched_revenue)) {
-                continue;
-            }
-
-            foreach ($matched_revenue as $property_id => $revenue) {
-                $property_breakdown[$property_id]['revenue'] += $revenue;
-                $property_breakdown[$property_id]['bookings']++;
-                $total_revenue += $revenue;
-                $total_bookings++;
-            }
+            $total_revenue += (float) $row->total_revenue;
+            $total_bookings += (int) $row->bookings_count;
         }
 
         // Aplicar comisión
         $commission_rate = get_field('owner_commission_rate', $owner_id);
-        $commission = 0;
-        $net_revenue = $total_revenue;
-
-        if ($commission_rate) {
-            $commission = ($total_revenue * $commission_rate) / 100;
-            $net_revenue = $total_revenue - $commission;
-        }
+        $commission = $commission_rate ? ($total_revenue * $commission_rate) / 100 : 0;
 
         $result = [
             'total' => $total_revenue,
             'commission' => $commission,
-            'net' => $net_revenue,
+            'net' => $total_revenue - $commission,
             'count' => $total_bookings,
             'properties' => $property_breakdown
         ];
 
         $this->cache_set($cache_key, $result, $this->get_cache_ttl());
-        $this->log_cache_event('cache_set', [
-            'owner_id' => (int) $owner_id,
-            'cache_key' => $cache_key
-        ]);
-
         return $result;
     }
 

@@ -1,150 +1,188 @@
 <?php
 /**
- * Vista de la página de ajustes de ALQUIPRESS
+ * Vista de la página de Ajustes ALQUIPRESS (diseño Pencil: Settings Dashboard)
  */
-if (!defined('ABSPATH')) exit;
-?>
-<div class="wrap" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-top: 20px;">
-    <h1 style="display: flex; align-items: center; gap: 10px;">
-        <span class="dashicons dashicons-admin-multisite" style="font-size: 2rem; width: 32px; height: 32px;"></span> 
-        <?php echo esc_html(get_admin_page_title()); ?>
-    </h1>
-    <p style="font-size: 1.1em; color: #666;">Bienvenido al centro de control de tu CRM. Activa o desactiva módulos según tus necesidades.</p>
-    
-    <hr style="margin: 20px 0;">
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-    <form method="post" action="">
-        <?php wp_nonce_field('alquipress_modules_nonce'); ?>
-        
-        <table class="wp-list-table widefat fixed striped" style="border: none; box-shadow: none;">
-            <thead>
-                <tr>
-                    <th style="width: 50px; padding: 15px;">Activo</th>
-                    <th style="padding: 15px;">Módulo</th>
-                    <th style="padding: 15px;">Descripción</th>
-                    <th style="padding: 15px; width: 120px;">Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($this->modules as $id => $module): ?>
-                    <tr>
-                        <td style="padding: 15px; vertical-align: middle;">
-                            <label class="switch">
-                                <input 
-                                    type="checkbox" 
-                                    name="modules[<?php echo esc_attr($id); ?>]" 
-                                    value="1"
-                                    <?php checked($this->active_modules[$id] ?? false); ?>
-                                >
-                                <span class="slider round"></span>
-                            </label>
-                        </td>
-                        <td style="padding: 15px; vertical-align: middle;">
-                            <strong style="font-size: 1.1em; color: #2271b1;"><?php echo esc_html($module['name']); ?></strong>
-                        </td>
-                        <td style="padding: 15px; vertical-align: middle; color: #555;">
-                            <?php echo esc_html($module['description']); ?>
-                        </td>
-                        <td style="padding: 15px; vertical-align: middle;">
-                            <?php if ($this->active_modules[$id] ?? false): ?>
-                                <span class="badge status-active" style="background: #e7f6ed; color: #208d50; padding: 4px 10px; border-radius: 12px; font-weight: 500;">
-                                    <span class="dashicons dashicons-yes-alt" style="font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span> Activo
-                                </span>
-                            <?php else: ?>
-                                <span class="badge status-inactive" style="background: #f0f0f1; color: #646970; padding: 4px 10px; border-radius: 12px; font-weight: 500;">
-                                    <span class="dashicons dashicons-dismiss" style="font-size: 16px; width: 16px; height: 16px; vertical-align: text-bottom;"></span> Inactivo
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        
-        <div style="margin-top: 30px; padding: 20px; background: #f9f9f9; border-radius: 6px;">
-            <input 
-                type="submit" 
-                name="alquipress_save_modules" 
-                class="button button-primary button-large" 
-                value="Guardar Configuración de Módulos"
-                style="height: 46px; padding: 0 30px; font-size: 15px;"
-            >
+$current_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'general';
+$tabs = [
+    'general' => ['label' => __('General', 'alquipress'), 'icon' => 'dashicons-building'],
+    'bookings' => ['label' => __('Reservas', 'alquipress'), 'icon' => 'dashicons-calendar-alt'],
+    'payments' => ['label' => __('Pagos', 'alquipress'), 'icon' => 'dashicons-money-alt'],
+    'email' => ['label' => __('Email y notificaciones', 'alquipress'), 'icon' => 'dashicons-email'],
+    'legal' => ['label' => __('Legal y cumplimiento', 'alquipress'), 'icon' => 'dashicons-shield'],
+    'team' => ['label' => __('Equipo y permisos', 'alquipress'), 'icon' => 'dashicons-groups'],
+    'advanced' => ['label' => __('Avanzado', 'alquipress'), 'icon' => 'dashicons-admin-tools'],
+];
+$base_url = admin_url('admin.php?page=alquipress-settings');
+require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
+?>
+<div class="wrap alquipress-settings-page ap-has-sidebar">
+    <div class="ap-owners-layout">
+        <?php alquipress_render_sidebar('settings'); ?>
+        <main class="ap-owners-main">
+    <header class="ap-settings-header">
+        <div class="ap-settings-header-left">
+            <h1 class="ap-settings-title"><?php echo esc_html(get_admin_page_title()); ?></h1>
+            <p class="ap-settings-subtitle"><?php esc_html_e('Configura preferencias del CRM, integraciones y permisos', 'alquipress'); ?></p>
         </div>
-    </form>
-    
-    <div style="margin-top: 40px;">
-        <h2 style="border-bottom: 2px solid #f0f0f1; padding-bottom: 10px;">📊 Estado del Sistema</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
-            <div class="status-card" style="background: #f0f6fb; padding: 15px; border-radius: 8px; border-left: 4px solid #2271b1;">
-                <span style="display: block; font-size: 0.9em; color: #666;">WordPress</span>
-                <strong><?php echo get_bloginfo('version'); ?></strong>
-            </div>
-            <div class="status-card" style="background: #f0f6fb; padding: 15px; border-radius: 8px; border-left: 4px solid <?php echo defined('WC_VERSION') ? '#2271b1' : '#d63638'; ?>;">
-                <span style="display: block; font-size: 0.9em; color: #666;">WooCommerce</span>
-                <strong><?php echo defined('WC_VERSION') ? WC_VERSION : 'No instalado'; ?></strong>
-            </div>
-            <div class="status-card" style="background: #f0f6fb; padding: 15px; border-radius: 8px; border-left: 4px solid <?php echo class_exists('ACF') ? '#2271b1' : '#ffa500'; ?>;">
-                <span style="display: block; font-size: 0.9em; color: #666;">ACF PRO</span>
-                <strong><?php echo class_exists('ACF') ? '✓ Instalado' : '✗ Requerido'; ?></strong>
-            </div>
-            <div class="status-card" style="background: #f0f6fb; padding: 15px; border-radius: 8px; border-left: 4px solid <?php echo class_exists('\MailPoet\API\API') ? '#2271b1' : '#666'; ?>;">
-                <span style="display: block; font-size: 0.9em; color: #666;">MailPoet</span>
-                <strong><?php echo class_exists('\MailPoet\API\API') ? '✓ Instalado' : 'No instalado'; ?></strong>
-            </div>
-        </div>
+    </header>
+
+    <div class="ap-settings-content">
+        <nav class="ap-settings-tabs" role="tablist" aria-label="<?php esc_attr_e('Secciones de ajustes', 'alquipress'); ?>">
+            <?php foreach ($tabs as $tab_key => $tab) : ?>
+                <a href="<?php echo esc_url(add_query_arg('tab', $tab_key, $base_url)); ?>"
+                   class="ap-settings-tab <?php echo $current_tab === $tab_key ? 'ap-settings-tab-active' : ''; ?>"
+                   role="tab"
+                   aria-selected="<?php echo $current_tab === $tab_key ? 'true' : 'false'; ?>">
+                    <span class="dashicons <?php echo esc_attr($tab['icon']); ?>"></span>
+                    <span><?php echo esc_html($tab['label']); ?></span>
+                </a>
+            <?php endforeach; ?>
+        </nav>
+
+        <main class="ap-settings-main" role="tabpanel">
+            <?php if ($current_tab === 'general') : ?>
+                <div class="ap-settings-section">
+                    <h2 class="ap-settings-section-title"><?php esc_html_e('Configuración general', 'alquipress'); ?></h2>
+                    <p class="ap-settings-section-desc"><?php esc_html_e('Activa o desactiva módulos del CRM según tus necesidades.', 'alquipress'); ?></p>
+                </div>
+
+                <form method="post" action="" class="ap-settings-form">
+                    <?php wp_nonce_field('alquipress_modules_nonce'); ?>
+                    <div class="ap-settings-card">
+                        <div class="ap-settings-card-head">
+                            <span class="dashicons dashicons-admin-generic"></span>
+                            <h3 class="ap-settings-card-title"><?php esc_html_e('Módulos', 'alquipress'); ?></h3>
+                        </div>
+                        <div class="ap-settings-table-wrap">
+                            <table class="ap-settings-modules-table">
+                                <thead>
+                                    <tr>
+                                        <th class="ap-settings-th-check"><?php esc_html_e('Activo', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Módulo', 'alquipress'); ?></th>
+                                        <th><?php esc_html_e('Descripción', 'alquipress'); ?></th>
+                                        <th class="ap-settings-th-status"><?php esc_html_e('Estado', 'alquipress'); ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($this->modules as $id => $module) : ?>
+                                        <tr>
+                                            <td class="ap-settings-td-check">
+                                                <label class="ap-settings-switch">
+                                                    <input type="checkbox"
+                                                           name="modules[<?php echo esc_attr($id); ?>]"
+                                                           value="1"
+                                                           <?php checked($this->active_modules[$id] ?? false); ?>>
+                                                    <span class="ap-settings-slider"></span>
+                                                </label>
+                                            </td>
+                                            <td class="ap-settings-td-name"><?php echo esc_html($module['name']); ?></td>
+                                            <td class="ap-settings-td-desc"><?php echo esc_html($module['description']); ?></td>
+                                            <td class="ap-settings-td-status">
+                                                <?php if ($this->active_modules[$id] ?? false) : ?>
+                                                    <span class="ap-settings-badge ap-settings-badge-active"><?php esc_html_e('Activo', 'alquipress'); ?></span>
+                                                <?php else : ?>
+                                                    <span class="ap-settings-badge ap-settings-badge-inactive"><?php esc_html_e('Inactivo', 'alquipress'); ?></span>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="ap-settings-form-actions">
+                            <button type="submit" name="alquipress_save_modules" class="ap-settings-btn ap-settings-btn-primary">
+                                <?php esc_html_e('Guardar configuración de módulos', 'alquipress'); ?>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="ap-settings-section ap-settings-system">
+                    <h2 class="ap-settings-section-title"><?php esc_html_e('Estado del sistema', 'alquipress'); ?></h2>
+                    <div class="ap-settings-cards-grid">
+                        <div class="ap-settings-status-card">
+                            <span class="ap-settings-status-label"><?php esc_html_e('WordPress', 'alquipress'); ?></span>
+                            <strong><?php echo esc_html(get_bloginfo('version')); ?></strong>
+                        </div>
+                        <div class="ap-settings-status-card">
+                            <span class="ap-settings-status-label"><?php esc_html_e('WooCommerce', 'alquipress'); ?></span>
+                            <strong><?php echo defined('WC_VERSION') ? esc_html(constant('WC_VERSION')) : esc_html__('No instalado', 'alquipress'); ?></strong>
+                        </div>
+                        <div class="ap-settings-status-card">
+                            <span class="ap-settings-status-label"><?php esc_html_e('ACF PRO', 'alquipress'); ?></span>
+                            <strong><?php echo class_exists('ACF') ? esc_html__('Instalado', 'alquipress') : esc_html__('Requerido', 'alquipress'); ?></strong>
+                        </div>
+                        <div class="ap-settings-status-card">
+                            <span class="ap-settings-status-label"><?php esc_html_e('MailPoet', 'alquipress'); ?></span>
+                            <strong><?php echo class_exists('\MailPoet\API\API') ? esc_html__('Instalado', 'alquipress') : esc_html__('No instalado', 'alquipress'); ?></strong>
+                        </div>
+                    </div>
+                </div>
+
+            <?php elseif ($current_tab === 'bookings') : ?>
+                <div class="ap-settings-section">
+                    <h2 class="ap-settings-section-title"><?php esc_html_e('Ajustes de reservas', 'alquipress'); ?></h2>
+                    <p class="ap-settings-section-desc"><?php esc_html_e('Estados del pipeline, reglas de bloqueo y configuración del calendario.', 'alquipress'); ?></p>
+                </div>
+                <div class="ap-settings-card ap-settings-placeholder">
+                    <p><?php esc_html_e('Los ajustes de reservas se gestionan desde el módulo Pipeline y las opciones de WooCommerce.', 'alquipress'); ?></p>
+                    <p><a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-pipeline')); ?>" class="ap-settings-btn ap-settings-btn-outline"><?php esc_html_e('Abrir Pipeline', 'alquipress'); ?></a></p>
+                </div>
+
+            <?php elseif ($current_tab === 'payments') : ?>
+                <div class="ap-settings-section">
+                    <h2 class="ap-settings-section-title"><?php esc_html_e('Pagos', 'alquipress'); ?></h2>
+                    <p class="ap-settings-section-desc"><?php esc_html_e('Pasarelas de pago, depósitos y métodos de cobro.', 'alquipress'); ?></p>
+                </div>
+                <div class="ap-settings-card ap-settings-placeholder">
+                    <p><?php esc_html_e('Configura Stripe, Redsys y demás pasarelas desde WooCommerce → Ajustes → Pagos.', 'alquipress'); ?></p>
+                    <p><a href="<?php echo esc_url(admin_url('admin.php?page=wc-settings&tab=checkout')); ?>" class="ap-settings-btn ap-settings-btn-outline"><?php esc_html_e('Ir a pagos WooCommerce', 'alquipress'); ?></a></p>
+                </div>
+
+            <?php elseif ($current_tab === 'email') : ?>
+                <div class="ap-settings-section">
+                    <h2 class="ap-settings-section-title"><?php esc_html_e('Email y notificaciones', 'alquipress'); ?></h2>
+                    <p class="ap-settings-section-desc"><?php esc_html_e('Plantillas, automatizaciones y integración con MailPoet.', 'alquipress'); ?></p>
+                </div>
+                <div class="ap-settings-card ap-settings-placeholder">
+                    <p><?php esc_html_e('La automatización de emails se gestiona con el módulo MailPoet y las notificaciones del CRM.', 'alquipress'); ?></p>
+                </div>
+
+            <?php elseif ($current_tab === 'legal') : ?>
+                <div class="ap-settings-section">
+                    <h2 class="ap-settings-section-title"><?php esc_html_e('Legal y cumplimiento', 'alquipress'); ?></h2>
+                    <p class="ap-settings-section-desc"><?php esc_html_e('Política de privacidad, condiciones y documentos legales.', 'alquipress'); ?></p>
+                </div>
+                <div class="ap-settings-card ap-settings-placeholder">
+                    <p><?php esc_html_e('Configura páginas legales desde WordPress → Ajustes → Privacidad y las opciones de tu tema.', 'alquipress'); ?></p>
+                    <p><a href="<?php echo esc_url(admin_url('options-privacy.php')); ?>" class="ap-settings-btn ap-settings-btn-outline"><?php esc_html_e('Privacidad', 'alquipress'); ?></a></p>
+                </div>
+
+            <?php elseif ($current_tab === 'team') : ?>
+                <div class="ap-settings-section">
+                    <h2 class="ap-settings-section-title"><?php esc_html_e('Equipo y permisos', 'alquipress'); ?></h2>
+                    <p class="ap-settings-section-desc"><?php esc_html_e('Roles de usuario y acceso al CRM.', 'alquipress'); ?></p>
+                </div>
+                <div class="ap-settings-card ap-settings-placeholder">
+                    <p><?php esc_html_e('Gestiona usuarios y roles desde Usuarios. Los permisos del CRM dependen de los roles de WordPress.', 'alquipress'); ?></p>
+                    <p><a href="<?php echo esc_url(admin_url('users.php')); ?>" class="ap-settings-btn ap-settings-btn-outline"><?php esc_html_e('Ver usuarios', 'alquipress'); ?></a></p>
+                </div>
+
+            <?php else : ?>
+                <div class="ap-settings-section">
+                    <h2 class="ap-settings-section-title"><?php esc_html_e('Avanzado', 'alquipress'); ?></h2>
+                    <p class="ap-settings-section-desc"><?php esc_html_e('Opciones técnicas y depuración.', 'alquipress'); ?></p>
+                </div>
+                <div class="ap-settings-card ap-settings-placeholder">
+                    <p><?php esc_html_e('Aquí podrás configurar opciones avanzadas en futuras versiones.', 'alquipress'); ?></p>
+                </div>
+            <?php endif; ?>
+        </main>
+    </div>
+        </main>
     </div>
 </div>
-
-<style>
-/* Switch styling */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 22px;
-}
-.switch input { 
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-input:checked + .slider {
-  background-color: #2271b1;
-}
-input:focus + .slider {
-  box-shadow: 0 0 1px #2271b1;
-}
-input:checked + .slider:before {
-  -webkit-transform: translateX(18px);
-  -ms-transform: translateX(18px);
-  transform: translateX(18px);
-}
-.slider.round {
-  border-radius: 22px;
-}
-.slider.round:before {
-  border-radius: 50%;
-}
-</style>

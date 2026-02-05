@@ -37,7 +37,7 @@
         },
 
         loadAllReports: function () {
-            this.loadOverview();
+            this.loadOverviewYoy();
             this.loadRevenueMonthly();
             this.loadRevenueSeason();
             this.loadOccupancyMonthly();
@@ -45,6 +45,7 @@
             this.loadTopClients();
             this.loadClientsRating();
             this.loadTopProperties();
+            this.loadBookingPerformance();
             this.loadPropertiesComparison();
         },
 
@@ -71,14 +72,22 @@
             });
         },
 
-        // ========== Cargar Estadísticas Overview ==========
+        // ========== Cargar Estadísticas Overview (con YoY) ==========
 
-        loadOverview: function () {
-            this.ajaxCall('overview', function (data) {
-                $('#stat-revenue-year').html(data.total_revenue);
-                $('#stat-bookings-year').text(data.total_bookings);
-                $('#stat-avg-booking').html(data.avg_booking);
-                $('#stat-occupancy-rate').text(data.occupancy_rate);
+        loadOverviewYoy: function () {
+            this.ajaxCall('overview_yoy', function (data) {
+                $('#stat-revenue-year').html(data.total_revenue || '—');
+                $('#stat-bookings-year').text(data.total_bookings !== undefined ? data.total_bookings : '—');
+                $('#stat-occupancy-rate').text(data.occupancy_rate || '—');
+                $('#stat-avg-daily-rate').html(data.avg_daily_rate || '—');
+                var revCh = data.revenue_change;
+                $('#stat-revenue-change').text(revCh != null ? (revCh >= 0 ? '+' : '') + revCh + '% YoY' : '—').toggleClass('ap-reports-change-negative', revCh < 0);
+                var bookCh = data.bookings_change;
+                $('#stat-bookings-change').text(bookCh != null ? (bookCh >= 0 ? '+' : '') + bookCh + '% ' + (alquipressReports.i18n && alquipressReports.i18n.vsLastYear ? alquipressReports.i18n.vsLastYear : 'vs año ant.') : '—').toggleClass('ap-reports-change-negative', bookCh < 0);
+                var occCh = data.occupancy_change;
+                $('#stat-occupancy-change').text(occCh != null ? (occCh >= 0 ? '+' : '') + occCh + '% ' + (alquipressReports.i18n && alquipressReports.i18n.vsAvg ? alquipressReports.i18n.vsAvg : 'vs media') : '—').toggleClass('ap-reports-change-negative', occCh < 0);
+                var adrCh = data.avg_daily_rate_change;
+                $('#stat-adr-change').text(adrCh != null ? (adrCh >= 0 ? '+' : '') + adrCh + '% YoY' : '—').toggleClass('ap-reports-change-negative', adrCh < 0);
             });
         },
 
@@ -86,27 +95,21 @@
 
         loadRevenueMonthly: function () {
             this.ajaxCall('revenue_monthly', function (data) {
-                if (ReportsApp.charts.revenueMonthly) {
-                    ReportsApp.charts.revenueMonthly.destroy();
-                }
-
-                const ctx = document.getElementById('chart-revenue-monthly').getContext('2d');
-
-                ReportsApp.charts.revenueMonthly = new Chart(ctx, {
+                var chartConfig = {
                     type: 'line',
                     data: {
                         labels: data.labels,
                         datasets: [{
                             label: 'Ingresos (€)',
                             data: data.data,
-                            borderColor: '#667eea',
-                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                            borderWidth: 3,
+                            borderColor: '#2c99e2',
+                            backgroundColor: 'rgba(44, 153, 226, 0.1)',
+                            borderWidth: 2,
                             fill: true,
                             tension: 0.4,
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            pointBackgroundColor: '#667eea',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#2c99e2',
                             pointBorderColor: '#fff',
                             pointBorderWidth: 2
                         }]
@@ -115,10 +118,7 @@
                         responsive: true,
                         maintainAspectRatio: true,
                         plugins: {
-                            legend: {
-                                display: true,
-                                position: 'top'
-                            },
+                            legend: { display: false },
                             tooltip: {
                                 callbacks: {
                                     label: function (context) {
@@ -138,6 +138,15 @@
                             }
                         }
                     }
+                };
+                ['chart-revenue-monthly', 'chart-revenue-monthly-tab'].forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (!el) return;
+                    if (ReportsApp.charts[id]) {
+                        ReportsApp.charts[id].destroy();
+                        ReportsApp.charts[id] = null;
+                    }
+                    ReportsApp.charts[id] = new Chart(el.getContext('2d'), chartConfig);
                 });
             });
         },
@@ -375,6 +384,25 @@
 
         // ========== Cargar Top Propiedades ==========
 
+        loadBookingPerformance: function () {
+            this.ajaxCall('top_properties', function (data) {
+                var tbody = $('#table-booking-performance tbody');
+                tbody.empty();
+                if (!data || data.length === 0) {
+                    tbody.append('<tr><td colspan="5">No hay datos disponibles</td></tr>');
+                    return;
+                }
+                data.forEach(function (p) {
+                    var rev = (p.total_revenue || 0).toFixed(2).replace('.', ',') + ' €';
+                    var occ = (p.occupancy_rate != null ? p.occupancy_rate.toFixed(1) : '—') + '%';
+                    var trend = '<span class="ap-reports-trend-up">↑</span>';
+                    tbody.append(
+                        '<tr><td>' + (p.name || '—') + '</td><td class="ap-reports-th-num">' + (p.total_bookings || 0) + '</td><td class="ap-reports-th-num">' + rev + '</td><td class="ap-reports-th-num">' + occ + '</td><td class="ap-reports-th-trend">' + trend + '</td></tr>'
+                    );
+                });
+            });
+        },
+
         loadTopProperties: function () {
             this.ajaxCall('top_properties', function (data) {
                 const tbody = $('#table-top-properties tbody');
@@ -460,7 +488,7 @@
 
     // Inicializar cuando el documento esté listo
     $(document).ready(function () {
-        if ($('.alquipress-reports-wrap').length) {
+        if ($('.alquipress-reports-page, .alquipress-reports-wrap').length) {
             ReportsApp.init();
         }
     });

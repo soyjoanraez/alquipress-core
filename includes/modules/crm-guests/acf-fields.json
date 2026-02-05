@@ -51,18 +51,58 @@
                 "label": "Documentación (DNI/Pasaporte)",
                 "name": "guest_documents",
                 "type": "repeater",
+                "instructions": "Gestiona los documentos de identidad del cliente (DNI, Pasaporte, NIE, etc.)",
+                "layout": "block",
+                "button_label": "Añadir documento",
                 "sub_fields": [
                     {
+                        "key": "field_doc_type",
+                        "label": "Tipo de Documento",
+                        "name": "tipo_doc",
+                        "type": "select",
+                        "choices": {
+                            "dni": "DNI",
+                            "pasaporte": "Pasaporte",
+                            "nie": "NIE",
+                            "otro": "Otro"
+                        },
+                        "default_value": "dni",
+                        "required": 1
+                    },
+                    {
+                        "key": "field_doc_number",
+                        "label": "Número de Documento",
+                        "name": "numero_doc",
+                        "type": "text",
+                        "placeholder": "Ej: 12345678A",
+                        "required": 1
+                    },
+                    {
+                        "key": "field_doc_expiry",
+                        "label": "Fecha de Vencimiento",
+                        "name": "fecha_vencimiento",
+                        "type": "date_picker",
+                        "display_format": "d/m/Y",
+                        "return_format": "Y-m-d",
+                        "first_day": 1
+                    },
+                    {
                         "key": "field_doc_name",
-                        "label": "Nombre Documento",
+                        "label": "Nombre/Descripción",
                         "name": "nombre_doc",
-                        "type": "text"
+                        "type": "text",
+                        "placeholder": "Ej: DNI Anverso y Reverso",
+                        "instructions": "Descripción opcional del documento"
                     },
                     {
                         "key": "field_doc_file",
-                        "label": "Archivo",
+                        "label": "Archivo PDF/Imagen",
                         "name": "archivo_doc",
-                        "type": "file"
+                        "type": "file",
+                        "return_format": "array",
+                        "library": "all",
+                        "mime_types": "pdf,jpg,jpeg,png",
+                        "instructions": "Sube el documento escaneado o fotografiado"
                     }
                 ]
             }

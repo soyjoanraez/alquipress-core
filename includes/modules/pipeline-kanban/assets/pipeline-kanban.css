@@ -277,6 +277,68 @@
     background: #999;
 }
 
+/* ========== Estados de Loading ========== */
+
+.order-card.updating {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+}
+
+.order-card.updating::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    z-index: 1;
+}
+
+.order-card.update-success {
+    border-color: #00a32a;
+    box-shadow: 0 0 0 2px rgba(0, 163, 42, 0.2);
+    animation: successPulse 0.5s ease-out;
+}
+
+.order-card.update-error {
+    border-color: #dc3232;
+    box-shadow: 0 0 0 2px rgba(220, 50, 50, 0.2);
+    animation: errorShake 0.5s ease-out;
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes errorShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* Spinner para loading states */
+.order-card .spinner {
+    margin: 0 auto;
+    float: none;
+}
+
 /* ========== Responsive ========== */
 
 @media screen and (max-width: 1400px) {

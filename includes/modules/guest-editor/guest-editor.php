@@ -66,12 +66,26 @@ class Alquipress_Guest_Editor
 
         // Verificar nonce
         if (!isset($_POST['_wpnonce']) || !wp_verify_nonce($_POST['_wpnonce'], 'alquipress_edit_guest_' . $user_id)) {
-            wp_die('Verificación de seguridad fallida');
+            wp_die(
+                __('Error de seguridad', 'alquipress'),
+                __('No se pudo verificar la solicitud', 'alquipress'),
+                [
+                    'back_link' => true,
+                    'response' => 403
+                ]
+            );
         }
 
         // Verificar permisos
         if (!current_user_can('edit_users')) {
-            wp_die('No tienes permisos para editar usuarios');
+            wp_die(
+                __('Permisos insuficientes', 'alquipress'),
+                __('No tienes permisos para editar usuarios', 'alquipress'),
+                [
+                    'back_link' => true,
+                    'response' => 403
+                ]
+            );
         }
 
         // Actualizar campos ACF
@@ -80,7 +94,19 @@ class Alquipress_Guest_Editor
         }
 
         if (isset($_POST['guest_rating'])) {
-            update_field('guest_rating', floatval($_POST['guest_rating']), 'user_' . $user_id);
+            $rating = isset($_POST['guest_rating']) ? floatval($_POST['guest_rating']) : null;
+            // Validar que el rating esté entre 1 y 5
+            if ($rating !== null && $rating >= 1 && $rating <= 5) {
+                update_field('guest_rating', $rating, 'user_' . $user_id);
+            } elseif ($rating !== null) {
+                // Rating fuera de rango válido
+                add_settings_error(
+                    'alquipress_guest_editor',
+                    'invalid_rating',
+                    __('La valoración debe estar entre 1 y 5.', 'alquipress'),
+                    'error'
+                );
+            }
         }
 
         if (isset($_POST['guest_preferences'])) {
@@ -158,25 +184,29 @@ class Alquipress_Guest_Editor
         // Mensaje de éxito
         $updated = isset($_GET['updated']) && $_GET['updated'] === 'true';
 
+        require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
         ?>
-        <div class="wrap alquipress-edit-guest-wrap">
-            <div class="edit-header">
-                <div class="header-left">
-                    <h1>✏️ Editar Huésped: <?php echo esc_html($user->display_name); ?></h1>
-                    <p class="subtitle">Gestionar perfil, preferencias y notas internas.</p>
-                </div>
-                <div class="header-right">
-                    <a href="<?php echo admin_url('users.php?page=alquipress-guest-profile&user_id=' . $user_id); ?>"
-                        class="button">👤 Ver Perfil Completo</a>
-                    <a href="<?php echo admin_url('users.php'); ?>" class="button">← Volver</a>
-                </div>
-            </div>
+        <div class="wrap alquipress-edit-guest-wrap ap-has-sidebar">
+            <div class="ap-owners-layout">
+                <?php alquipress_render_sidebar('clients'); ?>
+                <main class="ap-owners-main">
+                    <header class="ap-clients-header">
+                        <div class="ap-clients-header-left">
+                            <h1 class="ap-clients-title"><?php echo esc_html(sprintf(__('Editar Cliente: %s', 'alquipress'), $user->display_name)); ?></h1>
+                            <p class="ap-clients-subtitle"><?php esc_html_e('Gestionar perfil, preferencias, documentación y notas internas', 'alquipress'); ?></p>
+                        </div>
+                        <div class="ap-clients-header-right">
+                            <a href="<?php echo admin_url('users.php?page=alquipress-guest-profile&user_id=' . $user_id); ?>"
+                                class="ap-clients-btn"><?php esc_html_e('Ver Perfil Completo', 'alquipress'); ?></a>
+                            <a href="<?php echo admin_url('admin.php?page=alquipress-clients'); ?>" class="ap-clients-btn ap-clients-btn-primary"><?php esc_html_e('Volver a Clientes', 'alquipress'); ?></a>
+                        </div>
+                    </header>
 
-            <?php if ($updated): ?>
-                <div class="notice notice-success is-dismissible">
-                    <p><strong>✓ Huésped actualizado correctamente.</strong></p>
-                </div>
-            <?php endif; ?>
+                    <?php if ($updated): ?>
+                        <div class="notice notice-success is-dismissible" style="margin: 0 0 24px;">
+                            <p><strong>✓ <?php esc_html_e('Cliente actualizado correctamente.', 'alquipress'); ?></strong></p>
+                        </div>
+                    <?php endif; ?>
 
             <form method="post" action="" class="edit-guest-form">
                 <?php wp_nonce_field('alquipress_edit_guest_' . $user_id); ?>
@@ -316,13 +346,15 @@ class Alquipress_Guest_Editor
                 <!-- Botones de acción -->
                 <div class="form-actions">
                     <button type="submit" name="alquipress_save_guest" class="button button-primary button-large">
-                        💾 Guardar Cambios
+                        <?php esc_html_e('Guardar Cambios', 'alquipress'); ?>
                     </button>
-                    <a href="<?php echo admin_url('users.php'); ?>" class="button button-large">
-                        Cancelar
+                    <a href="<?php echo admin_url('admin.php?page=alquipress-clients'); ?>" class="button button-large">
+                        <?php esc_html_e('Cancelar', 'alquipress'); ?>
                     </a>
                 </div>
             </form>
+                </main>
+            </div>
         </div>
 
         <script>
@@ -356,6 +388,90 @@ class Alquipress_Guest_Editor
                 $('#guest_rating').on('input change', function () {
                     updateStars($(this).val());
                 });
+
+                // Validación del formulario antes de submit
+                $('.edit-guest-form').on('submit', function(e) {
+                    let isValid = true;
+                    let errorMessages = [];
+
+                    // Validar rating (debe estar entre 1 y 5 si se proporciona)
+                    const rating = parseFloat($('#guest_rating').val());
+                    if ($('#guest_rating').val() !== '' && (isNaN(rating) || rating < 1 || rating > 5)) {
+                        isValid = false;
+                        errorMessages.push('<?php echo esc_js(__('La valoración debe estar entre 1 y 5', 'alquipress')); ?>');
+                        $('#guest_rating').addClass('error');
+                    } else {
+                        $('#guest_rating').removeClass('error');
+                    }
+
+                    // Validar email si se proporciona
+                    const email = $('#user_email').val();
+                    if (email && !isValidEmail(email)) {
+                        isValid = false;
+                        errorMessages.push('<?php echo esc_js(__('Por favor, introduce un email válido', 'alquipress')); ?>');
+                        $('#user_email').addClass('error');
+                    } else {
+                        $('#user_email').removeClass('error');
+                    }
+
+                    // Validar campos requeridos
+                    if (!$('#first_name').val().trim()) {
+                        isValid = false;
+                        errorMessages.push('<?php echo esc_js(__('El nombre es obligatorio', 'alquipress')); ?>');
+                        $('#first_name').addClass('error');
+                    } else {
+                        $('#first_name').removeClass('error');
+                    }
+
+                    if (!isValid) {
+                        e.preventDefault();
+                        
+                        // Mostrar toasts de error en lugar de alert
+                        if (typeof AlquipressToast !== 'undefined') {
+                            // Mostrar cada error como un toast separado, o el primero si hay muchos
+                            if (errorMessages.length === 1) {
+                                AlquipressToast.error(errorMessages[0]);
+                            } else if (errorMessages.length <= 3) {
+                                // Mostrar hasta 3 toasts
+                                errorMessages.forEach(function(msg) {
+                                    AlquipressToast.error(msg, 5000);
+                                });
+                            } else {
+                                // Si hay muchos errores, mostrar un resumen
+                                AlquipressToast.error('Por favor, corrige los ' + errorMessages.length + ' errores en el formulario', 6000);
+                                // Mostrar los primeros 2 errores también
+                                errorMessages.slice(0, 2).forEach(function(msg) {
+                                    AlquipressToast.warning(msg, 5000);
+                                });
+                            }
+                        } else {
+                            // Fallback a alert si toast no está disponible
+                            alert(errorMessages.join('\n'));
+                        }
+                        
+                        return false;
+                    }
+
+                    // Prevenir doble submit
+                    const $submitBtn = $(this).find('button[type="submit"], input[type="submit"]');
+                    if ($submitBtn.data('submitting')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    $submitBtn.data('submitting', true).prop('disabled', true);
+                    $submitBtn.text('<?php echo esc_js(__('Guardando...', 'alquipress')); ?>');
+                });
+
+                // Función auxiliar para validar email
+                function isValidEmail(email) {
+                    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return re.test(email);
+                }
+
+                // Remover clase error al escribir
+                $('input, select').on('input change', function() {
+                    $(this).removeClass('error');
+                });
             });
         </script>
         <?php
@@ -370,11 +486,44 @@ class Alquipress_Guest_Editor
             return;
         }
 
+        // Cargar CSS del layout del dashboard (sidebar, etc.)
+        wp_enqueue_style(
+            'alquipress-admin-layout',
+            ALQUIPRESS_URL . 'includes/admin/assets/alquipress-admin-layout.css',
+            [],
+            ALQUIPRESS_VERSION
+        );
+
+        // Estilos críticos para el layout
+        $critical_layout = '#wpcontent,#wpbody-content{background:#f8fafb!important;}'
+            . '.wrap.ap-has-sidebar{min-height:80vh!important;width:100%!important;position:relative!important;z-index:999998!important;max-width:none!important;margin-top:12px!important;padding:0!important;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-layout{display:flex!important;min-height:calc(100vh - 140px)!important;background:#f8fafb!important;border:1px solid #e8eef3!important;border-radius:16px!important;overflow:hidden!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-sidebar{width:256px!important;min-width:256px!important;background:#ffffff!important;border-right:1px solid #e8eef3!important;display:flex!important;flex-direction:column!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-main{flex:1!important;min-width:0!important;padding:32px!important;background:#f8fafb!important;}';
+        wp_add_inline_style('alquipress-admin-layout', $critical_layout);
+
+        // CSS específico del editor de huésped
         wp_enqueue_style(
             'alquipress-guest-editor',
             ALQUIPRESS_URL . 'includes/modules/guest-editor/assets/guest-editor.css',
+            ['alquipress-admin-layout'],
+            ALQUIPRESS_VERSION
+        );
+        
+        // Cargar sistema de toast notifications
+        wp_enqueue_style(
+            'alquipress-toast-notifications',
+            ALQUIPRESS_URL . 'includes/admin/assets/toast-notifications.css',
             [],
             ALQUIPRESS_VERSION
+        );
+        
+        wp_enqueue_script(
+            'alquipress-toast-notifications',
+            ALQUIPRESS_URL . 'includes/admin/assets/toast-notifications.js',
+            ['jquery'],
+            ALQUIPRESS_VERSION,
+            true
         );
     }
 }

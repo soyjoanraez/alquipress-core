@@ -16,6 +16,9 @@ class Alquipress_Taxonomies
         add_action('init', [$this, 'populate_caracteristicas'], 99);
         add_action('init', [$this, 'populate_marina_alta'], 99);
         add_action('init', [$this, 'populate_tipo_vivienda'], 99);
+        
+        // Validar y normalizar coordenadas GPS al guardar
+        add_action('acf/save_post', [$this, 'validate_coordenadas_gps'], 20);
     }
 
     public function load_acf_fields()
@@ -301,6 +304,62 @@ class Alquipress_Taxonomies
         }
 
         update_option('alquipress_tipo_vivienda_populated_hash', $hash);
+    }
+
+    /**
+     * Valida y normaliza el campo de coordenadas GPS al guardar
+     */
+    public function validate_coordenadas_gps($post_id)
+    {
+        // Solo procesar productos
+        if (get_post_type($post_id) !== 'product') {
+            return;
+        }
+
+        // Obtener el valor actual del campo
+        $coordenadas = get_field('coordenadas_gps', $post_id);
+
+        // Si no hay coordenadas, no hacer nada
+        if (empty($coordenadas)) {
+            return;
+        }
+
+        // Normalizar el formato del campo
+        // ACF google_map puede devolver array con 'lat', 'lng', 'address'
+        // Asegurarse de que tenga el formato correcto
+        $normalized = [];
+
+        // Si es un array asociativo con lat/lng
+        if (is_array($coordenadas)) {
+            // Formato estándar de ACF google_map
+            if (isset($coordenadas['lat']) && isset($coordenadas['lng'])) {
+                $normalized = [
+                    'lat' => (float) $coordenadas['lat'],
+                    'lng' => (float) $coordenadas['lng'],
+                ];
+                
+                // Preservar address si existe
+                if (isset($coordenadas['address'])) {
+                    $normalized['address'] = sanitize_text_field($coordenadas['address']);
+                }
+            }
+            // Formato alternativo (latitud/longitud como claves diferentes)
+            elseif (isset($coordenadas['latitude']) && isset($coordenadas['longitude'])) {
+                $normalized = [
+                    'lat' => (float) $coordenadas['latitude'],
+                    'lng' => (float) $coordenadas['longitude'],
+                ];
+                
+                if (isset($coordenadas['address'])) {
+                    $normalized['address'] = sanitize_text_field($coordenadas['address']);
+                }
+            }
+        }
+
+        // Si se normalizó correctamente y es diferente al original, actualizar
+        if (!empty($normalized) && $normalized !== $coordenadas) {
+            update_field('coordenadas_gps', $normalized, $post_id);
+        }
     }
 }
 

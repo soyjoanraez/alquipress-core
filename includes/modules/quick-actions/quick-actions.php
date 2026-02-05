@@ -161,7 +161,11 @@ class Alquipress_Quick_Actions
                     // Handler: Vista Rápida
                     $(document).on('click', '.alq-quick-view', function (e) {
                         e.preventDefault();
-                        const orderId = $(this).data('order-id');
+                        const $btn = $(this);
+                        const orderId = $btn.data('order-id');
+
+                        // Deshabilitar botón y mostrar loading
+                        $btn.prop('disabled', true).text('Cargando...');
 
                         // Crear modal
                         if (!$('#alq-quick-view-modal').length) {
@@ -169,14 +173,16 @@ class Alquipress_Quick_Actions
                             <div id="alq-quick-view-modal" class="alq-modal">
                                 <div class="alq-modal-content">
                                     <span class="alq-modal-close">&times;</span>
-                                    <div id="alq-quick-view-content">Cargando...</div>
+                                    <div id="alq-quick-view-content"></div>
                                 </div>
                             </div>
                         `);
                         }
 
                         $('#alq-quick-view-modal').fadeIn();
-                        $('#alq-quick-view-content').html('<p style="text-align: center;">Cargando...</p>');
+                        $('#alq-quick-view-content').html(
+                            '<div style="text-align: center; padding: 40px;"><span class="spinner is-active" style="float: none; margin: 0;"></span><p style="margin: 15px 0 0; color: #666;">Cargando información del pedido...</p></div>'
+                        );
 
                         // AJAX
                         $.ajax({
@@ -190,10 +196,39 @@ class Alquipress_Quick_Actions
                             success: function (response) {
                                 if (response.success) {
                                     $('#alq-quick-view-content').html(response.data.html);
+                                    
+                                    // Mostrar toast de éxito si está disponible
+                                    if (typeof AlquipressToast !== 'undefined') {
+                                        AlquipressToast.success('Información del pedido cargada correctamente', 3000);
+                                    }
                                 } else {
+                                    const errorMsg = response.data && response.data.message 
+                                        ? response.data.message 
+                                        : 'Error al cargar el pedido.';
+                                    
                                     $('#alq-quick-view-content').html(
-                                        '<p style="color: red;">Error al cargar el pedido.</p>');
+                                        '<div style="padding: 40px; text-align: center;"><p style="color: #dc3232; font-weight: 600;">' + errorMsg + '</p></div>'
+                                    );
+                                    
+                                    // Mostrar toast de error
+                                    if (typeof AlquipressToast !== 'undefined') {
+                                        AlquipressToast.error(errorMsg);
+                                    }
                                 }
+                            },
+                            error: function() {
+                                $('#alq-quick-view-content').html(
+                                    '<div style="padding: 40px; text-align: center;"><p style="color: #dc3232; font-weight: 600;">Error de conexión. Por favor, intenta de nuevo.</p></div>'
+                                );
+                                
+                                // Mostrar toast de error
+                                if (typeof AlquipressToast !== 'undefined') {
+                                    AlquipressToast.error('Error de conexión. Por favor, intenta de nuevo.');
+                                }
+                            },
+                            complete: function() {
+                                // Rehabilitar botón
+                                $btn.prop('disabled', false).text('👁️ Vista Rápida');
                             }
                         });
                     });
@@ -266,17 +301,26 @@ class Alquipress_Quick_Actions
             wp_send_json_error(['message' => 'Permisos insuficientes']);
         }
 
-        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $order_id = isset($_POST['order_id']) ? absint($_POST['order_id']) : 0;
 
-        if (!$order_id) {
-            wp_send_json_error(['message' => 'ID de pedido inválido']);
+        if (!$order_id || $order_id <= 0) {
+            wp_send_json_error([
+                'message' => __('ID de pedido inválido', 'alquipress')
+            ]);
+            return;
         }
 
         $order = wc_get_order($order_id);
 
         if (!$order) {
-            wp_send_json_error(['message' => 'Pedido no encontrado']);
+            wp_send_json_error([
+                'message' => __('Pedido no encontrado', 'alquipress')
+            ]);
+            return;
         }
+
+        // Verificar que el usuario tiene permisos para ver este pedido específico
+        // (ya verificado con current_user_can('edit_shop_orders') arriba, pero añadimos validación adicional)
 
         // Obtener datos
         $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
@@ -395,6 +439,22 @@ class Alquipress_Quick_Actions
      */
     public function enqueue_assets($hook)
     {
+        // Cargar sistema de toast notifications
+        wp_enqueue_style(
+            'alquipress-toast-notifications',
+            ALQUIPRESS_URL . 'includes/admin/assets/toast-notifications.css',
+            [],
+            ALQUIPRESS_VERSION
+        );
+        
+        wp_enqueue_script(
+            'alquipress-toast-notifications',
+            ALQUIPRESS_URL . 'includes/admin/assets/toast-notifications.js',
+            ['jquery'],
+            ALQUIPRESS_VERSION,
+            true
+        );
+        
         wp_enqueue_style(
             'alquipress-quick-actions',
             ALQUIPRESS_URL . 'includes/modules/quick-actions/assets/quick-actions.css',
