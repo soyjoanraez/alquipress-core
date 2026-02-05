@@ -22,6 +22,7 @@ class Alquipress_Module_Manager
                 'order-columns' => true,
                 'dashboard-widgets' => true,
                 'properties-page' => true,
+                'property-editor' => true,
                 'owners-page' => true,
                 'bookings-page' => true,
                 'clients-page' => true,
@@ -40,6 +41,10 @@ class Alquipress_Module_Manager
         }
         if (!array_key_exists('communications', $this->active_modules)) {
             $this->active_modules['communications'] = true;
+            update_option('alquipress_modules', $this->active_modules);
+        }
+        if (!array_key_exists('property-editor', $this->active_modules)) {
+            $this->active_modules['property-editor'] = true;
             update_option('alquipress_modules', $this->active_modules);
         }
         add_action('admin_menu', [$this, 'add_settings_page']);
@@ -237,6 +242,12 @@ class Alquipress_Module_Manager
                 'name' => 'Página Propiedades (Pencil)',
                 'description' => 'Vista de listado de propiedades con diseño Pencil: grid de tarjetas, búsqueda, filtros',
                 'file' => 'properties-page/properties-page.php',
+                'dependencies' => []
+            ],
+            'property-editor' => [
+                'name' => 'Editor de Propiedades',
+                'description' => 'Editor propio con layout Pencil para propiedades',
+                'file' => 'property-editor/property-editor.php',
                 'dependencies' => []
             ],
             'owners-page' => [

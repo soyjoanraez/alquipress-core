@@ -534,6 +534,24 @@ body.post-type-shop_order .woocommerce-order-data .hndle {
     margin: 0;
 }
 
+.ap-prop-title-input {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ap-pencil-text);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius-md);
+    padding: 6px 12px;
+    min-width: 240px;
+    width: min(520px, 100%);
+    background: #ffffff;
+}
+
+.ap-prop-title-input:focus {
+    outline: none;
+    border-color: var(--ap-pencil-primary);
+    box-shadow: 0 0 0 2px rgba(44, 153, 226, 0.15);
+}
+
 .ap-prop-badge {
     display: inline-flex;
     align-items: center;
@@ -869,6 +887,21 @@ body.post-type-product #post-body-content:empty {
     line-height: 1.6;
     color: var(--ap-pencil-muted);
     margin: 0;
+}
+
+.ap-prop-description-editor .wp-editor-wrap {
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius-md);
+    overflow: hidden;
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+.ap-prop-description-editor .wp-editor-container {
+    border: 0;
+}
+
+.ap-prop-description-editor textarea {
+    min-height: 160px;
 }
 
 .ap-prop-card-muted {

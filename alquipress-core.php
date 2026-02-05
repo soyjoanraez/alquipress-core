@@ -44,6 +44,7 @@ function alquipress_activate()
             'order-columns' => true,
             'dashboard-widgets' => true,
             'properties-page' => true,
+            'property-editor' => true,
             'owners-page' => true,
             'bookings-page' => true,
             'clients-page' => true,

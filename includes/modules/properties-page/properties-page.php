@@ -442,10 +442,7 @@ class Alquipress_Properties_Page
                 <?php else: ?>
                     <?php foreach ($products as $post): setup_postdata($post);
                         $product = wc_get_product($post->ID);
-                        $edit_url = get_edit_post_link($post->ID, 'raw');
-                        if (!is_string($edit_url) || $edit_url === '') {
-                            $edit_url = admin_url('post.php?post=' . (int) $post->ID . '&action=edit');
-                        }
+                        $edit_url = admin_url('admin.php?page=alquipress-edit-property&post_id=' . (int) $post->ID);
                         $thumb_url = get_the_post_thumbnail_url($post->ID, [400, 300]);
                         $location = $this->get_product_location($post->ID);
                         $beds = $this->get_product_beds($post->ID);

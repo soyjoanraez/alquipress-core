@@ -110,7 +110,8 @@ class Alquipress_UI_Enhancements
             return;
         }
         if ($post->post_type === 'product') {
-            $this->render_property_edit_pencil_layout($post);
+            require_once ALQUIPRESS_PATH . 'includes/admin/property-edit-layout.php';
+            alquipress_render_property_edit_layout($post);
             return;
         }
         $cpt_slugs = ['propietario', 'shop_order'];
@@ -138,419 +139,8 @@ class Alquipress_UI_Enhancements
      */
     private function render_property_edit_pencil_layout($post)
     {
-        $list_url = (string) admin_url('admin.php?page=alquipress-properties');
-        $edit_url = get_edit_post_link($post->ID, 'raw');
-        if (!is_string($edit_url) || $edit_url === '') {
-            $edit_url = admin_url('post.php?post=' . (int) $post->ID . '&action=edit');
-        }
-        $view_url = get_permalink($post->ID);
-        if (!is_string($view_url) || $view_url === '') {
-            $view_url = '#';
-        }
-        $title = $post->post_title ?: __('Sin título', 'alquipress');
-        $status = $post->post_status;
-        $status_label = $status === 'publish' ? __('Activa', 'alquipress') : __('Borrador', 'alquipress');
-        $status_class = $status === 'publish' ? 'ap-prop-status-active' : 'ap-prop-status-draft';
-        $ref = get_post_meta($post->ID, '_sku', true);
-        if ($ref === '') {
-            $ref = function_exists('get_field') ? (string) get_field('referencia_interna', $post->ID) : '';
-        }
-        if ($ref === '') {
-            $ref = '#' . $post->ID;
-        }
-        $address = '';
-        $terms = get_the_terms($post->ID, 'poblacion');
-        if (is_array($terms) && !empty($terms)) {
-            $address = implode(', ', wp_list_pluck($terms, 'name'));
-        }
-        if ($address === '' && function_exists('get_field')) {
-            $address = (string) get_field('direccion', $post->ID);
-        }
-        $product = function_exists('wc_get_product') ? wc_get_product($post->ID) : null;
-        $price = $product ? $product->get_price() : '';
-        $price_html = $product && $price !== '' && function_exists('wc_price') ? wc_price($price) : '—';
-        $beds = null;
-        $baths = null;
-        $guests = null;
-        $surface = '';
-        if (function_exists('get_field')) {
-            $rows = get_field('distribucion_habitaciones', $post->ID);
-            $beds = is_array($rows) ? count($rows) : null;
-            $baths = get_field('numero_banos', $post->ID);
-            if (is_numeric($baths) && (int) $baths > 0) {
-                $baths = (int) $baths;
-            } else {
-                $baths = null;
-            }
-            $guests = get_field('plazas', $post->ID) ?: get_field('capacidad', $post->ID);
-            $guests = is_numeric($guests) && (int) $guests > 0 ? (int) $guests : null;
-            $surface = get_field('superficie', $post->ID);
-            $surface = is_string($surface) ? $surface : '';
-        }
-        $featured = $product && $product->get_catalog_visibility() === 'visible' ? true : false;
-        $thumb_url = get_the_post_thumbnail_url($post->ID, 'large');
-        $gallery_ids = $product && method_exists($product, 'get_gallery_image_ids') ? $product->get_gallery_image_ids() : [];
-        if (!is_array($gallery_ids)) {
-            $gallery_ids = [];
-        }
-        $rating_value = null;
-        $rating_count = 0;
-        if ($product && method_exists($product, 'get_average_rating')) {
-            $avg = $product->get_average_rating();
-            if (is_numeric($avg) && (float) $avg > 0) {
-                $rating_value = (float) $avg;
-            }
-            if (method_exists($product, 'get_review_count')) {
-                $rating_count = (int) $product->get_review_count();
-            }
-        }
-        $occupancy_pct = null;
-        $occupancy_label = '';
-        if (function_exists('wc_get_orders')) {
-            $month_start = gmdate('Y-m-01 00:00:00');
-            $month_end = gmdate('Y-m-t 23:59:59');
-            $orders = wc_get_orders([
-                'status' => ['wc-completed', 'wc-processing'],
-                'date_created' => $month_start . '...' . $month_end,
-                'limit' => -1,
-            ]);
-            $nights_booked = 0;
-            $days_in_month = (int) gmdate('t');
-            foreach ($orders as $order) {
-                foreach ($order->get_items() as $item) {
-                    if ((int) $item->get_product_id() === (int) $post->ID) {
-                        $nights = (int) $item->get_quantity();
-                        if ($nights <= 0) {
-                            $nights = 1;
-                        }
-                        $nights_booked += $nights;
-                    }
-                }
-            }
-            if ($days_in_month > 0) {
-                $occupancy_pct = min(100, (int) round(($nights_booked / $days_in_month) * 100));
-                $occupancy_label = sprintf(/* translators: month name */ __('Ocupación (%s)', 'alquipress'), gmdate('M'));
-            }
-        }
-        if ($occupancy_label === '') {
-            $occupancy_label = __('Ocupación', 'alquipress');
-        }
-        $dashboard_url = (string) admin_url('admin.php?page=alquipress-dashboard');
-        $description_text = $post->post_excerpt ?: $post->post_content;
-        $description_text = wp_trim_words(wp_strip_all_tags($description_text), 60);
-        if ($description_text === '') {
-            $description_text = __('Sin descripción.', 'alquipress');
-        }
-        ?>
-        <div class="ap-property-edit-pencil">
-            <header class="ap-prop-edit-header">
-                <div class="ap-prop-edit-back-row">
-                    <a href="<?php echo esc_url($list_url); ?>" class="ap-prop-edit-back">&larr; <?php esc_html_e('Volver a Propiedades', 'alquipress'); ?></a>
-                    <div class="ap-prop-edit-actions">
-                        <a href="<?php echo esc_url($view_url); ?>" target="_blank" rel="noopener" class="ap-prop-btn ap-prop-btn-secondary"><?php esc_html_e('Ver en web', 'alquipress'); ?></a>
-                        <span class="ap-prop-btn ap-prop-btn-primary"><?php esc_html_e('Editar', 'alquipress'); ?></span>
-                    </div>
-                </div>
-                <nav class="ap-prop-breadcrumb" aria-label="<?php esc_attr_e('Navegación', 'alquipress'); ?>">
-                    <a href="<?php echo esc_url($dashboard_url); ?>"><?php esc_html_e('Panel', 'alquipress'); ?></a>
-                    <span class="ap-prop-bc-sep" aria-hidden="true">›</span>
-                    <a href="<?php echo esc_url($list_url); ?>"><?php esc_html_e('Propiedades', 'alquipress'); ?></a>
-                    <span class="ap-prop-bc-sep" aria-hidden="true">›</span>
-                    <span class="ap-prop-bc-current"><?php echo esc_html($title); ?></span>
-                </nav>
-            </header>
-
-            <div class="ap-prop-hero">
-                <div class="ap-prop-hero-main" style="<?php echo $thumb_url ? 'background-image:url(' . esc_url($thumb_url) . ')' : 'background:#e8eef3'; ?>">
-                    <?php if (!$thumb_url) : ?>
-                        <span class="ap-prop-hero-placeholder"><?php esc_html_e('Imagen destacada', 'alquipress'); ?></span>
-                    <?php endif; ?>
-                </div>
-                <div class="ap-prop-hero-thumbs">
-                    <?php
-                    $thumbs = array_slice($gallery_ids, 0, 4);
-                    foreach ($thumbs as $img_id) :
-                        $src = wp_get_attachment_image_url($img_id, 'medium');
-                        if (!$src) {
-                            continue;
-                        }
-                        ?>
-                        <div class="ap-prop-thumb" style="background-image:url(<?php echo esc_url($src); ?>)"></div>
-                    <?php endforeach; ?>
-                    <?php for ($i = count($thumbs); $i < 4; $i++) : ?>
-                        <div class="ap-prop-thumb ap-prop-thumb-empty"></div>
-                    <?php endfor; ?>
-                </div>
-            </div>
-
-            <div class="ap-prop-header-block">
-                <div class="ap-prop-title-row">
-                    <h2 class="ap-prop-title"><?php echo esc_html($title); ?></h2>
-                    <span class="ap-prop-badge <?php echo esc_attr($status_class); ?>"><?php echo esc_html($status_label); ?></span>
-                    <?php if ($featured) : ?>
-                        <span class="ap-prop-badge ap-prop-badge-featured"><?php esc_html_e('Destacada', 'alquipress'); ?></span>
-                    <?php endif; ?>
-                </div>
-                <div class="ap-prop-meta-row">
-                    <span class="ap-prop-ref-label"><?php esc_html_e('Ref. interna:', 'alquipress'); ?></span>
-                    <code class="ap-prop-ref"><?php echo esc_html($ref); ?></code>
-                </div>
-                <?php if ($address !== '') : ?>
-                <div class="ap-prop-address-row">
-                    <span class="dashicons dashicons-location" aria-hidden="true"></span>
-                    <span><?php echo esc_html($address); ?></span>
-                </div>
-                <?php endif; ?>
-                <div class="ap-prop-url-row">
-                    <span class="dashicons dashicons-admin-links" aria-hidden="true"></span>
-                    <a href="<?php echo esc_url($view_url); ?>" target="_blank" rel="noopener" class="ap-prop-url"><?php echo esc_html($view_url); ?></a>
-                    <button type="button" class="ap-prop-copy-url" data-url="<?php echo esc_attr($view_url); ?>" title="<?php esc_attr_e('Copiar enlace', 'alquipress'); ?>"><span class="dashicons dashicons-admin-page"></span></button>
-                </div>
-            </div>
-
-            <div class="ap-prop-quick-stats">
-                <div class="ap-prop-stat">
-                    <span class="dashicons dashicons-bed" aria-hidden="true"></span>
-                    <div class="ap-prop-stat-content">
-                        <span class="ap-prop-stat-value"><?php echo $beds !== null ? (int) $beds : '—'; ?></span>
-                        <span class="ap-prop-stat-label"><?php esc_html_e('Habitaciones', 'alquipress'); ?></span>
-                    </div>
-                </div>
-                <div class="ap-prop-stat">
-                    <span class="dashicons dashicons-share" aria-hidden="true"></span>
-                    <div class="ap-prop-stat-content">
-                        <span class="ap-prop-stat-value"><?php echo $baths !== null ? (int) $baths : '—'; ?></span>
-                        <span class="ap-prop-stat-label"><?php esc_html_e('Baños', 'alquipress'); ?></span>
-                    </div>
-                </div>
-                <div class="ap-prop-stat">
-                    <span class="dashicons dashicons-groups" aria-hidden="true"></span>
-                    <div class="ap-prop-stat-content">
-                        <span class="ap-prop-stat-value"><?php echo $guests !== null ? (int) $guests : '—'; ?></span>
-                        <span class="ap-prop-stat-label"><?php esc_html_e('Plazas', 'alquipress'); ?></span>
-                    </div>
-                </div>
-                <?php if ($surface !== '') : ?>
-                <div class="ap-prop-stat">
-                    <span class="dashicons dashicons-editor-expand" aria-hidden="true"></span>
-                    <div class="ap-prop-stat-content">
-                        <span class="ap-prop-stat-value"><?php echo esc_html($surface); ?></span>
-                        <span class="ap-prop-stat-label"><?php esc_html_e('Superficie', 'alquipress'); ?></span>
-                    </div>
-                </div>
-                <?php endif; ?>
-                <div class="ap-prop-stat ap-prop-stat-rating">
-                    <span class="dashicons dashicons-star-filled" aria-hidden="true"></span>
-                    <div class="ap-prop-stat-content">
-                        <span class="ap-prop-stat-value"><?php echo $rating_value !== null ? number_format_i18n($rating_value, 1) : '—'; ?></span>
-                        <span class="ap-prop-stat-label"><?php echo $rating_count > 0 ? sprintf(/* translators: number of reviews */ _n('%d valoración', '%d valoraciones', $rating_count, 'alquipress'), $rating_count) : esc_html__('Valoración', 'alquipress'); ?></span>
-                    </div>
-                </div>
-                <div class="ap-prop-stat">
-                    <span class="dashicons dashicons-money-alt" aria-hidden="true"></span>
-                    <div class="ap-prop-stat-content">
-                        <span class="ap-prop-stat-value"><?php echo wp_kses_post($price_html); ?></span>
-                        <span class="ap-prop-stat-label"><?php esc_html_e('Precio/noche', 'alquipress'); ?></span>
-                    </div>
-                </div>
-                <div class="ap-prop-stat ap-prop-stat-occupancy">
-                    <span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span>
-                    <div class="ap-prop-stat-content">
-                        <span class="ap-prop-stat-value"><?php echo $occupancy_pct !== null ? (int) $occupancy_pct . '%' : '—'; ?></span>
-                        <span class="ap-prop-stat-label"><?php echo esc_html($occupancy_label); ?></span>
-                    </div>
-                </div>
-            </div>
-
-            <nav class="ap-prop-tabs-nav" role="tablist" aria-label="<?php esc_attr_e('Secciones de la propiedad', 'alquipress'); ?>">
-                <button type="button" class="ap-prop-tab is-active" role="tab" id="ap-prop-tab-overview" aria-selected="true" aria-controls="ap-prop-panel-overview" data-tab="overview"><?php esc_html_e('Overview', 'alquipress'); ?></button>
-                <button type="button" class="ap-prop-tab" role="tab" id="ap-prop-tab-calendario" aria-selected="false" aria-controls="ap-prop-panel-calendario" data-tab="calendario"><?php esc_html_e('Calendario', 'alquipress'); ?></button>
-                <button type="button" class="ap-prop-tab" role="tab" id="ap-prop-tab-rendimiento" aria-selected="false" aria-controls="ap-prop-panel-rendimiento" data-tab="rendimiento"><?php esc_html_e('Rendimiento', 'alquipress'); ?></button>
-                <button type="button" class="ap-prop-tab" role="tab" id="ap-prop-tab-documentos" aria-selected="false" aria-controls="ap-prop-panel-documentos" data-tab="documentos"><?php esc_html_e('Documentos', 'alquipress'); ?></button>
-                <button type="button" class="ap-prop-tab" role="tab" id="ap-prop-tab-propietario" aria-selected="false" aria-controls="ap-prop-panel-propietario" data-tab="propietario"><?php esc_html_e('Propietario', 'alquipress'); ?></button>
-            </nav>
-
-            <div id="ap-prop-panel-overview" class="ap-prop-tab-panel is-active" role="tabpanel" aria-labelledby="ap-prop-tab-overview">
-                <div class="ap-prop-overview-layout">
-                    <div class="ap-prop-overview-left">
-                        <div class="ap-prop-card ap-prop-card-description">
-                            <h3 class="ap-prop-card-title"><?php esc_html_e('Sobre esta propiedad', 'alquipress'); ?></h3>
-                            <p class="ap-prop-card-text"><?php echo esc_html($description_text); ?></p>
-                        </div>
-                        <div class="ap-prop-card ap-prop-card-amenities">
-                            <h3 class="ap-prop-card-title"><?php esc_html_e('Características y equipamiento', 'alquipress'); ?></h3>
-                            <p class="ap-prop-card-muted"><?php esc_html_e('Definidas en los campos personalizados (taxonomías, ACF).', 'alquipress'); ?></p>
-                        </div>
-                        <div class="ap-prop-card ap-prop-card-rooms">
-                            <h3 class="ap-prop-card-title"><?php esc_html_e('Configuración de habitaciones', 'alquipress'); ?></h3>
-                            <p class="ap-prop-card-muted"><?php echo $beds !== null ? sprintf(/* translators: number of rooms */ _n('%d habitación', '%d habitaciones', (int) $beds, 'alquipress'), (int) $beds) : esc_html__('Sin datos.', 'alquipress'); ?></p>
-                        </div>
-                        <div class="ap-prop-card ap-prop-card-location">
-                            <h3 class="ap-prop-card-title"><?php esc_html_e('Ubicación', 'alquipress'); ?></h3>
-                            <p class="ap-prop-card-text"><?php echo $address !== '' ? esc_html($address) : esc_html__('Sin dirección definida.', 'alquipress'); ?></p>
-                        </div>
-                        <div class="ap-prop-card ap-prop-card-rules">
-                            <h3 class="ap-prop-card-title"><?php esc_html_e('Normas y políticas', 'alquipress'); ?></h3>
-                            <p class="ap-prop-card-muted"><?php esc_html_e('Configurables en el producto o campos ACF.', 'alquipress'); ?></p>
-                        </div>
-                        <div class="ap-prop-card ap-prop-card-product-data">
-                            <h3 class="ap-prop-card-title"><?php esc_html_e('Datos del producto y campos personalizados', 'alquipress'); ?></h3>
-                            <div id="ap-prop-overview-content"></div>
-                        </div>
-                    </div>
-                    <aside class="ap-prop-overview-sidebar">
-                        <div class="ap-prop-widget ap-prop-widget-status">
-                            <h4 class="ap-prop-widget-title"><?php esc_html_e('Estado de la propiedad', 'alquipress'); ?></h4>
-                            <div class="ap-prop-widget-status-badge <?php echo esc_attr($status_class); ?>">
-                                <span class="ap-prop-widget-status-dot"></span>
-                                <span class="ap-prop-widget-status-text"><?php echo esc_html($status_label); ?></span>
-                            </div>
-                            <p class="ap-prop-widget-meta"><?php echo esc_html($ref); ?> · <?php echo $beds !== null ? (int) $beds . ' ' . esc_html__('hab.', 'alquipress') : ''; ?></p>
-                        </div>
-                        <div class="ap-prop-widget ap-prop-widget-next-booking">
-                            <h4 class="ap-prop-widget-title"><?php esc_html_e('Próxima reserva', 'alquipress'); ?></h4>
-                            <p class="ap-prop-widget-muted"><?php esc_html_e('Sin reservas próximas o no disponibles.', 'alquipress'); ?></p>
-                        </div>
-                        <div class="ap-prop-widget ap-prop-widget-stats">
-                            <h4 class="ap-prop-widget-title"><?php esc_html_e('Este mes', 'alquipress'); ?></h4>
-                            <div class="ap-prop-widget-stat-row">
-                                <span class="ap-prop-widget-stat-label"><?php esc_html_e('Ingresos', 'alquipress'); ?></span>
-                                <span class="ap-prop-widget-stat-value"><?php echo wp_kses_post($price_html); ?></span>
-                            </div>
-                            <div class="ap-prop-widget-stat-row">
-                                <span class="ap-prop-widget-stat-label"><?php esc_html_e('Ocupación', 'alquipress'); ?></span>
-                                <span class="ap-prop-widget-stat-value"><?php echo $occupancy_pct !== null ? (int) $occupancy_pct . '%' : '—'; ?></span>
-                            </div>
-                        </div>
-                        <div class="ap-prop-widget ap-prop-widget-actions">
-                            <h4 class="ap-prop-widget-title"><?php esc_html_e('Acciones rápidas', 'alquipress'); ?></h4>
-                            <div class="ap-prop-widget-actions-list">
-                                <a href="<?php echo esc_url($view_url); ?>" target="_blank" rel="noopener" class="ap-prop-widget-action-btn"><?php esc_html_e('Ver en web', 'alquipress'); ?></a>
-                                <a href="<?php echo esc_url($list_url); ?>" class="ap-prop-widget-action-btn"><?php esc_html_e('Volver a propiedades', 'alquipress'); ?></a>
-                            </div>
-                        </div>
-                    </aside>
-                </div>
-            </div>
-
-            <div id="ap-prop-panel-calendario" class="ap-prop-tab-panel" role="tabpanel" aria-labelledby="ap-prop-tab-calendario" hidden>
-                <div class="ap-prop-tab-placeholder">
-                    <span class="dashicons dashicons-calendar-alt"></span>
-                    <p><?php esc_html_e('Calendario de reservas de esta propiedad.', 'alquipress'); ?></p>
-                    <p class="ap-prop-tab-placeholder-note"><?php esc_html_e('Próximamente: vista de calendario integrada.', 'alquipress'); ?></p>
-                </div>
-            </div>
-
-            <div id="ap-prop-panel-rendimiento" class="ap-prop-tab-panel" role="tabpanel" aria-labelledby="ap-prop-tab-rendimiento" hidden>
-                <div class="ap-prop-tab-placeholder">
-                    <span class="dashicons dashicons-chart-line"></span>
-                    <p><?php esc_html_e('Rendimiento e ingresos de esta propiedad.', 'alquipress'); ?></p>
-                    <p class="ap-prop-tab-placeholder-note"><?php esc_html_e('Próximamente: gráficos y métricas.', 'alquipress'); ?></p>
-                </div>
-            </div>
-
-            <div id="ap-prop-panel-documentos" class="ap-prop-tab-panel" role="tabpanel" aria-labelledby="ap-prop-tab-documentos" hidden>
-                <div class="ap-prop-tab-placeholder">
-                    <span class="dashicons dashicons-media-default"></span>
-                    <p><?php esc_html_e('Documentos adjuntos a la propiedad.', 'alquipress'); ?></p>
-                    <p class="ap-prop-tab-placeholder-note"><?php esc_html_e('Próximamente: gestor de documentos.', 'alquipress'); ?></p>
-                </div>
-            </div>
-
-            <div id="ap-prop-panel-propietario" class="ap-prop-tab-panel" role="tabpanel" aria-labelledby="ap-prop-tab-propietario" hidden>
-                <div class="ap-prop-tab-placeholder">
-                    <span class="dashicons dashicons-admin-users"></span>
-                    <p><?php esc_html_e('Propietario asignado a esta propiedad.', 'alquipress'); ?></p>
-                    <p class="ap-prop-tab-placeholder-note"><?php esc_html_e('Próximamente: enlace a ficha del propietario.', 'alquipress'); ?></p>
-                </div>
-            </div>
-        </div>
-        <script>
-        (function() {
-            var btn = document.querySelector('.ap-prop-copy-url');
-            if (btn && btn.dataset.url) {
-                btn.addEventListener('click', function() {
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        navigator.clipboard.writeText(btn.dataset.url).then(function() {
-                            var dashicons = btn.querySelector('.dashicons');
-                            if (dashicons) { dashicons.className = 'dashicons dashicons-yes'; }
-                            setTimeout(function() { if (dashicons) dashicons.className = 'dashicons dashicons-admin-page'; }, 1500);
-                        });
-                    }
-                });
-            }
-
-            var pencil = document.querySelector('.ap-property-edit-pencil');
-            if (pencil) {
-                var overviewContent = document.getElementById('ap-prop-overview-content');
-                if (overviewContent) {
-                    // Esperar a que ACF cargue completamente los campos
-                    setTimeout(function() {
-                        // Buscar todos los meta boxes de ACF en el área principal
-                        var normalSortables = document.getElementById('normal-sortables');
-                        var postBodyContent = document.getElementById('post-body-content');
-                        
-                        var metaBoxesToMove = [];
-                        
-                        // Buscar meta boxes en #normal-sortables
-                        if (normalSortables) {
-                            var boxes = normalSortables.querySelectorAll('.postbox');
-                            boxes.forEach(function(box) {
-                                // Solo mover meta boxes que contengan campos ACF
-                                if (box.querySelector('.acf-fields') || box.querySelector('.acf-field-group')) {
-                                    metaBoxesToMove.push(box);
-                                }
-                            });
-                        }
-                        
-                        // Buscar meta boxes directamente en #post-body-content
-                        if (postBodyContent) {
-                            var boxes = postBodyContent.querySelectorAll('.postbox');
-                            boxes.forEach(function(box) {
-                                if (box.querySelector('.acf-fields') || box.querySelector('.acf-field-group')) {
-                                    // Evitar duplicados
-                                    if (metaBoxesToMove.indexOf(box) === -1) {
-                                        metaBoxesToMove.push(box);
-                                    }
-                                }
-                            });
-                        }
-                        
-                        // Mover los meta boxes al contenedor overview
-                        metaBoxesToMove.forEach(function(box) {
-                            if (!overviewContent.contains(box)) {
-                                overviewContent.appendChild(box);
-                            }
-                        });
-                        
-                        // Ocultar contenedores vacíos después de mover
-                        if (normalSortables && normalSortables.children.length === 0) {
-                            normalSortables.style.display = 'none';
-                        }
-                        if (postBodyContent && postBodyContent.children.length === 0) {
-                            postBodyContent.style.display = 'none';
-                        }
-                    }, 100);
-                }
-                var tabs = pencil.querySelectorAll('.ap-prop-tab');
-                var panels = pencil.querySelectorAll('.ap-prop-tab-panel');
-                function setActiveTab(tab) {
-                    var tabId = tab.getAttribute('data-tab');
-                    tabs.forEach(function(t) { t.classList.remove('is-active'); t.setAttribute('aria-selected', 'false'); });
-                    panels.forEach(function(p) { p.classList.remove('is-active'); p.hidden = true; });
-                    tab.classList.add('is-active');
-                    tab.setAttribute('aria-selected', 'true');
-                    var panel = document.getElementById(tab.getAttribute('aria-controls'));
-                    if (panel) { panel.classList.add('is-active'); panel.hidden = false; }
-                    document.body.classList.toggle('ap-prop-tab-non-overview', tabId !== 'overview');
-                }
-                tabs.forEach(function(tab) {
-                    tab.addEventListener('click', function() { setActiveTab(tab); });
-                });
-            }
-        })();
-        </script>
-        <?php
+        require_once ALQUIPRESS_PATH . 'includes/admin/property-edit-layout.php';
+        alquipress_render_property_edit_layout($post);
     }
 
     /**
@@ -1072,6 +662,7 @@ class Alquipress_UI_Enhancements
 
     /**
      * Ocultar metaboxes innecesarios en la página de edición de clientes
+     * Solo mostrar: Nombre, Campos ACF CRM Ficha de Huésped, Dirección de pedido WooCommerce
      */
     public function remove_unnecessary_user_meta_boxes()
     {
@@ -1091,23 +682,49 @@ class Alquipress_UI_Enhancements
             return;
         }
 
-        // Ocultar esquema de color
+        // Obtener todos los metaboxes registrados
+        global $wp_meta_boxes;
+        $screen = get_current_screen();
+        if (!$screen) {
+            return;
+        }
+
+        // Lista de metaboxes a mantener (solo estos se mostrarán)
+        $keep_meta_boxes = [
+            'acf-group_crm_cliente', // Campos ACF CRM Ficha de Huésped
+        ];
+
+        // Ocultar todos los metaboxes excepto los que queremos mantener
+        foreach (['normal', 'side', 'advanced'] as $context) {
+            if (!isset($wp_meta_boxes[$screen->id][$context])) {
+                continue;
+            }
+            
+            foreach ($wp_meta_boxes[$screen->id][$context] as $priority => $boxes) {
+                foreach ($boxes as $box_id => $box) {
+                    // Mantener solo los metaboxes permitidos
+                    if (!in_array($box_id, $keep_meta_boxes, true)) {
+                        // No ocultar metaboxes de WooCommerce (dirección de pedido)
+                        if (strpos($box_id, 'woocommerce') === false) {
+                            remove_meta_box($box_id, $screen->id, $context);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Ocultar campos específicos de WordPress
         remove_meta_box('show_user_color_scheme', 'user', 'normal');
         remove_meta_box('show_user_color_scheme', 'user', 'side');
-        
-        // Ocultar atajos de teclado (Keyboard Shortcuts)
         remove_meta_box('keyboard_shortcuts', 'user', 'normal');
         remove_meta_box('keyboard_shortcuts', 'user', 'side');
-        
-        // Ocultar contraseñas de aplicación
         remove_meta_box('application_passwords', 'user', 'normal');
-        
-        // Ocultar SEO de usuarios (si existe)
         remove_meta_box('wpseo_meta', 'user', 'normal');
     }
 
     /**
      * Ocultar metaboxes con CSS como respaldo
+     * Solo mostrar: Nombre, Campos ACF CRM, Dirección WooCommerce
      */
     public function hide_meta_boxes_css()
     {
@@ -1128,6 +745,54 @@ class Alquipress_UI_Enhancements
         }
         ?>
         <style>
+            /* Ocultar TODOS los campos excepto los permitidos */
+            body.user-edit .form-table tr:not([id*="first_name"]):not([id*="last_name"]):not([id*="user_email"]),
+            body.profile .form-table tr:not([id*="first_name"]):not([id*="last_name"]):not([id*="user_email"]) {
+                display: none !important;
+            }
+            
+            /* Mantener solo campos básicos: Nombre, Apellidos, Email (solo para identificación) */
+            body.user-edit .form-table tr[id*="first_name"],
+            body.user-edit .form-table tr[id*="last_name"],
+            body.profile .form-table tr[id*="first_name"],
+            body.profile .form-table tr[id*="last_name"] {
+                display: table-row !important;
+            }
+            
+            /* Ocultar campos de WordPress que no necesitamos */
+            body.user-edit .form-table tr[id*="nickname"],
+            body.user-edit .form-table tr[id*="display_name"],
+            body.user-edit .form-table tr[id*="description"],
+            body.user-edit .form-table tr[id*="url"],
+            body.user-edit .form-table tr[id*="user_login"],
+            body.user-edit .form-table tr[id*="user_pass"],
+            body.profile .form-table tr[id*="nickname"],
+            body.profile .form-table tr[id*="display_name"],
+            body.profile .form-table tr[id*="description"],
+            body.profile .form-table tr[id*="url"],
+            body.profile .form-table tr[id*="user_login"],
+            body.profile .form-table tr[id*="user_pass"] {
+                display: none !important;
+            }
+            
+            /* Ocultar todos los metaboxes excepto ACF CRM y WooCommerce */
+            body.user-edit .postbox:not([id*="acf-group_crm_cliente"]):not([id*="woocommerce-customer-data"]),
+            body.profile .postbox:not([id*="acf-group_crm_cliente"]):not([id*="woocommerce-customer-data"]) {
+                display: none !important;
+            }
+            
+            /* Ocultar campos de perfil personalizados */
+            body.user-edit .form-table tr[id*="rich_editing"],
+            body.user-edit .form-table tr[id*="comment_shortcuts"],
+            body.user-edit .form-table tr[id*="admin_color"],
+            body.user-edit .form-table tr[id*="show_admin_bar"],
+            body.profile .form-table tr[id*="rich_editing"],
+            body.profile .form-table tr[id*="comment_shortcuts"],
+            body.profile .form-table tr[id*="admin_color"],
+            body.profile .form-table tr[id*="show_admin_bar"] {
+                display: none !important;
+            }
+            
             /* Ocultar esquema de color */
             body.user-edit #show_user_color_scheme,
             body.profile #show_user_color_scheme,
@@ -1156,6 +821,52 @@ class Alquipress_UI_Enhancements
                 display: none !important;
             }
             
+            /* Ocultar TODOS los campos de WordPress excepto Nombre y Apellidos */
+            body.user-edit .form-table tr:not([id*="first_name"]):not([id*="last_name"]),
+            body.profile .form-table tr:not([id*="first_name"]):not([id*="last_name"]) {
+                display: none !important;
+            }
+            
+            /* Mantener solo campos básicos: Nombre, Apellidos */
+            body.user-edit .form-table tr[id*="first_name"],
+            body.user-edit .form-table tr[id*="last_name"],
+            body.profile .form-table tr[id*="first_name"],
+            body.profile .form-table tr[id*="last_name"] {
+                display: table-row !important;
+            }
+            
+            /* Ocultar campos específicos de WordPress */
+            body.user-edit .form-table tr[id*="nickname"],
+            body.user-edit .form-table tr[id*="display_name"],
+            body.user-edit .form-table tr[id*="description"],
+            body.user-edit .form-table tr[id*="url"],
+            body.user-edit .form-table tr[id*="user_login"],
+            body.user-edit .form-table tr[id*="user_email"],
+            body.user-edit .form-table tr[id*="user_pass"],
+            body.user-edit .form-table tr[id*="rich_editing"],
+            body.user-edit .form-table tr[id*="comment_shortcuts"],
+            body.user-edit .form-table tr[id*="admin_color"],
+            body.user-edit .form-table tr[id*="show_admin_bar"],
+            body.profile .form-table tr[id*="nickname"],
+            body.profile .form-table tr[id*="display_name"],
+            body.profile .form-table tr[id*="description"],
+            body.profile .form-table tr[id*="url"],
+            body.profile .form-table tr[id*="user_login"],
+            body.profile .form-table tr[id*="user_email"],
+            body.profile .form-table tr[id*="user_pass"],
+            body.profile .form-table tr[id*="rich_editing"],
+            body.profile .form-table tr[id*="comment_shortcuts"],
+            body.profile .form-table tr[id*="admin_color"],
+            body.profile .form-table tr[id*="show_admin_bar"] {
+                display: none !important;
+            }
+            
+            /* Ocultar todos los metaboxes excepto ACF CRM y WooCommerce */
+            body.user-edit .postbox:not([id*="acf-group_crm_cliente"]):not([id*="woocommerce"]),
+            body.profile .postbox:not([id*="acf-group_crm_cliente"]):not([id*="woocommerce"]) {
+                display: none !important;
+            }
+            
             /* Ocultar cualquier postbox que contenga "color" o "keyboard" en su ID o clase */
             body.user-edit .postbox[id*="color"],
             body.profile .postbox[id*="color"],
@@ -1174,6 +885,84 @@ class Alquipress_UI_Enhancements
             body.user-edit #contextual-help-link-wrap,
             body.profile #contextual-help-link-wrap {
                 display: none !important;
+            }
+            
+            /* Estilo del dashboard para los campos visibles */
+            body.user-edit .form-table tr[id*="first_name"] th,
+            body.user-edit .form-table tr[id*="last_name"] th,
+            body.profile .form-table tr[id*="first_name"] th,
+            body.profile .form-table tr[id*="last_name"] th {
+                font-weight: 600;
+                color: var(--ap-text-primary);
+                padding: 16px 0;
+                width: 200px;
+            }
+            
+            body.user-edit .form-table tr[id*="first_name"] td,
+            body.user-edit .form-table tr[id*="last_name"] td,
+            body.profile .form-table tr[id*="first_name"] td,
+            body.profile .form-table tr[id*="last_name"] td {
+                padding: 16px 0;
+            }
+            
+            body.user-edit .form-table tr[id*="first_name"] input,
+            body.user-edit .form-table tr[id*="last_name"] input,
+            body.profile .form-table tr[id*="first_name"] input,
+            body.profile .form-table tr[id*="last_name"] input {
+                width: 100%;
+                max-width: 400px;
+                padding: 10px 12px;
+                border: 1px solid var(--ap-border);
+                border-radius: var(--ap-radius-md);
+                font-size: 14px;
+                transition: border-color 0.2s;
+            }
+            
+            body.user-edit .form-table tr[id*="first_name"] input:focus,
+            body.user-edit .form-table tr[id*="last_name"] input:focus,
+            body.profile .form-table tr[id*="first_name"] input:focus,
+            body.profile .form-table tr[id*="last_name"] input:focus {
+                border-color: var(--ap-primary);
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(44, 153, 226, 0.1);
+            }
+            
+            /* Estilos para metaboxes ACF y WooCommerce */
+            body.user-edit .postbox[id*="acf-group_crm_cliente"],
+            body.user-edit .postbox[id*="woocommerce"],
+            body.profile .postbox[id*="acf-group_crm_cliente"],
+            body.profile .postbox[id*="woocommerce"] {
+                background: var(--ap-surface);
+                border: 1px solid var(--ap-border);
+                border-radius: var(--ap-radius-lg);
+                box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+                margin-bottom: 24px;
+            }
+            
+            body.user-edit .postbox[id*="acf-group_crm_cliente"] .postbox-header,
+            body.user-edit .postbox[id*="woocommerce"] .postbox-header,
+            body.profile .postbox[id*="acf-group_crm_cliente"] .postbox-header,
+            body.profile .postbox[id*="woocommerce"] .postbox-header {
+                border-bottom: 1px solid var(--ap-border);
+                padding: 16px 20px;
+                background: var(--ap-surface);
+            }
+            
+            body.user-edit .postbox[id*="acf-group_crm_cliente"] .postbox-header h2,
+            body.user-edit .postbox[id*="woocommerce"] .postbox-header h2,
+            body.profile .postbox[id*="acf-group_crm_cliente"] .postbox-header h2,
+            body.profile .postbox[id*="woocommerce"] .postbox-header h2 {
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--ap-text-primary);
+                font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            }
+            
+            body.user-edit .postbox[id*="acf-group_crm_cliente"] .inside,
+            body.user-edit .postbox[id*="woocommerce"] .inside,
+            body.profile .postbox[id*="acf-group_crm_cliente"] .inside,
+            body.profile .postbox[id*="woocommerce"] .inside {
+                padding: 20px;
             }
         </style>
         <?php

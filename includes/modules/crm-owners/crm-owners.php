@@ -55,14 +55,33 @@ class Alquipress_CRM_Owners
 
     public function load_acf_fields()
     {
+        // Verificar que ACF esté disponible
+        if (!function_exists('acf_add_local_field_group')) {
+            return;
+        }
+        
         $json_file = dirname(__FILE__) . '/acf-fields.json';
-        if (file_exists($json_file)) {
-            $json = file_get_contents($json_file);
-            $fields = json_decode($json, true);
-            if (function_exists('acf_add_local_field_group') && is_array($fields)) {
-                foreach ($fields as $field_group) {
-                    acf_add_local_field_group($field_group);
-                }
+        if (!file_exists($json_file)) {
+            return;
+        }
+        
+        $json = file_get_contents($json_file);
+        $fields = json_decode($json, true);
+        
+        if (!is_array($fields)) {
+            return;
+        }
+        
+        // Cargar cada grupo de campos solo si no existe ya
+        foreach ($fields as $field_group) {
+            // Verificar que el grupo tenga una key válida
+            if (!isset($field_group['key']) || empty($field_group['key'])) {
+                continue;
+            }
+            
+            // Verificar si el grupo ya existe antes de agregarlo
+            if (!function_exists('acf_is_local_field_group') || !acf_is_local_field_group($field_group['key'])) {
+                acf_add_local_field_group($field_group);
             }
         }
     }
