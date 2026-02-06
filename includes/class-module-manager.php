@@ -100,8 +100,44 @@ class Alquipress_Module_Manager
             . '.wrap.ap-has-sidebar .ap-owners-layout{display:flex!important;min-height:calc(100vh - 140px)!important;background:#f8fafb!important;border:1px solid #e8eef3!important;border-radius:16px!important;overflow:hidden!important;}'
             . '.wrap.ap-has-sidebar .ap-owners-sidebar{width:256px!important;min-width:256px!important;background:#ffffff!important;border-right:1px solid #e8eef3!important;display:flex!important;flex-direction:column!important;}'
             . '.wrap.ap-has-sidebar .ap-owners-main{flex:1!important;min-width:0!important;padding:32px!important;background:#f8fafb!important;}'
-            . '.wrap.ap-has-sidebar .ap-owners-icon{stroke:currentColor!important;fill:none!important;}';
+            . '.wrap.ap-has-sidebar .ap-owners-icon{stroke:currentColor!important;fill:none!important;}'
+            . '@media screen and (max-width:782px){'
+            . '.wrap.ap-has-sidebar{margin-top:0!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-layout{flex-direction:column!important;min-height:auto!important;border-radius:0!important;border-left:0!important;border-right:0!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-sidebar{width:100%!important;min-width:0!important;border-right:0!important;border-bottom:1px solid #e8eef3!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-logo{height:auto!important;padding:12px 16px!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-nav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;padding:12px!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-nav-item{height:auto!important;min-height:40px!important;padding:8px 10px!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-sidebar-spacer,.wrap.ap-has-sidebar .ap-owners-user{display:none!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-main{padding:16px!important;overflow-x:hidden!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-header{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:12px!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-header-right{width:100%!important;display:flex!important;flex-wrap:wrap!important;gap:8px!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-header-right .ap-owners-action-btn,.wrap.ap-has-sidebar .ap-owners-header-right .ap-owners-top-view{max-width:100%!important;}'
+            . '.wrap.ap-has-sidebar .ap-owners-metrics-row,.wrap.ap-has-sidebar .ap-content-row,.wrap.ap-has-sidebar .ap-pipeline-container,.wrap.ap-has-sidebar .ap-owners-content-row{overflow-x:auto!important;}'
+            . '@media screen and (max-width:520px){'
+            . '.wrap.ap-has-sidebar .ap-owners-nav{grid-template-columns:1fr!important;}'
+            . '}'
+            . '}';
         wp_add_inline_style('alquipress-admin-layout', $critical_layout);
+
+        // Modo "app": ocultar barra superior y menú lateral de WordPress dentro del dashboard ALQUIPRESS.
+        $hide_wp_chrome = 'html.wp-toolbar{padding-top:0!important;}'
+            . '#wpadminbar{display:none!important;}'
+            . '#adminmenumain,#adminmenuback,#adminmenuwrap{display:none!important;}'
+            . '#wpcontent,#wpfooter{margin-left:0!important;}'
+            . '#wpfooter,#footer-left,#footer-upgrade{display:none!important;}'
+            . '#wp-responsive-open{display:none!important;}'
+            . '.folded #wpcontent,.auto-fold #wpcontent{margin-left:0!important;}'
+            . '#wpbody-content{padding-top:0!important;padding-bottom:0!important;}'
+            . '#wpwrap{padding-left:0!important;}'
+            . '@media screen and (max-width:782px){'
+            . 'html.wp-toolbar{padding-top:0!important;}'
+            . '#wpadminbar{display:none!important;}'
+            . '#wp-responsive-wrap,#wpbody,#wpcontent{margin-left:0!important;padding-left:0!important;}'
+            . '#adminmenumain,#adminmenuback,#adminmenuwrap,#adminmenu,#wp-responsive-open{display:none!important;}'
+            . '#wpbody-content{padding-top:0!important;padding-bottom:0!important;}'
+            . '}';
+        wp_add_inline_style('alquipress-admin-layout', $hide_wp_chrome);
 
         if ($page === 'alquipress-settings') {
             wp_enqueue_style(

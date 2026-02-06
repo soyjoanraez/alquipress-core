@@ -144,6 +144,7 @@ class Alquipress_Owner_Profile
             'bar-chart' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="20" x2="6" y2="14" /><line x1="12" y1="20" x2="12" y2="8" /><line x1="18" y1="20" x2="18" y2="4" /></svg>',
             'settings' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V22a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-.4-1.1 1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.1-.4 1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 .4 1.1 1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.25.34.45.71.6 1.1.1.33.35.56.7.6H22a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.1.4c-.34.25-.56.6-.6.9Z" /></svg>',
             'edit' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>',
+            'download' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></svg>',
         ];
 
         if (!isset($icons[$name])) {
@@ -196,6 +197,131 @@ class Alquipress_Owner_Profile
         ];
     }
 
+    /**
+     * Normaliza un mes en formato YYYY-MM.
+     *
+     * @param string $month Mes.
+     * @return string
+     */
+    private function normalize_month($month)
+    {
+        $month = trim((string) $month);
+        if (!preg_match('/^\d{4}\-(0[1-9]|1[0-2])$/', $month)) {
+            return '';
+        }
+        return $month;
+    }
+
+    /**
+     * Devuelve opciones de mes para selector histórico.
+     *
+     * @param int $months_back Número de meses hacia atrás (incluyendo actual).
+     * @return array<int, array{value:string,label:string}>
+     */
+    private function get_settlement_month_options($months_back = 24)
+    {
+        $months_back = max(1, (int) $months_back);
+        $timezone = wp_timezone();
+        $base = new DateTime('first day of this month', $timezone);
+        $options = [];
+
+        for ($i = 0; $i < $months_back; $i++) {
+            $date = clone $base;
+            if ($i > 0) {
+                $date->modify('-' . $i . ' months');
+            }
+
+            $options[] = [
+                'value' => $date->format('Y-m'),
+                'label' => date_i18n('F Y', $date->getTimestamp()),
+            ];
+        }
+
+        return $options;
+    }
+
+    /**
+     * Verifica si el usuario actual puede acceder a la ficha del propietario.
+     *
+     * @param int $owner_id ID del propietario.
+     * @return bool
+     */
+    private function can_access_owner_profile($owner_id)
+    {
+        $owner_id = (int) $owner_id;
+        $user_id = (int) get_current_user_id();
+
+        if ($owner_id <= 0 || $user_id <= 0) {
+            return false;
+        }
+
+        if (
+            current_user_can('manage_options') ||
+            current_user_can('manage_woocommerce') ||
+            current_user_can('edit_post', $owner_id)
+        ) {
+            return true;
+        }
+
+        if (
+            class_exists('Alquipress_Owner_Role_Manager') &&
+            current_user_can(Alquipress_Owner_Role_Manager::ROLE_PROPERTY_OWNER) &&
+            $this->is_owner_linked_to_user($owner_id, $user_id)
+        ) {
+            return true;
+        }
+
+        return (bool) apply_filters('alquipress_owner_profile_can_access', false, $user_id, $owner_id);
+    }
+
+    /**
+     * Comprueba vinculación usuario <-> propietario.
+     *
+     * @param int $owner_id ID propietario.
+     * @param int $user_id ID usuario.
+     * @return bool
+     */
+    private function is_owner_linked_to_user($owner_id, $user_id)
+    {
+        $owner_id = (int) $owner_id;
+        $user_id = (int) $user_id;
+        if ($owner_id <= 0 || $user_id <= 0) {
+            return false;
+        }
+
+        $meta_user_keys = [
+            'owner_user_id',
+            'owner_wp_user_id',
+            '_owner_user_id',
+            '_owner_wp_user_id',
+        ];
+
+        foreach ($meta_user_keys as $meta_key) {
+            $linked_user_id = (int) get_post_meta($owner_id, $meta_key, true);
+            if ($linked_user_id > 0 && $linked_user_id === $user_id) {
+                return true;
+            }
+        }
+
+        if (function_exists('get_field')) {
+            $acf_user = get_field('owner_user', $owner_id);
+            if (is_numeric($acf_user) && (int) $acf_user === $user_id) {
+                return true;
+            }
+            if (is_object($acf_user) && isset($acf_user->ID) && (int) $acf_user->ID === $user_id) {
+                return true;
+            }
+        }
+
+        $owner_email = sanitize_email((string) get_post_meta($owner_id, 'owner_email_management', true));
+        $user = get_userdata($user_id);
+        if ($user && !empty($owner_email) && strtolower($owner_email) === strtolower((string) $user->user_email)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function render_owner_profile()
     {
         $owner_id = isset($_GET['owner_id']) ? (int) $_GET['owner_id'] : 0;
@@ -206,6 +332,14 @@ class Alquipress_Owner_Profile
         if (!$owner_post || $owner_post->post_type !== 'propietario') {
             echo '<div class="notice notice-error"><p>' . esc_html__('Propietario no encontrado.', 'alquipress') . '</p></div>';
             return;
+        }
+
+        if (!$this->can_access_owner_profile($owner_id)) {
+            wp_die(
+                esc_html__('No tienes permisos para ver esta ficha de propietario.', 'alquipress'),
+                esc_html__('Acceso denegado', 'alquipress'),
+                ['response' => 403]
+            );
         }
 
         $revenue_mod = class_exists('Alquipress_Owner_Revenue') ? Alquipress_Owner_Revenue::get_instance() : null;
@@ -224,6 +358,16 @@ class Alquipress_Owner_Profile
         $back_url = admin_url('edit.php?post_type=propietario');
         $edit_url = $this->get_owner_profile_url($owner_id, 'edit');
         $view_url = $this->get_owner_profile_url($owner_id);
+        $current_month = current_time('Y-m');
+        $requested_month = isset($_GET['settlement_month']) ? sanitize_text_field(wp_unslash($_GET['settlement_month'])) : '';
+        $selected_settlement_month = $this->normalize_month($requested_month);
+        if (empty($selected_settlement_month)) {
+            $selected_settlement_month = $current_month;
+        }
+        $settlement_month_options = $this->get_settlement_month_options(36);
+        $settlement_download_url = function_exists('alquipress_get_owner_settlement_download_url')
+            ? alquipress_get_owner_settlement_download_url($owner_id, $selected_settlement_month)
+            : '';
         $monthly = $this->get_owner_monthly_revenue($owner_id, 6);
 
         $user = wp_get_current_user();
@@ -302,6 +446,30 @@ class Alquipress_Owner_Profile
                         </div>
                         <div class="ap-owners-header-right ap-owners-header-actions">
                             <a href="<?php echo esc_url($back_url); ?>" class="ap-owners-top-view"><?php esc_html_e('Volver a Propietarios', 'alquipress'); ?></a>
+                            <?php if (!$is_edit && !empty($settlement_download_url)) : ?>
+                                <form method="get" action="<?php echo esc_url(admin_url('admin.php')); ?>" class="ap-owner-settlement-form">
+                                    <input type="hidden" name="page" value="alquipress-owner-profile">
+                                    <input type="hidden" name="owner_id" value="<?php echo (int) $owner_id; ?>">
+                                    <label for="ap-settlement-month" class="screen-reader-text"><?php esc_html_e('Seleccionar mes de liquidación', 'alquipress'); ?></label>
+                                    <select id="ap-settlement-month" name="settlement_month" class="ap-select-small">
+                                        <?php foreach ($settlement_month_options as $month_option) : ?>
+                                            <option value="<?php echo esc_attr($month_option['value']); ?>" <?php selected($selected_settlement_month, $month_option['value']); ?>>
+                                                <?php echo esc_html($month_option['label']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button type="submit" class="button button-secondary button-small"><?php esc_html_e('Cambiar mes', 'alquipress'); ?></button>
+                                </form>
+                                <a href="<?php echo esc_url($settlement_download_url); ?>" class="ap-owners-action-btn">
+                                    <?php echo $this->get_icon_svg('download'); ?>
+                                    <?php
+                                    printf(
+                                        esc_html__('Descargar liquidación (%s)', 'alquipress'),
+                                        esc_html(date_i18n('m/Y', strtotime($selected_settlement_month . '-01')))
+                                    );
+                                    ?>
+                                </a>
+                            <?php endif; ?>
                             <?php if ($is_edit) : ?>
                                 <a href="<?php echo esc_url($view_url); ?>" class="ap-owners-action-btn">
                                     <?php echo $this->get_icon_svg('edit'); ?>
@@ -463,6 +631,13 @@ class Alquipress_Owner_Profile
         <?php if (!$is_edit && !empty($monthly)) : ?>
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
+                    const settlementMonth = document.getElementById('ap-settlement-month');
+                    if (settlementMonth && settlementMonth.form) {
+                        settlementMonth.addEventListener('change', function () {
+                            settlementMonth.form.submit();
+                        });
+                    }
+
                     if (typeof Chart === 'undefined') {
                         return;
                     }

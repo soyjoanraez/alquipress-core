@@ -164,3 +164,6 @@ new Alquipress_CRM_Owners();
 
 // Cargar módulo de cálculo de ingresos
 require_once dirname(__FILE__) . '/owner-revenue.php';
+
+// Cargar endpoint seguro de liquidaciones (PDF firmado y con expiración)
+require_once dirname(__FILE__) . '/owner-settlement-endpoint.php';

@@ -292,34 +292,10 @@ class Alquipress_Pipeline_Kanban
             ]);
         }
         
-        // Normalizar: remover prefijo wc- si existe (update_status no lo necesita)
-        $new_status = str_replace('wc-', '', $new_status);
-        
-        // Validar que el estado existe en los estados registrados
-        $valid_statuses = [
-            // Estados estándar de WooCommerce
-            'pending', 
-            'processing', 
-            'completed', 
-            'cancelled', 
-            'refunded',
-            'on-hold',
-            'failed',
-            // Estados personalizados del booking pipeline
-            'deposito-ok', 
-            'pending-checkin', 
-            'in-progress', 
-            'checkout-review',
-            'deposit-refunded',
-            // Estados personalizados del payment manager
-            'deposit-paid',
-            'fully-paid',
-            'balance-pending',
-            'security-held',
-            'payment-failed'
-        ];
-        
-        if (!in_array($new_status, $valid_statuses, true)) {
+        // Normalizar y validar estado destino contra whitelist central
+        $new_status = Alquipress_Order_Status_Guard::normalize_status($new_status);
+
+        if (!Alquipress_Order_Status_Guard::is_valid_status($new_status)) {
             wp_send_json_error([
                 'message' => sprintf(__('Estado no válido: %s', 'alquipress'), esc_html($new_status))
             ]);
@@ -334,6 +310,17 @@ class Alquipress_Pipeline_Kanban
         
         // Obtener estado actual antes de actualizar para logging
         $old_status = $order->get_status();
+
+        if (!Alquipress_Order_Status_Guard::can_transition($old_status, $new_status)) {
+            wp_send_json_error([
+                'message' => sprintf(
+                    __('Transición no permitida: %1$s → %2$s', 'alquipress'),
+                    esc_html($old_status),
+                    esc_html($new_status)
+                )
+            ]);
+            return;
+        }
         
         // Verificar que el estado esté registrado en WooCommerce
         $all_statuses = wc_get_order_statuses();
