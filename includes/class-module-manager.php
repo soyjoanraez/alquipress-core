@@ -298,6 +298,7 @@ class Alquipress_Module_Manager
                 'description' => 'Reportes avanzados con Chart.js: ingresos, ocupación, top clientes y propiedades',
                 'file' => 'advanced-reports/advanced-reports.php',
                 'dependencies' => []
+<<<<<<< HEAD
             ],
 <<<<<<< HEAD
             'properties-page' => [
@@ -359,6 +360,8 @@ class Alquipress_Module_Manager
                 'file' => 'brand-customizer/brand-customizer.php',
 >>>>>>> main
                 'dependencies' => []
+=======
+>>>>>>> parent of a6cef58 (Agregar módulo Brand Customizer para personalización completa)
             ]
         ];
     }
@@ -501,11 +504,8 @@ class Alquipress_Module_Manager
 
     public function add_settings_page()
     {
-        // Obtener nombre personalizado de la empresa
-        $brand_settings = get_option('alquipress_brand_settings', ['company_name' => 'ALQUIPRESS']);
-        $menu_title = isset($brand_settings['company_name']) ? $brand_settings['company_name'] : 'ALQUIPRESS';
-
         add_menu_page(
+<<<<<<< HEAD
 <<<<<<< HEAD
             __('Dashboard', 'alquipress'),
             __('Dashboard', 'alquipress'),
@@ -513,6 +513,10 @@ class Alquipress_Module_Manager
             $menu_title,
             $menu_title,
 >>>>>>> main
+=======
+            'ALQUIPRESS',
+            'ALQUIPRESS',
+>>>>>>> parent of a6cef58 (Agregar módulo Brand Customizer para personalización completa)
             'manage_options',
             'alquipress-settings',
             [$this, 'router_render_section'],
