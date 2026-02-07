@@ -215,7 +215,7 @@ class Alquipress_Audit_Logger
         add_submenu_page(
             'alquipress-settings',
             'Auditoría de Accesos',
-            '🔒 Auditoría',
+            'Auditoría',
             'manage_options',
             'alquipress-audit',
             [__CLASS__, 'render_audit_page']
