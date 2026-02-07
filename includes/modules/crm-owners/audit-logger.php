@@ -233,31 +233,40 @@ class Alquipress_Audit_Logger
 
         $logs = self::get_recent_logs(100);
         ?>
-        <div class="wrap">
-            <h1>🔒 Auditoría de Accesos a Datos Sensibles</h1>
+        <div class="ap-wrap">
+            <div class="ap-page-header">
+                <h1>
+                    <span class="dashicons dashicons-shield-alt"></span>
+                    Auditoría de Accesos a Datos Sensibles
+                </h1>
+                <p>Registro de todos los accesos a información confidencial de propietarios.</p>
+            </div>
 
-            <div class="card" style="max-width: 100%; margin-top: 20px;">
+            <div class="ap-card">
                 <h2>Últimos 100 accesos registrados</h2>
 
                 <?php if (empty($logs)): ?>
-                    <p style="color: #666;">No hay registros de auditoría todavía.</p>
+                    <p class="ap-text-muted">No hay registros de auditoría todavía.</p>
                 <?php else: ?>
-                    <div style="background: #f9f9f9; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 600px; overflow-y: auto;">
+                    <div class="ap-code-block">
                         <?php foreach (array_reverse($logs) as $log): ?>
-                            <div style="padding: 5px 0; border-bottom: 1px solid #e0e0e0;">
+                            <div class="ap-code-block__line">
                                 <?php echo esc_html($log); ?>
                             </div>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
 
-                <p style="margin-top: 20px;">
+                <p class="ap-mt-5">
                     <strong>Archivo de log:</strong> <code><?php echo esc_html(self::$log_file); ?></code>
                 </p>
             </div>
 
-            <div class="card" style="max-width: 100%; margin-top: 20px;">
-                <h2>ℹ️ Información</h2>
+            <div class="ap-card ap-card--info">
+                <h2>
+                    <span class="dashicons dashicons-info"></span>
+                    Información del Sistema
+                </h2>
                 <ul>
                     <li>Se registran todos los accesos a datos sensibles (IBAN, cuentas bancarias)</li>
                     <li>Los logs incluyen: fecha, usuario, acción, propietario afectado e IP</li>
@@ -267,19 +276,6 @@ class Alquipress_Audit_Logger
                 </ul>
             </div>
         </div>
-
-        <style>
-            .card {
-                background: #fff;
-                border: 1px solid #ccd0d4;
-                border-radius: 4px;
-                padding: 20px;
-                box-shadow: 0 1px 1px rgba(0,0,0,.04);
-            }
-            .card h2 {
-                margin-top: 0;
-            }
-        </style>
         <?php
     }
 }

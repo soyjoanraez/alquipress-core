@@ -11,6 +11,23 @@ class Alquipress_Module_Manager
         $this->active_modules = get_option('alquipress_modules', []);
         add_action('admin_menu', [$this, 'add_settings_page']);
         add_action('admin_init', [$this, 'handle_form_submit']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_styles']);
+    }
+
+    /**
+     * Encolar estilos del Design System en todas las páginas de admin
+     */
+    public function enqueue_admin_styles($hook)
+    {
+        // Cargar Design System solo en páginas de ALQUIPRESS
+        if (strpos($hook, 'alquipress') !== false || strpos($hook, 'kyero') !== false) {
+            wp_enqueue_style(
+                'alquipress-design-system',
+                ALQUIPRESS_URL . 'includes/assets/css/admin-design-system.css',
+                [],
+                ALQUIPRESS_VERSION
+            );
+        }
     }
 
     private function register_modules()
