@@ -20,20 +20,9 @@ class Alquipress_Advanced_Reports
 
     public function maybe_render_section($page)
     {
-<<<<<<< HEAD
         if ($page === 'alquipress-reports') {
             $this->render_reports_page();
         }
-=======
-        add_submenu_page(
-            'alquipress-settings',
-            'Informes y Analíticas',
-            'Informes',
-            'manage_options',
-            'alquipress-reports',
-            [$this, 'render_reports_page']
-        );
->>>>>>> main
     }
 
     /**
@@ -44,7 +33,6 @@ class Alquipress_Advanced_Reports
         $current_year = date('Y');
         require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
         ?>
-<<<<<<< HEAD
         <div class="wrap alquipress-reports-page ap-has-sidebar">
             <div class="ap-owners-layout">
                 <?php alquipress_render_sidebar('reports'); ?>
@@ -95,65 +83,10 @@ class Alquipress_Advanced_Reports
                     <div class="ap-reports-metric-value-row">
                         <span class="ap-reports-metric-value" id="stat-avg-daily-rate">—</span>
                         <span class="ap-reports-metric-change ap-reports-change-positive" id="stat-adr-change">—</span>
-=======
-        <div class="wrap alquipress-reports-wrap">
-            <h1>
-                <span class="dashicons dashicons-chart-bar"></span>
-                Informes y Analíticas
-            </h1>
-
-            <!-- Filtros Generales -->
-            <div class="reports-filters">
-                <div class="filter-group">
-                    <label for="report-year">Año:</label>
-                    <select id="report-year">
-                        <?php
-                        $current_year = date('Y');
-                        for ($year = $current_year; $year >= $current_year - 5; $year--) {
-                            echo '<option value="' . $year . '">' . $year . '</option>';
-                        }
-                        ?>
-                    </select>
-                </div>
-                <button id="refresh-reports" class="button button-primary">
-                    <span class="dashicons dashicons-update"></span> Actualizar Informes
-                </button>
-            </div>
-
-            <!-- Estadísticas Rápidas -->
-            <div class="stats-overview">
-                <div class="stat-card">
-                    <div class="stat-icon"><span class="dashicons dashicons-money-alt"></span></div>
-                    <div class="stat-content">
-                        <h3 id="stat-revenue-year">Cargando...</h3>
-                        <p>Ingresos del Año</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><span class="dashicons dashicons-cart"></span></div>
-                    <div class="stat-content">
-                        <h3 id="stat-bookings-year">Cargando...</h3>
-                        <p>Reservas del Año</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><span class="dashicons dashicons-chart-line"></span></div>
-                    <div class="stat-content">
-                        <h3 id="stat-avg-booking">Cargando...</h3>
-                        <p>Valor Medio por Reserva</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><span class="dashicons dashicons-admin-home"></span></div>
-                    <div class="stat-content">
-                        <h3 id="stat-occupancy-rate">Cargando...</h3>
-                        <p>Tasa de Ocupación</p>
->>>>>>> main
                     </div>
                 </div>
             </div>
 
-<<<<<<< HEAD
             <div class="ap-reports-content-row">
                 <div class="ap-reports-left-col">
                     <!-- Revenue Breakdown (chart) -->
@@ -218,22 +151,6 @@ class Alquipress_Advanced_Reports
                         </dl>
                     </div>
                 </div>
-=======
-            <!-- Tabs de Informes -->
-            <div class="reports-tabs">
-                <button class="tab-button active" data-tab="revenue">
-                    <span class="dashicons dashicons-money-alt"></span> Ingresos
-                </button>
-                <button class="tab-button" data-tab="occupancy">
-                    <span class="dashicons dashicons-chart-bar"></span> Ocupación
-                </button>
-                <button class="tab-button" data-tab="clients">
-                    <span class="dashicons dashicons-groups"></span> Clientes
-                </button>
-                <button class="tab-button" data-tab="properties">
-                    <span class="dashicons dashicons-admin-home"></span> Propiedades
-                </button>
->>>>>>> main
             </div>
 
             <!-- Tabs de informes detallados -->

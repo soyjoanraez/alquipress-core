@@ -268,7 +268,6 @@ function alquipress_kyero_admin_page() {
     if ($export_term) {
         $export_count = $export_term->count;
     }
-<<<<<<< HEAD
     
     require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
     ?>
@@ -389,110 +388,6 @@ function alquipress_kyero_admin_page() {
                     </div>
                 </div>
             </main>
-=======
-
-    ?>
-    <div class="ap-wrap ap-wrap--narrow">
-        <div class="ap-page-header">
-            <h1>
-                <span class="dashicons dashicons-admin-home"></span>
-                Kyero Import/Export Manager
-            </h1>
-            <p>Sincroniza tus propiedades con el portal inmobiliario Kyero.</p>
-        </div>
-
-        <div class="ap-card">
-            <h2>
-                <span class="dashicons dashicons-upload"></span>
-                Exportación a Kyero
-            </h2>
-
-            <p>Propiedades marcadas para exportar: <strong class="ap-text-primary"><?php echo $export_count; ?></strong></p>
-            <p>URL del Feed XML: <code><?php echo home_url('/kyero-feed.xml'); ?></code></p>
-
-            <form method="post" class="ap-mt-5">
-                <?php wp_nonce_field('kyero_export'); ?>
-                <button type="submit" name="kyero_manual_export" class="ap-button ap-button--primary">
-                    <span class="dashicons dashicons-update"></span> Generar Feed Ahora
-                </button>
-            </form>
-
-            <hr class="ap-divider">
-
-            <h3>
-                <span class="dashicons dashicons-list-view"></span>
-                Instrucciones para Kyero
-            </h3>
-            <ol>
-                <li>Inicia sesión en tu cuenta de Kyero</li>
-                <li>Ve a <strong>Settings &gt; Data Feed</strong></li>
-                <li>Pega esta URL: <code><?php echo home_url('/kyero-feed.xml'); ?></code></li>
-                <li>Kyero sincronizará automáticamente cada 24h</li>
-            </ol>
-        </div>
-
-        <div class="ap-card">
-            <h2>
-                <span class="dashicons dashicons-download"></span>
-                Importación desde Kyero
-            </h2>
-
-            <form method="post">
-                <?php wp_nonce_field('kyero_settings'); ?>
-
-                <table class="ap-form-table">
-                    <tr>
-                        <th scope="row">URL del Feed XML</th>
-                        <td>
-                            <input type="url"
-                                   name="kyero_import_url"
-                                   value="<?php echo esc_attr($import_url); ?>"
-                                   class="regular-text"
-                                   placeholder="https://ejemplo.com/kyero-feed.xml">
-                            <p class="description">URL del feed XML de la agencia desde la que importar</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Importación Automática</th>
-                        <td>
-                            <label>
-                                <input type="checkbox"
-                                       name="kyero_auto_import"
-                                       value="1"
-                                       <?php checked($auto_import, 1); ?>>
-                                Importar automáticamente cada 24h
-                            </label>
-                        </td>
-                    </tr>
-                </table>
-
-                <div class="ap-submit-area">
-                    <button type="submit" name="kyero_save_settings" class="ap-button ap-button--success">
-                        <span class="dashicons dashicons-saved"></span> Guardar Configuración
-                    </button>
-                </div>
-            </form>
-
-            <hr class="ap-divider">
-
-            <form method="post">
-                <?php wp_nonce_field('kyero_import'); ?>
-                <button type="submit" name="kyero_manual_import" class="ap-button ap-button--secondary">
-                    <span class="dashicons dashicons-download"></span> Importar Ahora
-                </button>
-            </form>
-        </div>
-
-        <div class="ap-card ap-card--info">
-            <h2>
-                <span class="dashicons dashicons-yes-alt"></span>
-                Validar Feed
-            </h2>
-            <p>Valida tu feed antes de enviarlo a Kyero:</p>
-            <a href="https://www.kyero.com/xml-validator" target="_blank" class="ap-button ap-button--secondary">
-                <span class="dashicons dashicons-search"></span> Abrir Validador de Kyero
-            </a>
->>>>>>> main
         </div>
     </div>
     <?php

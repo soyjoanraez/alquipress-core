@@ -18,36 +18,32 @@ define('ALQUIPRESS_URL', plugin_dir_url(__FILE__));
 // Cargar helpers primero
 require_once ALQUIPRESS_PATH . 'includes/helpers.php';
 
-// Verificar dependencias antes de inicializar
-if (!alquipress_check_dependencies()) {
-    return; // No cargar el plugin si faltan dependencias críticas
-}
-
-require_once ALQUIPRESS_PATH . 'includes/class-rate-limiter.php';
-require_once ALQUIPRESS_PATH . 'includes/class-module-manager.php';
-require_once ALQUIPRESS_PATH . 'includes/class-frontend-filters.php';
-require_once ALQUIPRESS_PATH . 'includes/class-performance-optimizer.php';
-require_once ALQUIPRESS_PATH . 'includes/class-property-helper.php';
-require_once ALQUIPRESS_PATH . 'includes/class-config.php';
-require_once ALQUIPRESS_PATH . 'includes/class-logger.php';
-require_once ALQUIPRESS_PATH . 'includes/class-order-status-guard.php';
-require_once ALQUIPRESS_PATH . 'includes/class-owner-role-manager.php';
-
-function alquipress_init()
+/**
+ * Inicializar el plugin tras cargar todos los plugins para que las
+ * dependencias (WooCommerce/ACF) estén disponibles en cualquier orden.
+ */
+function alquipress_bootstrap()
 {
-    Alquipress_Owner_Role_Manager::ensure_role_exists();
+    if (!alquipress_check_dependencies()) {
+        return;
+    }
+
+    require_once ALQUIPRESS_PATH . 'includes/class-rate-limiter.php';
+    require_once ALQUIPRESS_PATH . 'includes/class-module-manager.php';
+    require_once ALQUIPRESS_PATH . 'includes/class-frontend-filters.php';
+    require_once ALQUIPRESS_PATH . 'includes/class-performance-optimizer.php';
+    require_once ALQUIPRESS_PATH . 'includes/class-property-helper.php';
+    require_once ALQUIPRESS_PATH . 'includes/class-config.php';
+    require_once ALQUIPRESS_PATH . 'includes/class-logger.php';
 
     $module_manager = new Alquipress_Module_Manager();
     $module_manager->load_active_modules();
 }
-add_action('plugins_loaded', 'alquipress_init');
+add_action('plugins_loaded', 'alquipress_bootstrap', 20);
 
 register_activation_hook(__FILE__, 'alquipress_activate');
 function alquipress_activate()
 {
-    Alquipress_Owner_Role_Manager::ensure_role_exists();
-    $migrated_owner_users = Alquipress_Owner_Role_Manager::migrate_legacy_owner_users();
-
     if (!get_option('alquipress_modules')) {
         update_option('alquipress_modules', [
             'taxonomies' => true,
@@ -69,8 +65,6 @@ function alquipress_activate()
             'alquipress-tester' => false
         ]);
     }
-
-    update_option('alquipress_owner_role_migrated_users', (int) $migrated_owner_users, false);
     
     // Crear índices de base de datos para optimizar queries de reservas
     alquipress_create_database_indexes();

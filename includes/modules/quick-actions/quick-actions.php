@@ -348,9 +348,9 @@ class Alquipress_Quick_Actions
         ob_start();
         ?>
         <div class="alq-quick-view-header">
-            <h2>Pedido #<?php echo esc_html($order_id); ?></h2>
-            <span class="order-status status-<?php echo esc_attr($order->get_status()); ?>">
-                <?php echo esc_html(wc_get_order_status_name($order->get_status())); ?>
+            <h2>Pedido #<?php echo $order_id; ?></h2>
+            <span class="order-status status-<?php echo $order->get_status(); ?>">
+                <?php echo wc_get_order_status_name($order->get_status()); ?>
             </span>
         </div>
 
@@ -378,15 +378,15 @@ class Alquipress_Quick_Actions
                 <h3>💰 Pagos</h3>
                 <p>Total: <strong><?php echo wc_price($order->get_total()); ?></strong></p>
                 <p>Pagado: <strong><?php echo wc_price($order->get_total() - $order->get_total_refunded()); ?></strong></p>
-                <p>Método: <?php echo esc_html($order->get_payment_method_title()); ?></p>
+                <p>Método: <?php echo $order->get_payment_method_title(); ?></p>
             </div>
         </div>
 
         <div class="quick-view-actions">
-            <a href="<?php echo esc_url(get_edit_post_link($order_id)); ?>" class="button button-primary" target="_blank">
+            <a href="<?php echo get_edit_post_link($order_id); ?>" class="button button-primary" target="_blank">
                 ✏️ Editar Pedido Completo
             </a>
-            <a href="<?php echo esc_url($order->get_view_order_url()); ?>" class="button" target="_blank">
+            <a href="<?php echo $order->get_view_order_url(); ?>" class="button" target="_blank">
                 👁️ Ver en Frontend
             </a>
         </div>
@@ -394,88 +394,6 @@ class Alquipress_Quick_Actions
         $html = ob_get_clean();
 
         wp_send_json_success(['html' => $html]);
-    }
-
-    /**
-     * AJAX: Cambio rápido de estado de pedido.
-     */
-    public function ajax_quick_status_change()
-    {
-        check_ajax_referer('alquipress_quick_actions', 'nonce');
-
-        if (!current_user_can('edit_shop_orders')) {
-            wp_send_json_error(['message' => __('Permisos insuficientes', 'alquipress')]);
-            return;
-        }
-
-        $order_id = isset($_POST['order_id']) ? absint($_POST['order_id']) : 0;
-        $new_status = isset($_POST['status']) ? sanitize_text_field(wp_unslash($_POST['status'])) : '';
-
-        if (!$order_id || empty($new_status)) {
-            wp_send_json_error(['message' => __('Parámetros inválidos', 'alquipress')]);
-            return;
-        }
-
-        $order = wc_get_order($order_id);
-        if (!$order) {
-            wp_send_json_error(['message' => __('Pedido no encontrado', 'alquipress')]);
-            return;
-        }
-
-        $new_status = Alquipress_Order_Status_Guard::normalize_status($new_status);
-        $old_status = $order->get_status();
-
-        if (!Alquipress_Order_Status_Guard::is_valid_status($new_status)) {
-            wp_send_json_error(['message' => __('Estado no válido', 'alquipress')]);
-            return;
-        }
-
-        if (!Alquipress_Order_Status_Guard::can_transition($old_status, $new_status)) {
-            wp_send_json_error([
-                'message' => sprintf(
-                    __('Transición no permitida: %1$s → %2$s', 'alquipress'),
-                    $old_status,
-                    $new_status
-                )
-            ]);
-            return;
-        }
-
-        $all_statuses = wc_get_order_statuses();
-        $status_with_prefix = 'wc-' . $new_status;
-        if (!isset($all_statuses[$status_with_prefix]) && !isset($all_statuses[$new_status])) {
-            wp_send_json_error([
-                'message' => __('Estado no registrado en WooCommerce', 'alquipress')
-            ]);
-            return;
-        }
-
-        try {
-            $order->update_status($new_status, __('Cambio rápido desde ALQUIPRESS', 'alquipress'), true);
-
-            wp_send_json_success([
-                'message' => __('Estado actualizado correctamente', 'alquipress'),
-                'old_status' => $old_status,
-                'new_status' => $order->get_status(),
-            ]);
-        } catch (Exception $e) {
-            if (class_exists('Alquipress_Logger')) {
-                Alquipress_Logger::error(
-                    'Error en quick status change',
-                    Alquipress_Logger::CONTEXT_AJAX,
-                    [
-                        'order_id' => $order_id,
-                        'old_status' => $old_status,
-                        'new_status' => $new_status,
-                        'error' => $e->getMessage(),
-                    ]
-                );
-            }
-
-            wp_send_json_error([
-                'message' => __('No se pudo actualizar el estado', 'alquipress')
-            ]);
-        }
     }
 
     /**

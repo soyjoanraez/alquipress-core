@@ -1,10 +1,5 @@
 /**
-<<<<<<< HEAD
  * Estilos para Informes y Analíticas (diseño Pencil: Reports Dashboard)
-=======
- * Estilos para Informes y Analíticas Avanzadas
- * Integrado con ALQUIPRESS Design System
->>>>>>> main
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -381,100 +376,6 @@
     font-weight: 600;
 }
 
-<<<<<<< HEAD
-=======
-/* ========== Filtros ========== */
-
-.reports-filters {
-    display: flex;
-    align-items: center;
-    gap: var(--ap-space-5);
-    margin-bottom: var(--ap-space-8);
-    padding: var(--ap-space-5);
-    background: var(--ap-bg-white);
-    border-radius: var(--ap-radius-md);
-    box-shadow: var(--ap-shadow-sm);
-}
-
-.filter-group {
-    display: flex;
-    align-items: center;
-    gap: var(--ap-space-3);
-}
-
-.filter-group label {
-    font-weight: 600;
-    color: var(--ap-text-primary);
-    margin: 0;
-}
-
-.filter-group select {
-    padding: var(--ap-space-2) var(--ap-space-3);
-    border: 1px solid var(--ap-border-color);
-    border-radius: var(--ap-radius-sm);
-    font-size: 14px;
-    min-width: 120px;
-}
-
-/* ========== Estadísticas Rápidas ========== */
-
-.stats-overview {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--ap-space-5);
-    margin-bottom: var(--ap-space-8);
-}
-
-.stat-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: var(--ap-space-6);
-    border-radius: var(--ap-radius-lg);
-    box-shadow: var(--ap-shadow-md);
-    display: flex;
-    align-items: center;
-    gap: var(--ap-space-5);
-    transition: var(--ap-transition);
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--ap-shadow-lg);
-}
-
-.stat-card:nth-child(2) {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-}
-
-.stat-card:nth-child(3) {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-.stat-card:nth-child(4) {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-}
-
-.stat-icon {
-    font-size: 48px;
-    line-height: 1;
-    opacity: 0.9;
-}
-
-.stat-content h3 {
-    margin: 0 0 var(--ap-space-1);
-    font-size: 28px;
-    font-weight: 700;
-    color: white;
-}
-
-.stat-content p {
-    margin: 0;
-    font-size: 13px;
-    opacity: 0.9;
-    font-weight: 500;
-}
-
->>>>>>> main
 /* ========== Tabs ========== */
 
 .reports-tabs {

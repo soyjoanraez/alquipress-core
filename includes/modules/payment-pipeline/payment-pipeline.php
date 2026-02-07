@@ -447,16 +447,14 @@ class Alquipress_Payment_Pipeline
             return;
         }
 
-        // Registrar SortableJS antes de usarlo como dependencia.
-        if (!wp_script_is('sortable-js', 'registered')) {
-            wp_register_script(
-                'sortable-js',
-                'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js',
-                [],
-                '1.15.0',
-                true
-            );
-        }
+        // Register SortableJS in this module to avoid missing-script dependency notices.
+        wp_enqueue_script(
+            'sortable-js',
+            'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js',
+            [],
+            '1.15.0',
+            true
+        );
         
         wp_enqueue_style(
             'alquipress-payment-pipeline',
@@ -500,7 +498,7 @@ class Alquipress_Payment_Pipeline
             wp_enqueue_script(
                 'alquipress-payment-pipeline',
                 ALQUIPRESS_URL . 'includes/modules/payment-pipeline/assets/payment-pipeline.js',
-                ['jquery', 'sortable-js'],
+                ['jquery'],
                 ALQUIPRESS_VERSION,
                 true
             );
