@@ -1,6 +1,8 @@
 <?php
 class Alquipress_Module_Manager
 {
+    const DASHBOARD_TEMPLATE_OPTION = 'alquipress_dashboard_template';
+    const DASHBOARD_TEMPLATE_DEFAULT = 'pencil';
 
     private $modules = [];
     private $active_modules = [];
@@ -46,6 +48,10 @@ class Alquipress_Module_Manager
         if (!array_key_exists('property-editor', $this->active_modules)) {
             $this->active_modules['property-editor'] = true;
             update_option('alquipress_modules', $this->active_modules);
+        }
+        $saved_template = get_option(self::DASHBOARD_TEMPLATE_OPTION, '');
+        if (!is_string($saved_template) || $saved_template === '') {
+            update_option(self::DASHBOARD_TEMPLATE_OPTION, self::DASHBOARD_TEMPLATE_DEFAULT);
         }
         add_action('admin_menu', [$this, 'add_settings_page']);
         add_action('admin_init', [$this, 'handle_form_submit']);
@@ -331,6 +337,40 @@ class Alquipress_Module_Manager
         ];
     }
 
+    public static function get_dashboard_template_choices()
+    {
+        return [
+            'pencil' => [
+                'label' => __('Pencil (actual)', 'alquipress'),
+                'description' => __('Layout equilibrado para uso diario del equipo.', 'alquipress'),
+            ],
+            'compact' => [
+                'label' => __('Compacto', 'alquipress'),
+                'description' => __('Mayor densidad de datos y menos espacios.', 'alquipress'),
+            ],
+            'executive' => [
+                'label' => __('Executive', 'alquipress'),
+                'description' => __('Vista enfocada a KPIs con estilo más visual.', 'alquipress'),
+            ],
+        ];
+    }
+
+    public static function sanitize_dashboard_template($template)
+    {
+        $template = sanitize_key((string) $template);
+        $choices = self::get_dashboard_template_choices();
+        if (!isset($choices[$template])) {
+            return self::DASHBOARD_TEMPLATE_DEFAULT;
+        }
+        return $template;
+    }
+
+    public static function get_dashboard_template()
+    {
+        $saved = get_option(self::DASHBOARD_TEMPLATE_OPTION, self::DASHBOARD_TEMPLATE_DEFAULT);
+        return self::sanitize_dashboard_template($saved);
+    }
+
     /**
      * Verificar si un módulo tiene todas sus dependencias activas
      * 
@@ -603,10 +643,14 @@ class Alquipress_Module_Manager
             update_option('alquipress_modules', $new_modules);
             $this->active_modules = $new_modules;
 
+            $dashboard_template = isset($_POST['dashboard_template']) ? wp_unslash($_POST['dashboard_template']) : self::DASHBOARD_TEMPLATE_DEFAULT;
+            $dashboard_template = self::sanitize_dashboard_template($dashboard_template);
+            update_option(self::DASHBOARD_TEMPLATE_OPTION, $dashboard_template);
+
             add_settings_error(
                 'alquipress_messages',
                 'alquipress_message',
-                '✓ Módulos actualizados correctamente.',
+                '✓ Módulos y plantilla de dashboard actualizados correctamente.',
                 'success'
             );
         }

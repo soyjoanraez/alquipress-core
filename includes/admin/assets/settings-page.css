@@ -340,6 +340,52 @@
     margin-top: 8px;
 }
 
+/* Dashboard template selector */
+.ap-settings-template-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.ap-settings-template-option {
+    display: block;
+    cursor: pointer;
+}
+
+.ap-settings-template-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ap-settings-template-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 106px;
+    border: 1px solid var(--ap-settings-border);
+    border-radius: 10px;
+    background: #fff;
+    padding: 14px;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.ap-settings-template-content strong {
+    font-size: 14px;
+    color: var(--ap-settings-text);
+}
+
+.ap-settings-template-content small {
+    color: var(--ap-settings-muted);
+    line-height: 1.35;
+}
+
+.ap-settings-template-option input:checked + .ap-settings-template-content {
+    border-color: var(--ap-settings-primary);
+    box-shadow: 0 0 0 2px rgba(44, 153, 226, 0.14);
+    transform: translateY(-1px);
+}
+
 /* Responsive */
 @media (max-width: 782px) {
     .alquipress-settings-page {
@@ -374,5 +420,9 @@
     .ap-settings-modules-table tbody td {
         padding: 10px 12px;
         font-size: 13px;
+    }
+
+    .ap-settings-template-grid {
+        grid-template-columns: 1fr;
     }
 }

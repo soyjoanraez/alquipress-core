@@ -854,9 +854,13 @@ class Alquipress_Dashboard_Widgets
 
         $orders_url = admin_url('edit.php?post_type=shop_order');
         $products_url = admin_url('edit.php?post_type=product');
+        $dashboard_template = class_exists('Alquipress_Module_Manager')
+            ? Alquipress_Module_Manager::get_dashboard_template()
+            : 'pencil';
+        $dashboard_template_class = 'ap-dashboard-template-' . sanitize_html_class($dashboard_template);
         require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
         ?>
-        <div class="wrap alquipress-dashboard-page ap-has-sidebar">
+        <div class="wrap alquipress-dashboard-page ap-has-sidebar <?php echo esc_attr($dashboard_template_class); ?>">
             <div class="ap-owners-layout">
                 <?php alquipress_render_sidebar('dashboard'); ?>
                 <main class="ap-owners-main">

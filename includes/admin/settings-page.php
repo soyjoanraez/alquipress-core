@@ -45,9 +45,13 @@ require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
 
         <main class="ap-settings-main" role="tabpanel">
             <?php if ($current_tab === 'general') : ?>
+                <?php
+                $dashboard_templates = Alquipress_Module_Manager::get_dashboard_template_choices();
+                $current_dashboard_template = Alquipress_Module_Manager::get_dashboard_template();
+                ?>
                 <div class="ap-settings-section">
                     <h2 class="ap-settings-section-title"><?php esc_html_e('Configuración general', 'alquipress'); ?></h2>
-                    <p class="ap-settings-section-desc"><?php esc_html_e('Activa o desactiva módulos del CRM según tus necesidades.', 'alquipress'); ?></p>
+                    <p class="ap-settings-section-desc"><?php esc_html_e('Activa o desactiva módulos del CRM y define el estilo del dashboard.', 'alquipress'); ?></p>
                 </div>
 
                 <form method="post" action="" class="ap-settings-form">
@@ -96,6 +100,32 @@ require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
                         <div class="ap-settings-form-actions">
                             <button type="submit" name="alquipress_save_modules" class="ap-settings-btn ap-settings-btn-primary">
                                 <?php esc_html_e('Guardar configuración de módulos', 'alquipress'); ?>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ap-settings-card">
+                        <div class="ap-settings-card-head">
+                            <span class="dashicons dashicons-layout"></span>
+                            <h3 class="ap-settings-card-title"><?php esc_html_e('Plantilla del dashboard', 'alquipress'); ?></h3>
+                        </div>
+                        <div class="ap-settings-template-grid">
+                            <?php foreach ($dashboard_templates as $template_key => $template) : ?>
+                                <label class="ap-settings-template-option">
+                                    <input type="radio"
+                                           name="dashboard_template"
+                                           value="<?php echo esc_attr($template_key); ?>"
+                                           <?php checked($current_dashboard_template, $template_key); ?>>
+                                    <span class="ap-settings-template-content">
+                                        <strong><?php echo esc_html($template['label']); ?></strong>
+                                        <small><?php echo esc_html($template['description']); ?></small>
+                                    </span>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="ap-settings-form-actions">
+                            <button type="submit" name="alquipress_save_modules" class="ap-settings-btn ap-settings-btn-primary">
+                                <?php esc_html_e('Guardar módulos y plantilla', 'alquipress'); ?>
                             </button>
                         </div>
                     </div>

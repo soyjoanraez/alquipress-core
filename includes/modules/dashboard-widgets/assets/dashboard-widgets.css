@@ -943,6 +943,65 @@
     color: var(--ap-text-main);
 }
 
+/* ========== Variantes de plantilla dashboard (Ajustes > General) ========== */
+.alquipress-dashboard-page.ap-dashboard-template-compact .ap-owners-main {
+    gap: 16px;
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-compact .ap-metrics-row {
+    gap: 12px;
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-compact .ap-metric-card,
+.alquipress-dashboard-page.ap-dashboard-template-compact .ap-recent-bookings,
+.alquipress-dashboard-page.ap-dashboard-template-compact .ap-recent-activity {
+    padding: 16px;
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-compact .ap-metric-value {
+    font-size: 26px;
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-compact .ap-content-row {
+    gap: 16px;
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-compact .ap-activity-item {
+    padding: 12px 0;
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-compact .ap-bookings-table tbody tr {
+    height: 48px;
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-executive {
+    --ap-primary: #0f766e;
+    --ap-info: #0ea5e9;
+    --ap-background: #f2f7f6;
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-executive .ap-header {
+    background: #ffffff;
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-lg);
+    padding: 16px 20px;
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-executive .ap-metric-card {
+    border-top: 4px solid var(--ap-primary);
+    box-shadow: 0 6px 18px rgba(15, 118, 110, 0.08);
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-executive .ap-content-left,
+.alquipress-dashboard-page.ap-dashboard-template-executive .ap-content-right {
+    align-self: stretch;
+}
+
+.alquipress-dashboard-page.ap-dashboard-template-executive .ap-recent-bookings-title,
+.alquipress-dashboard-page.ap-dashboard-template-executive .ap-recent-activity-title {
+    letter-spacing: 0.01em;
+}
+
 @media screen and (max-width: 1200px) {
     .ap-metrics-row { grid-template-columns: repeat(2, 1fr); }
     .ap-content-row { flex-direction: column; }
