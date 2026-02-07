@@ -20,9 +20,20 @@ class Alquipress_Advanced_Reports
 
     public function maybe_render_section($page)
     {
+<<<<<<< HEAD
         if ($page === 'alquipress-reports') {
             $this->render_reports_page();
         }
+=======
+        add_submenu_page(
+            'alquipress-settings',
+            'Informes y Analíticas',
+            'Informes',
+            'manage_options',
+            'alquipress-reports',
+            [$this, 'render_reports_page']
+        );
+>>>>>>> main
     }
 
     /**
@@ -33,6 +44,7 @@ class Alquipress_Advanced_Reports
         $current_year = date('Y');
         require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
         ?>
+<<<<<<< HEAD
         <div class="wrap alquipress-reports-page ap-has-sidebar">
             <div class="ap-owners-layout">
                 <?php alquipress_render_sidebar('reports'); ?>
@@ -83,10 +95,65 @@ class Alquipress_Advanced_Reports
                     <div class="ap-reports-metric-value-row">
                         <span class="ap-reports-metric-value" id="stat-avg-daily-rate">—</span>
                         <span class="ap-reports-metric-change ap-reports-change-positive" id="stat-adr-change">—</span>
+=======
+        <div class="wrap alquipress-reports-wrap">
+            <h1>
+                <span class="dashicons dashicons-chart-bar"></span>
+                Informes y Analíticas
+            </h1>
+
+            <!-- Filtros Generales -->
+            <div class="reports-filters">
+                <div class="filter-group">
+                    <label for="report-year">Año:</label>
+                    <select id="report-year">
+                        <?php
+                        $current_year = date('Y');
+                        for ($year = $current_year; $year >= $current_year - 5; $year--) {
+                            echo '<option value="' . $year . '">' . $year . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+                <button id="refresh-reports" class="button button-primary">
+                    <span class="dashicons dashicons-update"></span> Actualizar Informes
+                </button>
+            </div>
+
+            <!-- Estadísticas Rápidas -->
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <div class="stat-icon"><span class="dashicons dashicons-money-alt"></span></div>
+                    <div class="stat-content">
+                        <h3 id="stat-revenue-year">Cargando...</h3>
+                        <p>Ingresos del Año</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><span class="dashicons dashicons-cart"></span></div>
+                    <div class="stat-content">
+                        <h3 id="stat-bookings-year">Cargando...</h3>
+                        <p>Reservas del Año</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><span class="dashicons dashicons-chart-line"></span></div>
+                    <div class="stat-content">
+                        <h3 id="stat-avg-booking">Cargando...</h3>
+                        <p>Valor Medio por Reserva</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><span class="dashicons dashicons-admin-home"></span></div>
+                    <div class="stat-content">
+                        <h3 id="stat-occupancy-rate">Cargando...</h3>
+                        <p>Tasa de Ocupación</p>
+>>>>>>> main
                     </div>
                 </div>
             </div>
 
+<<<<<<< HEAD
             <div class="ap-reports-content-row">
                 <div class="ap-reports-left-col">
                     <!-- Revenue Breakdown (chart) -->
@@ -151,6 +218,22 @@ class Alquipress_Advanced_Reports
                         </dl>
                     </div>
                 </div>
+=======
+            <!-- Tabs de Informes -->
+            <div class="reports-tabs">
+                <button class="tab-button active" data-tab="revenue">
+                    <span class="dashicons dashicons-money-alt"></span> Ingresos
+                </button>
+                <button class="tab-button" data-tab="occupancy">
+                    <span class="dashicons dashicons-chart-bar"></span> Ocupación
+                </button>
+                <button class="tab-button" data-tab="clients">
+                    <span class="dashicons dashicons-groups"></span> Clientes
+                </button>
+                <button class="tab-button" data-tab="properties">
+                    <span class="dashicons dashicons-admin-home"></span> Propiedades
+                </button>
+>>>>>>> main
             </div>
 
             <!-- Tabs de informes detallados -->
@@ -240,14 +323,39 @@ class Alquipress_Advanced_Reports
      */
     public function ajax_get_report_data()
     {
+        // Rate limiting: 30 requests por minuto
+        Alquipress_Rate_Limiter::check_and_exit('get_report_data', 30, 60);
+
         check_ajax_referer('alquipress_reports', 'nonce');
 
         if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'Permisos insuficientes']);
+            wp_send_json_error(['message' => 'Permisos insuficientes'], 403);
         }
 
-        $report_type = isset($_POST['report_type']) ? sanitize_text_field($_POST['report_type']) : '';
-        $year = isset($_POST['year']) ? intval($_POST['year']) : date('Y');
+        $report_type = isset($_POST['report_type']) ? sanitize_key($_POST['report_type']) : '';
+        $year = isset($_POST['year']) ? absint($_POST['year']) : date('Y');
+
+        // Validar report_type
+        $allowed_reports = [
+            'overview',
+            'revenue_monthly',
+            'revenue_season',
+            'occupancy_monthly',
+            'occupancy_comparison',
+            'top_clients',
+            'clients_rating',
+            'top_properties',
+            'properties_comparison'
+        ];
+
+        if (!in_array($report_type, $allowed_reports, true)) {
+            wp_send_json_error(['message' => 'Tipo de reporte inválido'], 400);
+        }
+
+        // Validar año
+        if ($year < 2000 || $year > 2100) {
+            wp_send_json_error(['message' => 'Año inválido'], 400);
+        }
 
         // Whitelist de tipos de reporte válidos
         $valid_report_types = [
@@ -281,7 +389,8 @@ class Alquipress_Advanced_Reports
 
         $data = [];
 
-        switch ($report_type) {
+        try {
+            switch ($report_type) {
             case 'overview':
                 $raw = $this->get_overview_stats($year);
                 $data = [
@@ -319,10 +428,14 @@ class Alquipress_Advanced_Reports
                 $data = $this->get_properties_revenue_comparison($year);
                 break;
             default:
-                wp_send_json_error(['message' => 'Tipo de reporte no válido']);
-        }
+                wp_send_json_error(['message' => 'Tipo de reporte no válido'], 400);
+            }
 
-        wp_send_json_success($data);
+            wp_send_json_success($data);
+        } catch (Exception $e) {
+            error_log('ALQUIPRESS Reports Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Error al generar el reporte'], 500);
+        }
     }
 
     // ========== Métodos de Análisis de Datos ==========
@@ -648,7 +761,7 @@ class Alquipress_Advanced_Reports
         }
 
         return [
-            'labels' => ['⭐ 1 Estrella', '⭐⭐ 2 Estrellas', '⭐⭐⭐ 3 Estrellas', '⭐⭐⭐⭐ 4 Estrellas', '⭐⭐⭐⭐⭐ 5 Estrellas'],
+            'labels' => ['1 Estrella', '2 Estrellas', '3 Estrellas', '4 Estrellas', '5 Estrellas'],
             'data' => array_values($ratings)
         ];
     }

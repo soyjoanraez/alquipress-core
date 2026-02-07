@@ -55,6 +55,7 @@ class Alquipress_Module_Manager
         }
         add_action('admin_menu', [$this, 'add_settings_page']);
         add_action('admin_init', [$this, 'handle_form_submit']);
+<<<<<<< HEAD
         add_action('admin_init', [$this, 'redirect_wp_dashboard_to_alquipress'], 5);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_settings_assets']);
     }
@@ -149,12 +150,30 @@ class Alquipress_Module_Manager
             wp_enqueue_style(
                 'alquipress-settings-page',
                 ALQUIPRESS_URL . 'includes/admin/assets/settings-page.css',
+=======
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_styles']);
+    }
+
+    /**
+     * Encolar estilos del Design System en todas las páginas de admin
+     */
+    public function enqueue_admin_styles($hook)
+    {
+        // Cargar Design System solo en páginas de ALQUIPRESS
+        if (strpos($hook, 'alquipress') !== false || strpos($hook, 'kyero') !== false) {
+            wp_enqueue_style(
+                'alquipress-design-system',
+                ALQUIPRESS_URL . 'includes/assets/css/admin-design-system.css',
+>>>>>>> main
                 [],
                 ALQUIPRESS_VERSION
             );
         }
+<<<<<<< HEAD
 
         do_action('alquipress_enqueue_section_assets', $page);
+=======
+>>>>>>> main
     }
 
     private function register_modules()
@@ -280,6 +299,7 @@ class Alquipress_Module_Manager
                 'file' => 'advanced-reports/advanced-reports.php',
                 'dependencies' => []
             ],
+<<<<<<< HEAD
             'properties-page' => [
                 'name' => 'Página Propiedades (Pencil)',
                 'description' => 'Vista de listado de propiedades con diseño Pencil: grid de tarjetas, búsqueda, filtros',
@@ -332,6 +352,12 @@ class Alquipress_Module_Manager
                 'name' => 'Comunicación',
                 'description' => 'Sistema de emails con SMTP/IMAP e histórico completo',
                 'file' => 'communications/communications.php',
+=======
+            'brand-customizer' => [
+                'name' => 'Personalización de Marca',
+                'description' => 'Personaliza colores, tipografías, logo y nombre de empresa en el Dashboard',
+                'file' => 'brand-customizer/brand-customizer.php',
+>>>>>>> main
                 'dependencies' => []
             ]
         ];
@@ -475,9 +501,18 @@ class Alquipress_Module_Manager
 
     public function add_settings_page()
     {
+        // Obtener nombre personalizado de la empresa
+        $brand_settings = get_option('alquipress_brand_settings', ['company_name' => 'ALQUIPRESS']);
+        $menu_title = isset($brand_settings['company_name']) ? $brand_settings['company_name'] : 'ALQUIPRESS';
+
         add_menu_page(
+<<<<<<< HEAD
             __('Dashboard', 'alquipress'),
             __('Dashboard', 'alquipress'),
+=======
+            $menu_title,
+            $menu_title,
+>>>>>>> main
             'manage_options',
             'alquipress-settings',
             [$this, 'router_render_section'],
@@ -658,7 +693,11 @@ class Alquipress_Module_Manager
 
     public function render_settings_page()
     {
+<<<<<<< HEAD
         // Mostrar mensajes (guardado se maneja en handle_form_submit via admin_init)
+=======
+        // Mostrar mensajes
+>>>>>>> main
         settings_errors('alquipress_messages');
 
         // Render interfaz

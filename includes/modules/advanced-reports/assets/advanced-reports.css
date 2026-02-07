@@ -1,5 +1,10 @@
 /**
+<<<<<<< HEAD
  * Estilos para Informes y Analíticas (diseño Pencil: Reports Dashboard)
+=======
+ * Estilos para Informes y Analíticas Avanzadas
+ * Integrado con ALQUIPRESS Design System
+>>>>>>> main
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -365,58 +370,152 @@
 /* Legacy wrapper (por si se usa en otro contexto) */
 .alquipress-reports-wrap {
     max-width: 1400px;
-    margin: 20px auto;
-    padding: 0 20px;
+    margin: var(--ap-space-5) auto;
+    padding: 0 var(--ap-space-5);
 }
 
 .alquipress-reports-wrap h1 {
     font-size: 32px;
-    margin-bottom: 30px;
-    color: #2c3338;
+    margin-bottom: var(--ap-space-8);
+    color: var(--ap-text-primary);
     font-weight: 600;
 }
 
+<<<<<<< HEAD
+=======
+/* ========== Filtros ========== */
+
+.reports-filters {
+    display: flex;
+    align-items: center;
+    gap: var(--ap-space-5);
+    margin-bottom: var(--ap-space-8);
+    padding: var(--ap-space-5);
+    background: var(--ap-bg-white);
+    border-radius: var(--ap-radius-md);
+    box-shadow: var(--ap-shadow-sm);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: var(--ap-space-3);
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: var(--ap-text-primary);
+    margin: 0;
+}
+
+.filter-group select {
+    padding: var(--ap-space-2) var(--ap-space-3);
+    border: 1px solid var(--ap-border-color);
+    border-radius: var(--ap-radius-sm);
+    font-size: 14px;
+    min-width: 120px;
+}
+
+/* ========== Estadísticas Rápidas ========== */
+
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--ap-space-5);
+    margin-bottom: var(--ap-space-8);
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: var(--ap-space-6);
+    border-radius: var(--ap-radius-lg);
+    box-shadow: var(--ap-shadow-md);
+    display: flex;
+    align-items: center;
+    gap: var(--ap-space-5);
+    transition: var(--ap-transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--ap-shadow-lg);
+}
+
+.stat-card:nth-child(2) {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-card:nth-child(3) {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.stat-card:nth-child(4) {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.stat-icon {
+    font-size: 48px;
+    line-height: 1;
+    opacity: 0.9;
+}
+
+.stat-content h3 {
+    margin: 0 0 var(--ap-space-1);
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+}
+
+.stat-content p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+>>>>>>> main
 /* ========== Tabs ========== */
 
 .reports-tabs {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #f0f0f1;
+    gap: var(--ap-space-3);
+    margin-bottom: var(--ap-space-5);
+    border-bottom: 2px solid var(--ap-bg-gray);
 }
 
 .tab-button {
-    padding: 12px 24px;
+    padding: var(--ap-space-3) var(--ap-space-6);
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
     font-size: 14px;
     font-weight: 600;
-    color: #666;
+    color: var(--ap-text-muted);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: var(--ap-transition);
     position: relative;
     margin-bottom: -2px;
 }
 
 .tab-button:hover {
-    color: #2271b1;
-    background: #f6f7f7;
+    color: var(--ap-primary);
+    background: var(--ap-bg-gray);
 }
 
 .tab-button.active {
-    color: #2271b1;
-    border-bottom-color: #2271b1;
+    color: var(--ap-primary);
+    border-bottom-color: var(--ap-primary);
     background: transparent;
 }
 
 /* ========== Contenido de Tabs ========== */
 
 .reports-content {
-    background: white;
-    border-radius: 8px;
-    padding: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background: var(--ap-bg-white);
+    border-radius: var(--ap-radius-md);
+    padding: var(--ap-space-8);
+    box-shadow: var(--ap-shadow-sm);
 }
 
 .tab-content {
@@ -443,7 +542,7 @@
 /* ========== Secciones de Reporte ========== */
 
 .report-section {
-    margin-bottom: 40px;
+    margin-bottom: var(--ap-space-10);
 }
 
 .report-section:last-child {
@@ -453,32 +552,32 @@
 .report-section h2 {
     font-size: 20px;
     font-weight: 600;
-    color: #2c3338;
-    margin: 0 0 20px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid #f0f0f1;
+    color: var(--ap-text-primary);
+    margin: 0 0 var(--ap-space-5);
+    padding-bottom: var(--ap-space-3);
+    border-bottom: 2px solid var(--ap-bg-gray);
 }
 
 /* ========== Tablas ========== */
 
 .report-section table {
-    margin-top: 20px;
+    margin-top: var(--ap-space-5);
 }
 
 .report-section table th {
-    background: #f6f7f7;
+    background: var(--ap-bg-gray);
     font-weight: 600;
-    color: #2c3338;
-    padding: 12px;
+    color: var(--ap-text-primary);
+    padding: var(--ap-space-3);
 }
 
 .report-section table td {
-    padding: 12px;
+    padding: var(--ap-space-3);
     vertical-align: middle;
 }
 
 .report-section table tbody tr:hover {
-    background: #f9fafb;
+    background: var(--ap-bg-light);
 }
 
 /* Posiciones en tablas */
@@ -496,25 +595,25 @@
 .position-1 {
     background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
     color: #8b6914;
-    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+    box-shadow: var(--ap-shadow-sm);
 }
 
 .position-2 {
     background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
-    color: #666;
-    box-shadow: 0 2px 8px rgba(192, 192, 192, 0.4);
+    color: var(--ap-text-muted);
+    box-shadow: var(--ap-shadow-sm);
 }
 
 .position-3 {
     background: linear-gradient(135deg, #cd7f32 0%, #e8a16d 100%);
     color: #5c3a1a;
-    box-shadow: 0 2px 8px rgba(205, 127, 50, 0.4);
+    box-shadow: var(--ap-shadow-sm);
 }
 
 .position-4,
 .position-5 {
-    background: #f0f0f1;
-    color: #666;
+    background: var(--ap-bg-gray);
+    color: var(--ap-text-muted);
 }
 
 /* ========== Gráficos ========== */
@@ -528,11 +627,11 @@ canvas {
 
 .loading-spinner {
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: var(--ap-space-5);
+    height: var(--ap-space-5);
     border: 3px solid rgba(0, 0, 0, 0.1);
     border-radius: 50%;
-    border-top-color: #2271b1;
+    border-top-color: var(--ap-primary);
     animation: spin 0.8s linear infinite;
 }
 
@@ -546,7 +645,7 @@ canvas {
 
 @media screen and (max-width: 1200px) {
     .alquipress-reports-wrap {
-        padding: 0 15px;
+        padding: 0 var(--ap-space-4);
     }
 
     .stats-overview {
@@ -578,7 +677,7 @@ canvas {
     }
 
     .stat-card {
-        padding: 20px;
+        padding: var(--ap-space-5);
     }
 
     .stat-icon {
@@ -591,16 +690,16 @@ canvas {
 
     .reports-tabs {
         flex-wrap: wrap;
-        gap: 5px;
+        gap: var(--ap-space-1);
     }
 
     .tab-button {
-        padding: 10px 16px;
+        padding: var(--ap-space-3) var(--ap-space-4);
         font-size: 12px;
     }
 
     .reports-content {
-        padding: 20px;
+        padding: var(--ap-space-5);
     }
 
     .report-section h2 {
@@ -619,51 +718,22 @@ canvas {
 
 @media screen and (max-width: 600px) {
     .tab-button {
-        flex: 1 1 calc(50% - 5px);
+        flex: 1 1 calc(50% - var(--ap-space-1));
         text-align: center;
     }
 }
 
 /* ========== Utilidades ========== */
 
-.text-success {
-    color: #00a32a;
-    font-weight: 600;
-}
-
-.text-warning {
-    color: #f0b849;
-    font-weight: 600;
-}
-
-.text-error {
-    color: #dc3232;
-    font-weight: 600;
-}
-
-.text-muted {
-    color: #666;
-}
-
-.badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.badge-success {
-    background: #d5f4e6;
-    color: #00a32a;
-}
-
-.badge-warning {
-    background: #fffbeb;
-    color: #92400e;
-}
-
-.badge-info {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
+/*
+ * Las utilidades de texto (.ap-text-success, .ap-text-warning, etc.)
+ * y badges (.ap-badge, .ap-badge--success, etc.) están disponibles
+ * en el Design System global (admin-design-system.css).
+ *
+ * Clases disponibles:
+ * - .ap-text-success, .ap-text-warning, .ap-text-error, .ap-text-muted
+ * - .ap-badge, .ap-badge--success, .ap-badge--warning, .ap-badge--info
+ * - .ap-text-semibold, .ap-text-sm, .ap-text-lg
+ * - Utilidades de espaciado: .ap-mt-5, .ap-mb-3, .ap-p-4, etc.
+ * - Utilidades de flexbox: .ap-flex, .ap-items-center, .ap-gap-2, etc.
+ */

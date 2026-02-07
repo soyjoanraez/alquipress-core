@@ -143,7 +143,9 @@ class Alquipress_Performance_Optimizer
             AND p.post_status IN ('wc-completed', 'wc-in-progress', 'wc-checkout-review')
             AND p.post_date >= %s
             AND p.post_date <= %s
+            AND pm_customer.meta_value REGEXP '^[0-9]+$'
             AND CAST(pm_customer.meta_value AS UNSIGNED) > 0
+            AND pm_total.meta_value REGEXP '^[0-9]+\.?[0-9]*$'
             GROUP BY customer_id
             ORDER BY total_spent DESC
             LIMIT %d",
@@ -279,6 +281,7 @@ class Alquipress_Performance_Optimizer
             AND p.post_status IN ('wc-completed', 'wc-in-progress', 'wc-checkout-review')
             AND p.post_date >= %s
             AND p.post_date <= %s
+            AND pm.meta_value REGEXP '^[0-9]+\.?[0-9]*$'
             GROUP BY MONTH(p.post_date)
             ORDER BY month ASC",
             $start_date,
@@ -295,10 +298,11 @@ class Alquipress_Performance_Optimizer
     }
 
     /**
-     * Limpiar caché de informes
+     * Limpiar caché de informes (optimizado)
      */
     public function clear_reports_cache($post_id = null)
     {
+<<<<<<< HEAD
         // Limpiar todos los transients relacionados con informes
         self::clear_cache_group('reports');
     }
@@ -310,6 +314,52 @@ class Alquipress_Performance_Optimizer
      */
     public static function clear_all_alquipress_cache()
     {
+=======
+        // Solo limpiar caché si es relevante
+        if (!$post_id) {
+            return;
+        }
+
+        $post_type = get_post_type($post_id);
+        $current_year = date('Y');
+
+        // Si es un pedido, limpiar solo reportes relacionados
+        if ($post_type === 'shop_order') {
+            $order = wc_get_order($post_id);
+
+            if ($order) {
+                $order_year = date('Y', strtotime($order->get_date_created()));
+
+                // Limpiar transients específicos del año del pedido
+                delete_transient('alquipress_monthly_revenue_' . $order_year);
+                delete_transient('alquipress_top_clients_' . $order_year . '_5');
+                delete_transient('alquipress_top_properties_' . $order_year . '_5');
+
+                // Si es del año actual, limpiar también ese año
+                if ($order_year != $current_year) {
+                    delete_transient('alquipress_monthly_revenue_' . $current_year);
+                    delete_transient('alquipress_top_clients_' . $current_year . '_5');
+                    delete_transient('alquipress_top_properties_' . $current_year . '_5');
+                }
+            }
+        }
+
+        // Si es un producto (propiedad), limpiar reportes de propiedades
+        if ($post_type === 'product') {
+            delete_transient('alquipress_top_properties_' . $current_year . '_5');
+        }
+    }
+
+    /**
+     * Limpiar TODO el caché (solo llamar manualmente)
+     */
+    public function clear_all_cache()
+    {
+        if (!current_user_can('manage_options')) {
+            return false;
+        }
+
+>>>>>>> main
         global $wpdb;
 
         $deleted = $wpdb->query(
@@ -318,6 +368,7 @@ class Alquipress_Performance_Optimizer
             OR option_name LIKE '_transient_timeout_alquipress_%'"
         );
 
+<<<<<<< HEAD
         // Limpiar también el caché de Property Helper
         if (class_exists('Alquipress_Property_Helper')) {
             Alquipress_Property_Helper::clear_cache();
@@ -379,6 +430,9 @@ class Alquipress_Performance_Optimizer
             );
             $deleted += (int) $result;
         }
+=======
+        error_log('ALQUIPRESS: Limpiados ' . $deleted . ' transients');
+>>>>>>> main
 
         return $deleted;
     }

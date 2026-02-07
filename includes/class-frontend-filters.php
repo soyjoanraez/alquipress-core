@@ -26,37 +26,22 @@ class Alquipress_Frontend_Filters
         if (!is_shop() && !is_product_taxonomy())
             return;
 
-        $inline_js = "
-        jQuery(document).ready(function($) {
-            $('.alquipress-filter-group input').on('change', function() {
-                var url = new URL(window.location);
-                var tax = $(this).closest('.alquipress-filter-group').data('taxonomy');
-                var values = [];
-                
-                $(this).closest('.alquipress-filter-group').find('input:checked').each(function() {
-                    values.push($(this).val());
-                });
-                
-                url.searchParams.delete(tax);
-                if (values.length) {
-                    url.searchParams.append(tax, values.join(','));
-                }
-                
-                window.location = url;
-            });
-        });";
+        // Cargar CSS desde archivo externo
+        wp_enqueue_style(
+            'alquipress-frontend-filters',
+            ALQUIPRESS_URL . 'includes/assets/css/frontend-filters.css',
+            [],
+            ALQUIPRESS_VERSION
+        );
 
-        wp_add_inline_script('jquery', $inline_js);
-
-        $inline_css = "
-        .alquipress-filter-group { margin-bottom: 30px; }
-        .alquipress-filter-group h4 { margin-bottom: 10px; font-weight: 700; border-bottom: 2px solid #f0f0f1; padding-bottom: 5px; }
-        .alquipress-filter-list { list-style: none; padding: 0; }
-        .alquipress-filter-list li { margin-bottom: 5px; }
-        .alquipress-filter-list label { cursor: pointer; display: flex; align-items: center; gap: 8px; }
-        .alquipress-filter-list input { margin: 0; }
-        ";
-        wp_add_inline_style('astra-theme-css', $inline_css);
+        // Cargar JS desde archivo externo
+        wp_enqueue_script(
+            'alquipress-frontend-filters',
+            ALQUIPRESS_URL . 'includes/assets/js/frontend-filters.js',
+            ['jquery'],
+            ALQUIPRESS_VERSION,
+            true
+        );
     }
 
     public function apply_taxonomy_filters($query)
@@ -69,11 +54,21 @@ class Alquipress_Frontend_Filters
                 if (isset($_GET[$tax]) && !empty($_GET[$tax])) {
                     $raw = wp_unslash($_GET[$tax]);
                     $terms = array_filter(array_unique(array_map('sanitize_title', explode(',', $raw))));
-                    if (!empty($terms)) {
+
+                    // Validar que los términos existen en la taxonomía
+                    $valid_terms = [];
+                    foreach ($terms as $term_slug) {
+                        $term = get_term_by('slug', $term_slug, $tax);
+                        if ($term && !is_wp_error($term)) {
+                            $valid_terms[] = $term_slug;
+                        }
+                    }
+
+                    if (!empty($valid_terms)) {
                         $tax_query[] = [
                             'taxonomy' => $tax,
                             'field' => 'slug',
-                            'terms' => $terms,
+                            'terms' => $valid_terms,
                             'operator' => ($tax === 'caracteristicas') ? 'AND' : 'IN',
                         ];
                     }

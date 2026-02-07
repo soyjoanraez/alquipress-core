@@ -64,28 +64,28 @@ class Alquipress_Dashboard_Widgets
         // Widget: Movimientos de Hoy
         wp_add_dashboard_widget(
             'alquipress_todays_movements',
-            '📅 Movimientos de Hoy',
+            '<span class="dashicons dashicons-calendar-alt"></span> Movimientos de Hoy',
             [$this, 'render_todays_movements']
         );
 
         // Widget: Ingresos del Mes
         wp_add_dashboard_widget(
             'alquipress_monthly_revenue',
-            '💰 Ingresos del Mes',
+            '<span class="dashicons dashicons-money-alt"></span> Ingresos del Mes',
             [$this, 'render_monthly_revenue']
         );
 
         // Widget: Estado de Propiedades
         wp_add_dashboard_widget(
             'alquipress_property_status',
-            '🏠 Estado de Propiedades',
+            '<span class="dashicons dashicons-admin-home"></span> Estado de Propiedades',
             [$this, 'render_property_status']
         );
 
         // Widget: Alertas y Pendientes
         wp_add_dashboard_widget(
             'alquipress_alerts',
-            '⚠️ Alertas',
+            '<span class="dashicons dashicons-warning"></span> Alertas',
             [$this, 'render_alerts']
         );
     }
@@ -99,9 +99,80 @@ class Alquipress_Dashboard_Widgets
         $cache_key = 'alquipress_widget_movements_' . $today;
         $cached_html = get_transient($cache_key);
 
+<<<<<<< HEAD
         if ($cached_html !== false) {
             echo $cached_html;
             return;
+=======
+        // Obtener check-ins de hoy
+        $checkins_today = $this->get_bookings_by_checkin_date($today);
+
+        // Obtener check-outs de hoy
+        $checkouts_today = $this->get_bookings_by_checkout_date($today);
+
+        echo '<div class="alquipress-movements-grid">';
+
+        // Check-ins
+        echo '<div class="movement-card checkin-card">';
+        echo '<div class="movement-number">' . count($checkins_today) . '</div>';
+        echo '<div class="movement-label">Check-ins Hoy</div>';
+        echo '</div>';
+
+        // Check-outs
+        echo '<div class="movement-card checkout-card">';
+        echo '<div class="movement-number">' . count($checkouts_today) . '</div>';
+        echo '<div class="movement-label">Check-outs Hoy</div>';
+        echo '</div>';
+
+        echo '</div>';
+
+        // Listado detallado
+        if (!empty($checkins_today) || !empty($checkouts_today)) {
+            echo '<table class="widefat alquipress-movements-table">';
+            echo '<thead>';
+            echo '<tr>';
+            echo '<th>Huésped</th>';
+            echo '<th>Propiedad</th>';
+            echo '<th>Tipo</th>';
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+
+            // Check-ins
+            foreach ($checkins_today as $order_id) {
+                $order = wc_get_order($order_id);
+                if ($order) {
+                    $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+                    $property_name = $this->get_order_property_name($order);
+
+                    echo '<tr>';
+                    echo '<td><strong>' . esc_html($customer_name) . '</strong></td>';
+                    echo '<td>' . esc_html($property_name) . '</td>';
+                    echo '<td><span class="badge-checkin"><span class="dashicons dashicons-yes"></span> Check-in</span></td>';
+                    echo '</tr>';
+                }
+            }
+
+            // Check-outs
+            foreach ($checkouts_today as $order_id) {
+                $order = wc_get_order($order_id);
+                if ($order) {
+                    $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+                    $property_name = $this->get_order_property_name($order);
+
+                    echo '<tr>';
+                    echo '<td><strong>' . esc_html($customer_name) . '</strong></td>';
+                    echo '<td>' . esc_html($property_name) . '</td>';
+                    echo '<td><span class="badge-checkout"><span class="dashicons dashicons-exit"></span> Check-out</span></td>';
+                    echo '</tr>';
+                }
+            }
+
+            echo '</tbody>';
+            echo '</table>';
+        } else {
+            echo '<p style="text-align: center; color: #666; padding: 20px 0;">No hay movimientos programados para hoy.</p>';
+>>>>>>> main
         }
 
         ob_start();
@@ -207,12 +278,25 @@ class Alquipress_Dashboard_Widgets
                 <div class="revenue-amount"><?php echo wc_price($current_revenue); ?></div>
                 <div class="revenue-period"><?php echo wp_date('F Y'); ?></div>
 
+<<<<<<< HEAD
                 <div class="revenue-trend <?php echo ($change_percentage >= 0) ? 'trend-up' : 'trend-down'; ?>">
                     <span
                         class="dashicons <?php echo ($change_percentage >= 0) ? 'dashicons-trending-up' : 'dashicons-trending-down'; ?>"></span>
                     <?php echo number_format(abs($change_percentage), 1); ?>% vs mes pasado
                 </div>
             </div>
+=======
+        echo '<div class="revenue-comparison">';
+        if ($change_percentage > 0) {
+            echo '<span class="revenue-up"><span class="dashicons dashicons-arrow-up-alt"></span> +' . number_format($change_percentage, 1) . '%</span>';
+        } elseif ($change_percentage < 0) {
+            echo '<span class="revenue-down"><span class="dashicons dashicons-arrow-down-alt"></span> ' . number_format($change_percentage, 1) . '%</span>';
+        } else {
+            echo '<span class="revenue-neutral"><span class="dashicons dashicons-minus"></span> Sin cambios</span>';
+        }
+        echo ' respecto al mes anterior';
+        echo '</div>';
+>>>>>>> main
 
             <?php
             $revenue_by_status = $this->get_revenue_by_status($current_month_start, $current_month_end);
@@ -301,7 +385,7 @@ class Alquipress_Dashboard_Widgets
         if (!empty($checkins_tomorrow)) {
             $alerts[] = [
                 'type' => 'info',
-                'icon' => '📅',
+                'icon' => 'dashicons-calendar-alt',
                 'message' => count($checkins_tomorrow) . ' check-in(s) programado(s) para mañana'
             ];
         }
@@ -311,8 +395,13 @@ class Alquipress_Dashboard_Widgets
         if ($pending_count >= 5) {
             $alerts[] = [
                 'type' => 'warning',
+<<<<<<< HEAD
                 'icon' => '⚠️',
                 'message' => $pending_count . ' pedido(s) pendiente(s) de pago'
+=======
+                'icon' => 'dashicons-warning',
+                'message' => count($pending_orders) . ' pedido(s) pendiente(s) de pago'
+>>>>>>> main
             ];
         }
 
@@ -321,8 +410,13 @@ class Alquipress_Dashboard_Widgets
         if ($review_count > 0) {
             $alerts[] = [
                 'type' => 'info',
+<<<<<<< HEAD
                 'icon' => '🔍',
                 'message' => $review_count . ' propiedad(es) en revisión de salida'
+=======
+                'icon' => 'dashicons-search',
+                'message' => count($review_orders) . ' propiedad(es) en revisión de salida'
+>>>>>>> main
             ];
         }
 
@@ -331,12 +425,13 @@ class Alquipress_Dashboard_Widgets
         if ($owners_without_iban > 0) {
             $alerts[] = [
                 'type' => 'warning',
-                'icon' => '💳',
+                'icon' => 'dashicons-money-alt',
                 'message' => $owners_without_iban . ' propietario(s) sin IBAN registrado'
             ];
         }
 
         // Renderizar alertas
+<<<<<<< HEAD
         ?>
         <div class="alquipress-dashboard-container">
             <?php if (!empty($alerts)): ?>
@@ -358,6 +453,23 @@ class Alquipress_Dashboard_Widgets
             <?php endif; ?>
         </div>
         <?php
+=======
+        if (!empty($alerts)) {
+            echo '<ul class="alquipress-alerts-list">';
+            foreach ($alerts as $alert) {
+                $class = 'alert-' . $alert['type'];
+                echo '<li class="' . esc_attr($class) . '">';
+                echo '<span class="alert-icon dashicons ' . esc_attr($alert['icon']) . '"></span>';
+                echo '<span class="alert-message">' . esc_html($alert['message']) . '</span>';
+                echo '</li>';
+            }
+            echo '</ul>';
+        } else {
+            echo '<p style="text-align: center; color: #46b450; padding: 20px 0; font-weight: 600;">';
+            echo '<span class="dashicons dashicons-yes"></span> No hay alertas pendientes';
+            echo '</p>';
+        }
+>>>>>>> main
     }
 
     // ========== Métodos auxiliares ==========
