@@ -24,28 +24,28 @@ class Alquipress_Dashboard_Widgets
         // Widget: Movimientos de Hoy
         wp_add_dashboard_widget(
             'alquipress_todays_movements',
-            '📅 Movimientos de Hoy',
+            '<span class="dashicons dashicons-calendar-alt"></span> Movimientos de Hoy',
             [$this, 'render_todays_movements']
         );
 
         // Widget: Ingresos del Mes
         wp_add_dashboard_widget(
             'alquipress_monthly_revenue',
-            '💰 Ingresos del Mes',
+            '<span class="dashicons dashicons-money-alt"></span> Ingresos del Mes',
             [$this, 'render_monthly_revenue']
         );
 
         // Widget: Estado de Propiedades
         wp_add_dashboard_widget(
             'alquipress_property_status',
-            '🏠 Estado de Propiedades',
+            '<span class="dashicons dashicons-admin-home"></span> Estado de Propiedades',
             [$this, 'render_property_status']
         );
 
         // Widget: Alertas y Pendientes
         wp_add_dashboard_widget(
             'alquipress_alerts',
-            '⚠️ Alertas',
+            '<span class="dashicons dashicons-warning"></span> Alertas',
             [$this, 'render_alerts']
         );
     }
@@ -102,7 +102,7 @@ class Alquipress_Dashboard_Widgets
                     echo '<tr>';
                     echo '<td><strong>' . esc_html($customer_name) . '</strong></td>';
                     echo '<td>' . esc_html($property_name) . '</td>';
-                    echo '<td><span class="badge-checkin">✅ Check-in</span></td>';
+                    echo '<td><span class="badge-checkin"><span class="dashicons dashicons-yes"></span> Check-in</span></td>';
                     echo '</tr>';
                 }
             }
@@ -117,7 +117,7 @@ class Alquipress_Dashboard_Widgets
                     echo '<tr>';
                     echo '<td><strong>' . esc_html($customer_name) . '</strong></td>';
                     echo '<td>' . esc_html($property_name) . '</td>';
-                    echo '<td><span class="badge-checkout">🚪 Check-out</span></td>';
+                    echo '<td><span class="badge-checkout"><span class="dashicons dashicons-exit"></span> Check-out</span></td>';
                     echo '</tr>';
                 }
             }
@@ -158,11 +158,11 @@ class Alquipress_Dashboard_Widgets
 
         echo '<div class="revenue-comparison">';
         if ($change_percentage > 0) {
-            echo '<span class="revenue-up">📈 +' . number_format($change_percentage, 1) . '%</span>';
+            echo '<span class="revenue-up"><span class="dashicons dashicons-arrow-up-alt"></span> +' . number_format($change_percentage, 1) . '%</span>';
         } elseif ($change_percentage < 0) {
-            echo '<span class="revenue-down">📉 ' . number_format($change_percentage, 1) . '%</span>';
+            echo '<span class="revenue-down"><span class="dashicons dashicons-arrow-down-alt"></span> ' . number_format($change_percentage, 1) . '%</span>';
         } else {
-            echo '<span class="revenue-neutral">➡️ Sin cambios</span>';
+            echo '<span class="revenue-neutral"><span class="dashicons dashicons-minus"></span> Sin cambios</span>';
         }
         echo ' respecto al mes anterior';
         echo '</div>';
@@ -259,7 +259,7 @@ class Alquipress_Dashboard_Widgets
         if (!empty($checkins_tomorrow)) {
             $alerts[] = [
                 'type' => 'info',
-                'icon' => '📅',
+                'icon' => 'dashicons-calendar-alt',
                 'message' => count($checkins_tomorrow) . ' check-in(s) programado(s) para mañana'
             ];
         }
@@ -272,7 +272,7 @@ class Alquipress_Dashboard_Widgets
         if (!empty($pending_orders)) {
             $alerts[] = [
                 'type' => 'warning',
-                'icon' => '⚠️',
+                'icon' => 'dashicons-warning',
                 'message' => count($pending_orders) . ' pedido(s) pendiente(s) de pago'
             ];
         }
@@ -285,7 +285,7 @@ class Alquipress_Dashboard_Widgets
         if (!empty($review_orders)) {
             $alerts[] = [
                 'type' => 'info',
-                'icon' => '🔍',
+                'icon' => 'dashicons-search',
                 'message' => count($review_orders) . ' propiedad(es) en revisión de salida'
             ];
         }
@@ -295,7 +295,7 @@ class Alquipress_Dashboard_Widgets
         if ($owners_without_iban > 0) {
             $alerts[] = [
                 'type' => 'warning',
-                'icon' => '💳',
+                'icon' => 'dashicons-money-alt',
                 'message' => $owners_without_iban . ' propietario(s) sin IBAN registrado'
             ];
         }
@@ -306,14 +306,14 @@ class Alquipress_Dashboard_Widgets
             foreach ($alerts as $alert) {
                 $class = 'alert-' . $alert['type'];
                 echo '<li class="' . esc_attr($class) . '">';
-                echo '<span class="alert-icon">' . $alert['icon'] . '</span>';
+                echo '<span class="alert-icon dashicons ' . esc_attr($alert['icon']) . '"></span>';
                 echo '<span class="alert-message">' . esc_html($alert['message']) . '</span>';
                 echo '</li>';
             }
             echo '</ul>';
         } else {
             echo '<p style="text-align: center; color: #46b450; padding: 20px 0; font-weight: 600;">';
-            echo '✅ No hay alertas pendientes';
+            echo '<span class="dashicons dashicons-yes"></span> No hay alertas pendientes';
             echo '</p>';
         }
     }

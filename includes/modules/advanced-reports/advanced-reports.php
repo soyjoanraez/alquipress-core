@@ -30,7 +30,7 @@ class Alquipress_Advanced_Reports
         add_submenu_page(
             'alquipress-settings',
             'Informes y Analíticas',
-            '📊 Informes',
+            'Informes',
             'manage_options',
             'alquipress-reports',
             [$this, 'render_reports_page']
@@ -44,7 +44,10 @@ class Alquipress_Advanced_Reports
     {
         ?>
         <div class="wrap alquipress-reports-wrap">
-            <h1>📊 Informes y Analíticas</h1>
+            <h1>
+                <span class="dashicons dashicons-chart-bar"></span>
+                Informes y Analíticas
+            </h1>
 
             <!-- Filtros Generales -->
             <div class="reports-filters">
@@ -59,34 +62,36 @@ class Alquipress_Advanced_Reports
                         ?>
                     </select>
                 </div>
-                <button id="refresh-reports" class="button button-primary">🔄 Actualizar Informes</button>
+                <button id="refresh-reports" class="button button-primary">
+                    <span class="dashicons dashicons-update"></span> Actualizar Informes
+                </button>
             </div>
 
             <!-- Estadísticas Rápidas -->
             <div class="stats-overview">
                 <div class="stat-card">
-                    <div class="stat-icon">💰</div>
+                    <div class="stat-icon"><span class="dashicons dashicons-money-alt"></span></div>
                     <div class="stat-content">
                         <h3 id="stat-revenue-year">Cargando...</h3>
                         <p>Ingresos del Año</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">📦</div>
+                    <div class="stat-icon"><span class="dashicons dashicons-cart"></span></div>
                     <div class="stat-content">
                         <h3 id="stat-bookings-year">Cargando...</h3>
                         <p>Reservas del Año</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">📈</div>
+                    <div class="stat-icon"><span class="dashicons dashicons-chart-line"></span></div>
                     <div class="stat-content">
                         <h3 id="stat-avg-booking">Cargando...</h3>
                         <p>Valor Medio por Reserva</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🏠</div>
+                    <div class="stat-icon"><span class="dashicons dashicons-admin-home"></span></div>
                     <div class="stat-content">
                         <h3 id="stat-occupancy-rate">Cargando...</h3>
                         <p>Tasa de Ocupación</p>
@@ -96,10 +101,18 @@ class Alquipress_Advanced_Reports
 
             <!-- Tabs de Informes -->
             <div class="reports-tabs">
-                <button class="tab-button active" data-tab="revenue">💰 Ingresos</button>
-                <button class="tab-button" data-tab="occupancy">📊 Ocupación</button>
-                <button class="tab-button" data-tab="clients">👥 Clientes</button>
-                <button class="tab-button" data-tab="properties">🏠 Propiedades</button>
+                <button class="tab-button active" data-tab="revenue">
+                    <span class="dashicons dashicons-money-alt"></span> Ingresos
+                </button>
+                <button class="tab-button" data-tab="occupancy">
+                    <span class="dashicons dashicons-chart-bar"></span> Ocupación
+                </button>
+                <button class="tab-button" data-tab="clients">
+                    <span class="dashicons dashicons-groups"></span> Clientes
+                </button>
+                <button class="tab-button" data-tab="properties">
+                    <span class="dashicons dashicons-admin-home"></span> Propiedades
+                </button>
             </div>
 
             <!-- Contenido de Tabs -->
@@ -532,7 +545,7 @@ class Alquipress_Advanced_Reports
         }
 
         return [
-            'labels' => ['⭐ 1 Estrella', '⭐⭐ 2 Estrellas', '⭐⭐⭐ 3 Estrellas', '⭐⭐⭐⭐ 4 Estrellas', '⭐⭐⭐⭐⭐ 5 Estrellas'],
+            'labels' => ['1 Estrella', '2 Estrellas', '3 Estrellas', '4 Estrellas', '5 Estrellas'],
             'data' => array_values($ratings)
         ];
     }

@@ -10,11 +10,42 @@ if (!defined('ABSPATH'))
 class Alquipress_Audit_Logger
 {
     private static $log_file;
+    private static $write_counter = 0;
 
     public static function init()
     {
-        self::$log_file = WP_CONTENT_DIR . '/alquipress-audit.log';
+        // SEGURIDAD: Mover log fuera del document root (CRITICAL #1)
+        // Si no es posible, usar directorio protegido
+        $log_dir = dirname(ABSPATH) . '/alquipress-logs';
+
+        // Fallback: Si no se puede crear fuera de ABSPATH, usar wp-content con .htaccess
+        if (!is_dir($log_dir) && !wp_mkdir_p($log_dir)) {
+            $log_dir = WP_CONTENT_DIR . '/alquipress-logs';
+            wp_mkdir_p($log_dir);
+            self::protect_log_directory($log_dir);
+        }
+
+        self::$log_file = $log_dir . '/audit.log';
         add_action('wp_ajax_alquipress_log_iban_access', [__CLASS__, 'log_iban_access']);
+    }
+
+    /**
+     * Proteger directorio de logs con .htaccess (fallback si no está fuera de document root)
+     */
+    private static function protect_log_directory($log_dir)
+    {
+        $htaccess_file = $log_dir . '/.htaccess';
+
+        if (!file_exists($htaccess_file)) {
+            $content = "# Bloquear acceso a archivos de log\n";
+            $content .= "Order deny,allow\n";
+            $content .= "Deny from all\n";
+            $content .= "<FilesMatch \"\\.(log|bak)$\">\n";
+            $content .= "    Deny from all\n";
+            $content .= "</FilesMatch>\n";
+
+            file_put_contents($htaccess_file, $content);
+        }
     }
 
     /**
@@ -51,8 +82,8 @@ class Alquipress_Audit_Logger
             get_current_user_id(),
             $action,
             $owner_id,
-            get_the_title($owner_id),
-            self::get_client_ip()
+            esc_html(get_the_title($owner_id)), // Sanitizar título
+            alquipress_get_client_ip() // Usar función global mejorada
         );
 
         // Escribir al log
@@ -63,6 +94,7 @@ class Alquipress_Audit_Logger
 
     /**
      * Escribir entrada al archivo de log
+     * Optimizado: Solo verifica filesize cada 50 escrituras (MEDIUM #6)
      */
     private static function write_log($entry)
     {
@@ -73,53 +105,65 @@ class Alquipress_Audit_Logger
         }
 
         // Escribir al archivo
-        error_log($entry, 3, self::$log_file);
+        $result = error_log($entry, 3, self::$log_file);
 
-        // Rotar log si es muy grande (> 5MB)
-        if (file_exists(self::$log_file) && filesize(self::$log_file) > 5 * 1024 * 1024) {
-            self::rotate_log();
+        if ($result === false) {
+            error_log('ALQUIPRESS Audit: Failed to write to log file');
+            return;
+        }
+
+        // Incrementar contador
+        self::$write_counter++;
+
+        // Verificar tamaño solo cada 50 escrituras (optimización)
+        if (self::$write_counter % 50 === 0 && file_exists(self::$log_file)) {
+            $filesize = filesize(self::$log_file);
+            if ($filesize !== false && $filesize > 5 * 1024 * 1024) {
+                self::rotate_log();
+            }
         }
     }
 
     /**
      * Rotar archivo de log
+     * Mejorado con error handling y optimización (MEDIUM #5, #7)
      */
     private static function rotate_log()
     {
         $backup_file = self::$log_file . '.' . date('Y-m-d-His') . '.bak';
-        rename(self::$log_file, $backup_file);
 
-        // Mantener solo los últimos 5 archivos de backup
+        // Verificar resultado de rename (MEDIUM #5)
+        if (!rename(self::$log_file, $backup_file)) {
+            error_log('ALQUIPRESS Audit: Failed to rotate log file');
+            return;
+        }
+
+        // Resetear contador después de rotar
+        self::$write_counter = 0;
+
+        // Mantener solo los últimos 5 archivos de backup (optimizado)
         $backups = glob(self::$log_file . '.*.bak');
-        if (count($backups) > 5) {
-            usort($backups, function ($a, $b) {
-                return filemtime($a) - filemtime($b);
-            });
-            // Eliminar los más antiguos
-            foreach (array_slice($backups, 0, -5) as $old_backup) {
+
+        if ($backups === false || count($backups) <= 5) {
+            return; // No hay backups o no exceden el límite
+        }
+
+        // Optimización: usar array_multisort en lugar de usort con filemtime
+        $mtimes = array_map('filemtime', $backups);
+        array_multisort($mtimes, SORT_ASC, $backups);
+
+        // Eliminar los más antiguos (mantener últimos 5)
+        $to_delete = array_slice($backups, 0, -5);
+        foreach ($to_delete as $old_backup) {
+            if (file_exists($old_backup) && is_writable($old_backup)) {
                 unlink($old_backup);
             }
         }
     }
 
     /**
-     * Obtener IP del cliente
-     */
-    private static function get_client_ip()
-    {
-        $ip = '';
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } else {
-            $ip = $_SERVER['REMOTE_ADDR'];
-        }
-        return sanitize_text_field($ip);
-    }
-
-    /**
      * Obtener últimos logs (solo para administradores)
+     * Optimizado con SplFileObject para prevenir memory exhaustion (HIGH #1)
      */
     public static function get_recent_logs($limit = 50)
     {
@@ -131,8 +175,32 @@ class Alquipress_Audit_Logger
             return [];
         }
 
-        $lines = file(self::$log_file);
-        return array_slice($lines, -$limit);
+        try {
+            // Usar SplFileObject para lectura eficiente (HIGH #1)
+            $file = new SplFileObject(self::$log_file, 'r');
+            $file->seek(PHP_INT_MAX); // Ir al final
+            $total_lines = $file->key() + 1;
+
+            // Calcular desde qué línea leer
+            $start_line = max(0, $total_lines - $limit);
+
+            $lines = [];
+            $file->seek($start_line);
+
+            while (!$file->eof() && count($lines) < $limit) {
+                $line = $file->current();
+                if (!empty(trim($line))) {
+                    $lines[] = $line;
+                }
+                $file->next();
+            }
+
+            return $lines;
+
+        } catch (Exception $e) {
+            error_log('ALQUIPRESS Audit: Error reading log file - ' . $e->getMessage());
+            return [];
+        }
     }
 
     /**
@@ -147,7 +215,7 @@ class Alquipress_Audit_Logger
         add_submenu_page(
             'alquipress-settings',
             'Auditoría de Accesos',
-            '🔒 Auditoría',
+            'Auditoría',
             'manage_options',
             'alquipress-audit',
             [__CLASS__, 'render_audit_page']
@@ -165,52 +233,49 @@ class Alquipress_Audit_Logger
 
         $logs = self::get_recent_logs(100);
         ?>
-        <div class="wrap">
-            <h1>🔒 Auditoría de Accesos a Datos Sensibles</h1>
+        <div class="ap-wrap">
+            <div class="ap-page-header">
+                <h1>
+                    <span class="dashicons dashicons-shield-alt"></span>
+                    Auditoría de Accesos a Datos Sensibles
+                </h1>
+                <p>Registro de todos los accesos a información confidencial de propietarios.</p>
+            </div>
 
-            <div class="card" style="max-width: 100%; margin-top: 20px;">
+            <div class="ap-card">
                 <h2>Últimos 100 accesos registrados</h2>
 
                 <?php if (empty($logs)): ?>
-                    <p style="color: #666;">No hay registros de auditoría todavía.</p>
+                    <p class="ap-text-muted">No hay registros de auditoría todavía.</p>
                 <?php else: ?>
-                    <div style="background: #f9f9f9; padding: 15px; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 600px; overflow-y: auto;">
+                    <div class="ap-code-block">
                         <?php foreach (array_reverse($logs) as $log): ?>
-                            <div style="padding: 5px 0; border-bottom: 1px solid #e0e0e0;">
+                            <div class="ap-code-block__line">
                                 <?php echo esc_html($log); ?>
                             </div>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
 
-                <p style="margin-top: 20px;">
+                <p class="ap-mt-5">
                     <strong>Archivo de log:</strong> <code><?php echo esc_html(self::$log_file); ?></code>
                 </p>
             </div>
 
-            <div class="card" style="max-width: 100%; margin-top: 20px;">
-                <h2>ℹ️ Información</h2>
+            <div class="ap-card ap-card--info">
+                <h2>
+                    <span class="dashicons dashicons-info"></span>
+                    Información del Sistema
+                </h2>
                 <ul>
                     <li>Se registran todos los accesos a datos sensibles (IBAN, cuentas bancarias)</li>
                     <li>Los logs incluyen: fecha, usuario, acción, propietario afectado e IP</li>
                     <li>Los archivos de log se rotan automáticamente cuando superan 5MB</li>
                     <li>Se mantienen los últimos 5 archivos de backup</li>
+                    <li><strong>Seguridad:</strong> Los logs están almacenados fuera del document root o protegidos con .htaccess</li>
                 </ul>
             </div>
         </div>
-
-        <style>
-            .card {
-                background: #fff;
-                border: 1px solid #ccd0d4;
-                border-radius: 4px;
-                padding: 20px;
-                box-shadow: 0 1px 1px rgba(0,0,0,.04);
-            }
-            .card h2 {
-                margin-top: 0;
-            }
-        </style>
         <?php
     }
 }

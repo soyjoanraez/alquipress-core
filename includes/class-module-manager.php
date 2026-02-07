@@ -11,6 +11,23 @@ class Alquipress_Module_Manager
         $this->active_modules = get_option('alquipress_modules', []);
         add_action('admin_menu', [$this, 'add_settings_page']);
         add_action('admin_init', [$this, 'handle_form_submit']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_styles']);
+    }
+
+    /**
+     * Encolar estilos del Design System en todas las páginas de admin
+     */
+    public function enqueue_admin_styles($hook)
+    {
+        // Cargar Design System solo en páginas de ALQUIPRESS
+        if (strpos($hook, 'alquipress') !== false || strpos($hook, 'kyero') !== false) {
+            wp_enqueue_style(
+                'alquipress-design-system',
+                ALQUIPRESS_URL . 'includes/assets/css/admin-design-system.css',
+                [],
+                ALQUIPRESS_VERSION
+            );
+        }
     }
 
     private function register_modules()
@@ -135,6 +152,12 @@ class Alquipress_Module_Manager
                 'description' => 'Reportes avanzados con Chart.js: ingresos, ocupación, top clientes y propiedades',
                 'file' => 'advanced-reports/advanced-reports.php',
                 'dependencies' => []
+            ],
+            'brand-customizer' => [
+                'name' => 'Personalización de Marca',
+                'description' => 'Personaliza colores, tipografías, logo y nombre de empresa en el Dashboard',
+                'file' => 'brand-customizer/brand-customizer.php',
+                'dependencies' => []
             ]
         ];
     }
@@ -153,9 +176,13 @@ class Alquipress_Module_Manager
 
     public function add_settings_page()
     {
+        // Obtener nombre personalizado de la empresa
+        $brand_settings = get_option('alquipress_brand_settings', ['company_name' => 'ALQUIPRESS']);
+        $menu_title = isset($brand_settings['company_name']) ? $brand_settings['company_name'] : 'ALQUIPRESS';
+
         add_menu_page(
-            'ALQUIPRESS',
-            'ALQUIPRESS',
+            $menu_title,
+            $menu_title,
             'manage_options',
             'alquipress-settings',
             [$this, 'render_settings_page'],

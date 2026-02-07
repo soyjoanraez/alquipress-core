@@ -11,6 +11,7 @@ class Alquipress_Rate_Limiter
 {
     /**
      * Verificar si el usuario ha excedido el límite de peticiones
+     * Usa locking para prevenir race conditions
      *
      * @param string $action Nombre de la acción AJAX
      * @param int $max_requests Máximo de peticiones permitidas
@@ -22,15 +23,36 @@ class Alquipress_Rate_Limiter
         $user_id = get_current_user_id();
         $ip = alquipress_get_client_ip();
 
+        // Sanitizar action para prevenir injection
+        $action = sanitize_key($action);
+
         // Crear clave única por usuario/IP + acción
         $transient_key = 'alquipress_rl_' . md5($user_id . '_' . $ip . '_' . $action);
+        $lock_key = $transient_key . '_lock';
 
-        // Obtener contador actual
+        // Intentar adquirir lock (máximo 5 intentos con 100ms de espera)
+        $lock_acquired = false;
+        for ($i = 0; $i < 5; $i++) {
+            if (add_transient($lock_key, '1', 2)) { // Lock por 2 segundos
+                $lock_acquired = true;
+                break;
+            }
+            usleep(100000); // Esperar 100ms antes de reintentar
+        }
+
+        if (!$lock_acquired) {
+            // No se pudo adquirir lock, denegar por seguridad
+            error_log('ALQUIPRESS Rate Limit: Could not acquire lock for ' . $action);
+            return false;
+        }
+
+        // Obtener contador actual (dentro de la sección crítica)
         $requests = get_transient($transient_key);
 
         if ($requests === false) {
             // Primera petición en esta ventana de tiempo
             set_transient($transient_key, 1, $time_window);
+            delete_transient($lock_key); // Liberar lock
             return true;
         }
 
@@ -44,11 +66,13 @@ class Alquipress_Rate_Limiter
                 $requests,
                 $max_requests
             ));
+            delete_transient($lock_key); // Liberar lock
             return false;
         }
 
         // Incrementar contador
         set_transient($transient_key, $requests + 1, $time_window);
+        delete_transient($lock_key); // Liberar lock
         return true;
     }
 
