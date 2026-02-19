@@ -18,9 +18,13 @@ class Alquipress_Bookings_Page
 
     public function maybe_render_section($page)
     {
-        if ($page === 'alquipress-bookings') {
-            $this->render_page();
+        if ($page !== 'alquipress-bookings') {
+            return;
         }
+        if (apply_filters('alquipress_bookings_skip_resumen', false)) {
+            return;
+        }
+        $this->render_page();
     }
 
     public function enqueue_section_assets($page)
@@ -128,14 +132,15 @@ class Alquipress_Bookings_Page
             }
             $created = $order->get_date_created();
             if ($created && $month_start <= $created->format('Y-m-d') && $created->format('Y-m-d') <= $month_end) {
-                $revenue += (float) $order->get_total();
+                $real_total = $order->get_meta('_apm_booking_total');
+                $revenue += (float) ($real_total !== '' && is_numeric($real_total) ? $real_total : $order->get_total());
             }
         }
 
         $active_today = count($this->get_bookings_by_checkin_date($today));
         $active_yesterday = count($this->get_bookings_by_checkin_date(date('Y-m-d', strtotime('-1 day'))));
         $badge_today = $active_today - $active_yesterday;
-        $badge_text = $badge_today > 0 ? '↑ +' . $badge_today . ' ' . __('today', 'alquipress') : ($badge_today < 0 ? $badge_today . ' ' . __('today', 'alquipress') : '');
+        $badge_text = $badge_today > 0 ? '↑ +' . $badge_today . ' ' . __('hoy', 'alquipress') : ($badge_today < 0 ? $badge_today . ' ' . __('hoy', 'alquipress') : '');
 
         return [
             'active_bookings' => $active,
@@ -233,6 +238,55 @@ class Alquipress_Bookings_Page
         return $bookings;
     }
 
+    private function wc_bookings_active()
+    {
+        return class_exists('WC_Bookings') && class_exists('WC_Bookings_Admin');
+    }
+
+    private function get_booking_tabs()
+    {
+        $base = admin_url('admin.php?page=alquipress-bookings');
+        $tabs = [
+            'resumen' => ['label' => __('Resumen', 'alquipress'), 'icon' => 'dashicons-calendar-alt', 'url' => $base],
+            'pipeline' => ['label' => __('Pipeline', 'alquipress'), 'icon' => 'dashicons-editor-table', 'url' => admin_url('admin.php?page=alquipress-pipeline')],
+        ];
+        if ($this->wc_bookings_active()) {
+            $tabs['calendario'] = ['label' => __('Calendario', 'alquipress'), 'icon' => 'dashicons-calendar', 'url' => add_query_arg('view', 'calendario', $base)];
+            $tabs['create'] = ['label' => __('Nueva reserva', 'alquipress'), 'icon' => 'dashicons-plus-alt2', 'url' => add_query_arg('view', 'create', $base)];
+            $tabs['notifications'] = ['label' => __('Notificaciones', 'alquipress'), 'icon' => 'dashicons-email-alt', 'url' => add_query_arg('view', 'notifications', $base)];
+            $tabs['settings'] = ['label' => __('Config. reservas', 'alquipress'), 'icon' => 'dashicons-admin-generic', 'url' => add_query_arg('view', 'settings', $base)];
+        }
+        return $tabs;
+    }
+
+    private function render_booking_tabs($current)
+    {
+        $tabs = $this->get_booking_tabs();
+        ?>
+        <nav class="ap-bookings-tabs-nav" role="tablist">
+            <?php foreach ($tabs as $key => $tab) : ?>
+                <a href="<?php echo esc_url($tab['url']); ?>" class="ap-bookings-tab <?php echo $key === $current ? 'is-active' : ''; ?>" role="tab">
+                    <?php if (!empty($tab['icon'])) : ?><span class="dashicons <?php echo esc_attr($tab['icon']); ?>"></span><?php endif; ?>
+                    <?php echo esc_html($tab['label']); ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
+        <?php
+    }
+
+    private function render_header_actions()
+    {
+        ?>
+        <div class="ap-bookings-header-actions">
+            <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-ses-export')); ?>" class="ap-bookings-new-btn ap-bookings-btn-ses" style="background:#0f766e;"><span class="dashicons dashicons-media-spreadsheet"></span> <?php esc_html_e('SES XML', 'alquipress'); ?></a>
+            <a href="<?php echo esc_url(admin_url('post-new.php?post_type=shop_order')); ?>" class="ap-bookings-new-btn"><span class="dashicons dashicons-plus-alt2"></span> <?php esc_html_e('Nueva reserva', 'alquipress'); ?></a>
+            <?php if ($this->wc_bookings_active()) : ?>
+                <a href="<?php echo esc_url(admin_url('edit.php?post_type=wc_booking')); ?>" class="ap-bookings-new-btn ap-bookings-btn-wc" target="_blank" rel="noopener"><span class="dashicons dashicons-external"></span> <?php esc_html_e('Lista WC Bookings', 'alquipress'); ?></a>
+            <?php endif; ?>
+        </div>
+        <?php
+    }
+
     public function render_page()
     {
         $kpis = $this->get_kpis();
@@ -253,13 +307,11 @@ class Alquipress_Bookings_Page
                     <p class="ap-header-subtitle"><?php esc_html_e('Gestión detallada y KPIs de reservas activas', 'alquipress'); ?></p>
                 </div>
                 <div class="ap-header-right">
-                    <div class="ap-bookings-view-toggle">
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-bookings')); ?>" class="ap-bookings-view-btn ap-bookings-view-active"><span class="dashicons dashicons-calendar-alt"></span> <?php esc_html_e('Resumen', 'alquipress'); ?></a>
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-pipeline')); ?>" class="ap-bookings-view-btn"><span class="dashicons dashicons-editor-table"></span> <?php esc_html_e('Pipeline', 'alquipress'); ?></a>
-                    </div>
-                    <a href="<?php echo esc_url($new_order_url); ?>" class="ap-bookings-new-btn"><span class="dashicons dashicons-plus-alt2"></span> <?php esc_html_e('Nueva reserva', 'alquipress'); ?></a>
+                    <?php $this->render_header_actions(); ?>
                 </div>
             </header>
+
+            <?php $this->render_booking_tabs('resumen'); ?>
 
             <div class="ap-bookings-kpi-row">
                 <div class="ap-bookings-kpi-card ap-bookings-kpi-active">
@@ -332,11 +384,12 @@ class Alquipress_Bookings_Page
                                         <th><?php esc_html_e('PROPIEDAD', 'alquipress'); ?></th>
                                         <th class="ap-bookings-th-amount"><?php esc_html_e('IMPORTE', 'alquipress'); ?></th>
                                         <th class="ap-bookings-th-status"><?php esc_html_e('ESTADO', 'alquipress'); ?></th>
+                                        <th class="ap-bookings-th-action"><?php esc_html_e('Ver', 'alquipress'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php if (empty($recent)) : ?>
-                                        <tr><td colspan="5" class="ap-bookings-empty"><?php esc_html_e('No hay reservas recientes.', 'alquipress'); ?></td></tr>
+                                        <tr><td colspan="6" class="ap-bookings-empty"><?php esc_html_e('No hay reservas recientes.', 'alquipress'); ?></td></tr>
                                     <?php else : ?>
                                         <?php foreach ($recent as $b) : ?>
                                             <tr>
@@ -345,6 +398,7 @@ class Alquipress_Bookings_Page
                                                 <td><?php echo esc_html($b['prop_name']); ?></td>
                                                 <td class="ap-bookings-td-amount"><?php echo function_exists('wc_price') ? wc_price($b['amount']) : number_format_i18n($b['amount'], 2); ?></td>
                                                 <td class="ap-bookings-td-status"><span class="ap-bookings-badge ap-bookings-badge-<?php echo esc_attr($b['status_class']); ?>"><?php echo esc_html($b['status_label']); ?></span></td>
+                                                <td class="ap-bookings-td-action"><a href="<?php echo esc_url($b['edit_url']); ?>" class="ap-bookings-view-btn"><?php esc_html_e('View', 'alquipress'); ?></a></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php endif; ?>

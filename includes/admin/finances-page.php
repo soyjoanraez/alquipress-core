@@ -8,6 +8,34 @@ if (!defined('ABSPATH')) {
 
 global $wpdb;
 
+$table_schedule = $wpdb->prefix . 'apm_payment_schedule';
+$table_security = $wpdb->prefix . 'apm_security_deposits';
+$tables_exist = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table_schedule)) === $table_schedule)
+    && ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table_security)) === $table_security);
+
+if (!$tables_exist) {
+    require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
+    ?>
+    <div class="wrap alquipress-dashboard-page ap-has-sidebar">
+        <div class="ap-owners-layout">
+            <?php alquipress_render_sidebar('finances'); ?>
+            <main class="ap-owners-main">
+                <header class="ap-header">
+                    <h1 class="ap-header-title"><?php esc_html_e('Gestión Financiera', 'alquipress'); ?></h1>
+                    <p class="ap-header-subtitle"><?php esc_html_e('Control de ingresos, saldos programados y fianzas', 'alquipress'); ?></p>
+                </header>
+                <div class="notice notice-warning inline" style="margin: 20px 0; padding: 16px;">
+                    <p><strong><?php esc_html_e('Módulo APM no inicializado', 'alquipress'); ?></strong></p>
+                    <p><?php esc_html_e('Las tablas de pagos programados y fianzas no existen. Activa o configura el módulo Alquipress Payment Manager para usar esta sección.', 'alquipress'); ?></p>
+                    <p><a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-settings')); ?>" class="button"><?php esc_html_e('Ir a Ajustes', 'alquipress'); ?></a></p>
+                </div>
+            </main>
+        </div>
+    </div>
+    <?php
+    return;
+}
+
 // 1. Obtener KPIs Financieros
 $today = current_time('Y-m-d');
 $month_start = date('Y-m-01 00:00:00');
@@ -26,14 +54,12 @@ $sql_revenue = "
 $total_revenue = (float) $wpdb->get_var($wpdb->prepare($sql_revenue, $month_start, $month_end));
 
 // Saldos Pendientes de cobro (desde la tabla de pagos programados)
-$table_schedule = $wpdb->prefix . 'apm_payment_schedule';
 $pending_balances = (float) $wpdb->get_var($wpdb->prepare(
     "SELECT SUM(amount) FROM {$table_schedule} WHERE status = 'pending' AND scheduled_date >= %s",
     $today . ' 00:00:00'
 ));
 
 // Fianzas Retenidas actualmente
-$table_security = $wpdb->prefix . 'apm_security_deposits';
 $active_security = (float) $wpdb->get_var(
     "SELECT SUM(amount) FROM {$table_security} WHERE status = 'held'"
 );

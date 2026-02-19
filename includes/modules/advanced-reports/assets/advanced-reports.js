@@ -5,6 +5,31 @@
 (function ($) {
     'use strict';
 
+    /**
+     * Calcula regresión lineal y devuelve puntos de tendencia
+     * @param {number[]} values - Datos Y (uno por mes)
+     * @returns {number[]} Valores de la línea de tendencia
+     */
+    function linearRegression(values) {
+        var n = values.length;
+        if (n < 2) return values.slice();
+        var sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+        for (var i = 0; i < n; i++) {
+            sumX += i;
+            sumY += values[i];
+            sumXY += i * values[i];
+            sumX2 += i * i;
+        }
+        var denom = n * sumX2 - sumX * sumX;
+        var m = denom !== 0 ? (n * sumXY - sumX * sumY) / denom : 0;
+        var b = (sumY - m * sumX) / n;
+        var out = [];
+        for (var j = 0; j < n; j++) {
+            out.push(m * j + b);
+        }
+        return out;
+    }
+
     const ReportsApp = {
         charts: {},
         currentYear: alquipressReports.currentYear,
@@ -25,6 +50,31 @@
             $('#refresh-reports').on('click', function () {
                 ReportsApp.currentYear = $('#report-year').val();
                 ReportsApp.loadAllReports();
+            });
+
+            // Export Excel (CSV)
+            $('#export-excel').on('click', function () {
+                var year = $('#report-year').val() || ReportsApp.currentYear;
+                var form = $('<form>').attr({
+                    method: 'POST',
+                    action: alquipressReports.ajaxurl,
+                    style: 'display:none'
+                });
+                form.append($('<input>').attr({ type: 'hidden', name: 'action', value: 'alquipress_export_reports_csv' }));
+                form.append($('<input>').attr({ type: 'hidden', name: 'nonce', value: alquipressReports.nonce }));
+                form.append($('<input>').attr({ type: 'hidden', name: 'year', value: year }));
+                $('body').append(form);
+                form.submit();
+                form.remove();
+            });
+
+            // Export PDF (impresión)
+            $('#export-pdf').on('click', function () {
+                $('body').addClass('ap-reports-print-mode');
+                window.print();
+                setTimeout(function () {
+                    $('body').removeClass('ap-reports-print-mode');
+                }, 500);
             });
         },
 
@@ -63,11 +113,21 @@
                     if (response.success) {
                         callback(response.data);
                     } else {
-                        console.error('Error al cargar reporte:', reportType);
+                        var msg = (response.data && response.data.message) ? response.data.message : ('Error al cargar reporte: ' + reportType);
+                        if (typeof AlquipressToast !== 'undefined') {
+                            AlquipressToast.error(msg);
+                        } else {
+                            console.error(msg);
+                        }
                     }
                 },
                 error: function (xhr, status, error) {
-                    console.error('Error AJAX:', error);
+                    var msg = (alquipressReports.i18n && alquipressReports.i18n.errorConnection) ? alquipressReports.i18n.errorConnection : 'Error de conexión al cargar los datos.';
+                    if (typeof AlquipressToast !== 'undefined') {
+                        AlquipressToast.error(msg);
+                    } else {
+                        console.error('Error AJAX:', error);
+                    }
                 }
             });
         },
@@ -91,34 +151,65 @@
             });
         },
 
-        // ========== Cargar Ingresos Mensuales ==========
+        // ========== Cargar Ingresos Mensuales (con YoY) ==========
 
         loadRevenueMonthly: function () {
-            this.ajaxCall('revenue_monthly', function (data) {
+            this.ajaxCall('revenue_monthly_yoy', function (data) {
+                var trendData = linearRegression(data.data);
+                var datasets = [{
+                    label: (data.year || ReportsApp.currentYear) + ' (€)',
+                    data: data.data,
+                    borderColor: '#2c99e2',
+                    backgroundColor: 'rgba(44, 153, 226, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: '#2c99e2',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }];
+                if (data.data_prev && data.data_prev.length) {
+                    datasets.push({
+                        label: (data.year_prev || (ReportsApp.currentYear - 1)) + ' (€)',
+                        data: data.data_prev,
+                        borderColor: '#94a3b8',
+                        backgroundColor: 'transparent',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        pointBackgroundColor: '#94a3b8',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    });
+                }
+                datasets.push({
+                    label: (alquipressReports.i18n && alquipressReports.i18n.trend) ? alquipressReports.i18n.trend : 'Tendencia',
+                    data: trendData,
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    borderDash: [8, 4],
+                    fill: false,
+                    tension: 0,
+                    pointRadius: 0,
+                    pointHoverRadius: 0
+                });
                 var chartConfig = {
                     type: 'line',
                     data: {
                         labels: data.labels,
-                        datasets: [{
-                            label: 'Ingresos (€)',
-                            data: data.data,
-                            borderColor: '#2c99e2',
-                            backgroundColor: 'rgba(44, 153, 226, 0.1)',
-                            borderWidth: 2,
-                            fill: true,
-                            tension: 0.4,
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
-                            pointBackgroundColor: '#2c99e2',
-                            pointBorderColor: '#fff',
-                            pointBorderWidth: 2
-                        }]
+                        datasets: datasets
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: true,
                         plugins: {
-                            legend: { display: false },
+                            legend: { display: true },
                             tooltip: {
                                 callbacks: {
                                     label: function (context) {
@@ -209,19 +300,35 @@
                     ReportsApp.charts.occupancyMonthly.destroy();
                 }
 
-                const ctx = document.getElementById('chart-occupancy-monthly').getContext('2d');
+                var trendData = linearRegression(data.data);
+                var ctx = document.getElementById('chart-occupancy-monthly').getContext('2d');
 
                 ReportsApp.charts.occupancyMonthly = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: data.labels,
-                        datasets: [{
-                            label: 'Ocupación (%)',
-                            data: data.data,
-                            backgroundColor: 'rgba(67, 233, 123, 0.8)',
-                            borderColor: '#43e97b',
-                            borderWidth: 2
-                        }]
+                        datasets: [
+                            {
+                                label: 'Ocupación (%)',
+                                data: data.data,
+                                backgroundColor: 'rgba(67, 233, 123, 0.8)',
+                                borderColor: '#43e97b',
+                                borderWidth: 2
+                            },
+                            {
+                                label: (alquipressReports.i18n && alquipressReports.i18n.trend) ? alquipressReports.i18n.trend : 'Tendencia',
+                                data: trendData,
+                                type: 'line',
+                                borderColor: '#f59e0b',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                borderDash: [8, 4],
+                                fill: false,
+                                tension: 0,
+                                pointRadius: 0,
+                                pointHoverRadius: 0
+                            }
+                        ]
                     },
                     options: {
                         responsive: true,
@@ -234,6 +341,9 @@
                             tooltip: {
                                 callbacks: {
                                     label: function (context) {
+                                        if (context.dataset.type === 'line') {
+                                            return 'Tendencia: ' + context.parsed.y.toFixed(1) + '%';
+                                        }
                                         return 'Ocupación: ' + context.parsed.y.toFixed(1) + '%';
                                     }
                                 }

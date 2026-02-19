@@ -614,6 +614,7 @@ class Alquipress_Dashboard_Widgets
                 'dates' => $dates,
                 'status_label' => $status_label,
                 'status_class' => $status_class,
+                'edit_url' => $order->get_edit_order_url(),
             ];
         }
 
@@ -785,6 +786,29 @@ class Alquipress_Dashboard_Widgets
     }
 
     /**
+     * Mini calendario: próximos N días con check-ins y check-outs.
+     *
+     * @param int $days Número de días a mostrar (por defecto 7).
+     * @return array [{date, label, checkins, checkouts, is_today}, ...]
+     */
+    private function get_mini_calendar_data($days = 7)
+    {
+        $today = date('Y-m-d');
+        $result = [];
+        for ($i = 0; $i < $days; $i++) {
+            $d = date('Y-m-d', strtotime($today . ' +' . $i . ' days'));
+            $result[] = [
+                'date' => $d,
+                'label' => $i === 0 ? __('Hoy', 'alquipress') : wp_date('D j M', strtotime($d)),
+                'checkins' => Alquipress_Dashboard_Data::get_bookings_by_checkin_date($d),
+                'checkouts' => Alquipress_Dashboard_Data::get_bookings_by_checkout_date($d),
+                'is_today' => $d === $today,
+            ];
+        }
+        return $result;
+    }
+
+    /**
      * Cargar estilos CSS (dashboard WP y página Panel ALQUIPRESS)
      */
     public function enqueue_assets($hook)
@@ -827,13 +851,18 @@ class Alquipress_Dashboard_Widgets
         $last_month_end = date('Y-m-t', strtotime('-1 month'));
         $current_revenue = Alquipress_Dashboard_Data::get_revenue_between_dates($current_month_start, $current_month_end);
         $last_revenue = Alquipress_Dashboard_Data::get_revenue_between_dates($last_month_start, $last_month_end);
+        $same_month_last_year_start = date('Y-m-01', strtotime('-1 year', strtotime($current_month_start)));
+        $same_month_last_year_end = date('Y-m-t', strtotime('-1 year', strtotime($current_month_start)));
+        $revenue_same_month_yoy = Alquipress_Dashboard_Data::get_revenue_between_dates($same_month_last_year_start, $same_month_last_year_end);
         $revenue_change_pct = ($last_revenue > 0) ? (($current_revenue - $last_revenue) / $last_revenue) * 100 : 0;
+        $revenue_change_yoy = ($revenue_same_month_yoy > 0) ? (($current_revenue - $revenue_same_month_yoy) / $revenue_same_month_yoy) * 100 : ($current_revenue > 0 ? 100 : 0);
         $total_properties = (int) wp_count_posts('product')->publish;
         $occupied_today = Alquipress_Dashboard_Data::get_occupied_properties_count($today);
         $occupancy_rate = ($total_properties > 0) ? ($occupied_today / $total_properties) * 100 : 0;
         $active_bookings = Alquipress_Dashboard_Data::get_active_bookings_count();
         $recent_bookings = $this->get_recent_bookings(5);
         $recent_activity = $this->get_recent_activity(5);
+        $mini_calendar = $this->get_mini_calendar_data(7);
 
         // Propiedades publicadas este mes (optimizado con found_posts)
         $props_query = new WP_Query([
@@ -851,6 +880,10 @@ class Alquipress_Dashboard_Widgets
         $occ_last_month = Alquipress_Dashboard_Data::get_occupied_properties_count($last_month_15);
         $occupancy_last = ($total_properties > 0) ? ($occ_last_month / $total_properties) * 100 : 0;
         $occupancy_change = round($occupancy_rate - $occupancy_last, 1);
+        $same_day_last_year = date('Y-m-d', strtotime('-1 year', strtotime($today)));
+        $occ_same_day_yoy = Alquipress_Dashboard_Data::get_occupied_properties_count($same_day_last_year);
+        $occupancy_yoy = ($total_properties > 0) ? ($occ_same_day_yoy / $total_properties) * 100 : 0;
+        $occupancy_change_yoy = round($occupancy_rate - $occupancy_yoy, 1);
 
         $orders_url = admin_url('edit.php?post_type=shop_order');
         $products_url = admin_url('edit.php?post_type=product');
@@ -870,8 +903,8 @@ class Alquipress_Dashboard_Widgets
                     <p class="ap-header-subtitle"><?php esc_html_e('Bienvenido, aquí tienes el resumen de tus propiedades', 'alquipress'); ?></p>
                 </div>
                 <div class="ap-header-right">
-                    <form action="<?php echo esc_url(admin_url('edit.php')); ?>" method="get" class="ap-search-form" role="search">
-                        <input type="hidden" name="post_type" value="product">
+                    <form action="<?php echo esc_url(admin_url('admin.php?page=alquipress-properties')); ?>" method="get" class="ap-search-form" role="search">
+                        <input type="hidden" name="page" value="alquipress-properties">
                         <input type="search" name="s" class="ap-search-bar" placeholder="<?php esc_attr_e('Buscar propiedades...', 'alquipress'); ?>" aria-label="<?php esc_attr_e('Buscar propiedades', 'alquipress'); ?>" value="<?php echo isset($_GET['s']) ? esc_attr(sanitize_text_field(wp_unslash($_GET['s']))) : ''; ?>">
                     </form>
                     <a href="<?php echo esc_url($products_url); ?>" class="ap-notif-btn" title="<?php esc_attr_e('Notificaciones', 'alquipress'); ?>"><span class="dashicons dashicons-bell"></span></a>
@@ -897,14 +930,14 @@ class Alquipress_Dashboard_Widgets
                     <span class="ap-metric-label"><?php esc_html_e('Ingresos del mes', 'alquipress'); ?></span>
                     <div class="ap-metric-value-row">
                         <span class="ap-metric-value"><?php echo wc_price($current_revenue); ?></span>
-                        <span class="ap-metric-change ap-change-success"><?php echo ($revenue_change_pct >= 0 ? '+' : '') . number_format_i18n($revenue_change_pct, 1); ?>%</span>
+                        <span class="ap-metric-change <?php echo $revenue_change_yoy >= 0 ? 'ap-change-success' : 'ap-change-negative'; ?>"><?php echo ($revenue_change_yoy >= 0 ? '+' : '') . number_format_i18n($revenue_change_yoy, 1); ?>% <?php esc_html_e('YoY', 'alquipress'); ?></span>
                     </div>
                 </div>
                 <div class="ap-metric-card">
                     <span class="ap-metric-label"><?php esc_html_e('Ocupación hoy', 'alquipress'); ?></span>
                     <div class="ap-metric-value-row">
                         <span class="ap-metric-value"><?php echo round($occupancy_rate); ?>%</span>
-                        <span class="ap-metric-change ap-change-success"><?php echo ($occupancy_change >= 0 ? '+' : '') . number_format_i18n($occupancy_change, 1); ?>% <?php esc_html_e('vs mes pasado', 'alquipress'); ?></span>
+                        <span class="ap-metric-change <?php echo $occupancy_change_yoy >= 0 ? 'ap-change-success' : 'ap-change-negative'; ?>"><?php echo ($occupancy_change_yoy >= 0 ? '+' : '') . number_format_i18n($occupancy_change_yoy, 1); ?>% <?php esc_html_e('YoY', 'alquipress'); ?></span>
                     </div>
                 </div>
             </div>
@@ -929,6 +962,7 @@ class Alquipress_Dashboard_Widgets
                                         <th><?php esc_html_e('Huésped', 'alquipress'); ?></th>
                                         <th><?php esc_html_e('Fechas', 'alquipress'); ?></th>
                                         <th><?php esc_html_e('Estado', 'alquipress'); ?></th>
+                                        <th class="ap-bookings-th-action"><?php esc_html_e('Ver', 'alquipress'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -952,6 +986,11 @@ class Alquipress_Dashboard_Widgets
                                             <td class="ap-booking-guest"><?php echo esc_html($row['guest']); ?></td>
                                             <td class="ap-booking-dates"><?php echo esc_html($row['dates']); ?></td>
                                             <td><span class="ap-booking-status <?php echo esc_attr($row['status_class']); ?>"><?php echo esc_html($row['status_label']); ?></span></td>
+                                            <td class="ap-bookings-td-action">
+                                                <?php if (!empty($row['edit_url'])) : ?>
+                                                    <a href="<?php echo esc_url($row['edit_url']); ?>" class="ap-bookings-view-btn"><?php esc_html_e('View', 'alquipress'); ?></a>
+                                                <?php endif; ?>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -965,6 +1004,27 @@ class Alquipress_Dashboard_Widgets
                     </section>
                 </div>
                 <div class="ap-content-right">
+                    <section class="ap-mini-calendar">
+                        <h3 class="ap-mini-calendar-title"><?php esc_html_e('Próximos 7 días', 'alquipress'); ?></h3>
+                        <ul class="ap-mini-calendar-list">
+                            <?php foreach ($mini_calendar as $day): ?>
+                                <li class="ap-mini-calendar-day <?php echo $day['is_today'] ? 'is-today' : ''; ?>">
+                                    <span class="ap-mini-calendar-label"><?php echo esc_html($day['label']); ?></span>
+                                    <span class="ap-mini-calendar-badges">
+                                        <?php if (!empty($day['checkins'])): ?>
+                                            <span class="ap-mini-calendar-badge ap-badge-in" title="<?php esc_attr_e('Check-ins', 'alquipress'); ?>"><?php echo count($day['checkins']); ?> <?php esc_html_e('in', 'alquipress'); ?></span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($day['checkouts'])): ?>
+                                            <span class="ap-mini-calendar-badge ap-badge-out" title="<?php esc_attr_e('Check-outs', 'alquipress'); ?>"><?php echo count($day['checkouts']); ?> <?php esc_html_e('out', 'alquipress'); ?></span>
+                                        <?php endif; ?>
+                                        <?php if (empty($day['checkins']) && empty($day['checkouts'])): ?>
+                                            <span class="ap-mini-calendar-empty">—</span>
+                                        <?php endif; ?>
+                                    </span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </section>
                     <section class="ap-recent-activity">
                         <div class="ap-recent-activity-header">
                             <h2 class="ap-recent-activity-title"><?php esc_html_e('Actividad reciente', 'alquipress'); ?></h2>

@@ -206,3 +206,213 @@ function alquipress_is_editing_post_type($post_type)
 
     return false;
 }
+
+/**
+ * Opciones oficiales SES Hospedajes: tipo de documento.
+ *
+ * @return array
+ */
+function alquipress_ses_document_type_choices()
+{
+    return [
+        'NIF' => 'DNI/NIF',
+        'NIE' => 'NIE',
+        'PAS' => 'Pasaporte',
+        'OTRO' => 'Otro documento',
+    ];
+}
+
+/**
+ * Opciones oficiales SES Hospedajes: rol de persona.
+ *
+ * @return array
+ */
+function alquipress_ses_role_choices()
+{
+    return [
+        'VI' => 'Viajero',
+        'TI' => 'Titular contrato',
+        'CP' => 'Conductor principal',
+        'CS' => 'Conductor secundario',
+    ];
+}
+
+/**
+ * Opciones oficiales SES Hospedajes: tipo de pago.
+ *
+ * @return array
+ */
+function alquipress_ses_payment_type_choices()
+{
+    return [
+        'DESTI' => 'Pago en destino',
+        'TARJT' => 'Tarjeta',
+        'PLATF' => 'Plataforma',
+        'TRANS' => 'Transferencia',
+        'EFECT' => 'Efectivo',
+        'MOVIL' => 'Pago móvil',
+        'TREG' => 'Tarjeta regalo',
+        'OTRO' => 'Otro',
+    ];
+}
+
+/**
+ * Normalizar tipo de documento a códigos SES.
+ *
+ * @param string $value Valor libre o legacy.
+ * @return string Código SES (NIF/NIE/PAS/OTRO).
+ */
+function alquipress_ses_normalize_document_type($value)
+{
+    $value = strtoupper(trim((string) $value));
+
+    $legacy_map = [
+        'DNI' => 'NIF',
+        'NIF' => 'NIF',
+        'NIE' => 'NIE',
+        'PASAPORTE' => 'PAS',
+        'PAS' => 'PAS',
+        'OTRO' => 'OTRO',
+    ];
+
+    if (isset($legacy_map[$value])) {
+        return $legacy_map[$value];
+    }
+
+    $choices = alquipress_ses_document_type_choices();
+    return isset($choices[$value]) ? $value : 'OTRO';
+}
+
+/**
+ * Obtener etiqueta humana a partir de código SES de documento.
+ *
+ * @param string $code Código SES.
+ * @return string
+ */
+function alquipress_ses_get_document_label($code)
+{
+    $code = alquipress_ses_normalize_document_type($code);
+    $choices = alquipress_ses_document_type_choices();
+
+    return isset($choices[$code]) ? $choices[$code] : $choices['OTRO'];
+}
+
+/**
+ * Normalizar rol de persona a código SES.
+ *
+ * @param string $value Valor libre.
+ * @return string Código SES (por defecto VI).
+ */
+function alquipress_ses_normalize_role($value)
+{
+    $value = strtoupper(trim((string) $value));
+    $choices = alquipress_ses_role_choices();
+
+    return isset($choices[$value]) ? $value : 'VI';
+}
+
+/**
+ * Normalizar tipo de pago a código SES.
+ *
+ * @param string $value Valor libre o legacy.
+ * @return string Código SES.
+ */
+function alquipress_ses_normalize_payment_type($value)
+{
+    $value = strtoupper(trim((string) $value));
+
+    $legacy_map = [
+        'DESTINO' => 'DESTI',
+        'DESTI' => 'DESTI',
+        'TARJETA' => 'TARJT',
+        'TARJT' => 'TARJT',
+        'PLATAFORMA' => 'PLATF',
+        'PLATF' => 'PLATF',
+        'TRANSFERENCIA' => 'TRANS',
+        'TRANS' => 'TRANS',
+        'EFECTIVO' => 'EFECT',
+        'EFECT' => 'EFECT',
+        'MOVIL' => 'MOVIL',
+        'TREG' => 'TREG',
+        'OTRO' => 'OTRO',
+    ];
+
+    if (isset($legacy_map[$value])) {
+        return $legacy_map[$value];
+    }
+
+    $choices = alquipress_ses_payment_type_choices();
+    return isset($choices[$value]) ? $value : 'OTRO';
+}
+
+/**
+ * Estimar tipo de pago SES a partir del método de pago del pedido.
+ *
+ * @param WC_Order|mixed $order Pedido WooCommerce.
+ * @return string
+ */
+function alquipress_ses_guess_payment_type_from_order($order)
+{
+    if (!is_object($order) || !method_exists($order, 'get_payment_method')) {
+        return 'OTRO';
+    }
+
+    $gateway = (string) $order->get_payment_method();
+    $title = strtoupper((string) $order->get_payment_method_title());
+
+    $platform_gateways = ['stripe', 'paypal', 'redsys', 'bacs', 'bookings_gateway'];
+    if (in_array($gateway, $platform_gateways, true)) {
+        return 'PLATF';
+    }
+
+    if ($gateway === 'cod') {
+        return 'DESTI';
+    }
+
+    if (strpos($title, 'TRANSFER') !== false) {
+        return 'TRANS';
+    }
+
+    if (strpos($title, 'TARJET') !== false || strpos($title, 'CARD') !== false) {
+        return 'TARJT';
+    }
+
+    if (strpos($title, 'EFECT') !== false || strpos($title, 'CASH') !== false) {
+        return 'EFECT';
+    }
+
+    return 'OTRO';
+}
+
+/**
+ * Validar fecha ISO (YYYY-MM-DD).
+ *
+ * @param string $date Fecha.
+ * @return bool
+ */
+function alquipress_is_iso_date($date)
+{
+    $date = trim((string) $date);
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        return false;
+    }
+
+    $parts = explode('-', $date);
+    return checkdate((int) $parts[1], (int) $parts[2], (int) $parts[0]);
+}
+
+/**
+ * Registrar rol de WordPress para propietarios (portal frontend).
+ * Solo lectura; redirección al panel tras login.
+ */
+function alquipress_add_owner_role()
+{
+    if (get_role('propietario_alquipress')) {
+        return;
+    }
+    add_role(
+        'propietario_alquipress',
+        __('Propietario', 'alquipress'),
+        ['read' => true]
+    );
+}

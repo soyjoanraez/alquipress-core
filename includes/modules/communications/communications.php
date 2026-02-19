@@ -60,7 +60,13 @@ class Alquipress_Communications
             wp_die(__('Lo siento, no tienes permisos para acceder a esta página.', 'alquipress'));
         }
         
-        $this->render_page();
+        $tab = isset($_GET['tab']) ? sanitize_text_field(wp_unslash($_GET['tab'])) : 'manage';
+
+        if ($tab === 'manage') {
+            $this->render_page();
+        } else {
+            $this->render_inbox_page();
+        }
     }
 
     public function enqueue_section_assets($page)
@@ -68,41 +74,44 @@ class Alquipress_Communications
         if ($page !== 'alquipress-comunicacion') {
             return;
         }
-        wp_enqueue_style(
-            'alquipress-communications',
-            ALQUIPRESS_URL . 'includes/modules/communications/assets/communications.css',
-            [],
-            ALQUIPRESS_VERSION
-        );
-        
-        wp_enqueue_script(
-            'alquipress-communications',
-            ALQUIPRESS_URL . 'includes/modules/communications/assets/communications.js',
-            ['jquery'],
-            ALQUIPRESS_VERSION,
-            true
-        );
-        
-        wp_localize_script('alquipress-communications', 'alquipressComm', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('alquipress_comm_nonce')
-        ]);
-        
-        // Cargar sistema de toast notifications
-        wp_enqueue_style(
-            'alquipress-toast-notifications',
-            ALQUIPRESS_URL . 'includes/admin/assets/toast-notifications.css',
-            [],
-            ALQUIPRESS_VERSION
-        );
-        
-        wp_enqueue_script(
-            'alquipress-toast-notifications',
-            ALQUIPRESS_URL . 'includes/admin/assets/toast-notifications.js',
-            ['jquery'],
-            ALQUIPRESS_VERSION,
-            true
-        );
+        $tab = isset($_GET['tab']) ? sanitize_text_field(wp_unslash($_GET['tab'])) : 'manage';
+
+        if ($tab === 'manage') {
+            wp_enqueue_style(
+                'alquipress-communications',
+                ALQUIPRESS_URL . 'includes/modules/communications/assets/communications.css',
+                [],
+                ALQUIPRESS_VERSION
+            );
+
+            wp_enqueue_script(
+                'alquipress-communications',
+                ALQUIPRESS_URL . 'includes/modules/communications/assets/communications.js',
+                ['jquery'],
+                ALQUIPRESS_VERSION,
+                true
+            );
+
+            wp_localize_script('alquipress-communications', 'alquipressComm', [
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('alquipress_comm_nonce')
+            ]);
+        } else {
+            wp_enqueue_style(
+                'alquipress-inbox',
+                ALQUIPRESS_URL . 'includes/modules/communications/assets/inbox.css',
+                [],
+                ALQUIPRESS_VERSION
+            );
+
+            wp_enqueue_script(
+                'alquipress-inbox',
+                ALQUIPRESS_URL . 'includes/modules/communications/assets/inbox.js',
+                ['jquery'],
+                ALQUIPRESS_VERSION,
+                true
+            );
+        }
     }
 
     public function register_cron_schedule($schedules)
@@ -417,6 +426,8 @@ class Alquipress_Communications
             'status' => isset($_REQUEST['filter_status']) ? sanitize_text_field($_REQUEST['filter_status']) : '',
             'entity_type' => isset($_REQUEST['filter_entity_type']) ? sanitize_text_field($_REQUEST['filter_entity_type']) : '',
             'entity_id' => isset($_REQUEST['filter_entity_id']) ? absint($_REQUEST['filter_entity_id']) : 0,
+            'owner_id' => isset($_REQUEST['filter_owner_id']) ? absint($_REQUEST['filter_owner_id']) : 0,
+            'guest_id' => isset($_REQUEST['filter_guest_id']) ? absint($_REQUEST['filter_guest_id']) : 0,
             'date_from' => isset($_REQUEST['filter_date_from']) ? sanitize_text_field($_REQUEST['filter_date_from']) : '',
             'date_to' => isset($_REQUEST['filter_date_to']) ? sanitize_text_field($_REQUEST['filter_date_to']) : '',
         ];
@@ -864,22 +875,65 @@ class Alquipress_Communications
             ];
         }
 
-        // Filtro por tipo de entidad
-        if (!empty($filters['entity_type'])) {
-            $args['meta_query'][] = [
-                'key' => 'ap_comm_entity_type',
-                'value' => $filters['entity_type'],
-                'compare' => '='
+        $entity_filters = [];
+
+        if (!empty($filters['entity_type']) || !empty($filters['entity_id'])) {
+            $entity_group = ['relation' => 'AND'];
+            if (!empty($filters['entity_type'])) {
+                $entity_group[] = [
+                    'key' => 'ap_comm_entity_type',
+                    'value' => sanitize_text_field($filters['entity_type']),
+                    'compare' => '='
+                ];
+            }
+            if (!empty($filters['entity_id'])) {
+                $entity_group[] = [
+                    'key' => 'ap_comm_entity_id',
+                    'value' => absint($filters['entity_id']),
+                    'compare' => '='
+                ];
+            }
+            if (count($entity_group) > 1) {
+                $entity_filters[] = $entity_group;
+            }
+        }
+
+        if (!empty($filters['owner_id'])) {
+            $entity_filters[] = [
+                'relation' => 'AND',
+                [
+                    'key' => 'ap_comm_entity_type',
+                    'value' => 'propietario',
+                    'compare' => '='
+                ],
+                [
+                    'key' => 'ap_comm_entity_id',
+                    'value' => absint($filters['owner_id']),
+                    'compare' => '='
+                ],
             ];
         }
 
-        // Filtro por ID de entidad
-        if (!empty($filters['entity_id'])) {
-            $args['meta_query'][] = [
-                'key' => 'ap_comm_entity_id',
-                'value' => absint($filters['entity_id']),
-                'compare' => '='
+        if (!empty($filters['guest_id'])) {
+            $entity_filters[] = [
+                'relation' => 'AND',
+                [
+                    'key' => 'ap_comm_entity_type',
+                    'value' => 'cliente',
+                    'compare' => '='
+                ],
+                [
+                    'key' => 'ap_comm_entity_id',
+                    'value' => absint($filters['guest_id']),
+                    'compare' => '='
+                ],
             ];
+        }
+
+        if (count($entity_filters) === 1) {
+            $args['meta_query'][] = $entity_filters[0];
+        } elseif (count($entity_filters) > 1) {
+            $args['meta_query'][] = array_merge(['relation' => 'OR'], $entity_filters);
         }
 
         // Filtro por rango de fechas
@@ -907,6 +961,163 @@ class Alquipress_Communications
         return get_posts($args);
     }
 
+    /**
+     * Renderizar página Inbox Omnicanal: layout 3 columnas con datos mock.
+     */
+    private function render_inbox_page()
+    {
+        $mock_conversations = [
+            [
+                'id' => 'conv_1',
+                'guest' => 'María García',
+                'channel' => 'whatsapp',
+                'last_message' => __('¿A qué hora es el check-in?', 'alquipress'),
+                'last_at' => __('Hace 5 min', 'alquipress'),
+                'booking_id' => 123,
+                'prop_name' => 'Villa Sol',
+                'checkin_today' => true,
+                'unread' => 1,
+            ],
+            [
+                'id' => 'conv_2',
+                'guest' => 'Juan Pérez',
+                'channel' => 'airbnb',
+                'last_message' => __('Confirmación de reserva recibida', 'alquipress'),
+                'last_at' => __('Hace 2 h', 'alquipress'),
+                'booking_id' => 124,
+                'prop_name' => 'Apartamento Centro',
+                'checkin_today' => false,
+                'unread' => 0,
+            ],
+            [
+                'id' => 'conv_3',
+                'guest' => 'Ana Martínez',
+                'channel' => 'booking',
+                'last_message' => __('¿Hay parking disponible?', 'alquipress'),
+                'last_at' => __('Ayer', 'alquipress'),
+                'booking_id' => 125,
+                'prop_name' => 'Casa Playa',
+                'checkin_today' => false,
+                'unread' => 0,
+            ],
+        ];
+
+        $mock_messages = [
+            ['role' => 'guest', 'content' => __('Hola, tengo una reserva para la Villa Sol la próxima semana. ¿A qué hora es el check-in?', 'alquipress'), 'time' => __('10:32', 'alquipress')],
+            ['role' => 'staff', 'content' => __('Hola María, el check-in es a las 16:00. Te enviaré las coordenadas y el código de la caja de llaves el día anterior.', 'alquipress'), 'time' => __('10:45', 'alquipress')],
+            ['role' => 'note', 'content' => __('Ojo: Este cliente ha pedido toallas extra, ya se las he dejado en el armario.', 'alquipress'), 'time' => __('10:50', 'alquipress')],
+            ['role' => 'guest', 'content' => __('Perfecto, muchas gracias.', 'alquipress'), 'time' => __('11:02', 'alquipress')],
+        ];
+
+        $channel_icons = [
+            'whatsapp' => '✓',
+            'airbnb' => 'A',
+            'booking' => 'B',
+            'email' => '✉',
+        ];
+
+        require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
+        ?>
+        <div class="wrap alquipress-inbox-page ap-has-sidebar">
+            <div class="ap-owners-layout">
+                <?php alquipress_render_sidebar('communications'); ?>
+                <main class="ap-owners-main" style="padding:0; display:flex; flex-direction:column;">
+                    <header class="ap-header" style="padding:20px 32px; border-bottom:1px solid var(--ap-border);">
+                        <div class="ap-header-left">
+                            <h1 class="ap-header-title"><?php esc_html_e('Inbox', 'alquipress'); ?></h1>
+                            <p class="ap-header-subtitle"><?php esc_html_e('Comunicación unificada con huéspedes y propietarios.', 'alquipress'); ?></p>
+                        </div>
+                    </header>
+
+                    <div class="ap-comm-tabs" style="padding: 0 32px; border-bottom: 1px solid var(--ap-border); background: #fff;">
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-comunicacion&tab=inbox')); ?>" class="ap-comm-tab is-active" style="display:inline-block; padding: 16px 20px; text-decoration:none; color:var(--ap-primary); border-bottom: 2px solid var(--ap-primary); font-weight: 600;">
+                            <?php esc_html_e('Omnicanal Inbox', 'alquipress'); ?>
+                        </a>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-comunicacion&tab=manage')); ?>" class="ap-comm-tab" style="display:inline-block; padding: 16px 20px; text-decoration:none; color:var(--ap-text-secondary); border-bottom: 2px solid transparent; font-weight: 600;">
+                            <?php esc_html_e('Histórico y Ajustes SMTP', 'alquipress'); ?>
+                        </a>
+                    </div>
+
+                    <div class="ap-inbox">
+                        <div class="ap-inbox-conversations">
+                            <div class="ap-inbox-tabs">
+                                <button type="button" class="ap-inbox-tab is-active"><?php esc_html_e('Pendientes', 'alquipress'); ?></button>
+                                <button type="button" class="ap-inbox-tab"><?php esc_html_e('Míos', 'alquipress'); ?></button>
+                                <button type="button" class="ap-inbox-tab"><?php esc_html_e('Archivados', 'alquipress'); ?></button>
+                            </div>
+                            <div class="ap-inbox-conversation-list">
+                                <?php foreach ($mock_conversations as $i => $conv) : ?>
+                                    <div class="ap-inbox-conv-item <?php echo $i === 0 ? 'is-active' : ''; ?> <?php echo $conv['checkin_today'] ? 'is-urgent' : ''; ?>" data-conv-id="<?php echo esc_attr($conv['id']); ?>">
+                                        <div class="ap-inbox-conv-avatar-wrap">
+                                            <div class="ap-inbox-conv-avatar"><?php echo esc_html(strtoupper(substr($conv['guest'], 0, 1))); ?></div>
+                                            <span class="ap-inbox-conv-channel" title="<?php echo esc_attr(ucfirst($conv['channel'])); ?>"><?php echo esc_html($channel_icons[$conv['channel']] ?? '?'); ?></span>
+                                        </div>
+                                        <div class="ap-inbox-conv-body">
+                                            <div class="ap-inbox-conv-header">
+                                                <span class="ap-inbox-conv-guest"><?php echo esc_html($conv['guest']); ?></span>
+                                                <?php if ($conv['unread'] > 0) : ?><span class="ap-inbox-conv-unread"><?php echo (int) $conv['unread']; ?></span><?php endif; ?>
+                                            </div>
+                                            <div class="ap-inbox-conv-preview"><?php echo esc_html($conv['last_message']); ?></div>
+                                            <div class="ap-inbox-conv-time"><?php echo esc_html($conv['last_at']); ?></div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                        <div class="ap-inbox-thread">
+                            <div class="ap-inbox-thread-empty" style="<?php echo count($mock_conversations) > 0 ? 'display:none;' : ''; ?>">
+                                <span class="dashicons dashicons-email-alt"></span>
+                                <p><?php esc_html_e('Selecciona una conversación', 'alquipress'); ?></p>
+                            </div>
+                            <div class="ap-inbox-messages" style="<?php echo count($mock_conversations) > 0 ? '' : 'display:none;'; ?>">
+                                <?php foreach ($mock_messages as $msg) : ?>
+                                    <div class="ap-inbox-msg ap-inbox-msg-role-<?php echo esc_attr($msg['role']); ?>">
+                                        <div class="ap-inbox-msg-content"><?php echo esc_html($msg['content']); ?></div>
+                                        <div class="ap-inbox-msg-time"><?php echo esc_html($msg['time']); ?></div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                            <div class="ap-inbox-toolbar">
+                                <div class="ap-inbox-toolbar-actions">
+                                    <button type="button" class="ap-inbox-auto-redact" disabled><?php esc_html_e('Auto-Redactar', 'alquipress'); ?></button>
+                                </div>
+                                <div class="ap-inbox-input-wrap">
+                                    <button type="button" class="ap-inbox-ghost-toggle" title="<?php esc_attr_e('Modo Colaboración: nota interna (amarillo) o mensaje al cliente (azul)', 'alquipress'); ?>" aria-label="<?php esc_attr_e('Toggle modo colaboración', 'alquipress'); ?>">
+                                        <span class="dashicons dashicons-edit"></span>
+                                    </button>
+                                    <textarea class="ap-inbox-input" rows="2" placeholder="<?php esc_attr_e('Escribe un mensaje...', 'alquipress'); ?>"></textarea>
+                                    <button type="button" class="ap-inbox-send"><?php esc_html_e('Enviar', 'alquipress'); ?></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ap-inbox-context">
+                            <?php if (count($mock_conversations) > 0) : $ctx = $mock_conversations[0]; ?>
+                                <div class="ap-inbox-context-card">
+                                    <div class="ap-inbox-context-photo"></div>
+                                    <div class="ap-inbox-context-details">
+                                        <div class="ap-inbox-context-prop"><?php echo esc_html($ctx['prop_name']); ?></div>
+                                        <div class="ap-inbox-context-dates"><?php esc_html_e('15 Feb - 22 Feb 2026', 'alquipress'); ?></div>
+                                        <span class="ap-inbox-context-status paid"><?php esc_html_e('Pagado', 'alquipress'); ?></span>
+                                    </div>
+                                </div>
+                                <div class="ap-inbox-context-actions">
+                                    <a href="#" class="ap-inbox-ctx-btn"><?php esc_html_e('Extender estancia', 'alquipress'); ?></a>
+                                    <a href="#" class="ap-inbox-ctx-btn"><?php esc_html_e('Solicitar pago', 'alquipress'); ?></a>
+                                    <a href="tel:" class="ap-inbox-ctx-btn"><span class="dashicons dashicons-phone" style="font-size:16px;width:16px;height:16px;"></span> <?php esc_html_e('Llamar ahora', 'alquipress'); ?></a>
+                                </div>
+                            <?php else : ?>
+                                <div class="ap-inbox-context-empty"><?php esc_html_e('Selecciona una conversación para ver el contexto de la reserva.', 'alquipress'); ?></div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+        <?php
+    }
+
     private function render_page()
     {
         $settings = $this->get_settings();
@@ -922,6 +1133,8 @@ class Alquipress_Communications
             'status' => isset($_GET['filter_status']) ? sanitize_text_field($_GET['filter_status']) : '',
             'entity_type' => isset($_GET['filter_entity_type']) ? sanitize_text_field($_GET['filter_entity_type']) : '',
             'entity_id' => isset($_GET['filter_entity_id']) ? absint($_GET['filter_entity_id']) : 0,
+            'owner_id' => isset($_GET['filter_owner_id']) ? absint($_GET['filter_owner_id']) : 0,
+            'guest_id' => isset($_GET['filter_guest_id']) ? absint($_GET['filter_guest_id']) : 0,
             'date_from' => isset($_GET['filter_date_from']) ? sanitize_text_field($_GET['filter_date_from']) : '',
             'date_to' => isset($_GET['filter_date_to']) ? sanitize_text_field($_GET['filter_date_to']) : '',
             'search' => isset($_GET['filter_search']) ? sanitize_text_field($_GET['filter_search']) : '',
@@ -968,6 +1181,16 @@ class Alquipress_Communications
                             </form>
                         </div>
                     </header>
+
+                    <?php $tab = 'manage'; ?>
+                    <div class="ap-comm-tabs" style="padding: 0 32px; border-bottom: 1px solid var(--ap-border); background: #fff;">
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-comunicacion&tab=inbox')); ?>" class="ap-comm-tab" style="display:inline-block; padding: 16px 20px; text-decoration:none; color:var(--ap-text-secondary); border-bottom: 2px solid transparent; font-weight: 600;">
+                            <?php esc_html_e('Omnicanal Inbox', 'alquipress'); ?>
+                        </a>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-comunicacion&tab=manage')); ?>" class="ap-comm-tab is-active" style="display:inline-block; padding: 16px 20px; text-decoration:none; color:var(--ap-primary); border-bottom: 2px solid var(--ap-primary); font-weight: 600;">
+                            <?php esc_html_e('Histórico y Ajustes SMTP', 'alquipress'); ?>
+                        </a>
+                    </div>
 
                     <?php if ($saved): ?>
                         <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Ajustes guardados correctamente.', 'alquipress'); ?></p></div>
@@ -1086,6 +1309,7 @@ class Alquipress_Communications
                             <!-- Filtros -->
                             <form method="get" action="<?php echo esc_url(admin_url('admin.php')); ?>" class="ap-comm-filters">
                                 <input type="hidden" name="page" value="alquipress-comunicacion">
+                                <input type="hidden" name="tab" value="manage">
                                 
                                 <div class="ap-comm-filters-row">
                                     <div class="ap-comm-filter-group">
@@ -1126,6 +1350,30 @@ class Alquipress_Communications
                                         <label><?php esc_html_e('ID:', 'alquipress'); ?></label>
                                         <input type="number" name="filter_entity_id" class="ap-comm-input" value="<?php echo esc_attr($filters['entity_id']); ?>" min="0">
                                     </div>
+
+                                    <div class="ap-comm-filter-group">
+                                        <label><?php esc_html_e('Propietario:', 'alquipress'); ?></label>
+                                        <select name="filter_owner_id" class="ap-comm-select">
+                                            <option value=""><?php esc_html_e('Todos', 'alquipress'); ?></option>
+                                            <?php foreach ($owners as $owner_id) : ?>
+                                                <option value="<?php echo esc_attr($owner_id); ?>" <?php selected($filters['owner_id'], $owner_id); ?>>
+                                                    <?php echo esc_html(get_the_title($owner_id)); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+
+                                    <div class="ap-comm-filter-group">
+                                        <label><?php esc_html_e('Guest:', 'alquipress'); ?></label>
+                                        <select name="filter_guest_id" class="ap-comm-select">
+                                            <option value=""><?php esc_html_e('Todos', 'alquipress'); ?></option>
+                                            <?php foreach ($users as $user) : ?>
+                                                <option value="<?php echo esc_attr($user->ID); ?>" <?php selected($filters['guest_id'], $user->ID); ?>>
+                                                    <?php echo esc_html(($user->display_name ?: $user->user_login) . ' (' . $user->user_email . ')'); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
                                     
                                     <div class="ap-comm-filter-group">
                                         <label><?php esc_html_e('Desde:', 'alquipress'); ?></label>
@@ -1139,7 +1387,7 @@ class Alquipress_Communications
                                     
                                     <div class="ap-comm-filter-group">
                                         <button type="submit" class="button button-primary"><?php esc_html_e('Filtrar', 'alquipress'); ?></button>
-                                        <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-comunicacion')); ?>" class="button"><?php esc_html_e('Limpiar', 'alquipress'); ?></a>
+                                        <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-comunicacion&tab=manage')); ?>" class="button"><?php esc_html_e('Limpiar', 'alquipress'); ?></a>
                                     </div>
                                 </div>
                             </form>

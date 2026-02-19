@@ -266,6 +266,8 @@
                 filter_status: $('select[name="filter_status"]').val() || '',
                 filter_entity_type: $('select[name="filter_entity_type"]').val() || '',
                 filter_entity_id: $('input[name="filter_entity_id"]').val() || '',
+                filter_owner_id: $('select[name="filter_owner_id"]').val() || '',
+                filter_guest_id: $('select[name="filter_guest_id"]').val() || '',
                 filter_date_from: $('input[name="filter_date_from"]').val() || '',
                 filter_date_to: $('input[name="filter_date_to"]').val() || ''
             };

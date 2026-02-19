@@ -31,6 +31,7 @@ function alquipress_render_property_edit_layout($post, $args = [])
         'dashboard_url' => admin_url('admin.php?page=alquipress-dashboard'),
         'primary_action_html' => '<span class="ap-prop-btn ap-prop-btn-primary">' . esc_html__('Editar', 'alquipress') . '</span>',
         'secondary_action_html' => '',
+        'tertiary_action_html' => '',
         'editable_title' => false,
         'render_editor' => false,
     ];
@@ -70,25 +71,31 @@ function alquipress_render_property_edit_layout($post, $args = [])
 
     $product = function_exists('wc_get_product') ? wc_get_product($post->ID) : null;
     $price = $product ? $product->get_price() : '';
-    $price_html = $product && $price !== '' && function_exists('wc_price') ? wc_price($price) : '—';
-    $beds = null;
-    $baths = null;
-    $guests = null;
+    $price_range = class_exists('Alquipress_Property_Helper') ? Alquipress_Property_Helper::get_product_price_range($post->ID) : null;
+    if ($price_range && $price_range['min'] !== $price_range['max'] && function_exists('wc_price')) {
+        $price_html = wc_price($price_range['min']) . ' – ' . wc_price($price_range['max']);
+    } elseif ($product && $price !== '' && function_exists('wc_price')) {
+        $price_html = wc_price($price);
+    } else {
+        $price_html = '—';
+    }
+
+    $beds = class_exists('Alquipress_Property_Helper') ? Alquipress_Property_Helper::get_product_beds($post->ID) : null;
+    $baths = class_exists('Alquipress_Property_Helper') ? Alquipress_Property_Helper::get_product_baths($post->ID) : null;
+    $guests = class_exists('Alquipress_Property_Helper') ? Alquipress_Property_Helper::get_product_guests($post->ID) : null;
+
     $surface = '';
     if (function_exists('get_field')) {
-        $rows = get_field('distribucion_habitaciones', $post->ID);
-        $beds = is_array($rows) ? count($rows) : null;
-        $baths = get_field('numero_banos', $post->ID);
-        if (is_numeric($baths) && (int) $baths > 0) {
-            $baths = (int) $baths;
-        } else {
-            $baths = null;
+        $surface = get_field('superficie', $post->ID) ?: get_field('superficie_m2', $post->ID);
+        $surface = is_string($surface) ? $surface : (is_numeric($surface) ? (string) $surface : '');
+        if ($surface !== '' && is_numeric($surface)) {
+            $surface .= ' m²';
         }
-        $guests = get_field('plazas', $post->ID) ?: get_field('capacidad', $post->ID);
-        $guests = is_numeric($guests) && (int) $guests > 0 ? (int) $guests : null;
-        $surface = get_field('superficie', $post->ID);
-        $surface = is_string($surface) ? $surface : '';
     }
+
+    $cleaning_fee = (float) get_post_meta($post->ID, '_cleaning_fee', true);
+    $cleaning_fee_html = function_exists('wc_price') && ($cleaning_fee > 0 || get_post_meta($post->ID, '_cleaning_fee', true) !== '') ? wc_price($cleaning_fee) : '—';
+
     $featured = $product && $product->get_catalog_visibility() === 'visible';
     $thumb_url = get_the_post_thumbnail_url($post->ID, 'large');
     $gallery_ids = $product && method_exists($product, 'get_gallery_image_ids') ? $product->get_gallery_image_ids() : [];
@@ -111,25 +118,52 @@ function alquipress_render_property_edit_layout($post, $args = [])
     $occupancy_pct = null;
     $occupancy_label = '';
     if (function_exists('wc_get_orders')) {
-        $month_start = gmdate('Y-m-01 00:00:00');
-        $month_end = gmdate('Y-m-t 23:59:59');
+        $month_start = gmdate('Y-m-01');
+        $month_end = gmdate('Y-m-t');
+        $days_in_month = (int) gmdate('t');
         $orders = wc_get_orders([
-            'status' => ['wc-completed', 'wc-processing'],
-            'date_created' => $month_start . '...' . $month_end,
+            'status' => ['wc-completed', 'wc-processing', 'wc-deposito-ok', 'wc-in-progress', 'wc-pending', 'wc-on-hold'],
             'limit' => -1,
+            'return' => 'objects',
+            'meta_query' => [
+                ['key' => '_booking_checkin_date', 'compare' => 'EXISTS'],
+                ['key' => '_booking_checkout_date', 'compare' => 'EXISTS'],
+            ],
         ]);
         $nights_booked = 0;
-        $days_in_month = (int) gmdate('t');
         foreach ($orders as $order) {
-            foreach ($order->get_items() as $item) {
-                if ((int) $item->get_product_id() === (int) $post->ID) {
-                    $nights = (int) $item->get_quantity();
-                    if ($nights <= 0) {
-                        $nights = 1;
+            $product_id = (int) $order->get_meta('_booking_product_id');
+            if ($product_id !== (int) $post->ID) {
+                $found = false;
+                foreach ($order->get_items() as $item) {
+                    if ((int) $item->get_product_id() === (int) $post->ID) {
+                        $found = true;
+                        break;
                     }
-                    $nights_booked += $nights;
+                }
+                if (!$found) {
+                    continue;
                 }
             }
+            $checkin = $order->get_meta('_booking_checkin_date');
+            $checkout = $order->get_meta('_booking_checkout_date');
+            if (!$checkin || !$checkout) {
+                continue;
+            }
+            $checkin_ts = strtotime($checkin);
+            $checkout_ts = strtotime($checkout);
+            $month_start_ts = strtotime($month_start);
+            $month_end_ts = strtotime($month_end);
+            if ($checkout_ts <= $month_start_ts || $checkin_ts > $month_end_ts) {
+                continue;
+            }
+            $overlap_start = max($checkin_ts, $month_start_ts);
+            $overlap_end = min($checkout_ts, $month_end_ts);
+            $nights = (int) (($overlap_end - $overlap_start) / 86400);
+            if ($nights < 1) {
+                $nights = 1;
+            }
+            $nights_booked += $nights;
         }
         if ($days_in_month > 0) {
             $occupancy_pct = min(100, (int) round(($nights_booked / $days_in_month) * 100));
@@ -153,6 +187,9 @@ function alquipress_render_property_edit_layout($post, $args = [])
                 <div class="ap-prop-edit-actions">
                     <?php echo wp_kses_post($args['secondary_action_html']); ?>
                     <?php echo wp_kses_post($args['primary_action_html']); ?>
+                    <?php if (!empty($args['tertiary_action_html'])) : ?>
+                        <?php echo wp_kses_post($args['tertiary_action_html']); ?>
+                    <?php endif; ?>
                 </div>
             </div>
             <nav class="ap-prop-breadcrumb" aria-label="<?php esc_attr_e('Navegación', 'alquipress'); ?>">
@@ -262,6 +299,13 @@ function alquipress_render_property_edit_layout($post, $args = [])
                     <span class="ap-prop-stat-label"><?php esc_html_e('Precio/noche', 'alquipress'); ?></span>
                 </div>
             </div>
+            <div class="ap-prop-stat">
+                <span class="dashicons dashicons-admin-tools" aria-hidden="true"></span>
+                <div class="ap-prop-stat-content">
+                    <span class="ap-prop-stat-value"><?php echo wp_kses_post($cleaning_fee_html); ?></span>
+                    <span class="ap-prop-stat-label"><?php esc_html_e('Limpieza', 'alquipress'); ?></span>
+                </div>
+            </div>
             <div class="ap-prop-stat ap-prop-stat-occupancy">
                 <span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span>
                 <div class="ap-prop-stat-content">
@@ -318,10 +362,6 @@ function alquipress_render_property_edit_layout($post, $args = [])
                         <h3 class="ap-prop-card-title"><?php esc_html_e('Normas y políticas', 'alquipress'); ?></h3>
                         <p class="ap-prop-card-muted"><?php esc_html_e('Configurables en el producto o campos ACF.', 'alquipress'); ?></p>
                     </div>
-                    <div class="ap-prop-card ap-prop-card-product-data">
-                        <h3 class="ap-prop-card-title"><?php esc_html_e('Datos del producto y campos personalizados', 'alquipress'); ?></h3>
-                        <div id="ap-prop-overview-content"></div>
-                    </div>
                 </div>
                 <aside class="ap-prop-overview-sidebar">
                     <div class="ap-prop-widget ap-prop-widget-status">
@@ -350,11 +390,21 @@ function alquipress_render_property_edit_layout($post, $args = [])
                     <div class="ap-prop-widget ap-prop-widget-actions">
                         <h4 class="ap-prop-widget-title"><?php esc_html_e('Acciones rápidas', 'alquipress'); ?></h4>
                         <div class="ap-prop-widget-actions-list">
+                            <?php
+                            $native_edit_url = admin_url('post.php?post=' . (int) $post->ID . '&action=edit&alquipress_native_edit=1');
+                            ?>
+                            <a href="<?php echo esc_url($native_edit_url); ?>" class="ap-prop-widget-action-btn ap-prop-widget-action-full-edit"><?php esc_html_e('Edición completa (WordPress)', 'alquipress'); ?></a>
                             <a href="<?php echo esc_url($view_url); ?>" target="_blank" rel="noopener" class="ap-prop-widget-action-btn"><?php esc_html_e('Ver en web', 'alquipress'); ?></a>
                             <a href="<?php echo esc_url($list_url); ?>" class="ap-prop-widget-action-btn"><?php esc_html_e('Volver a propiedades', 'alquipress'); ?></a>
                         </div>
+                        <p class="ap-prop-widget-muted ap-prop-widget-actions-note"><?php esc_html_e('La edición completa permite cambiar precio, galería, población, zona, características, habitaciones y todos los campos.', 'alquipress'); ?></p>
                     </div>
                 </aside>
+            </div>
+            <div class="ap-prop-card ap-prop-card-product-data ap-prop-card-fullwidth">
+                <h3 class="ap-prop-card-title"><?php esc_html_e('Datos del producto (Reservas, Disponibilidad, Costes)', 'alquipress'); ?></h3>
+                <p class="ap-prop-card-muted"><?php esc_html_e('Configuración de duración, calendario, disponibilidad, costes, Pagos ALQUIPRESS y depósitos.', 'alquipress'); ?></p>
+                <div id="ap-prop-overview-content"></div>
             </div>
         </div>
 
@@ -420,6 +470,9 @@ function alquipress_render_property_edit_layout($post, $args = [])
                             if (box.querySelector('.acf-fields') || box.querySelector('.acf-field-group')) {
                                 metaBoxesToMove.push(box);
                             }
+                            if (box.id === 'woocommerce-product-data') {
+                                metaBoxesToMove.push(box);
+                            }
                         });
                     }
 
@@ -431,11 +484,17 @@ function alquipress_render_property_edit_layout($post, $args = [])
                                     metaBoxesToMove.push(box);
                                 }
                             }
+                            if (box.id === 'woocommerce-product-data' && metaBoxesToMove.indexOf(box) === -1) {
+                                metaBoxesToMove.push(box);
+                            }
                         });
                     }
 
                     metaBoxesToMove.forEach(function(box) {
-                        if (!overviewContent.contains(box)) {
+                        if (overviewContent.contains(box)) return;
+                        if (box.id === 'woocommerce-product-data') {
+                            overviewContent.insertBefore(box, overviewContent.firstChild);
+                        } else {
                             overviewContent.appendChild(box);
                         }
                     });

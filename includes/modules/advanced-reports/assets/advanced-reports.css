@@ -638,3 +638,38 @@ canvas {
  * - Utilidades de espaciado: .ap-mt-5, .ap-mb-3, .ap-p-4, etc.
  * - Utilidades de flexbox: .ap-flex, .ap-items-center, .ap-gap-2, etc.
  */
+
+/* ========== Estilos de impresión (Exportar a PDF) ========== */
+
+@media print {
+    body.ap-reports-print-mode #wpadminbar,
+    body.ap-reports-print-mode .ap-owners-sidebar,
+    body.ap-reports-print-mode .ap-reports-header-right,
+    body.ap-reports-print-mode .ap-reports-export-card,
+    body.ap-reports-print-mode .ap-reports-filters-card,
+    body.ap-reports-print-mode .ap-reports-chart-filters,
+    body.ap-reports-print-mode #refresh-reports,
+    body.ap-reports-print-mode .notice,
+    body.ap-reports-print-mode .update-nag {
+        display: none !important;
+    }
+
+    body.ap-reports-print-mode .ap-owners-main {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    body.ap-reports-print-mode .alquipress-reports-page {
+        padding: 0;
+        background: #fff;
+    }
+
+    body.ap-reports-print-mode .ap-reports-metric-card {
+        break-inside: avoid;
+    }
+
+    body.ap-reports-print-mode .ap-reports-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+}

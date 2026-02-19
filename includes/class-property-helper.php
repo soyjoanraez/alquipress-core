@@ -229,6 +229,117 @@ class Alquipress_Property_Helper
     }
 
     /**
+     * Obtener el rango de precios por noche (min–max) según reglas de costes por fechas
+     *
+     * Para productos WC Bookings con reglas de precios por fechas (temporada, etc.),
+     * calcula el mínimo y máximo precio por noche muestreando fechas a lo largo del año.
+     * Retorna null si no hay reglas variables (usar precio único).
+     *
+     * @param int $product_id ID del producto/propiedad
+     * @return array|null ['min' => float, 'max' => float] o null
+     * @since 1.0.0
+     */
+    public static function get_product_price_range($product_id)
+    {
+        $product_id = (int) $product_id;
+        if ($product_id <= 0) {
+            return null;
+        }
+
+        $cache_key = 'price_range_product_' . $product_id;
+        if (isset(self::$cache[$cache_key])) {
+            return self::$cache[$cache_key];
+        }
+
+        if (!function_exists('wc_get_product') || !class_exists('WC_Bookings_Cost_Calculation')) {
+            self::$cache[$cache_key] = null;
+            return null;
+        }
+
+        $product = wc_get_product($product_id);
+        if (!$product || $product->get_type() !== 'booking') {
+            self::$cache[$cache_key] = null;
+            return null;
+        }
+
+        $costs = method_exists($product, 'get_costs') ? $product->get_costs() : [];
+        if (empty($costs)) {
+            self::$cache[$cache_key] = null;
+            return null;
+        }
+
+        $persons = [];
+        if (method_exists($product, 'has_persons') && $product->has_persons() && method_exists($product, 'has_person_types') && $product->has_person_types()) {
+            $person_types = $product->get_person_types();
+            $min_total = max(1, (int) $product->get_min_persons());
+            $total = 0;
+            foreach ($person_types as $person_type) {
+                $min = method_exists($person_type, 'get_min') ? (int) $person_type->get_min() : 0;
+                $count = max(0, $min);
+                $persons[$person_type->get_id()] = $count;
+                $total += $count;
+            }
+            if ($total < $min_total && !empty($persons)) {
+                $first_key = array_key_first($persons);
+                $persons[$first_key] += ($min_total - $total);
+            } elseif (empty($persons)) {
+                $persons[0] = $min_total;
+            }
+        } else {
+            $persons[0] = 1;
+        }
+
+        $resource_id = null;
+        if (method_exists($product, 'has_resources') && $product->has_resources()) {
+            $ids = $product->get_resource_ids();
+            if (!empty($ids) && is_array($ids)) {
+                $resource_id = (int) $ids[0];
+            }
+        }
+
+        $year = (int) gmdate('Y');
+        $prices = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $ts = strtotime(sprintf('%d-%02d-01 12:00:00', $year, $m));
+            $data = [
+                '_start_date'    => $ts,
+                '_end_date'      => strtotime('+1 day', $ts),
+                '_duration'      => 1,
+                '_persons'       => $persons,
+                '_qty'           => max(1, (int) array_sum($persons)),
+                '_date'          => gmdate('Y-m-d', $ts),
+                'date'           => gmdate('Y-m-d', $ts),
+                '_time'          => '',
+                'time'           => '',
+            ];
+            if ($resource_id) {
+                $data['_resource_id'] = $resource_id;
+            }
+
+            $cost = WC_Bookings_Cost_Calculation::calculate_booking_cost($data, $product);
+            if (!is_wp_error($cost) && is_numeric($cost) && (float) $cost > 0) {
+                $prices[] = (float) $cost;
+            }
+        }
+
+        if (empty($prices)) {
+            self::$cache[$cache_key] = null;
+            return null;
+        }
+
+        $min = min($prices);
+        $max = max($prices);
+        if ($min === $max) {
+            self::$cache[$cache_key] = null;
+            return null;
+        }
+
+        $result = ['min' => $min, 'max' => $max];
+        self::$cache[$cache_key] = $result;
+        return $result;
+    }
+
+    /**
      * Limpiar el cache interno
      * 
      * Útil después de actualizar propiedades u órdenes para forzar la recarga de datos.
@@ -251,8 +362,9 @@ class Alquipress_Property_Helper
             $product_id = (int) $product_id;
             // Eliminar todas las entradas relacionadas con este producto
             foreach (self::$cache as $key => $value) {
-                if (strpos($key, '_product_' . $product_id) !== false || 
-                    strpos($key, '_order_') !== false) {
+                if (strpos($key, '_product_' . $product_id) !== false
+                    || strpos($key, 'price_range_product_' . $product_id) !== false
+                    || strpos($key, '_order_') !== false) {
                     unset(self::$cache[$key]);
                 }
             }

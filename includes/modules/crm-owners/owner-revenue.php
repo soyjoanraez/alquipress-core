@@ -35,6 +35,7 @@ class Alquipress_Owner_Revenue
 
         // Invalidación de cache en cambios relevantes
         add_action('save_post_propietario', [$this, 'invalidate_owner_cache_on_save'], 20, 3);
+        add_action('save_post_product', [$this, 'invalidate_cache_on_product_save'], 20, 3);
         add_action('acf/save_post', [$this, 'invalidate_owner_cache_on_acf_save'], 20);
         add_action('woocommerce_order_status_changed', [$this, 'invalidate_cache_for_order'], 10, 4);
         add_action('woocommerce_new_order', [$this, 'invalidate_cache_for_order_id'], 10, 1);
@@ -124,9 +125,18 @@ class Alquipress_Owner_Revenue
             $total_bookings += (int) $row->bookings_count;
         }
 
-        // Aplicar comisión
-        $commission_rate = get_field('owner_commission_rate', $owner_id);
-        $commission = $commission_rate ? ($total_revenue * $commission_rate) / 100 : 0;
+        // Comisión por propiedad: usar property_commission_rate si existe, si no owner_commission_rate
+        $commission = 0;
+        foreach ($property_breakdown as $pid => $prop_data) {
+            $prop_rate = get_post_meta($pid, 'property_commission_rate', true);
+            if ($prop_rate === '' || $prop_rate === false) {
+                $prop_rate = get_field('owner_commission_rate', $owner_id);
+            }
+            $prop_rate = floatval($prop_rate);
+            if ($prop_rate > 0) {
+                $commission += ($prop_data['revenue'] * $prop_rate) / 100;
+            }
+        }
 
         $result = [
             'total' => $total_revenue,
@@ -299,6 +309,17 @@ class Alquipress_Owner_Revenue
         }
     }
 
+    public function invalidate_cache_on_product_save($post_id, $post, $update)
+    {
+        if (!$post || $post->post_type !== 'product') {
+            return;
+        }
+        $owner_ids = $this->get_owner_ids_for_product($post_id);
+        foreach ($owner_ids as $owner_id) {
+            $this->bump_revenue_cache_version($owner_id);
+        }
+    }
+
     public function invalidate_owner_cache_on_acf_save($post_id)
     {
         if (is_numeric($post_id) && get_post_type((int) $post_id) === 'propietario') {
@@ -418,7 +439,7 @@ class Alquipress_Owner_Revenue
     public function render_revenue_metabox($post)
     {
         $stats = $this->calculate_owner_revenue($post->ID);
-        $commission_rate = get_field('owner_commission_rate', $post->ID);
+        $effective_rate = $stats['total'] > 0 ? ($stats['commission'] / $stats['total']) * 100 : 0;
 
         ?>
         <div style="padding: 10px 0;">
@@ -429,10 +450,10 @@ class Alquipress_Owner_Revenue
                 </span>
             </div>
 
-            <?php if ($commission_rate): ?>
+            <?php if ($stats['commission'] > 0): ?>
                 <div style="margin-bottom: 15px; padding: 10px; background: #fff3cd; border-radius: 4px;">
-                    <strong style="display: block; font-size: 11px; color: #666; margin-bottom: 5px;">COMISIÓN (
-                        <?php echo $commission_rate; ?>%)
+                    <strong style="display: block; font-size: 11px; color: #666; margin-bottom: 5px;">COMISIÓN
+                        <?php if ($effective_rate > 0): ?>(<?php echo number_format($effective_rate, 1); ?>% ef.)<?php endif; ?>
                     </strong>
                     <span style="font-size: 18px; font-weight: bold; color: #ff9800;">-
                         <?php echo wc_price($stats['commission']); ?>

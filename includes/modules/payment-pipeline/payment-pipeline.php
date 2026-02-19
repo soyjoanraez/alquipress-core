@@ -36,24 +36,8 @@ class Alquipress_Payment_Pipeline
         add_action('wp_ajax_alquipress_test_reminders_cron', [$this, 'ajax_test_reminders_cron']);
         add_action('wp_ajax_alquipress_activate_reminders_cron', [$this, 'ajax_activate_reminders_cron']);
         
-        // Agregar menú en sidebar
-        add_action('admin_menu', [$this, 'add_menu_item'], 20);
+        // Pipeline de Cobros integrado como pestaña en Pipeline (sin menú separado)
         add_action('admin_menu', [$this, 'add_reminders_submenu'], 21);
-    }
-    
-    /**
-     * Agregar entrada de menú para Pipeline de Cobros
-     */
-    public function add_menu_item()
-    {
-        add_submenu_page(
-            'alquipress-settings',
-            __('Pipeline de Cobros', 'alquipress'),
-            __('Pipeline de Cobros', 'alquipress'),
-            'edit_shop_orders',
-            'alquipress-payment-pipeline',
-            '__return_false' // El contenido se renderiza vía alquipress_render_section
-        );
     }
     
     /**
@@ -72,11 +56,13 @@ class Alquipress_Payment_Pipeline
     }
     
     /**
-     * Renderizar sección si es la página correcta
+     * Renderizar sección si es la página correcta.
+     * Pipeline de Cobros accesible como pestaña en Pipeline (alquipress-pipeline?tab=cobros).
      */
     public function maybe_render_section($page)
     {
-        if ($page === 'alquipress-payment-pipeline') {
+        $is_cobros_tab = ($page === 'alquipress-pipeline' && isset($_GET['tab']) && $_GET['tab'] === 'cobros');
+        if ($page === 'alquipress-payment-pipeline' || $is_cobros_tab) {
             $this->render_pipeline_page();
         } elseif ($page === 'alquipress-dashboard') {
             $this->render_dashboard_widget();
@@ -98,7 +84,7 @@ class Alquipress_Payment_Pipeline
         ?>
         <div class="wrap alquipress-dashboard-page ap-has-sidebar">
             <div class="ap-owners-layout">
-                <?php alquipress_render_sidebar('payment-pipeline'); ?>
+                <?php alquipress_render_sidebar('pipeline'); ?>
                 <main class="ap-owners-main">
                     <header class="ap-header">
                         <div class="ap-header-left">
@@ -443,18 +429,13 @@ class Alquipress_Payment_Pipeline
      */
     public function enqueue_section_assets($page)
     {
-        if ($page !== 'alquipress-payment-pipeline' && $page !== 'alquipress-dashboard' && $page !== 'alquipress-payment-reminders') {
+        $is_cobros_tab = ($page === 'alquipress-pipeline' && isset($_GET['tab']) && $_GET['tab'] === 'cobros');
+        if ($page !== 'alquipress-payment-pipeline' && $page !== 'alquipress-dashboard' && $page !== 'alquipress-payment-reminders' && !$is_cobros_tab) {
             return;
         }
 
-        // Register SortableJS in this module to avoid missing-script dependency notices.
-        wp_enqueue_script(
-            'sortable-js',
-            'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js',
-            [],
-            '1.15.0',
-            true
-        );
+        // SortableJS local (evitar CDN)
+        wp_enqueue_script('sortable-js', ALQUIPRESS_URL . 'includes/admin/assets/sortable.min.js', [], '1.15.0', true);
         
         wp_enqueue_style(
             'alquipress-payment-pipeline',
@@ -511,15 +492,23 @@ class Alquipress_Payment_Pipeline
     public function render_pipeline_page()
     {
         require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
+        $sidebar_page = 'pipeline';
         ?>
         <div class="wrap alquipress-dashboard-page ap-has-sidebar">
             <div class="ap-owners-layout">
-                <?php alquipress_render_sidebar('payment-pipeline'); ?>
+                <?php alquipress_render_sidebar($sidebar_page); ?>
                 <main class="ap-owners-main">
                     <header class="ap-header">
                         <div class="ap-header-left">
-                            <h1 class="ap-header-title"><?php esc_html_e('Pipeline de Cobros', 'alquipress'); ?></h1>
-                            <p class="ap-header-subtitle"><?php esc_html_e('Gestiona los pagos por hitos de tus reservas', 'alquipress'); ?></p>
+                            <h1 class="ap-header-title"><?php esc_html_e('Pipeline', 'alquipress'); ?></h1>
+                            <div class="ap-pipeline-tabs" style="display:flex;gap:4px;margin-top:8px;">
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-pipeline')); ?>" class="ap-tab" style="padding:6px 14px;border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;color:#507a95;">
+                                    <?php esc_html_e('Reservas', 'alquipress'); ?>
+                                </a>
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-pipeline&tab=cobros')); ?>" class="ap-tab ap-tab-active" style="padding:6px 14px;border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;background:rgba(44,153,226,0.1);color:#2c99e2;">
+                                    <?php esc_html_e('Cobros', 'alquipress'); ?>
+                                </a>
+                            </div>
                         </div>
                     </header>
                     
@@ -564,7 +553,7 @@ class Alquipress_Payment_Pipeline
                         <span class="pipeline-badge pipeline-badge-overdue"><?php echo esc_html(count($overdue)); ?></span>
                     <?php endif; ?>
                 </h2>
-                <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-payment-pipeline')); ?>" class="pipeline-view-all">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-pipeline&tab=cobros')); ?>" class="pipeline-view-all">
                     <?php esc_html_e('Ver todo', 'alquipress'); ?>
                 </a>
             </div>

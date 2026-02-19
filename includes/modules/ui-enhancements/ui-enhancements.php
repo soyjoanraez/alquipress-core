@@ -42,6 +42,43 @@ class Alquipress_UI_Enhancements
     {
         $screen = get_current_screen();
 
+        // Página de órdenes de WooCommerce (wc-orders) - aplicar estilos del dashboard
+        // Detecta tanto 'woocommerce_page_wc-orders' como 'admin_page_wc-orders' y sus variantes con sufijos
+        if ($screen && (
+            strpos($screen->id, 'woocommerce_page_wc-orders') === 0 || 
+            strpos($screen->id, 'admin_page_wc-orders') === 0 ||
+            $screen->id === 'woocommerce_page_wc-orders' ||
+            $screen->id === 'admin_page_wc-orders'
+        )) {
+            // Cargar CSS del layout del dashboard
+            wp_enqueue_style(
+                'alquipress-admin-layout',
+                ALQUIPRESS_URL . 'includes/admin/assets/alquipress-admin-layout.css',
+                [],
+                ALQUIPRESS_VERSION
+            );
+            
+            // Cargar también los estilos Pencil para mantener consistencia con otras páginas
+            wp_enqueue_style(
+                'alquipress-admin-pencil',
+                ALQUIPRESS_URL . 'includes/modules/ui-enhancements/assets/admin-pencil.css',
+                [],
+                ALQUIPRESS_VERSION
+            );
+            
+            // Estilos críticos del layout para página de órdenes
+            $critical_layout = '#wpcontent,#wpbody-content{background:#f8fafb!important;}'
+                . 'body.woocommerce_page_wc-orders .wrap,body.admin_page_wc-orders .wrap{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif!important;max-width:none!important;margin-top:12px!important;padding:24px 20px 32px!important;color:#0e161b!important;}'
+                . 'body.woocommerce_page_wc-orders .wrap h1,body.admin_page_wc-orders .wrap h1{font-size:28px!important;font-weight:700!important;color:#0e161b!important;margin-bottom:4px!important;}'
+                . 'body.woocommerce_page_wc-orders .wp-list-table,body.admin_page_wc-orders .wp-list-table{background:#ffffff!important;border:1px solid #e8eef3!important;border-radius:8px!important;box-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05)!important;overflow:hidden!important;}'
+                . 'body.woocommerce_page_wc-orders .wp-list-table thead th,body.admin_page_wc-orders .wp-list-table thead th{background:#f8fafb!important;color:#507a95!important;font-size:11px!important;font-weight:600!important;letter-spacing:0.5px!important;text-transform:uppercase!important;padding:12px 14px!important;border-bottom:1px solid #e8eef3!important;}'
+                . 'body.woocommerce_page_wc-orders .wp-list-table tbody td,body.admin_page_wc-orders .wp-list-table tbody td{padding:12px 14px!important;border-bottom:1px solid #e8eef3!important;color:#0e161b!important;font-size:14px!important;}'
+                . 'body.woocommerce_page_wc-orders .wp-list-table tbody tr:hover,body.admin_page_wc-orders .wp-list-table tbody tr:hover{background:rgba(44,153,226,0.04)!important;}'
+                . 'body.woocommerce_page_wc-orders .tablenav,body.admin_page_wc-orders .tablenav{background:#ffffff!important;border:1px solid #e8eef3!important;border-radius:8px!important;padding:10px 14px!important;margin-bottom:12px!important;box-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05)!important;}';
+            wp_add_inline_style('alquipress-admin-layout', $critical_layout);
+            return;
+        }
+
         // Tema Pencil para CPTs: listados y edición de propietario, product, shop_order
         $cpt_pencil_screens = [
             'edit-propietario',

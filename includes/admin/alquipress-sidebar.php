@@ -19,6 +19,7 @@ function alquipress_sidebar_icon_svg($name, $class = 'ap-owners-icon')
         'layout-dashboard' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="8" height="9" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="14" width="8" height="7" rx="1"/></svg>',
         'building' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h3"/><path d="M14 7h3"/><path d="M7 12h3"/><path d="M14 12h3"/><path d="M7 17h3"/><path d="M14 17h3"/></svg>',
         'calendar' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+        'users' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
         'briefcase' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg>',
         'wallet' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Z"/><path d="M16 12h2"/></svg>',
         'credit-card' => '<svg class="' . esc_attr($class) . '" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
@@ -97,14 +98,14 @@ function alquipress_render_sidebar($current_page)
             'label' => __('Reservas', 'alquipress'),
             'icon' => 'calendar',
         ],
-        'clients' => [
+        'guests' => [
             'url' => admin_url('admin.php?page=alquipress-clients'),
-            'label' => __('Clientes', 'alquipress'),
-            'icon' => 'building-2',
+            'label' => __('Guests', 'alquipress'),
+            'icon' => 'users',
         ],
         'owners' => [
             'url' => admin_url('admin.php?page=alquipress-owners'),
-            'label' => __('Propietarios', 'alquipress'),
+            'label' => __('Owners', 'alquipress'),
             'icon' => 'briefcase',
         ],
         'finances' => [
@@ -112,30 +113,26 @@ function alquipress_render_sidebar($current_page)
             'label' => __('Finanzas', 'alquipress'),
             'icon' => 'wallet',
         ],
+        'accounting' => [
+            'url' => admin_url('admin.php?page=alquipress-accounting'),
+            'label' => __('Contabilidad', 'alquipress'),
+            'icon' => 'credit-card',
+        ],
         'reports' => [
             'url' => admin_url('admin.php?page=alquipress-reports'),
             'label' => __('Informes', 'alquipress'),
             'icon' => 'bar-chart',
-        ],
-        'payment-pipeline' => [
-            'url' => admin_url('admin.php?page=alquipress-payment-pipeline'),
-            'label' => __('Cobros', 'alquipress'),
-            'icon' => 'wallet',
         ],
         'pipeline' => [
             'url' => admin_url('admin.php?page=alquipress-pipeline'),
             'label' => __('Pipeline', 'alquipress'),
             'icon' => 'columns',
         ],
-        'payment-pipeline' => [
-            'url' => admin_url('admin.php?page=alquipress-payment-pipeline'),
-            'label' => __('Pipeline de Cobros', 'alquipress'),
-            'icon' => 'credit-card',
-        ],
         'communications' => [
             'url' => admin_url('admin.php?page=alquipress-comunicacion'),
-            'label' => __('Comunicación', 'alquipress'),
+            'label' => __('Inbox', 'alquipress'),
             'icon' => 'mail',
+            'badge' => 0,
         ],
         'kyero' => [
             'url' => admin_url('admin.php?page=alquipress-kyero'),
@@ -153,6 +150,8 @@ function alquipress_render_sidebar($current_page)
             'icon' => 'settings',
         ],
     ];
+
+    $wp_admin_url = admin_url('edit.php');
     ?>
     <aside class="ap-owners-sidebar">
         <div class="ap-owners-logo">
@@ -164,15 +163,29 @@ function alquipress_render_sidebar($current_page)
                 <span class="ap-owners-logo-sub"><?php esc_html_e('Inmobiliaria', 'alquipress'); ?></span>
             </div>
         </div>
+        <div class="ap-sidebar-search-wrap">
+            <form method="get" action="<?php echo esc_url(admin_url('admin.php')); ?>" class="ap-sidebar-search-form" role="search">
+                <input type="hidden" name="page" value="alquipress-search">
+                <input type="search" name="s" class="ap-sidebar-search-input" placeholder="<?php esc_attr_e('Buscar propiedades, reservas, clientes...', 'alquipress'); ?>" value="<?php echo esc_attr(isset($_GET['page']) && isset($_GET['s']) && $_GET['page'] === 'alquipress-search' ? sanitize_text_field(wp_unslash($_GET['s'])) : ''); ?>" aria-label="<?php esc_attr_e('Búsqueda global', 'alquipress'); ?>" autocomplete="off">
+            </form>
+            <div class="ap-live-search-dropdown" role="listbox" aria-hidden="true"></div>
+        </div>
         <nav class="ap-owners-nav">
-            <?php foreach ($items as $key => $item) : ?>
+            <?php foreach ($items as $key => $item) :
+                $badge = isset($item['badge']) ? (is_callable($item['badge']) ? $item['badge']() : (int) $item['badge']) : 0;
+            ?>
                 <a class="ap-owners-nav-item <?php echo $key === $current_page ? 'is-active' : ''; ?>" href="<?php echo esc_url($item['url']); ?>">
                     <?php echo alquipress_sidebar_icon_svg($item['icon']); ?>
                     <span><?php echo esc_html($item['label']); ?></span>
+                    <?php if ($badge > 0) : ?><span class="ap-nav-badge"><?php echo esc_html($badge > 99 ? '99+' : $badge); ?></span><?php endif; ?>
                 </a>
             <?php endforeach; ?>
         </nav>
         <div class="ap-owners-sidebar-spacer"></div>
+        <a class="ap-owners-nav-item ap-owners-back-wp" href="<?php echo esc_url($wp_admin_url); ?>">
+            <svg class="ap-owners-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+            <span><?php esc_html_e('Volver a WordPress', 'alquipress'); ?></span>
+        </a>
         <div class="ap-owners-user">
             <div class="ap-owners-avatar"><?php echo esc_html(alquipress_sidebar_user_initials()); ?></div>
             <div class="ap-owners-user-info">

@@ -17,6 +17,7 @@ class Alquipress_Property_Editor
         add_action('admin_menu', [$this, 'add_editor_page']);
         add_action('current_screen', [$this, 'override_screen_for_assets']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
+        add_filter('woocommerce_screen_ids', [$this, 'add_screen_id_for_wc_assets']);
         add_action('admin_footer', [$this, 'init_postboxes']);
         add_action('load-post.php', [$this, 'maybe_redirect_native_edit']);
         add_filter('admin_body_class', [$this, 'add_body_class']);
@@ -73,6 +74,17 @@ class Alquipress_Property_Editor
         $screen->base = 'post';
         $screen->post_type = 'product';
         $screen->action = 'edit';
+    }
+
+    /**
+     * Incluir la pantalla del editor de propiedad en woocommerce_screen_ids
+     * para que WooCommerce y WC Bookings carguen sus scripts de producto.
+     */
+    public function add_screen_id_for_wc_assets($ids)
+    {
+        $ids[] = 'alquipress-settings_page_' . self::PAGE_SLUG;
+        $ids[] = 'toplevel_page_alquipress-settings';
+        return $ids;
     }
 
     /**
@@ -188,6 +200,50 @@ class Alquipress_Property_Editor
         if (function_exists('acf_enqueue_scripts')) {
             acf_enqueue_scripts();
         }
+
+        $this->enqueue_wc_bookings_product_assets();
+    }
+
+    /**
+     * Forzar carga de assets de WooCommerce Bookings en el editor de propiedad.
+     * La pantalla personalizada (admin.php?page=alquipress-edit-property) no dispara
+     * la carga automática de WC Bookings; sin estos scripts el tab "Reservas" no aparece.
+     */
+    private function enqueue_wc_bookings_product_assets()
+    {
+        if (!class_exists('WC_Bookings') || !defined('WC_BOOKINGS_PLUGIN_URL') || !defined('WC_BOOKINGS_VERSION')) {
+            return;
+        }
+
+        $plugin_url = WC_BOOKINGS_PLUGIN_URL;
+        $version = WC_BOOKINGS_VERSION;
+
+        wp_enqueue_style('wc_bookings_admin_styles', $plugin_url . 'dist/admin.css', ['wp-components'], $version);
+
+        wp_enqueue_style(
+            'alquipress-property-editor-wc-bookings',
+            ALQUIPRESS_URL . 'includes/modules/property-editor/assets/property-editor-wc-bookings.css',
+            ['wc_bookings_admin_styles', 'alquipress-admin-pencil'],
+            ALQUIPRESS_VERSION
+        );
+
+        if (!wp_script_is('wc_bookings_admin_js', 'registered')) {
+            wp_register_script('wc_bookings_admin_js', $plugin_url . 'dist/admin.js', ['jquery', 'jquery-ui-datepicker', 'jquery-ui-sortable'], $version, true);
+        }
+        wp_enqueue_script('wc_bookings_admin_js');
+
+        if (!wp_script_is('wc_bookings_admin_edit_bookable_product_js', 'registered')) {
+            $deps = function_exists('wc_booking_get_script_dependencies')
+                ? wc_booking_get_script_dependencies('admin-edit-bookable-product', ['wc_bookings_admin_js'])
+                : ['jquery', 'wc_bookings_admin_js'];
+            wp_register_script('wc_bookings_admin_edit_bookable_product_js', $plugin_url . 'dist/admin-edit-bookable-product.js', $deps, $version, true);
+        }
+        wp_enqueue_script('wc_bookings_admin_edit_bookable_product_js');
+
+        wp_localize_script('wc_bookings_admin_js', 'wc_bookings_admin_params', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'plugin_url' => WC()->plugin_url(),
+        ]);
     }
 
     /**
@@ -308,10 +364,12 @@ class Alquipress_Property_Editor
                         if (!is_string($view_url) || $view_url === '') {
                             $view_url = '#';
                         }
+                        $native_edit_url = admin_url('post.php?post=' . (int) $post_id . '&action=edit&alquipress_native_edit=1');
                         alquipress_render_property_edit_layout($post, [
                             'list_url' => admin_url('admin.php?page=alquipress-properties'),
                             'primary_action_html' => '<button type="submit" form="ap-edit-property-form" class="ap-prop-btn ap-prop-btn-primary">' . esc_html__('Guardar cambios', 'alquipress') . '</button>',
                             'secondary_action_html' => '<a href="' . esc_url($view_url) . '" target="_blank" rel="noopener" class="ap-prop-btn ap-prop-btn-secondary">' . esc_html__('Ver en web', 'alquipress') . '</a>',
+                            'tertiary_action_html' => '<a href="' . esc_url($native_edit_url) . '" class="ap-prop-btn ap-prop-btn-full-edit">' . esc_html__('Edición completa', 'alquipress') . '</a>',
                             'editable_title' => true,
                             'render_editor' => true,
                         ]);
@@ -319,6 +377,13 @@ class Alquipress_Property_Editor
 
                         <?php do_action('edit_form_top', $post); ?>
 
+                        <div class="ap-prop-metaboxes-section">
+                            <div class="ap-prop-metaboxes-header">
+                                <h3 class="ap-prop-metaboxes-title"><?php esc_html_e('Más campos editables', 'alquipress'); ?></h3>
+                                <p class="ap-prop-metaboxes-desc"><?php esc_html_e('Precio, reservas (duración, disponibilidad), galería, población, zona, características y otros datos del producto.', 'alquipress'); ?></p>
+                                <a href="<?php echo esc_url(admin_url('post.php?post=' . (int) $post_id . '&action=edit&alquipress_native_edit=1')); ?>" class="ap-prop-metaboxes-full-link"><?php esc_html_e('→ Edición completa en WordPress (todos los campos)', 'alquipress'); ?></a>
+                            </div>
+                        </div>
                         <div id="poststuff">
                             <div id="post-body" class="metabox-holder columns-2">
                                 <div id="post-body-content">

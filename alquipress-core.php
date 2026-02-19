@@ -17,6 +17,7 @@ define('ALQUIPRESS_URL', plugin_dir_url(__FILE__));
 
 // Cargar helpers primero
 require_once ALQUIPRESS_PATH . 'includes/helpers.php';
+require_once ALQUIPRESS_PATH . 'includes/email-helpers.php';
 
 /**
  * Inicializar el plugin tras cargar todos los plugins para que las
@@ -28,8 +29,14 @@ function alquipress_bootstrap()
         return;
     }
 
+    if (class_exists('WooCommerce')) {
+        require_once ALQUIPRESS_PATH . 'includes/integrations/class-wc-deposits-payments.php';
+        Alquipress_WC_Deposits_Payments::init();
+    }
+
     require_once ALQUIPRESS_PATH . 'includes/class-rate-limiter.php';
     require_once ALQUIPRESS_PATH . 'includes/class-module-manager.php';
+    require_once ALQUIPRESS_PATH . 'includes/admin/class-live-search.php';
     require_once ALQUIPRESS_PATH . 'includes/class-frontend-filters.php';
     require_once ALQUIPRESS_PATH . 'includes/class-performance-optimizer.php';
     require_once ALQUIPRESS_PATH . 'includes/class-property-helper.php';
@@ -38,12 +45,14 @@ function alquipress_bootstrap()
 
     $module_manager = new Alquipress_Module_Manager();
     $module_manager->load_active_modules();
+    new Alquipress_Live_Search();
 }
 add_action('plugins_loaded', 'alquipress_bootstrap', 20);
 
 register_activation_hook(__FILE__, 'alquipress_activate');
 function alquipress_activate()
 {
+    alquipress_add_owner_role();
     if (!get_option('alquipress_modules')) {
         update_option('alquipress_modules', [
             'taxonomies' => true,
@@ -57,10 +66,17 @@ function alquipress_activate()
             'dashboard-widgets' => true,
             'properties-page' => true,
             'property-editor' => true,
+            'property-pricing-fields' => true,
+            'accounting' => true,
+            'owner-invoicing' => true,
+            'checkout-document-fields' => true,
+            'owner-portal' => true,
+            'email-campaigns' => true,
             'owners-page' => true,
             'bookings-page' => true,
             'clients-page' => true,
             'booking-calendar-prices' => true,
+            'ses-compliance' => true,
             'payments' => false,
             'alquipress-tester' => false
         ]);

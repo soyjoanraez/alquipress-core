@@ -16,6 +16,7 @@ class Alquipress_Advanced_Reports
         add_action('alquipress_enqueue_section_assets', [$this, 'enqueue_section_assets']);
 
         add_action('wp_ajax_alquipress_get_report_data', [$this, 'ajax_get_report_data']);
+        add_action('wp_ajax_alquipress_export_reports_csv', [$this, 'ajax_export_reports_csv']);
     }
 
     public function maybe_render_section($page)
@@ -255,7 +256,9 @@ class Alquipress_Advanced_Reports
         // Validar report_type
         $allowed_reports = [
             'overview',
+            'overview_yoy',
             'revenue_monthly',
+            'revenue_monthly_yoy',
             'revenue_season',
             'occupancy_monthly',
             'occupancy_comparison',
@@ -279,6 +282,7 @@ class Alquipress_Advanced_Reports
             'overview',
             'overview_yoy',
             'revenue_monthly',
+            'revenue_monthly_yoy',
             'revenue_season',
             'occupancy_monthly',
             'occupancy_comparison',
@@ -323,6 +327,17 @@ class Alquipress_Advanced_Reports
             case 'revenue_monthly':
                 $data = $this->get_revenue_monthly($year);
                 break;
+            case 'revenue_monthly_yoy':
+                $curr = $this->get_revenue_monthly($year);
+                $prev = $this->get_revenue_monthly($year - 1);
+                $data = [
+                    'labels' => $curr['labels'],
+                    'data' => $curr['data'],
+                    'data_prev' => $prev['data'],
+                    'year' => $year,
+                    'year_prev' => $year - 1,
+                ];
+                break;
             case 'revenue_season':
                 $data = $this->get_revenue_by_season($year);
                 break;
@@ -353,6 +368,88 @@ class Alquipress_Advanced_Reports
             error_log('ALQUIPRESS Reports Error: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Error al generar el reporte'], 500);
         }
+    }
+
+    /**
+     * AJAX: Exportar informes a CSV (Excel)
+     */
+    public function ajax_export_reports_csv()
+    {
+        Alquipress_Rate_Limiter::check_and_exit('export_reports_csv', 5, 60);
+        check_ajax_referer('alquipress_reports', 'nonce');
+        if (!current_user_can('manage_options')) {
+            status_header(403);
+            exit;
+        }
+        $year = isset($_POST['year']) ? absint($_POST['year']) : date('Y');
+        if ($year < 2020 || $year > 2100) {
+            $year = date('Y');
+        }
+
+        try {
+            $overview = $this->get_overview_with_yoy($year);
+            $revenue_monthly = $this->get_revenue_monthly($year);
+            $top_clients = $this->get_top_clients($year);
+            $top_properties = $this->get_top_properties($year);
+        } catch (Exception $e) {
+            error_log('ALQUIPRESS Export Error: ' . $e->getMessage());
+            status_header(500);
+            exit;
+        }
+
+        $csv = $this->build_export_csv($year, $overview, $revenue_monthly, $top_clients, $top_properties);
+        $filename = 'informes-alquipress-' . $year . '.csv';
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . sanitize_file_name($filename) . '"');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Pragma: no-cache');
+        echo "\xEF\xBB\xBF"; // BOM UTF-8
+        echo $csv;
+        exit;
+    }
+
+    /**
+     * Construir CSV para exportación
+     */
+    private function build_export_csv($year, $overview, $revenue_monthly, $top_clients, $top_properties)
+    {
+        $lines = [];
+        $lines[] = __('Informes Alquipress', 'alquipress') . ' - ' . $year;
+        $lines[] = '';
+        $lines[] = __('Resumen', 'alquipress');
+        $lines[] = __('Ingresos totales', 'alquipress') . ';' . ($overview['total_revenue_raw'] ?? 0);
+        $lines[] = __('Reservas totales', 'alquipress') . ';' . ($overview['total_bookings'] ?? 0);
+        $lines[] = __('Tasa ocupación', 'alquipress') . ';' . ($overview['occupancy_rate'] ?? '');
+        $lines[] = __('Precio medio diario', 'alquipress') . ';' . ($overview['avg_daily_rate'] ?? '');
+        $lines[] = '';
+        $lines[] = __('Ingresos mensuales (€)', 'alquipress');
+        $lines[] = __('Mes', 'alquipress') . ';' . __('Ingresos', 'alquipress');
+        foreach ($revenue_monthly['labels'] as $i => $label) {
+            $lines[] = $label . ';' . number_format($revenue_monthly['data'][$i] ?? 0, 2, ',', '');
+        }
+        $lines[] = '';
+        $lines[] = __('Top clientes por gasto', 'alquipress');
+        $lines[] = __('Cliente', 'alquipress') . ';' . __('Email', 'alquipress') . ';' . __('Reservas', 'alquipress') . ';' . __('Gasto total (€)', 'alquipress') . ';' . __('Última reserva', 'alquipress');
+        foreach ($top_clients as $c) {
+            $lines[] = $this->csv_escape($c['name']) . ';' . $this->csv_escape($c['email']) . ';' . ($c['total_orders'] ?? 0) . ';' . number_format($c['total_spent'] ?? 0, 2, ',', '') . ';' . ($c['last_order_date'] ?? '');
+        }
+        $lines[] = '';
+        $lines[] = __('Top propiedades por ingresos', 'alquipress');
+        $lines[] = __('Propiedad', 'alquipress') . ';' . __('Reservas', 'alquipress') . ';' . __('Noches', 'alquipress') . ';' . __('Ingresos (€)', 'alquipress') . ';' . __('Ocupación %', 'alquipress');
+        foreach ($top_properties as $p) {
+            $lines[] = $this->csv_escape($p['name']) . ';' . ($p['total_bookings'] ?? 0) . ';' . ($p['total_nights'] ?? 0) . ';' . number_format($p['total_revenue'] ?? 0, 2, ',', '') . ';' . number_format($p['occupancy_rate'] ?? 0, 1, ',', '');
+        }
+        return implode("\r\n", $lines);
+    }
+
+    private function csv_escape($val)
+    {
+        $val = (string) $val;
+        if (strpos($val, ';') !== false || strpos($val, '"') !== false || strpos($val, "\n") !== false) {
+            return '"' . str_replace('"', '""', $val) . '"';
+        }
+        return $val;
     }
 
     // ========== Métodos de Análisis de Datos ==========
@@ -802,10 +899,24 @@ class Alquipress_Advanced_Reports
             ALQUIPRESS_VERSION
         );
 
+        wp_enqueue_style(
+            'alquipress-toast-notifications',
+            ALQUIPRESS_URL . 'includes/admin/assets/toast-notifications.css',
+            [],
+            ALQUIPRESS_VERSION
+        );
+        wp_enqueue_script(
+            'alquipress-toast-notifications',
+            ALQUIPRESS_URL . 'includes/admin/assets/toast-notifications.js',
+            ['jquery'],
+            ALQUIPRESS_VERSION,
+            true
+        );
+
         wp_enqueue_script(
             'alquipress-advanced-reports',
             ALQUIPRESS_URL . 'includes/modules/advanced-reports/assets/advanced-reports.js',
-            ['jquery', 'chartjs'],
+            ['jquery', 'chartjs', 'alquipress-toast-notifications'],
             ALQUIPRESS_VERSION,
             true
         );
@@ -817,6 +928,8 @@ class Alquipress_Advanced_Reports
             'i18n' => [
                 'vsLastYear' => __('vs año ant.', 'alquipress'),
                 'vsAvg' => __('vs media', 'alquipress'),
+                'trend' => __('Tendencia', 'alquipress'),
+                'errorConnection' => __('Error de conexión al cargar los datos.', 'alquipress'),
             ]
         ]);
     }

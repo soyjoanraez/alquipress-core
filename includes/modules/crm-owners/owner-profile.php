@@ -454,6 +454,73 @@ class Alquipress_Owner_Profile
                                 </div>
                                 <p class="ap-owner-empty"><?php esc_html_e('No hay documentos cargados.', 'alquipress'); ?></p>
                             </div>
+
+                            <?php
+                            $owner_comms = [];
+                            if (post_type_exists('alquipress_comm')) {
+                                $owner_comms = get_posts([
+                                    'post_type' => 'alquipress_comm',
+                                    'post_status' => 'publish',
+                                    'numberposts' => 10,
+                                    'orderby' => 'date',
+                                    'order' => 'DESC',
+                                    'meta_query' => [
+                                        [
+                                            'key' => 'ap_comm_entity_type',
+                                            'value' => 'propietario',
+                                            'compare' => '=',
+                                        ],
+                                        [
+                                            'key' => 'ap_comm_entity_id',
+                                            'value' => $owner_id,
+                                            'compare' => '=',
+                                        ],
+                                    ],
+                                ]);
+                            }
+                            $inbox_url = add_query_arg(
+                                [
+                                    'tab' => 'manage',
+                                    'filter_owner_id' => $owner_id,
+                                    'filter_entity_type' => 'propietario',
+                                    'filter_entity_id' => $owner_id,
+                                ],
+                                admin_url('admin.php?page=alquipress-comunicacion')
+                            );
+                            ?>
+                            <div class="ap-owner-card">
+                                <div class="ap-owner-card-header">
+                                    <h3><?php esc_html_e('Comunicaciones', 'alquipress'); ?></h3>
+                                    <?php if (!empty($owner_comms)) : ?>
+                                        <span class="ap-owner-card-sub"><?php echo count($owner_comms); ?> <?php echo count($owner_comms) === 1 ? esc_html__('mensaje', 'alquipress') : esc_html__('mensajes', 'alquipress'); ?></span>
+                                    <?php else : ?>
+                                        <span class="ap-owner-card-sub"><?php esc_html_e('Historial de mensajes', 'alquipress'); ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <?php if (!empty($owner_comms)) : ?>
+                                    <div class="ap-owner-comms-list">
+                                        <?php foreach ($owner_comms as $comm) : ?>
+                                            <?php
+                                            $direction = get_post_meta($comm->ID, 'ap_comm_direction', true);
+                                            $label = $direction === 'inbound' ? __('Entrada', 'alquipress') : __('Salida', 'alquipress');
+                                            ?>
+                                            <div class="ap-owner-comm-item">
+                                                <span class="ap-owner-comm-date"><?php echo esc_html(wp_date('d/m/Y H:i', strtotime($comm->post_date))); ?></span>
+                                                <span class="ap-owner-comm-pill ap-owner-comm-pill-<?php echo $direction === 'inbound' ? 'in' : 'out'; ?>"><?php echo esc_html($label); ?></span>
+                                                <span class="ap-owner-comm-subject" title="<?php echo esc_attr($comm->post_title); ?>"><?php echo esc_html(wp_trim_words($comm->post_title, 6)); ?></span>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <p class="ap-owner-comms-footer" style="margin-top:12px;margin-bottom:0;">
+                                        <a href="<?php echo esc_url($inbox_url); ?>" class="ap-owners-top-view"><?php esc_html_e('Ir al Inbox', 'alquipress'); ?></a>
+                                    </p>
+                                <?php else : ?>
+                                    <p class="ap-owner-empty"><?php esc_html_e('Las comunicaciones vinculadas a este propietario aparecerán aquí.', 'alquipress'); ?></p>
+                                    <p style="margin-top:12px;">
+                                        <a href="<?php echo esc_url($inbox_url); ?>" class="ap-owners-action-btn"><?php esc_html_e('Ir al Inbox', 'alquipress'); ?></a>
+                                    </p>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </main>

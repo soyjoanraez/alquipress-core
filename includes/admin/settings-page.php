@@ -72,21 +72,21 @@ require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($this->modules as $id => $module) : ?>
+                                    <?php foreach ((isset($modules) ? $modules : []) as $id => $module) : ?>
                                         <tr>
                                             <td class="ap-settings-td-check">
                                                 <label class="ap-settings-switch">
                                                     <input type="checkbox"
                                                            name="modules[<?php echo esc_attr($id); ?>]"
                                                            value="1"
-                                                           <?php checked($this->active_modules[$id] ?? false); ?>>
+                                                           <?php checked(isset($active_modules) && ($active_modules[$id] ?? false)); ?>>
                                                     <span class="ap-settings-slider"></span>
                                                 </label>
                                             </td>
                                             <td class="ap-settings-td-name"><?php echo esc_html($module['name']); ?></td>
                                             <td class="ap-settings-td-desc"><?php echo esc_html($module['description']); ?></td>
                                             <td class="ap-settings-td-status">
-                                                <?php if ($this->active_modules[$id] ?? false) : ?>
+                                                <?php if (isset($active_modules) && ($active_modules[$id] ?? false)) : ?>
                                                     <span class="ap-settings-badge ap-settings-badge-active"><?php esc_html_e('Activo', 'alquipress'); ?></span>
                                                 <?php else : ?>
                                                     <span class="ap-settings-badge ap-settings-badge-inactive"><?php esc_html_e('Inactivo', 'alquipress'); ?></span>
@@ -126,6 +126,25 @@ require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
                         <div class="ap-settings-form-actions">
                             <button type="submit" name="alquipress_save_modules" class="ap-settings-btn ap-settings-btn-primary">
                                 <?php esc_html_e('Guardar módulos y plantilla', 'alquipress'); ?>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ap-settings-card">
+                        <div class="ap-settings-card-head">
+                            <span class="dashicons dashicons-art"></span>
+                            <h3 class="ap-settings-card-title"><?php esc_html_e('Modo oscuro', 'alquipress'); ?></h3>
+                        </div>
+                        <div class="ap-settings-dark-mode-wrap">
+                            <label class="ap-settings-switch">
+                                <input type="checkbox" name="dark_mode" value="1" <?php checked(Alquipress_Module_Manager::is_dark_mode()); ?>>
+                                <span class="ap-settings-slider"></span>
+                            </label>
+                            <span class="ap-settings-dark-mode-label"><?php esc_html_e('Activar tema oscuro en el CRM', 'alquipress'); ?></span>
+                        </div>
+                        <div class="ap-settings-form-actions">
+                            <button type="submit" name="alquipress_save_modules" class="ap-settings-btn ap-settings-btn-primary">
+                                <?php esc_html_e('Guardar preferencias', 'alquipress'); ?>
                             </button>
                         </div>
                     </div>

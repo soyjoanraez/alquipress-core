@@ -40,6 +40,7 @@ class Alquipress_Order_Columns
                 $new_columns['check_dates'] = '📅 Fechas';
                 $new_columns['owner'] = '👤 Propietario';
                 $new_columns['booking_status'] = '🚦 Estado';
+                $new_columns['ses_status'] = '🛂 SES';
             }
         }
 
@@ -68,6 +69,9 @@ class Alquipress_Order_Columns
             case 'booking_status':
                 $this->render_status_semaphore($order);
                 break;
+            case 'ses_status':
+                $this->render_ses_status($order);
+                break;
         }
     }
 
@@ -95,6 +99,9 @@ class Alquipress_Order_Columns
                 break;
             case 'booking_status':
                 $this->render_status_semaphore($order);
+                break;
+            case 'ses_status':
+                $this->render_ses_status($order);
                 break;
         }
     }
@@ -217,6 +224,30 @@ class Alquipress_Order_Columns
         echo esc_html($config['text']);
         echo '</small>';
         echo '</div>';
+    }
+
+    /**
+     * Renderizar estado de comunicación SES.
+     */
+    private function render_ses_status($order)
+    {
+        $status = (string) $order->get_meta('_alq_ses_status');
+        if ($status === '') {
+            $status = 'pending';
+        }
+
+        $map = [
+            'pending' => ['label' => 'Pendiente', 'color' => '#6b7280', 'bg' => '#f3f4f6'],
+            'xml_generated' => ['label' => 'XML', 'color' => '#1d4ed8', 'bg' => '#dbeafe'],
+            'sent' => ['label' => 'Enviado', 'color' => '#0369a1', 'bg' => '#e0f2fe'],
+            'accepted' => ['label' => 'Aceptado', 'color' => '#166534', 'bg' => '#dcfce7'],
+            'rejected' => ['label' => 'Rechazado', 'color' => '#991b1b', 'bg' => '#fee2e2'],
+        ];
+        $item = isset($map[$status]) ? $map[$status] : $map['pending'];
+
+        echo '<span style="display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;'
+            . 'color:' . esc_attr($item['color']) . ';background:' . esc_attr($item['bg']) . ';">'
+            . esc_html($item['label']) . '</span>';
     }
 
     /**

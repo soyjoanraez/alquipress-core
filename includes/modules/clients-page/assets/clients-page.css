@@ -397,6 +397,63 @@
     font-size: 14px;
 }
 
+/* Paginación */
+.ap-clients-pagination {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ap-border);
+    display: flex;
+    justify-content: center;
+}
+
+.ap-clients-pagination ul.page-numbers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ap-clients-pagination .page-numbers li {
+    margin: 0;
+}
+
+.ap-clients-pagination .page-numbers a,
+.ap-clients-pagination .page-numbers span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ap-text-secondary);
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.ap-clients-pagination .page-numbers a:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: var(--ap-text-primary);
+}
+
+.ap-clients-pagination .page-numbers .current {
+    background: var(--ap-primary);
+    border-color: var(--ap-primary);
+    color: #fff;
+}
+
+.ap-clients-pagination .page-numbers .dots {
+    border: none;
+    background: transparent;
+}
+
 @media (max-width: 1024px) {
     .ap-clients-table-wrap {
         overflow-x: auto;

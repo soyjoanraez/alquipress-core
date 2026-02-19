@@ -14,6 +14,7 @@ class Alquipress_Properties_Page
     {
         add_action('alquipress_render_section', [$this, 'maybe_render_section']);
         add_action('alquipress_enqueue_section_assets', [$this, 'enqueue_section_assets']);
+        add_action('wp_ajax_alquipress_create_property', [$this, 'ajax_create_property']);
     }
 
     public function maybe_render_section($page)
@@ -34,6 +35,62 @@ class Alquipress_Properties_Page
             [],
             ALQUIPRESS_VERSION
         );
+        wp_enqueue_style(
+            'leaflet-css',
+            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+            [],
+            '1.9.4'
+        );
+        wp_enqueue_script(
+            'leaflet-js',
+            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+            [],
+            '1.9.4',
+            true
+        );
+        wp_enqueue_script(
+            'alquipress-add-property-modal',
+            ALQUIPRESS_URL . 'includes/modules/properties-page/assets/add-property-modal.js',
+            ['jquery'],
+            ALQUIPRESS_VERSION,
+            true
+        );
+        wp_localize_script('alquipress-add-property-modal', 'alquipressAddProperty', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('alquipress_create_property'),
+            'i18n' => [
+                'title' => __('Añadir propiedad', 'alquipress'),
+                'desc' => __('Introduce el nombre o título de la propiedad.', 'alquipress'),
+                'create' => __('Crear', 'alquipress'),
+                'cancel' => __('Cancelar', 'alquipress'),
+                'placeholder' => __('Nombre de la propiedad', 'alquipress'),
+                'error' => __('Error al crear la propiedad.', 'alquipress'),
+                'required' => __('El nombre es obligatorio.', 'alquipress'),
+            ],
+        ]);
+    }
+
+    public function ajax_create_property()
+    {
+        check_ajax_referer('alquipress_create_property', 'nonce');
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error(['message' => 'Forbidden'], 403);
+        }
+        $title = isset($_POST['title']) ? sanitize_text_field(wp_unslash($_POST['title'])) : '';
+        $title = trim($title);
+        if ($title === '') {
+            wp_send_json_error(['message' => 'El nombre es obligatorio']);
+        }
+        $post_id = wp_insert_post([
+            'post_type' => 'product',
+            'post_title' => $title,
+            'post_status' => 'draft',
+        ]);
+        if (is_wp_error($post_id) || !$post_id) {
+            wp_send_json_error(['message' => 'Error al crear']);
+        }
+        $edit_url = admin_url('admin.php?page=alquipress-edit-property&post_id=' . $post_id);
+        wp_send_json_success(['edit_url' => $edit_url]);
     }
 
     /**
@@ -153,10 +210,13 @@ class Alquipress_Properties_Page
         $habitaciones_min = isset($_GET['habitaciones_min']) ? absint($_GET['habitaciones_min']) : 0;
         $banos_min = isset($_GET['banos_min']) ? absint($_GET['banos_min']) : 0;
         $orderby = isset($_GET['orderby']) ? sanitize_key($_GET['orderby']) : 'date';
+        $paged = isset($_GET['paged']) ? max(1, absint($_GET['paged'])) : 1;
+        $per_page = 24;
 
         $args = [
             'post_type' => 'product',
-            'posts_per_page' => 50,
+            'posts_per_page' => $habitaciones_min > 0 ? 500 : $per_page,
+            'paged' => $habitaciones_min > 0 ? 1 : $paged,
             'order' => 'DESC',
         ];
 
@@ -263,9 +323,13 @@ class Alquipress_Properties_Page
                 return $beds !== null && $beds >= $habitaciones_min;
             });
             $products = array_values($products);
+            $total_count = count($products);
+            $products = array_slice($products, ($paged - 1) * $per_page, $per_page);
+        } else {
+            $total_count = $query->found_posts;
         }
         $showing_count = count($products);
-        $total_count = $habitaciones_min > 0 ? $showing_count : $query->found_posts;
+        $total_pages = $total_count > 0 ? (int) ceil($total_count / $per_page) : 1;
 
         $count_all = wp_count_posts('product');
         $count_active = isset($count_all->publish) ? (int) $count_all->publish : 0;
@@ -285,6 +349,20 @@ class Alquipress_Properties_Page
         }
         if (!is_array($terms_caracteristicas)) {
             $terms_caracteristicas = [];
+        }
+        $map_properties = [];
+        foreach ($products as $p) {
+            $coords = function_exists('get_field') ? get_field('coordenadas_gps', $p->ID) : null;
+            if (is_array($coords) && !empty($coords['lat']) && !empty($coords['lng'])) {
+                $map_properties[] = [
+                    'id' => $p->ID,
+                    'title' => $p->post_title,
+                    'title_escaped' => esc_html($p->post_title),
+                    'lat' => (float) $coords['lat'],
+                    'lng' => (float) $coords['lng'],
+                    'url' => esc_url(admin_url('admin.php?page=alquipress-edit-property&post_id=' . $p->ID)),
+                ];
+            }
         }
         require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
         ?>
@@ -308,15 +386,15 @@ class Alquipress_Properties_Page
                         <span class="dashicons dashicons-filter"></span>
                         <span><?php esc_html_e('Filtrar', 'alquipress'); ?></span>
                     </button>
-                    <a href="<?php echo esc_url($add_url); ?>" class="ap-props-add-btn">
+                    <button type="button" class="ap-props-add-btn ap-add-property-trigger">
                         <span class="dashicons dashicons-plus-alt2"></span>
                         <span><?php esc_html_e('Añadir propiedad', 'alquipress'); ?></span>
-                    </a>
+                    </button>
                 </div>
             </header>
 
             <?php
-            $has_active_filters = $price_min > 0 || $price_max > 0 || $poblacion !== '' || $zona !== '' || $habitaciones_min > 0 || $banos_min > 0 || !empty($caracteristicas);
+            $has_active_filters = $price_min > 0 || $price_max > 0 || $poblacion !== '' || $zona !== '' || $habitaciones_min > 0 || $banos_min > 0 || !empty($caracteristicas) || $status_filter !== 'all' || $search !== '';
             ?>
             <div class="ap-props-filter-panel" id="ap-props-filter-panel" role="region" aria-label="<?php esc_attr_e('Filtros', 'alquipress'); ?>" <?php echo $has_active_filters ? '' : 'hidden'; ?>>
                 <form action="<?php echo esc_url($base_url); ?>" method="get" class="ap-props-filter-form">
@@ -390,6 +468,11 @@ class Alquipress_Properties_Page
                         <button type="button" class="ap-props-view-btn ap-props-view-list" aria-pressed="false" data-view="list">
                             <span class="dashicons dashicons-list-view"></span>
                         </button>
+                        <?php if (!empty($map_properties)): ?>
+                        <button type="button" class="ap-props-view-btn ap-props-view-map" aria-pressed="false" data-view="map" title="<?php esc_attr_e('Vista mapa', 'alquipress'); ?>">
+                            <span class="dashicons dashicons-location-alt"></span>
+                        </button>
+                        <?php endif; ?>
                     </div>
                     
                     <div class="ap-props-sort">
@@ -437,7 +520,12 @@ class Alquipress_Properties_Page
                     <div class="ap-props-empty">
                         <span class="dashicons dashicons-building"></span>
                         <p><?php esc_html_e('No hay propiedades que coincidan con el filtro.', 'alquipress'); ?></p>
-                        <a href="<?php echo esc_url($add_url); ?>" class="button button-primary"><?php esc_html_e('Añadir propiedad', 'alquipress'); ?></a>
+                        <?php if ($has_active_filters): ?>
+                            <a href="<?php echo esc_url($base_url); ?>" class="button"><?php esc_html_e('Limpiar filtros', 'alquipress'); ?></a>
+                            <button type="button" class="button button-primary ap-add-property-trigger" style="margin-left:8px;"><?php esc_html_e('Añadir propiedad', 'alquipress'); ?></button>
+                        <?php else: ?>
+                            <button type="button" class="button button-primary ap-add-property-trigger"><?php esc_html_e('Añadir propiedad', 'alquipress'); ?></button>
+                        <?php endif; ?>
                     </div>
                 <?php else: ?>
                     <?php foreach ($products as $post): setup_postdata($post);
@@ -469,8 +557,10 @@ class Alquipress_Properties_Page
                                 <span class="ap-props-card-badge <?php echo $is_draft ? 'status-draft' : 'status-active'; ?>">
                                     <?php echo $is_draft ? esc_html__('Borrador', 'alquipress') : esc_html__('Activa', 'alquipress'); ?>
                                 </span>
-                                <a href="<?php echo esc_url($edit_url); ?>" class="ap-props-card-menu" title="<?php esc_attr_e('Editar', 'alquipress'); ?>">
-                                    <span class="dashicons dashicons-ellipsis"></span>
+                                <a href="<?php echo esc_url($edit_url); ?>" class="ap-props-card-menu" title="<?php esc_attr_e('Editar', 'alquipress'); ?>" aria-label="<?php esc_attr_e('Opciones', 'alquipress'); ?>">
+                                    <svg class="ap-props-card-menu-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                        <circle cx="12" cy="6" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="18" r="2"/>
+                                    </svg>
                                 </a>
                             </div>
                             <div class="ap-props-card-content">
@@ -517,6 +607,43 @@ class Alquipress_Properties_Page
                     <?php endforeach; wp_reset_postdata(); ?>
                 <?php endif; ?>
             </div>
+
+            <?php if (!empty($map_properties)): ?>
+            <div class="ap-props-map-wrap" data-view="map" style="display:none;">
+                <div id="ap-props-map" style="height: 500px; border-radius: 12px; border: 1px solid #e2e8f0;"></div>
+                <p class="ap-props-map-note"><?php echo count($map_properties); ?> <?php esc_html_e('propiedades con ubicación en mapa', 'alquipress'); ?></p>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($total_pages > 1) : ?>
+                <?php
+                $paginate_args = ['page' => 'alquipress-properties', 'status' => $status_filter];
+                if ($search) $paginate_args['s'] = $search;
+                if ($price_min > 0) $paginate_args['precio_min'] = $price_min;
+                if ($price_max > 0) $paginate_args['precio_max'] = $price_max;
+                if ($poblacion) $paginate_args['poblacion'] = $poblacion;
+                if ($zona) $paginate_args['zona'] = $zona;
+                if ($habitaciones_min > 0) $paginate_args['habitaciones_min'] = $habitaciones_min;
+                if ($banos_min > 0) $paginate_args['banos_min'] = $banos_min;
+                if ($orderby !== 'date') $paginate_args['orderby'] = $orderby;
+                if (!empty($caracteristicas)) $paginate_args['caracteristicas'] = $caracteristicas;
+                $paginate_base = add_query_arg($paginate_args, admin_url('admin.php'));
+                $paginate_base = str_replace('%#%', '###PAGE###', $paginate_base);
+                ?>
+                <nav class="ap-props-pagination" aria-label="<?php esc_attr_e('Paginación', 'alquipress'); ?>">
+                    <?php
+                    echo paginate_links([
+                        'base' => esc_url(str_replace('###PAGE###', '%#%', $paginate_base)),
+                        'format' => '&paged=%#%',
+                        'current' => max(1, $paged),
+                        'total' => $total_pages,
+                        'prev_text' => '&larr; ' . __('Anterior', 'alquipress'),
+                        'next_text' => __('Siguiente', 'alquipress') . ' &rarr;',
+                        'type' => 'list',
+                    ]);
+                    ?>
+                </nav>
+            <?php endif; ?>
                 </main>
             </div>
         </div>
@@ -524,16 +651,39 @@ class Alquipress_Properties_Page
         ?>
         <script>
         (function() {
+            var mapProps = <?php echo wp_json_encode(!empty($map_properties) ? $map_properties : []); ?>;
             var grid = document.querySelector('.ap-props-grid');
+            var mapWrap = document.querySelector('.ap-props-map-wrap');
+            var pagination = document.querySelector('.ap-props-pagination');
             var btns = document.querySelectorAll('.ap-props-view-btn[data-view]');
+            var apMap = null;
+            function initMap() {
+                if (!mapWrap || !mapProps.length || typeof L === 'undefined') return;
+                var mapEl = document.getElementById('ap-props-map');
+                if (!mapEl || apMap) return;
+                apMap = L.map('ap-props-map').setView([mapProps[0].lat, mapProps[0].lng], 11);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(apMap);
+                mapProps.forEach(function(p) {
+                    var popupHtml = '<a href="' + p.url + '">' + (p.title_escaped || p.title || '') + '</a>';
+                    L.marker([p.lat, p.lng]).addTo(apMap).bindPopup(popupHtml);
+                });
+                if (mapProps.length > 1) {
+                    var bounds = L.latLngBounds(mapProps.map(function(m){ return [m.lat, m.lng]; }));
+                    apMap.fitBounds(bounds, { padding: [30, 30] });
+                }
+            }
             if (grid && btns.length) {
                 btns.forEach(function(btn) {
                     btn.addEventListener('click', function(e) {
                         e.preventDefault();
                         var view = this.getAttribute('data-view');
                         grid.setAttribute('data-view', view);
+                        if (grid.style) grid.style.display = (view === 'map') ? 'none' : '';
+                        if (mapWrap) mapWrap.style.display = (view === 'map') ? '' : 'none';
+                        if (pagination) pagination.style.display = (view === 'map') ? 'none' : '';
                         btns.forEach(function(b) { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
                         this.classList.add('active'); this.setAttribute('aria-pressed', 'true');
+                        if (view === 'map') initMap();
                     });
                 });
             }
@@ -555,11 +705,14 @@ class Alquipress_Properties_Page
         })();
 
         // Script para la ordenación
-        document.getElementById('ap-props-orderby').addEventListener('change', function() {
+        var orderbyEl = document.getElementById('ap-props-orderby');
+        if (orderbyEl) {
+            orderbyEl.addEventListener('change', function() {
             var url = new URL(window.location);
             url.searchParams.set('orderby', this.value);
             window.location = url.href;
         });
+        }
         </script>
         
         <style>

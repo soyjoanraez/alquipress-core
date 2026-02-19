@@ -3,6 +3,7 @@ class Alquipress_Module_Manager
 {
     const DASHBOARD_TEMPLATE_OPTION = 'alquipress_dashboard_template';
     const DASHBOARD_TEMPLATE_DEFAULT = 'pencil';
+    const DARK_MODE_OPTION = 'alquipress_dark_mode';
 
     private $modules = [];
     private $active_modules = [];
@@ -29,9 +30,11 @@ class Alquipress_Module_Manager
                 'bookings-page' => true,
                 'clients-page' => true,
                 'booking-calendar-prices' => true,
+                'ses-compliance' => true,
                 'operational-health' => true,
                 'payment-pipeline' => true,
                 'communications' => true,
+                'ical-sync' => true,
                 'payments' => false,
                 'alquipress-tester' => false,
             ];
@@ -49,6 +52,34 @@ class Alquipress_Module_Manager
             $this->active_modules['property-editor'] = true;
             update_option('alquipress_modules', $this->active_modules);
         }
+        if (!array_key_exists('property-pricing-fields', $this->active_modules)) {
+            $this->active_modules['property-pricing-fields'] = true;
+            update_option('alquipress_modules', $this->active_modules);
+        }
+        if (!array_key_exists('accounting', $this->active_modules)) {
+            $this->active_modules['accounting'] = true;
+            update_option('alquipress_modules', $this->active_modules);
+        }
+        if (!array_key_exists('owner-invoicing', $this->active_modules)) {
+            $this->active_modules['owner-invoicing'] = true;
+            update_option('alquipress_modules', $this->active_modules);
+        }
+        if (!array_key_exists('checkout-document-fields', $this->active_modules)) {
+            $this->active_modules['checkout-document-fields'] = true;
+            update_option('alquipress_modules', $this->active_modules);
+        }
+        if (!array_key_exists('owner-portal', $this->active_modules)) {
+            $this->active_modules['owner-portal'] = true;
+            update_option('alquipress_modules', $this->active_modules);
+        }
+        if (!array_key_exists('email-campaigns', $this->active_modules)) {
+            $this->active_modules['email-campaigns'] = true;
+            update_option('alquipress_modules', $this->active_modules);
+        }
+        if (!array_key_exists('ses-compliance', $this->active_modules)) {
+            $this->active_modules['ses-compliance'] = true;
+            update_option('alquipress_modules', $this->active_modules);
+        }
         $saved_template = get_option(self::DASHBOARD_TEMPLATE_OPTION, '');
         if (!is_string($saved_template) || $saved_template === '') {
             update_option(self::DASHBOARD_TEMPLATE_OPTION, self::DASHBOARD_TEMPLATE_DEFAULT);
@@ -57,6 +88,22 @@ class Alquipress_Module_Manager
         add_action('admin_init', [$this, 'handle_form_submit']);
         add_action('admin_init', [$this, 'redirect_wp_dashboard_to_alquipress'], 5);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_settings_assets']);
+        add_filter('admin_body_class', [$this, 'add_fullscreen_body_class']);
+    }
+
+    /**
+     * Añadir clase para modo pantalla completa y modo oscuro en páginas Alquipress.
+     */
+    public function add_fullscreen_body_class($classes)
+    {
+        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+        if ($page !== '' && strpos($page, 'alquipress-') === 0) {
+            $classes .= ' alquipress-fullscreen';
+            if (get_option(self::DARK_MODE_OPTION, false)) {
+                $classes .= ' ap-dark-mode';
+            }
+        }
+        return $classes;
     }
 
     /**
@@ -99,9 +146,19 @@ class Alquipress_Module_Manager
             ALQUIPRESS_VERSION
         );
 
+        // Modo pantalla completa: ocultar barra superior y menú lateral de WordPress
+        $fullscreen_css = 'html:has(body.alquipress-fullscreen){margin-top:0!important;}'
+            . 'body.alquipress-fullscreen #wpadminbar{display:none!important;}'
+            . 'body.alquipress-fullscreen.admin-bar{margin-top:0!important;}'
+            . 'body.alquipress-fullscreen #adminmenuback,body.alquipress-fullscreen #adminmenuwrap{display:none!important;}'
+            . 'body.alquipress-fullscreen #wpcontent,body.alquipress-fullscreen #wpbody{margin-left:0!important;}'
+            . 'body.alquipress-fullscreen .wrap.ap-has-sidebar .ap-owners-layout{min-height:100vh!important;}';
+
+        $wpcontent_bg = get_option(self::DARK_MODE_OPTION, false) ? '#111318' : '#f8fafb';
         // Estilos críticos para Panel, Propiedades, Propietarios, Reservas, etc.: fondo claro y layout flex
         // Evita que tema/plugins (ej. Astra) cubran el contenido con fondo negro o rompan el layout.
-        $critical_layout = '#wpcontent,#wpbody-content{background:#f8fafb!important;}'
+        $critical_layout = $fullscreen_css
+            . '#wpcontent,#wpbody-content{background:' . esc_attr($wpcontent_bg) . '!important;}'
             . '.wrap.ap-has-sidebar{min-height:80vh!important;width:100%!important;position:relative!important;z-index:999998!important;max-width:none!important;margin-top:12px!important;padding:0!important;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif!important;}'
             . '.wrap.ap-has-sidebar .ap-owners-layout{display:flex!important;min-height:calc(100vh - 140px)!important;background:#f8fafb!important;border:1px solid #e8eef3!important;border-radius:16px!important;overflow:hidden!important;}'
             . '.wrap.ap-has-sidebar .ap-owners-sidebar{width:256px!important;min-width:256px!important;background:#ffffff!important;border-right:1px solid #e8eef3!important;display:flex!important;flex-direction:column!important;}'
@@ -115,6 +172,27 @@ class Alquipress_Module_Manager
                 ALQUIPRESS_URL . 'includes/admin/assets/settings-page.css',
                 [],
                 ALQUIPRESS_VERSION
+            );
+        }
+
+        if ($is_page_alquipress) {
+            wp_enqueue_script(
+                'alquipress-keyboard-shortcuts',
+                ALQUIPRESS_URL . 'includes/admin/assets/keyboard-shortcuts.js',
+                [],
+                ALQUIPRESS_VERSION,
+                true
+            );
+        }
+
+        // SortableJS: disponible en ambas pestañas del Pipeline (Reservas y Cobros) para evitar dependencia no registrada.
+        if ($page === 'alquipress-pipeline') {
+            wp_enqueue_script(
+                'sortable-js',
+                ALQUIPRESS_URL . 'includes/admin/assets/sortable.min.js',
+                [],
+                '1.15.0',
+                true
             );
         }
 
@@ -268,6 +346,12 @@ class Alquipress_Module_Manager
                 'file' => 'bookings-page/bookings-page.php',
                 'dependencies' => []
             ],
+            'wc-bookings-dashboard' => [
+                'name' => 'Dashboard WC Bookings integrado',
+                'description' => 'Calendario, nueva reserva, notificaciones y configuración de WooCommerce Bookings en el diseño Alquipress',
+                'file' => 'wc-bookings-dashboard/wc-bookings-dashboard.php',
+                'dependencies' => ['bookings-page']
+            ],
             'clients-page' => [
                 'name' => 'Página Clientes (Huéspedes)',
                 'description' => 'Listado de clientes: datos, pagos, método de pago, estancia y documentación (DNI, etc.)',
@@ -278,6 +362,12 @@ class Alquipress_Module_Manager
                 'name' => 'Precios en Calendario de Reservas',
                 'description' => 'Muestra el coste por día en el calendario de WooCommerce Bookings',
                 'file' => 'booking-calendar-prices/booking-calendar-prices.php',
+                'dependencies' => []
+            ],
+            'ses-compliance' => [
+                'name' => 'Cumplimiento SES Hospedajes',
+                'description' => 'Metadatos operativos SES en pedidos: estado, tipo de pago y referencia de envío',
+                'file' => 'ses-compliance/ses-compliance.php',
                 'dependencies' => []
             ],
             'operational-health' => [
@@ -296,6 +386,48 @@ class Alquipress_Module_Manager
                 'name' => 'Comunicación',
                 'description' => 'Sistema de emails con SMTP/IMAP e histórico completo',
                 'file' => 'communications/communications.php',
+                'dependencies' => []
+            ],
+            'property-pricing-fields' => [
+                'name' => 'Campos de precios por propiedad',
+                'description' => 'Limpieza, lavandería y comisión por propiedad',
+                'file' => 'property-pricing-fields/property-pricing-fields.php',
+                'dependencies' => []
+            ],
+            'accounting' => [
+                'name' => 'Contabilidad automática',
+                'description' => 'Registro automático de ingresos, comisiones, limpieza y lavandería por propiedad y propietario',
+                'file' => 'accounting/accounting.php',
+                'dependencies' => []
+            ],
+            'owner-invoicing' => [
+                'name' => 'Facturación propietarios',
+                'description' => 'Generar facturas PDF/HTML con el desglose a pagar a cada propietario',
+                'file' => 'owner-invoicing/owner-invoicing.php',
+                'dependencies' => ['crm-owners']
+            ],
+            'checkout-document-fields' => [
+                'name' => 'DNI/Pasaporte en checkout',
+                'description' => 'Campos obligatorios de documento de identidad antes de confirmar la reserva',
+                'file' => 'checkout-document-fields/checkout-document-fields.php',
+                'dependencies' => []
+            ],
+            'owner-portal' => [
+                'name' => 'Portal propietarios',
+                'description' => 'Área privada frontend para que los propietarios vean la ocupación de sus propiedades',
+                'file' => 'owner-portal/owner-portal.php',
+                'dependencies' => ['crm-owners']
+            ],
+            'email-campaigns' => [
+                'name' => 'Campañas de email',
+                'description' => 'Email masivo a clientes, listas Mailpoet fin de año, recordatorios mismas fechas',
+                'file' => 'email-campaigns/email-campaigns.php',
+                'dependencies' => []
+            ],
+            'ical-sync' => [
+                'name' => 'Sincronización iCal',
+                'description' => 'Export/import calendarios para Airbnb, Booking.com, VRBO',
+                'file' => 'ical-sync/ical-sync.php',
                 'dependencies' => []
             ]
         ];
@@ -333,6 +465,11 @@ class Alquipress_Module_Manager
     {
         $saved = get_option(self::DASHBOARD_TEMPLATE_OPTION, self::DASHBOARD_TEMPLATE_DEFAULT);
         return self::sanitize_dashboard_template($saved);
+    }
+
+    public static function is_dark_mode()
+    {
+        return (bool) get_option(self::DARK_MODE_OPTION, false);
     }
 
     /**
@@ -419,7 +556,7 @@ class Alquipress_Module_Manager
         }
         
         // Forzar siempre la carga de los módulos de páginas del menú para que Panel, Propiedades, Reservas, Clientes y Propietarios funcionen
-        $page_modules = ['dashboard-widgets', 'properties-page', 'owners-page', 'bookings-page', 'clients-page', 'communications'];
+        $page_modules = ['dashboard-widgets', 'properties-page', 'owners-page', 'bookings-page', 'wc-bookings-dashboard', 'clients-page', 'communications'];
         foreach ($page_modules as $module_id) {
             if (!isset($this->modules[$module_id])) {
                 continue;
@@ -457,6 +594,16 @@ class Alquipress_Module_Manager
     public function register_dashboard_sections()
     {
         remove_submenu_page('alquipress-settings', 'alquipress-settings');
+
+        add_submenu_page(
+            'alquipress-settings',
+            __('Buscar', 'alquipress'),
+            __('Buscar', 'alquipress'),
+            'edit_posts',
+            'alquipress-search',
+            [$this, 'router_render_section']
+        );
+        remove_submenu_page('alquipress-settings', 'alquipress-search');
 
         add_submenu_page(
             'alquipress-settings',
@@ -506,6 +653,26 @@ class Alquipress_Module_Manager
             'alquipress-finanzas',
             [$this, 'router_render_section']
         );
+        if (!empty($this->active_modules['owner-invoicing'])) {
+            add_submenu_page(
+                'alquipress-settings',
+                __('Facturación propietarios', 'alquipress'),
+                __('Facturación propietarios', 'alquipress'),
+                'manage_options',
+                'alquipress-owner-invoicing',
+                [$this, 'router_render_section']
+            );
+        }
+        if (!empty($this->active_modules['accounting'])) {
+            add_submenu_page(
+                'alquipress-settings',
+                __('Contabilidad', 'alquipress'),
+                __('Contabilidad', 'alquipress'),
+                'manage_options',
+                'alquipress-accounting',
+                [$this, 'router_render_section']
+            );
+        }
         add_submenu_page(
             'alquipress-settings',
             __('Informes', 'alquipress'),
@@ -529,10 +696,20 @@ class Alquipress_Module_Manager
         if (!empty($this->active_modules['communications'])) {
             add_submenu_page(
                 'alquipress-settings',
-                __('Comunicación', 'alquipress'),
-                __('Comunicación', 'alquipress'),
+                __('Inbox', 'alquipress'),
+                __('Inbox', 'alquipress'),
                 'manage_options',
                 'alquipress-comunicacion',
+                [$this, 'router_render_section']
+            );
+        }
+        if (!empty($this->active_modules['email-campaigns'])) {
+            add_submenu_page(
+                'alquipress-settings',
+                __('Campañas de email', 'alquipress'),
+                __('Campañas de email', 'alquipress'),
+                'manage_options',
+                'alquipress-email-campaigns',
                 [$this, 'router_render_section']
             );
         }
@@ -561,6 +738,11 @@ class Alquipress_Module_Manager
 
         if ($page === 'alquipress-settings') {
             $this->render_settings_page();
+            return;
+        }
+
+        if ($page === 'alquipress-search') {
+            require_once ALQUIPRESS_PATH . 'includes/admin/global-search-page.php';
             return;
         }
 
@@ -611,6 +793,9 @@ class Alquipress_Module_Manager
             $dashboard_template = self::sanitize_dashboard_template($dashboard_template);
             update_option(self::DASHBOARD_TEMPLATE_OPTION, $dashboard_template);
 
+            $dark_mode = isset($_POST['dark_mode']) ? '1' : '0';
+            update_option(self::DARK_MODE_OPTION, $dark_mode);
+
             add_settings_error(
                 'alquipress_messages',
                 'alquipress_message',
@@ -625,7 +810,9 @@ class Alquipress_Module_Manager
         // Mostrar mensajes (guardado se maneja en handle_form_submit via admin_init)
         settings_errors('alquipress_messages');
 
-        // Render interfaz
+        // Pasar variables al template para evitar dependencia de $this en contexto incluido
+        $modules = $this->modules;
+        $active_modules = $this->active_modules;
         require_once ALQUIPRESS_PATH . 'includes/admin/settings-page.php';
     }
 }

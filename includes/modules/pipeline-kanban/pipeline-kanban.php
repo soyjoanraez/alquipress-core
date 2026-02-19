@@ -20,19 +20,21 @@ class Alquipress_Pipeline_Kanban
 
     public function maybe_render_section($page)
     {
-        if ($page === 'alquipress-pipeline') {
+        $tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : '';
+        if ($page === 'alquipress-pipeline' && $tab !== 'cobros') {
             $this->render_pipeline_page();
         }
     }
 
     public function enqueue_section_assets($page)
     {
-        if ($page !== 'alquipress-pipeline') {
+        $tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : '';
+        if ($page !== 'alquipress-pipeline' || $tab === 'cobros') {
             return;
         }
         
-        // Cargar SortableJS
-        wp_enqueue_script('sortable-js', 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js', [], '1.15.0', true);
+        // Cargar SortableJS (local, sin CDN)
+        wp_enqueue_script('sortable-js', ALQUIPRESS_URL . 'includes/admin/assets/sortable.min.js', [], '1.15.0', true);
         
         // Cargar sistema de toast notifications
         wp_enqueue_style(
@@ -102,8 +104,15 @@ class Alquipress_Pipeline_Kanban
                 <main class="ap-owners-main">
                     <header class="ap-header">
                         <div class="ap-header-left">
-                            <h1 class="ap-header-title"><?php esc_html_e('Pipeline de Reservas', 'alquipress'); ?></h1>
-                            <p class="ap-header-subtitle"><?php esc_html_e('Gestión visual del flujo de reservas por estado', 'alquipress'); ?></p>
+                            <h1 class="ap-header-title"><?php esc_html_e('Pipeline', 'alquipress'); ?></h1>
+                            <div class="ap-pipeline-tabs" style="display:flex;gap:4px;margin-top:8px;">
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-pipeline')); ?>" class="ap-tab ap-tab-active" style="padding:6px 14px;border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;background:rgba(44,153,226,0.1);color:#2c99e2;">
+                                    <?php esc_html_e('Reservas', 'alquipress'); ?>
+                                </a>
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-pipeline&tab=cobros')); ?>" class="ap-tab" style="padding:6px 14px;border-radius:8px;font-size:14px;font-weight:500;text-decoration:none;color:#507a95;">
+                                    <?php esc_html_e('Cobros', 'alquipress'); ?>
+                                </a>
+                            </div>
                         </div>
                         <div class="ap-header-right">
                             <div class="ap-pipeline-filters-row">
@@ -126,6 +135,10 @@ class Alquipress_Pipeline_Kanban
                                 <?php
                                 $orders = $this->get_orders_by_status($status);
                                 $count = count($orders);
+                                $column_total = 0;
+                                foreach ($orders as $o) {
+                                    $column_total += (float) (method_exists($o, 'get_meta') && $o->get_meta('_apm_booking_total') ? $o->get_meta('_apm_booking_total') : $o->get_total());
+                                }
                                 ?>
 
                                 <div class="pipeline-column" data-status="<?php echo esc_attr($status); ?>">
@@ -134,6 +147,9 @@ class Alquipress_Pipeline_Kanban
                                             <span class="column-label"><?php echo esc_html($config['label']); ?></span>
                                             <span class="column-count"><?php echo $count; ?></span>
                                         </div>
+                                        <?php if ($column_total > 0): ?>
+                                        <div class="column-total"><?php echo wc_price($column_total); ?></div>
+                                        <?php endif; ?>
                                     </div>
 
                                     <div class="column-cards" id="cards-<?php echo esc_attr($status); ?>">
@@ -163,6 +179,7 @@ class Alquipress_Pipeline_Kanban
             .column-title { display: flex; justify-content: space-between; align-items: center; }
             .column-label { font-weight: 700; color: #1e293b; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
             .column-count { background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+            .column-total { margin-top: 6px; font-size: 12px; font-weight: 600; color: #059669; }
             .column-cards { padding: 12px; flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; min-height: 100px; }
             .empty-column-msg { text-align: center; padding: 20px; color: #94a3b8; font-size: 12px; font-style: italic; }
             
@@ -253,6 +270,7 @@ class Alquipress_Pipeline_Kanban
             $status = 'wc-' . $status;
         }
         
+        // meta_query compatible con HPOS (WooCommerce abstrae internamente desde 8.2+)
         return wc_get_orders([
             'limit' => 20,
             'status' => $status,

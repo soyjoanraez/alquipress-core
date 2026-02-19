@@ -15,6 +15,14 @@
     --ap-settings-radius: 12px;
 }
 
+body.ap-dark-mode .alquipress-settings-page {
+    --ap-settings-bg: #1a1d24;
+    --ap-settings-surface: #242830;
+    --ap-settings-border: #3a3f4a;
+    --ap-settings-text: #e8eaed;
+    --ap-settings-muted: #9ca3af;
+}
+
 .alquipress-settings-page {
     max-width: 1200px;
     margin-top: 12px;
@@ -185,6 +193,19 @@
 
 .ap-settings-td-desc {
     color: var(--ap-settings-muted);
+}
+
+/* Dark mode option */
+.ap-settings-dark-mode-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0;
+}
+
+.ap-settings-dark-mode-label {
+    font-size: 14px;
+    color: var(--ap-settings-text);
 }
 
 /* Switch */

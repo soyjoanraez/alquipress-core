@@ -35,16 +35,93 @@
                 "type": "textarea"
             },
             {
+                "key": "field_guest_sex",
+                "label": "Sexo",
+                "name": "guest_sex",
+                "type": "select",
+                "choices": {
+                    "M": "Masculino",
+                    "F": "Femenino",
+                    "X": "Otro / No binario"
+                }
+            },
+            {
+                "key": "field_guest_birth_date",
+                "label": "Fecha de nacimiento",
+                "name": "guest_birth_date",
+                "type": "date_picker",
+                "display_format": "d/m/Y",
+                "return_format": "Y-m-d",
+                "first_day": 1
+            },
+            {
                 "key": "field_guest_prefs",
                 "label": "Preferencias",
                 "name": "guest_preferences",
                 "type": "checkbox",
                 "choices": {
                     "mascotas": "Mascotas",
+                    "nofumador": "No fumador",
                     "fumador": "Fumador",
+                    "familia": "Familia",
                     "ninos": "Niños/Familia",
-                    "accesibilidad": "Movilidad Reducida"
+                    "accesibilidad": "Movilidad Reducida",
+                    "nomada": "Nómada digital",
+                    "silencio": "Zona tranquila",
+                    "parking": "Parking",
+                    "cocina": "Cocina equipada",
+                    "piscina": "Piscina",
+                    "playa": "Cerca de la playa"
                 }
+            },
+            {
+                "key": "field_guest_language",
+                "label": "Idioma preferido",
+                "name": "guest_preferred_language",
+                "type": "select",
+                "choices": {
+                    "es": "Español",
+                    "en": "English",
+                    "fr": "Français",
+                    "de": "Deutsch",
+                    "it": "Italiano",
+                    "other": "Otro"
+                },
+                "default_value": "es"
+            },
+            {
+                "key": "field_guest_contact_channel",
+                "label": "Canal de contacto preferido",
+                "name": "guest_contact_channel",
+                "type": "select",
+                "choices": {
+                    "whatsapp": "WhatsApp",
+                    "email": "Email",
+                    "phone": "Teléfono",
+                    "sms": "SMS"
+                },
+                "default_value": "whatsapp"
+            },
+            {
+                "key": "field_guest_trip_type",
+                "label": "Tipo de viaje habitual",
+                "name": "guest_trip_type",
+                "type": "select",
+                "choices": {
+                    "family": "Familiar",
+                    "couple": "Pareja",
+                    "work": "Trabajo",
+                    "group": "Grupo",
+                    "other": "Otro"
+                },
+                "default_value": "family"
+            },
+            {
+                "key": "field_guest_special_needs",
+                "label": "Necesidades especiales",
+                "name": "guest_special_needs",
+                "type": "textarea",
+                "instructions": "Ej: cuna, trona, acceso PMR, cargador vehículo eléctrico"
             },
             {
                 "key": "field_guest_docs",
@@ -61,12 +138,12 @@
                         "name": "tipo_doc",
                         "type": "select",
                         "choices": {
-                            "dni": "DNI",
-                            "pasaporte": "Pasaporte",
-                            "nie": "NIE",
-                            "otro": "Otro"
+                            "NIF": "NIF / DNI",
+                            "NIE": "NIE",
+                            "PAS": "Pasaporte",
+                            "OTRO": "Otro"
                         },
-                        "default_value": "dni",
+                        "default_value": "NIF",
                         "required": 1
                     },
                     {
@@ -85,6 +162,23 @@
                         "display_format": "d/m/Y",
                         "return_format": "Y-m-d",
                         "first_day": 1
+                    },
+                    {
+                        "key": "field_doc_issue_date",
+                        "label": "Fecha de Expedición",
+                        "name": "fecha_expedicion",
+                        "type": "date_picker",
+                        "display_format": "d/m/Y",
+                        "return_format": "Y-m-d",
+                        "first_day": 1
+                    },
+                    {
+                        "key": "field_doc_issue_country",
+                        "label": "País de Expedición",
+                        "name": "pais_expedicion",
+                        "type": "text",
+                        "placeholder": "Ej: ESP",
+                        "instructions": "Código ISO de 3 letras recomendado (ESP, FRA, ITA...)"
                     },
                     {
                         "key": "field_doc_name",

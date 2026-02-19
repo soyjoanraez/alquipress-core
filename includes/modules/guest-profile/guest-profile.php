@@ -76,7 +76,35 @@ class Alquipress_Guest_Profile
         $internal_notes = get_field('guest_internal_notes', 'user_' . $user_id) ?: '';
         $nationality = get_field('guest_nationality', 'user_' . $user_id) ?: '';
         $phone = get_field('guest_phone', 'user_' . $user_id) ?: '';
+        $sex = get_field('guest_sex', 'user_' . $user_id) ?: '';
+        $birth_date = get_field('guest_birth_date', 'user_' . $user_id) ?: '';
+        $preferred_language = get_field('guest_preferred_language', 'user_' . $user_id) ?: '';
+        $contact_channel = get_field('guest_contact_channel', 'user_' . $user_id) ?: '';
+        $trip_type = get_field('guest_trip_type', 'user_' . $user_id) ?: '';
+        $special_needs = get_field('guest_special_needs', 'user_' . $user_id) ?: '';
         $documents = get_field('guest_documents', 'user_' . $user_id) ?: [];
+
+        $language_labels = [
+            'es' => 'Español',
+            'en' => 'English',
+            'fr' => 'Français',
+            'de' => 'Deutsch',
+            'it' => 'Italiano',
+            'other' => 'Otro',
+        ];
+        $channel_labels = [
+            'whatsapp' => 'WhatsApp',
+            'email' => 'Email',
+            'phone' => 'Teléfono',
+            'sms' => 'SMS',
+        ];
+        $trip_labels = [
+            'family' => 'Familiar',
+            'couple' => 'Pareja',
+            'work' => 'Trabajo',
+            'group' => 'Grupo',
+            'other' => 'Otro',
+        ];
 
         // Calcular gasto total
         $total_spent = $this->get_user_total_spent($user_id);
@@ -158,8 +186,24 @@ class Alquipress_Guest_Profile
                             <span class="ap-clients-metric-value ap-guest-stat-value"><?php echo $nationality ? esc_html($nationality) : '—'; ?></span>
                         </div>
                         <div class="ap-clients-metric-card">
+                            <span class="ap-clients-metric-label"><?php esc_html_e('Sexo', 'alquipress'); ?></span>
+                            <span class="ap-clients-metric-value ap-guest-stat-value"><?php echo $sex ? esc_html($sex) : '—'; ?></span>
+                        </div>
+                        <div class="ap-clients-metric-card">
+                            <span class="ap-clients-metric-label"><?php esc_html_e('Nacimiento', 'alquipress'); ?></span>
+                            <span class="ap-clients-metric-value ap-guest-stat-value"><?php echo $birth_date ? esc_html(date_i18n('d/m/Y', strtotime($birth_date))) : '—'; ?></span>
+                        </div>
+                        <div class="ap-clients-metric-card">
                             <span class="ap-clients-metric-label"><?php esc_html_e('Gasto total', 'alquipress'); ?></span>
                             <span class="ap-clients-metric-value"><?php echo function_exists('wc_price') ? wc_price($total_spent) : number_format_i18n($total_spent, 2) . ' €'; ?></span>
+                        </div>
+                        <div class="ap-clients-metric-card">
+                            <span class="ap-clients-metric-label"><?php esc_html_e('Idioma', 'alquipress'); ?></span>
+                            <span class="ap-clients-metric-value ap-guest-stat-value"><?php echo $preferred_language ? esc_html($language_labels[$preferred_language] ?? $preferred_language) : '—'; ?></span>
+                        </div>
+                        <div class="ap-clients-metric-card">
+                            <span class="ap-clients-metric-label"><?php esc_html_e('Canal', 'alquipress'); ?></span>
+                            <span class="ap-clients-metric-value ap-guest-stat-value"><?php echo $contact_channel ? esc_html($channel_labels[$contact_channel] ?? $contact_channel) : '—'; ?></span>
                         </div>
                     </div>
 
@@ -175,12 +219,17 @@ class Alquipress_Guest_Profile
                         <?php
                         $pref_icons = [
                             'mascotas' => ['icon' => '🐾', 'label' => 'Admite Mascotas'],
+                            'fumador' => ['icon' => '🚬', 'label' => 'Fumador'],
                             'nofumador' => ['icon' => '🚭', 'label' => 'No Fumador'],
+                            'ninos' => ['icon' => '🧒', 'label' => 'Niños/Familia'],
                             'familia' => ['icon' => '👨‍👩‍👧', 'label' => 'Familia'],
                             'accesibilidad' => ['icon' => '♿', 'label' => 'Accesibilidad'],
                             'nomada' => ['icon' => '💻', 'label' => 'Nómada Digital'],
                             'silencio' => ['icon' => '🤫', 'label' => 'Zona Tranquila'],
-                            'parking' => ['icon' => '🚗', 'label' => 'Requiere Parking']
+                            'parking' => ['icon' => '🚗', 'label' => 'Requiere Parking'],
+                            'cocina' => ['icon' => '🍳', 'label' => 'Cocina Equipada'],
+                            'piscina' => ['icon' => '🏊', 'label' => 'Piscina'],
+                            'playa' => ['icon' => '🏖️', 'label' => 'Cerca de la Playa']
                         ];
 
                         foreach ($preferences as $pref) {
@@ -192,6 +241,32 @@ class Alquipress_Guest_Profile
                             </div>
                         <?php } ?>
                     </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($trip_type || $special_needs): ?>
+                <div class="ap-guest-profile-card">
+                    <h2 class="ap-guest-card-title">
+                        <span class="dashicons dashicons-admin-tools"></span>
+                        <?php esc_html_e('Opciones operativas', 'alquipress'); ?>
+                    </h2>
+                    <div class="ap-guest-preferences-grid">
+                        <?php if ($trip_type): ?>
+                            <div class="ap-guest-preference-item">
+                                <span class="ap-guest-pref-icon">🧳</span>
+                                <span class="ap-guest-pref-label"><?php echo esc_html($trip_labels[$trip_type] ?? $trip_type); ?></span>
+                            </div>
+                        <?php endif; ?>
+                        <?php if ($contact_channel): ?>
+                            <div class="ap-guest-preference-item">
+                                <span class="ap-guest-pref-icon">📲</span>
+                                <span class="ap-guest-pref-label"><?php echo esc_html($channel_labels[$contact_channel] ?? $contact_channel); ?></span>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <?php if ($special_needs): ?>
+                        <p class="ap-guest-empty-text" style="margin-top:12px;"><?php echo esc_html($special_needs); ?></p>
+                    <?php endif; ?>
                 </div>
             <?php endif; ?>
 
@@ -208,12 +283,6 @@ class Alquipress_Guest_Profile
                 <?php if (!empty($documents)): ?>
                     <div class="ap-guest-documents-grid">
                         <?php
-                        $tipo_labels = [
-                            'dni' => 'DNI',
-                            'pasaporte' => 'Pasaporte',
-                            'nie' => 'NIE',
-                            'otro' => 'Otro'
-                        ];
                         $today = strtotime('today');
                         $expiring_threshold = strtotime('+30 days');
 
@@ -244,7 +313,7 @@ class Alquipress_Guest_Profile
                                 }
                             }
                             
-                            $tipo_label = !empty($tipo) ? ($tipo_labels[$tipo] ?? ucfirst($tipo)) : ($nombre ?: 'Documento');
+                            $tipo_label = !empty($tipo) ? alquipress_ses_get_document_label($tipo) : ($nombre ?: 'Documento');
                             ?>
                             <div class="ap-guest-document-item <?php echo esc_attr($status_class); ?>">
                                 <div class="ap-guest-doc-header">
@@ -326,6 +395,7 @@ class Alquipress_Guest_Profile
                                 <th><?php esc_html_e('Check-out', 'alquipress'); ?></th>
                                 <th><?php esc_html_e('Noches', 'alquipress'); ?></th>
                                 <th><?php esc_html_e('Total', 'alquipress'); ?></th>
+                                <th><?php esc_html_e('Documento', 'alquipress'); ?></th>
                                 <th><?php esc_html_e('Estado', 'alquipress'); ?></th>
                                 <th><?php esc_html_e('Acciones', 'alquipress'); ?></th>
                             </tr>
@@ -358,6 +428,16 @@ class Alquipress_Guest_Profile
                                     <td><?php echo $checkout ? date_i18n('d/m/Y', strtotime($checkout)) : '-'; ?></td>
                                     <td><?php echo $nights > 0 ? $nights : '-'; ?></td>
                                     <td><strong><?php echo wc_price($order->get_total()); ?></strong></td>
+                                    <td>
+                                        <?php
+                                        if (class_exists('Alquipress_Checkout_Document_Fields')) {
+                                            $doc = Alquipress_Checkout_Document_Fields::get_order_document($order_id);
+                                            echo $doc ? esc_html($doc) : '—';
+                                        } else {
+                                            echo '—';
+                                        }
+                                        ?>
+                                    </td>
                                     <td><?php echo esc_html($status_label); ?></td>
                                     <td>
                                         <a href="<?php echo get_edit_post_link($order_id); ?>" class="ap-clients-link" target="_blank"><?php esc_html_e('Ver', 'alquipress'); ?></a>
@@ -369,6 +449,73 @@ class Alquipress_Guest_Profile
                     </div>
                 <?php else: ?>
                     <p class="ap-guest-empty-text ap-guest-empty-reservas"><?php esc_html_e('Este cliente aún no tiene reservas registradas.', 'alquipress'); ?></p>
+                <?php endif; ?>
+            </div>
+
+            <!-- Comunicaciones -->
+            <?php
+            $guest_comms = [];
+            if (post_type_exists('alquipress_comm')) {
+                $guest_comms = get_posts([
+                    'post_type' => 'alquipress_comm',
+                    'post_status' => 'publish',
+                    'numberposts' => 10,
+                    'orderby' => 'date',
+                    'order' => 'DESC',
+                    'meta_query' => [
+                        [
+                            'key' => 'ap_comm_entity_type',
+                            'value' => 'cliente',
+                            'compare' => '=',
+                        ],
+                        [
+                            'key' => 'ap_comm_entity_id',
+                            'value' => $user_id,
+                            'compare' => '=',
+                        ],
+                    ],
+                ]);
+            }
+            $inbox_url = add_query_arg(
+                [
+                    'tab' => 'manage',
+                    'filter_guest_id' => $user_id,
+                    'filter_entity_type' => 'cliente',
+                    'filter_entity_id' => $user_id,
+                ],
+                admin_url('admin.php?page=alquipress-comunicacion')
+            );
+            ?>
+            <div class="ap-guest-profile-card">
+                <h2 class="ap-guest-card-title">
+                    <span class="dashicons dashicons-email-alt"></span>
+                    <?php esc_html_e('Comunicaciones', 'alquipress'); ?>
+                    <?php if (!empty($guest_comms)): ?>
+                        <span class="ap-guest-doc-count-badge"><?php echo count($guest_comms); ?></span>
+                    <?php endif; ?>
+                </h2>
+                <?php if (!empty($guest_comms)): ?>
+                    <div class="ap-guest-comms-list">
+                        <?php foreach ($guest_comms as $comm): ?>
+                            <?php
+                            $direction = get_post_meta($comm->ID, 'ap_comm_direction', true);
+                            $label = $direction === 'inbound' ? __('Entrada', 'alquipress') : __('Salida', 'alquipress');
+                            ?>
+                            <div class="ap-guest-comm-item">
+                                <span class="ap-guest-comm-date"><?php echo esc_html(wp_date('d/m/Y H:i', strtotime($comm->post_date))); ?></span>
+                                <span class="ap-guest-comm-pill ap-guest-comm-pill-<?php echo $direction === 'inbound' ? 'in' : 'out'; ?>"><?php echo esc_html($label); ?></span>
+                                <span class="ap-guest-comm-subject" title="<?php echo esc_attr($comm->post_title); ?>"><?php echo esc_html(wp_trim_words($comm->post_title, 6)); ?></span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <p class="ap-guest-comms-footer">
+                        <a href="<?php echo esc_url($inbox_url); ?>" class="ap-clients-link"><?php esc_html_e('Ir al Inbox', 'alquipress'); ?></a>
+                    </p>
+                <?php else: ?>
+                    <p class="ap-guest-empty-text"><?php esc_html_e('Las comunicaciones vinculadas a este cliente aparecerán aquí.', 'alquipress'); ?></p>
+                    <p class="ap-guest-empty-actions">
+                        <a href="<?php echo esc_url($inbox_url); ?>" class="ap-clients-btn ap-clients-btn-primary"><?php esc_html_e('Ir al Inbox', 'alquipress'); ?></a>
+                    </p>
                 <?php endif; ?>
             </div>
                 </main>

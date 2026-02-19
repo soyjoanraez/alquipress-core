@@ -26,14 +26,18 @@
 /* Fondo zona de contenido cuando estamos en un CPT Pencil */
 body.post-type-propietario #wpcontent,
 body.post-type-product #wpcontent,
-body.post-type-shop_order #wpcontent {
+body.post-type-shop_order #wpcontent,
+body.woocommerce_page_wc-orders #wpcontent,
+body.admin_page_wc-orders #wpcontent {
     background: var(--ap-pencil-bg);
 }
 
 /* ========== .wrap (contenedor principal) ========== */
 body.post-type-propietario .wrap,
 body.post-type-product .wrap,
-body.post-type-shop_order .wrap {
+body.post-type-shop_order .wrap,
+body.woocommerce_page_wc-orders .wrap,
+body.admin_page_wc-orders .wrap {
     font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     max-width: 1400px;
     margin-top: 12px;
@@ -43,7 +47,9 @@ body.post-type-shop_order .wrap {
 
 body.post-type-propietario .wrap h1,
 body.post-type-product .wrap h1,
-body.post-type-shop_order .wrap h1 {
+body.post-type-shop_order .wrap h1,
+body.woocommerce_page_wc-orders .wrap h1,
+body.admin_page_wc-orders .wrap h1 {
     font-size: 28px;
     font-weight: 700;
     color: var(--ap-pencil-text);
@@ -139,7 +145,9 @@ body.post-type-shop_order #post-body-content {
 /* ========== Tablas (listados) ========== */
 body.post-type-propietario .wp-list-table,
 body.post-type-product .wp-list-table,
-body.post-type-shop_order .wp-list-table {
+body.post-type-shop_order .wp-list-table,
+body.woocommerce_page_wc-orders .wp-list-table,
+body.admin_page_wc-orders .wp-list-table {
     background: var(--ap-pencil-surface);
     border: 1px solid var(--ap-pencil-border);
     border-radius: var(--ap-pencil-radius-md);
@@ -149,7 +157,9 @@ body.post-type-shop_order .wp-list-table {
 
 body.post-type-propietario .wp-list-table thead th,
 body.post-type-product .wp-list-table thead th,
-body.post-type-shop_order .wp-list-table thead th {
+body.post-type-shop_order .wp-list-table thead th,
+body.woocommerce_page_wc-orders .wp-list-table thead th,
+body.admin_page_wc-orders .wp-list-table thead th {
     background: var(--ap-pencil-bg);
     color: var(--ap-pencil-muted);
     font-size: 11px;
@@ -162,7 +172,9 @@ body.post-type-shop_order .wp-list-table thead th {
 
 body.post-type-propietario .wp-list-table tbody td,
 body.post-type-product .wp-list-table tbody td,
-body.post-type-shop_order .wp-list-table tbody td {
+body.post-type-shop_order .wp-list-table tbody td,
+body.woocommerce_page_wc-orders .wp-list-table tbody td,
+body.admin_page_wc-orders .wp-list-table tbody td {
     padding: 12px 14px;
     border-bottom: 1px solid var(--ap-pencil-border);
     color: var(--ap-pencil-text);
@@ -171,7 +183,9 @@ body.post-type-shop_order .wp-list-table tbody td {
 
 body.post-type-propietario .wp-list-table tbody tr:hover,
 body.post-type-product .wp-list-table tbody tr:hover,
-body.post-type-shop_order .wp-list-table tbody tr:hover {
+body.post-type-shop_order .wp-list-table tbody tr:hover,
+body.woocommerce_page_wc-orders .wp-list-table tbody tr:hover,
+body.admin_page_wc-orders .wp-list-table tbody tr:hover {
     background: rgba(44, 153, 226, 0.04);
 }
 
@@ -190,7 +204,9 @@ body.post-type-shop_order .wp-list-table .row-actions a {
 /* ========== Tablenav (filtros, búsqueda, paginación) ========== */
 body.post-type-propietario .tablenav,
 body.post-type-product .tablenav,
-body.post-type-shop_order .tablenav {
+body.post-type-shop_order .tablenav,
+body.woocommerce_page_wc-orders .tablenav,
+body.admin_page_wc-orders .tablenav {
     background: var(--ap-pencil-surface);
     border: 1px solid var(--ap-pencil-border);
     border-radius: var(--ap-pencil-radius-md);
@@ -202,9 +218,13 @@ body.post-type-shop_order .tablenav {
 body.post-type-propietario .tablenav .actions select,
 body.post-type-product .tablenav .actions select,
 body.post-type-shop_order .tablenav .actions select,
+body.woocommerce_page_wc-orders .tablenav .actions select,
+body.admin_page_wc-orders .tablenav .actions select,
 body.post-type-propietario .tablenav .search-input,
 body.post-type-product .tablenav .search-input,
-body.post-type-shop_order .tablenav .search-input {
+body.post-type-shop_order .tablenav .search-input,
+body.woocommerce_page_wc-orders .tablenav .search-input,
+body.admin_page_wc-orders .tablenav .search-input {
     border-radius: var(--ap-pencil-radius-sm);
     border-color: var(--ap-pencil-border);
     font-size: 14px;
@@ -212,20 +232,26 @@ body.post-type-shop_order .tablenav .search-input {
 
 body.post-type-propietario .subsubsub,
 body.post-type-product .subsubsub,
-body.post-type-shop_order .subsubsub {
+body.post-type-shop_order .subsubsub,
+body.woocommerce_page_wc-orders .subsubsub,
+body.admin_page_wc-orders .subsubsub {
     color: var(--ap-pencil-muted);
     font-size: 13px;
 }
 
 body.post-type-propietario .subsubsub a,
 body.post-type-product .subsubsub a,
-body.post-type-shop_order .subsubsub a {
+body.post-type-shop_order .subsubsub a,
+body.woocommerce_page_wc-orders .subsubsub a,
+body.admin_page_wc-orders .subsubsub a {
     color: var(--ap-pencil-primary);
 }
 
 body.post-type-propietario .subsubsub a.current,
 body.post-type-product .subsubsub a.current,
-body.post-type-shop_order .subsubsub a.current {
+body.post-type-shop_order .subsubsub a.current,
+body.woocommerce_page_wc-orders .subsubsub a.current,
+body.admin_page_wc-orders .subsubsub a.current {
     color: var(--ap-pencil-text);
     font-weight: 600;
 }
@@ -265,7 +291,9 @@ body.post-type-shop_order .postbox .inside {
 /* ========== Botones ========== */
 body.post-type-propietario .button,
 body.post-type-product .button,
-body.post-type-shop_order .button {
+body.post-type-shop_order .button,
+body.woocommerce_page_wc-orders .button,
+body.admin_page_wc-orders .button {
     border-radius: var(--ap-pencil-radius-sm);
     font-weight: 500;
     transition: box-shadow 0.15s;
@@ -273,7 +301,9 @@ body.post-type-shop_order .button {
 
 body.post-type-propietario .button-primary,
 body.post-type-product .button-primary,
-body.post-type-shop_order .button-primary {
+body.post-type-shop_order .button-primary,
+body.woocommerce_page_wc-orders .button-primary,
+body.admin_page_wc-orders .button-primary {
     background: var(--ap-pencil-primary) !important;
     border-color: var(--ap-pencil-primary) !important;
     color: #fff !important;
@@ -282,7 +312,9 @@ body.post-type-shop_order .button-primary {
 
 body.post-type-propietario .button-primary:hover,
 body.post-type-product .button-primary:hover,
-body.post-type-shop_order .button-primary:hover {
+body.post-type-shop_order .button-primary:hover,
+body.woocommerce_page_wc-orders .button-primary:hover,
+body.admin_page_wc-orders .button-primary:hover {
     background: #2380c9 !important;
     border-color: #2380c9 !important;
     box-shadow: var(--ap-pencil-shadow-md);
@@ -420,6 +452,18 @@ body.post-type-shop_order .woocommerce-order-data .hndle {
 .ap-prop-btn-primary:hover {
     background: #2380c9;
     border-color: #2380c9;
+}
+
+.ap-prop-btn-full-edit {
+    background: transparent;
+    border-color: var(--ap-pencil-border);
+    color: var(--ap-pencil-text);
+}
+
+.ap-prop-btn-full-edit:hover {
+    background: var(--ap-pencil-bg);
+    border-color: var(--ap-pencil-primary);
+    color: var(--ap-pencil-primary);
 }
 
 .ap-prop-breadcrumb {
@@ -786,6 +830,52 @@ body.post-type-shop_order .woocommerce-order-data .hndle {
     opacity: 0.9;
 }
 
+/* Sección de metaboxes con enlace a edición completa */
+.ap-prop-metaboxes-section {
+    margin: 24px 0 16px;
+    padding: 20px 24px;
+    background: #f8fafb;
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius-md);
+}
+
+.ap-prop-metaboxes-header .ap-prop-metaboxes-title {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ap-pencil-text);
+}
+
+.ap-prop-metaboxes-desc {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: var(--ap-pencil-muted);
+}
+
+.ap-prop-metaboxes-full-link {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ap-pencil-primary);
+    text-decoration: none;
+}
+
+.ap-prop-metaboxes-full-link:hover {
+    text-decoration: underline;
+}
+
+.ap-prop-widget-action-full-edit {
+    background: #e8f4fc !important;
+    border-color: var(--ap-pencil-primary) !important;
+    color: var(--ap-pencil-primary) !important;
+}
+
+.ap-prop-widget-actions-note {
+    margin-top: 12px !important;
+    font-size: 12px !important;
+    line-height: 1.4;
+}
+
 /* Ocultar sidebar de meta boxes cuando no está en Overview */
 body.ap-prop-tab-non-overview.post-type-product #postbox-container-1,
 body.ap-prop-tab-non-overview.post-type-product #postbox-container-2 {
@@ -809,6 +899,18 @@ body.ap-prop-tab-non-overview.post-type-product #postbox-container-2 {
 
 #ap-prop-overview-content .postbox .inside {
     padding: 16px;
+}
+
+/* Sección "Datos del producto" a 100% de ancho */
+.ap-prop-card-fullwidth {
+    width: 100%;
+    max-width: none;
+    margin-top: 32px;
+}
+
+/* Panel WC Bookings "Datos del producto" en overview */
+#ap-prop-overview-content #woocommerce-product-data {
+    margin-bottom: 24px;
 }
 
 /* Ocultar meta boxes duplicados que puedan quedar fuera del contenedor overview */
@@ -1042,4 +1144,79 @@ body.post-type-product #post-body-content:empty {
     background: var(--ap-pencil-surface);
     border-color: var(--ap-pencil-primary);
     color: var(--ap-pencil-primary);
+}
+
+/* ========== Estilos específicos para página de órdenes de WooCommerce (wc-orders) ========== */
+body.woocommerce_page_wc-orders .wp-list-table .row-actions,
+body.admin_page_wc-orders .wp-list-table .row-actions {
+    color: var(--ap-pencil-muted);
+}
+
+body.woocommerce_page_wc-orders .wp-list-table .row-actions a,
+body.admin_page_wc-orders .wp-list-table .row-actions a {
+    color: var(--ap-pencil-primary);
+}
+
+body.woocommerce_page_wc-orders .page-title-action,
+body.admin_page_wc-orders .page-title-action {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: var(--ap-pencil-radius-md);
+    border: 1px solid var(--ap-pencil-border);
+    background: var(--ap-pencil-surface);
+    color: var(--ap-pencil-primary);
+    box-shadow: var(--ap-pencil-shadow);
+    vertical-align: middle;
+    height: auto;
+    line-height: 1.4;
+}
+
+body.woocommerce_page_wc-orders .page-title-action:hover,
+body.admin_page_wc-orders .page-title-action:hover {
+    background: var(--ap-pencil-bg);
+    border-color: var(--ap-pencil-primary);
+    color: var(--ap-pencil-primary);
+}
+
+/* Estilos para filtros y búsqueda en la página de órdenes */
+body.woocommerce_page_wc-orders .tablenav .tablenav-pages,
+body.admin_page_wc-orders .tablenav .tablenav-pages {
+    color: var(--ap-pencil-muted);
+    font-size: 13px;
+}
+
+body.woocommerce_page_wc-orders .tablenav .tablenav-pages a,
+body.admin_page_wc-orders .tablenav .tablenav-pages a {
+    color: var(--ap-pencil-primary);
+}
+
+body.woocommerce_page_wc-orders .tablenav .tablenav-pages .current,
+body.admin_page_wc-orders .tablenav .tablenav-pages .current {
+    color: var(--ap-pencil-text);
+    font-weight: 600;
+}
+
+/* Estilos para inputs y selects en la página de órdenes */
+body.woocommerce_page_wc-orders input[type="text"],
+body.woocommerce_page_wc-orders input[type="search"],
+body.woocommerce_page_wc-orders select,
+body.admin_page_wc-orders input[type="text"],
+body.admin_page_wc-orders input[type="search"],
+body.admin_page_wc-orders select {
+    border-radius: var(--ap-pencil-radius-sm);
+    border-color: var(--ap-pencil-border);
+    font-size: 14px;
+    padding: 6px 10px;
+}
+
+body.woocommerce_page_wc-orders input[type="text"]:focus,
+body.woocommerce_page_wc-orders input[type="search"]:focus,
+body.woocommerce_page_wc-orders select:focus,
+body.admin_page_wc-orders input[type="text"]:focus,
+body.admin_page_wc-orders input[type="search"]:focus,
+body.admin_page_wc-orders select:focus {
+    border-color: var(--ap-pencil-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(44, 153, 226, 0.1);
 }

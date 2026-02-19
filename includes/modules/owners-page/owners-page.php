@@ -262,14 +262,29 @@ class Alquipress_Owners_Page
         return '';
     }
 
-    private function get_upcoming_payments($limit = 3)
+    private function get_upcoming_payments($limit = 7)
     {
         if (!function_exists('wc_get_orders')) {
             return [];
         }
 
+        global $wpdb;
+        $table_schedule = $wpdb->prefix . 'apm_payment_schedule';
+        $has_schedule = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table_schedule)) === $table_schedule);
+
+        $schedule_dates = [];
+        if ($has_schedule) {
+            $rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT order_id, scheduled_date FROM {$table_schedule} WHERE status = 'pending' AND scheduled_date >= %s ORDER BY scheduled_date ASC LIMIT 50",
+                current_time('Y-m-d') . ' 00:00:00'
+            ));
+            foreach ($rows as $r) {
+                $schedule_dates[(int) $r->order_id] = $r->scheduled_date;
+            }
+        }
+
         $orders = wc_get_orders([
-            'status' => ['pending', 'on-hold', 'processing'],
+            'status' => ['pending', 'on-hold', 'processing', 'deposito-ok'],
             'limit' => 60,
             'orderby' => 'date',
             'order' => 'ASC',
@@ -278,11 +293,18 @@ class Alquipress_Owners_Page
         $today = new DateTime('today', wp_timezone());
         $items = [];
         foreach ($orders as $order) {
-            $due = $this->get_order_due_date($order);
-            if (!$due) {
-                continue;
+            $order_id = $order->get_id();
+            $due = null;
+            if (isset($schedule_dates[$order_id])) {
+                $dt = DateTime::createFromFormat('Y-m-d H:i:s', $schedule_dates[$order_id], wp_timezone());
+                if ($dt) {
+                    $due = $dt;
+                }
             }
-            if ($due < $today) {
+            if (!$due) {
+                $due = $this->get_order_due_date($order);
+            }
+            if (!$due || $due < $today) {
                 continue;
             }
             $items[] = [
@@ -300,12 +322,13 @@ class Alquipress_Owners_Page
         $out = [];
         foreach ($items as $idx => $item) {
             $order = $item['order'];
-            $owner = $this->get_owner_name_for_order($order);
-            $owner = $owner !== '' ? $owner : __('Sin propietario asignado', 'alquipress');
+            $owner_name = $this->get_owner_name_for_order($order);
+            $owner_name = $owner_name !== '' ? $owner_name : __('Sin propietario asignado', 'alquipress');
+            $amount = (float) ($order->get_meta('_apm_booking_total') ?: $order->get_total());
             $out[] = [
-                'owner' => $owner,
+                'owner' => $owner_name,
                 'due' => $item['due'],
-                'amount' => function_exists('wc_price') ? wc_price($order->get_total()) : number_format_i18n($order->get_total(), 2) . ' €',
+                'amount' => function_exists('wc_price') ? wc_price($amount) : number_format_i18n($amount, 2) . ' €',
                 'class' => $colors[$idx % count($colors)],
             ];
         }
@@ -410,7 +433,7 @@ class Alquipress_Owners_Page
         $metrics = $this->get_metrics();
         $attention = $this->get_requires_attention();
         $top = $this->get_top_owners(5);
-        $payments = $this->get_upcoming_payments(3);
+        $payments = $this->get_upcoming_payments(7);
         $search_url = admin_url('edit.php?post_type=propietario');
         $add_url = admin_url('post-new.php?post_type=propietario');
         $search_query = isset($_GET['s']) ? sanitize_text_field(wp_unslash($_GET['s'])) : '';
@@ -488,7 +511,7 @@ class Alquipress_Owners_Page
                                         <span class="ap-owners-req-icon"><?php echo $this->get_icon_svg('triangle-alert'); ?></span>
                                         <h3 class="ap-owners-req-title"><?php esc_html_e('Requieren atención', 'alquipress'); ?></h3>
                                     </div>
-                                    <span class="ap-owners-req-count"><?php echo count($attention); ?> <?php echo count($attention) === 1 ? __('item', 'alquipress') : __('items', 'alquipress'); ?></span>
+                                    <span class="ap-owners-req-count"><?php echo count($attention); ?> <?php echo _n('elemento', 'elementos', count($attention), 'alquipress'); ?></span>
                                 </div>
                                 <div class="ap-owners-req-items">
                                     <?php if (empty($attention)) : ?>

@@ -459,6 +459,58 @@
     margin-top: 0;
 }
 
+/* Comunicaciones card */
+.ap-guest-comms-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ap-guest-comm-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: #f8fafc;
+    border-radius: var(--ap-radius-md);
+    font-size: 13px;
+}
+
+.ap-guest-comm-date {
+    color: var(--ap-text-secondary);
+    flex-shrink: 0;
+}
+
+.ap-guest-comm-pill {
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+}
+
+.ap-guest-comm-pill-in {
+    background: rgba(59, 130, 246, 0.15);
+    color: #1d4ed8;
+}
+
+.ap-guest-comm-pill-out {
+    background: rgba(16, 185, 129, 0.15);
+    color: #059669;
+}
+
+.ap-guest-comm-subject {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ap-guest-comms-footer {
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
 /* Responsive */
 @media screen and (max-width: 1200px) {
     .ap-guest-stats-grid {

@@ -125,6 +125,31 @@ class Alquipress_Guest_Editor
             update_field('guest_nationality', sanitize_text_field($_POST['guest_nationality']), 'user_' . $user_id);
         }
 
+        if (isset($_POST['guest_sex'])) {
+            update_field('guest_sex', sanitize_text_field($_POST['guest_sex']), 'user_' . $user_id);
+        }
+
+        if (isset($_POST['guest_birth_date'])) {
+            $birth_date = sanitize_text_field($_POST['guest_birth_date']);
+            update_field('guest_birth_date', alquipress_is_iso_date($birth_date) ? $birth_date : '', 'user_' . $user_id);
+        }
+
+        if (isset($_POST['guest_preferred_language'])) {
+            update_field('guest_preferred_language', sanitize_text_field($_POST['guest_preferred_language']), 'user_' . $user_id);
+        }
+
+        if (isset($_POST['guest_contact_channel'])) {
+            update_field('guest_contact_channel', sanitize_text_field($_POST['guest_contact_channel']), 'user_' . $user_id);
+        }
+
+        if (isset($_POST['guest_trip_type'])) {
+            update_field('guest_trip_type', sanitize_text_field($_POST['guest_trip_type']), 'user_' . $user_id);
+        }
+
+        if (isset($_POST['guest_special_needs'])) {
+            update_field('guest_special_needs', sanitize_textarea_field($_POST['guest_special_needs']), 'user_' . $user_id);
+        }
+
         // Actualizar datos básicos del usuario
         $userdata = [
             'ID' => $user_id,
@@ -180,6 +205,34 @@ class Alquipress_Guest_Editor
         $internal_notes = get_field('guest_internal_notes', 'user_' . $user_id) ?: '';
         $nationality = get_field('guest_nationality', 'user_' . $user_id) ?: '';
         $phone = get_field('guest_phone', 'user_' . $user_id) ?: '';
+        $sex = get_field('guest_sex', 'user_' . $user_id) ?: '';
+        $birth_date = get_field('guest_birth_date', 'user_' . $user_id) ?: '';
+        $preferred_language = get_field('guest_preferred_language', 'user_' . $user_id) ?: 'es';
+        $contact_channel = get_field('guest_contact_channel', 'user_' . $user_id) ?: 'whatsapp';
+        $trip_type = get_field('guest_trip_type', 'user_' . $user_id) ?: 'family';
+        $special_needs = get_field('guest_special_needs', 'user_' . $user_id) ?: '';
+
+        $language_options = [
+            'es' => 'Español',
+            'en' => 'English',
+            'fr' => 'Français',
+            'de' => 'Deutsch',
+            'it' => 'Italiano',
+            'other' => 'Otro',
+        ];
+        $contact_options = [
+            'whatsapp' => 'WhatsApp',
+            'email' => 'Email',
+            'phone' => 'Teléfono',
+            'sms' => 'SMS',
+        ];
+        $trip_options = [
+            'family' => 'Familiar',
+            'couple' => 'Pareja',
+            'work' => 'Trabajo',
+            'group' => 'Grupo',
+            'other' => 'Otro',
+        ];
 
         // Mensaje de éxito
         $updated = isset($_GET['updated']) && $_GET['updated'] === 'true';
@@ -251,6 +304,22 @@ class Alquipress_Guest_Editor
                                 <input type="text" id="guest_nationality" name="guest_nationality"
                                     value="<?php echo esc_attr($nationality); ?>" class="regular-text">
                             </div>
+
+                            <div class="form-field">
+                                <label for="guest_sex">Sexo</label>
+                                <select id="guest_sex" name="guest_sex" class="regular-text">
+                                    <option value=""><?php esc_html_e('Seleccionar', 'alquipress'); ?></option>
+                                    <option value="M" <?php selected($sex, 'M'); ?>><?php esc_html_e('Masculino', 'alquipress'); ?></option>
+                                    <option value="F" <?php selected($sex, 'F'); ?>><?php esc_html_e('Femenino', 'alquipress'); ?></option>
+                                    <option value="X" <?php selected($sex, 'X'); ?>><?php esc_html_e('Otro / No binario', 'alquipress'); ?></option>
+                                </select>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="guest_birth_date">Fecha de nacimiento</label>
+                                <input type="date" id="guest_birth_date" name="guest_birth_date"
+                                    value="<?php echo esc_attr($birth_date); ?>" class="regular-text">
+                            </div>
                         </div>
 
                         <!-- Estado y Valoración -->
@@ -296,12 +365,17 @@ class Alquipress_Guest_Editor
                                 <?php
                                 $pref_options = [
                                     'mascotas' => ['icon' => '🐾', 'label' => 'Admite Mascotas'],
+                                    'fumador' => ['icon' => '🚬', 'label' => 'Fumador'],
                                     'nofumador' => ['icon' => '🚭', 'label' => 'No Fumador'],
+                                    'ninos' => ['icon' => '🧒', 'label' => 'Niños/Familia'],
                                     'familia' => ['icon' => '👨‍👩‍👧', 'label' => 'Familia'],
                                     'accesibilidad' => ['icon' => '♿', 'label' => 'Accesibilidad'],
                                     'nomada' => ['icon' => '💻', 'label' => 'Nómada Digital'],
                                     'silencio' => ['icon' => '🤫', 'label' => 'Zona Tranquila'],
-                                    'parking' => ['icon' => '🚗', 'label' => 'Requiere Parking']
+                                    'parking' => ['icon' => '🚗', 'label' => 'Requiere Parking'],
+                                    'cocina' => ['icon' => '🍳', 'label' => 'Cocina Equipada'],
+                                    'piscina' => ['icon' => '🏊', 'label' => 'Piscina'],
+                                    'playa' => ['icon' => '🏖️', 'label' => 'Cerca de la Playa'],
                                 ];
 
                                 foreach ($pref_options as $key => $config) {
@@ -316,6 +390,53 @@ class Alquipress_Guest_Editor
                                         </span>
                                     </label>
                                 <?php } ?>
+                            </div>
+                        </div>
+
+                        <!-- Opciones Operativas -->
+                        <div class="form-card">
+                            <h2 class="card-title">
+                                <span class="dashicons dashicons-admin-tools"></span>
+                                Opciones Operativas
+                            </h2>
+
+                            <div class="form-field">
+                                <label for="guest_preferred_language">Idioma preferido</label>
+                                <select id="guest_preferred_language" name="guest_preferred_language" class="regular-text">
+                                    <?php foreach ($language_options as $value => $label): ?>
+                                        <option value="<?php echo esc_attr($value); ?>" <?php selected($preferred_language, $value); ?>>
+                                            <?php echo esc_html($label); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="guest_contact_channel">Canal de contacto</label>
+                                <select id="guest_contact_channel" name="guest_contact_channel" class="regular-text">
+                                    <?php foreach ($contact_options as $value => $label): ?>
+                                        <option value="<?php echo esc_attr($value); ?>" <?php selected($contact_channel, $value); ?>>
+                                            <?php echo esc_html($label); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="guest_trip_type">Tipo de viaje habitual</label>
+                                <select id="guest_trip_type" name="guest_trip_type" class="regular-text">
+                                    <?php foreach ($trip_options as $value => $label): ?>
+                                        <option value="<?php echo esc_attr($value); ?>" <?php selected($trip_type, $value); ?>>
+                                            <?php echo esc_html($label); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="guest_special_needs">Necesidades especiales</label>
+                                <textarea id="guest_special_needs" name="guest_special_needs" rows="4" class="large-text"
+                                    placeholder="Ej: cuna, trona, acceso PMR, cargador coche eléctrico"><?php echo esc_textarea($special_needs); ?></textarea>
                             </div>
                         </div>
 
@@ -421,6 +542,19 @@ class Alquipress_Guest_Editor
                         $('#first_name').addClass('error');
                     } else {
                         $('#first_name').removeClass('error');
+                    }
+
+                    // Validar fecha de nacimiento (si existe no puede ser futura)
+                    const birthDate = $('#guest_birth_date').val();
+                    if (birthDate) {
+                        const today = new Date().toISOString().slice(0, 10);
+                        if (birthDate > today) {
+                            isValid = false;
+                            errorMessages.push('<?php echo esc_js(__('La fecha de nacimiento no puede ser futura', 'alquipress')); ?>');
+                            $('#guest_birth_date').addClass('error');
+                        } else {
+                            $('#guest_birth_date').removeClass('error');
+                        }
                     }
 
                     if (!isValid) {

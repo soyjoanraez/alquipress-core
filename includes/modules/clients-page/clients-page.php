@@ -104,6 +104,74 @@ class Alquipress_Clients_Page
     }
 
     /**
+     * IDs de clientes por segmento (gasto, frecuencia, última visita).
+     *
+     * @param string $segment high_spender|frequent|active_6m|inactive_1y
+     * @return array|null IDs de clientes o null si no aplica
+     */
+    private function get_customer_ids_by_segment($segment)
+    {
+        if (!function_exists('wc_get_orders') || $segment === '') {
+            return null;
+        }
+        $orders = wc_get_orders([
+            'limit' => -1,
+            'status' => ['completed', 'processing', 'deposito-ok', 'in-progress'],
+            'return' => 'objects',
+        ]);
+        $by_customer = [];
+        foreach ($orders as $order) {
+            $cid = $order->get_customer_id();
+            if (!$cid) {
+                continue;
+            }
+            if (!isset($by_customer[$cid])) {
+                $by_customer[$cid] = ['total' => 0, 'count' => 0, 'last_date' => ''];
+            }
+            $total = (float) ($order->get_meta('_apm_booking_total') ?: $order->get_total());
+            $by_customer[$cid]['total'] += $total;
+            $by_customer[$cid]['count']++;
+            $date = $order->get_date_created() ? $order->get_date_created()->format('Y-m-d') : '';
+            if ($date && (!$by_customer[$cid]['last_date'] || $date > $by_customer[$cid]['last_date'])) {
+                $by_customer[$cid]['last_date'] = $date;
+            }
+        }
+        $ids = [];
+        $cutoff_6m = gmdate('Y-m-d', strtotime('-6 months'));
+        $cutoff_1y = gmdate('Y-m-d', strtotime('-12 months'));
+        foreach ($by_customer as $cid => $data) {
+            $match = false;
+            switch ($segment) {
+                case 'high_spender':
+                    $match = $data['total'] >= 2000;
+                    break;
+                case 'frequent':
+                    $match = $data['count'] >= 2;
+                    break;
+                case 'active_6m':
+                    $match = $data['last_date'] >= $cutoff_6m;
+                    break;
+                case 'inactive_1y':
+                    $match = $data['last_date'] === '' || $data['last_date'] < $cutoff_1y;
+                    break;
+            }
+            if ($match) {
+                $ids[] = $cid;
+            }
+        }
+        if ($segment === 'inactive_1y') {
+            $with_qualifying_orders = array_keys($by_customer);
+            $all_customers = get_users(['role' => 'customer', 'fields' => 'ID']);
+            foreach ($all_customers as $uid) {
+                if (!in_array($uid, $with_qualifying_orders, true)) {
+                    $ids[] = $uid;
+                }
+            }
+        }
+        return $ids;
+    }
+
+    /**
      * Lista de productos (inmuebles) para el filtro.
      */
     private function get_properties_for_filter()
@@ -136,29 +204,29 @@ class Alquipress_Clients_Page
     }
 
     /**
-     * Obtener clientes (usuarios con rol customer). Acepta filtros: nombre, fechas de estancia, inmueble.
+     * Obtener clientes (usuarios con rol customer). Acepta filtros y paginación.
+     *
+     * @param int   $limit   Límite por página
+     * @param array $filters Filtros (name, date_from, date_to, property_id)
+     * @param int   $paged   Página actual (1-based)
+     * @return array [clients => array, total => int]
      */
-    private function get_clients($limit = 500, $filters = [])
+    private function get_clients($limit = 25, $filters = [], $paged = 1)
     {
         $filter_name = isset($filters['name']) ? trim((string) $filters['name']) : '';
         $filter_date_from = isset($filters['date_from']) ? sanitize_text_field($filters['date_from']) : '';
         $filter_date_to = isset($filters['date_to']) ? sanitize_text_field($filters['date_to']) : '';
         $filter_property_id = isset($filters['property_id']) ? (int) $filters['property_id'] : 0;
-
-        $args = [
-            'role' => 'customer',
-            'number' => $limit,
-            'orderby' => 'registered',
-            'order' => 'DESC',
-        ];
-        if ($filter_name !== '') {
-            $args['search'] = '*' . $filter_name . '*';
-            $args['search_columns'] = ['user_login', 'user_email', 'display_name', 'user_nicename'];
-        }
-
-        $users = get_users($args);
+        $filter_segment = isset($filters['segment']) ? sanitize_key($filters['segment']) : '';
+        $offset = ($paged - 1) * $limit;
 
         $filter_by_ids = null;
+        if ($filter_segment !== '' && in_array($filter_segment, ['high_spender', 'frequent', 'active_6m', 'inactive_1y'], true)) {
+            $ids_seg = $this->get_customer_ids_by_segment($filter_segment);
+            if ($ids_seg !== null) {
+                $filter_by_ids = $filter_by_ids === null ? $ids_seg : array_intersect($filter_by_ids, $ids_seg);
+            }
+        }
         if ($filter_date_from !== '' || $filter_date_to !== '') {
             $from = $filter_date_from ?: '1970-01-01';
             $to = $filter_date_to ?: gmdate('Y-m-d');
@@ -173,11 +241,39 @@ class Alquipress_Clients_Page
                 $filter_by_ids = $filter_by_ids === null ? $ids_prop : array_intersect($filter_by_ids, $ids_prop);
             }
         }
+
         if ($filter_by_ids !== null) {
-            $filter_by_ids = array_fill_keys($filter_by_ids, true);
-            $users = array_filter($users, function ($u) use ($filter_by_ids) {
-                return isset($filter_by_ids[$u->ID]);
-            });
+            $filter_by_ids = array_values($filter_by_ids);
+            $args = [
+                'role' => 'customer',
+                'include' => $filter_by_ids,
+                'orderby' => 'registered',
+                'order' => 'DESC',
+                'number' => -1,
+            ];
+            if ($filter_name !== '') {
+                $args['search'] = '*' . $filter_name . '*';
+                $args['search_columns'] = ['user_login', 'user_email', 'display_name', 'user_nicename'];
+            }
+            $users = get_users($args);
+            $total = count($users);
+            $users = array_slice(array_values($users), $offset, $limit);
+        } else {
+            $args = [
+                'role' => 'customer',
+                'number' => $limit,
+                'offset' => $offset,
+                'orderby' => 'registered',
+                'order' => 'DESC',
+                'count_total' => true,
+            ];
+            if ($filter_name !== '') {
+                $args['search'] = '*' . $filter_name . '*';
+                $args['search_columns'] = ['user_login', 'user_email', 'display_name', 'user_nicename'];
+            }
+            $user_query = new WP_User_Query($args);
+            $users = $user_query->get_results();
+            $total = $user_query->get_total();
         }
 
         $clients = [];
@@ -215,7 +311,7 @@ class Alquipress_Clients_Page
             ];
         }
 
-        return $clients;
+        return ['clients' => $clients, 'total' => $total];
     }
 
     private function get_user_total_spent($user_id)
@@ -386,19 +482,26 @@ class Alquipress_Clients_Page
         $filter_date_from = isset($_GET['filter_date_from']) ? sanitize_text_field(wp_unslash($_GET['filter_date_from'])) : '';
         $filter_date_to = isset($_GET['filter_date_to']) ? sanitize_text_field(wp_unslash($_GET['filter_date_to'])) : '';
         $filter_property_id = isset($_GET['filter_property']) ? (int) $_GET['filter_property'] : 0;
+        $filter_segment = isset($_GET['filter_segment']) ? sanitize_key($_GET['filter_segment']) : '';
+        $paged = isset($_GET['paged']) ? max(1, (int) $_GET['paged']) : 1;
+        $per_page = 24;
 
         $filters = [
             'name' => $filter_name,
             'date_from' => $filter_date_from,
             'date_to' => $filter_date_to,
             'property_id' => $filter_property_id,
+            'segment' => $filter_segment,
         ];
 
         $metrics = $this->get_metrics();
-        $clients = $this->get_clients(500, $filters);
+        $result = $this->get_clients($per_page, $filters, $paged);
+        $clients = $result['clients'];
+        $total_clients = $result['total'];
+        $total_pages = (int) ceil($total_clients / $per_page);
         $users_url = admin_url('users.php');
         $properties_list = $this->get_properties_for_filter();
-        $has_filters = $filter_name !== '' || $filter_date_from !== '' || $filter_date_to !== '' || $filter_property_id > 0;
+        $has_filters = $filter_name !== '' || $filter_date_from !== '' || $filter_date_to !== '' || $filter_property_id > 0 || $filter_segment !== '';
 
         require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
         ?>
@@ -439,6 +542,16 @@ class Alquipress_Clients_Page
                                     <?php foreach ($properties_list as $pid => $title) : ?>
                                         <option value="<?php echo (int) $pid; ?>" <?php selected($filter_property_id, $pid); ?>><?php echo esc_html($title); ?></option>
                                     <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="ap-clients-filter-group">
+                                <label for="filter_segment" class="ap-clients-filter-label"><?php esc_html_e('Segmento', 'alquipress'); ?></label>
+                                <select id="filter_segment" name="filter_segment" class="ap-clients-filter-select">
+                                    <option value=""><?php esc_html_e('Todos', 'alquipress'); ?></option>
+                                    <option value="high_spender" <?php selected($filter_segment, 'high_spender'); ?>><?php esc_html_e('Alto gasto (≥2000€)', 'alquipress'); ?></option>
+                                    <option value="frequent" <?php selected($filter_segment, 'frequent'); ?>><?php esc_html_e('Cliente frecuente (2+ reservas)', 'alquipress'); ?></option>
+                                    <option value="active_6m" <?php selected($filter_segment, 'active_6m'); ?>><?php esc_html_e('Activo (últimos 6 meses)', 'alquipress'); ?></option>
+                                    <option value="inactive_1y" <?php selected($filter_segment, 'inactive_1y'); ?>><?php esc_html_e('Inactivo (>1 año sin estancia)', 'alquipress'); ?></option>
                                 </select>
                             </div>
                             <div class="ap-clients-filter-actions">
@@ -553,8 +666,7 @@ class Alquipress_Clients_Page
                                                         foreach ($docs_info['documents'] as $doc) {
                                                             $doc_label = '';
                                                             if (!empty($doc['tipo'])) {
-                                                                $tipo_labels = ['dni' => 'DNI', 'pasaporte' => 'Pasaporte', 'nie' => 'NIE', 'otro' => 'Otro'];
-                                                                $doc_label = ($tipo_labels[$doc['tipo']] ?? ucfirst($doc['tipo']));
+                                                                $doc_label = alquipress_ses_get_document_label($doc['tipo']);
                                                             }
                                                             if (!empty($doc['numero'])) {
                                                                 $doc_label .= ($doc_label ? ': ' : '') . $doc['numero'];
@@ -594,6 +706,29 @@ class Alquipress_Clients_Page
                             </tbody>
                         </table>
                     </div>
+                    <?php if ($total_pages > 1) : ?>
+                        <nav class="ap-clients-pagination" aria-label="<?php esc_attr_e('Paginación', 'alquipress'); ?>">
+                            <?php
+                            $paginate_args = ['page' => 'alquipress-clients'];
+                            if ($filter_name !== '') $paginate_args['filter_name'] = $filter_name;
+                            if ($filter_date_from !== '') $paginate_args['filter_date_from'] = $filter_date_from;
+                            if ($filter_date_to !== '') $paginate_args['filter_date_to'] = $filter_date_to;
+                            if ($filter_property_id > 0) $paginate_args['filter_property'] = $filter_property_id;
+                            if ($filter_segment !== '') $paginate_args['filter_segment'] = $filter_segment;
+                            $paginate_base = add_query_arg($paginate_args, admin_url('admin.php'));
+                            $paginate_base = str_replace('%#%', '###PAGE###', $paginate_base);
+                            echo wp_kses_post(paginate_links([
+                                'base' => str_replace('###PAGE###', '%#%', $paginate_base),
+                                'format' => '&paged=%#%',
+                                'prev_text' => '&larr; ' . __('Anterior', 'alquipress'),
+                                'next_text' => __('Siguiente', 'alquipress') . ' &rarr;',
+                                'total' => $total_pages,
+                                'current' => $paged,
+                                'type' => 'list',
+                            ]));
+                            ?>
+                        </nav>
+                    <?php endif; ?>
                 </main>
             </div>
         </div>

@@ -127,6 +127,83 @@
     color: #fff;
 }
 
+.ap-bookings-btn-wc {
+    background: var(--ap-text-secondary) !important;
+}
+
+.ap-bookings-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Tabs nav (Resumen, Pipeline, Calendario, etc.) */
+.ap-bookings-tabs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 24px;
+    padding: 4px;
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-md);
+    width: fit-content;
+}
+
+.ap-bookings-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ap-text-secondary);
+    text-decoration: none;
+}
+
+.ap-bookings-tab .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.ap-bookings-tab:hover {
+    color: var(--ap-primary);
+}
+
+.ap-bookings-tab.is-active {
+    background: var(--ap-primary);
+    color: #fff;
+}
+
+/* WC Bookings integrado */
+.ap-wc-bookings-content {
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-lg);
+    padding: 24px;
+}
+
+.ap-wc-embed {
+    max-width: 100%;
+}
+
+.ap-wc-embed.ap-card {
+    background: var(--ap-surface);
+    padding: 24px;
+    border-radius: var(--ap-radius-md);
+}
+
+.ap-wc-embed .form-table th {
+    padding-right: 16px;
+}
+
+.ap-nav-tabs {
+    margin-bottom: 20px;
+}
+
 /* KPI Row */
 .ap-bookings-kpi-row {
     display: grid;
@@ -445,6 +522,11 @@
 
 .ap-bookings-table .ap-bookings-td-amount {
     text-align: right;
+}
+
+.ap-bookings-table .ap-bookings-td-action .ap-bookings-view-btn {
+    padding: 4px 10px;
+    font-size: 12px;
 }
 
 .ap-bookings-table .ap-bookings-td-status {

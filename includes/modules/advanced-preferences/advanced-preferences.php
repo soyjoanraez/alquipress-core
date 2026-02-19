@@ -17,11 +17,23 @@ class Alquipress_Advanced_Preferences
             'category' => 'restricciones',
             'description' => 'El huésped viaja con mascotas'
         ],
+        'fumador' => [
+            'icon' => '🚬',
+            'label' => 'Fumador',
+            'category' => 'restricciones',
+            'description' => 'El huésped solicita propiedades donde se permita fumar'
+        ],
         'nofumador' => [
             'icon' => '🚭',
             'label' => 'No Fumador',
             'category' => 'restricciones',
             'description' => 'El huésped prefiere ambiente sin humo'
+        ],
+        'ninos' => [
+            'icon' => '🧒',
+            'label' => 'Niños/Familia',
+            'category' => 'tipo',
+            'description' => 'Viaja con menores'
         ],
         'familia' => [
             'icon' => '👨‍👩‍👧',
