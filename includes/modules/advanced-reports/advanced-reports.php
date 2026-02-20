@@ -17,6 +17,7 @@ class Alquipress_Advanced_Reports
 
         add_action('wp_ajax_alquipress_get_report_data', [$this, 'ajax_get_report_data']);
         add_action('wp_ajax_alquipress_export_reports_csv', [$this, 'ajax_export_reports_csv']);
+        add_action('wp_ajax_alquipress_email_report', [$this, 'ajax_email_report']);
     }
 
     public function maybe_render_section($page)
@@ -241,8 +242,8 @@ class Alquipress_Advanced_Reports
      */
     public function ajax_get_report_data()
     {
-        // Rate limiting: 30 requests por minuto
-        Alquipress_Rate_Limiter::check_and_exit('get_report_data', 30, 60);
+        // Rate limiting: 120 requests por minuto para soportar cargas completas del dashboard
+        Alquipress_Rate_Limiter::check_and_exit('get_report_data', 120, 60);
 
         check_ajax_referer('alquipress_reports', 'nonce');
 
@@ -410,6 +411,95 @@ class Alquipress_Advanced_Reports
     }
 
     /**
+     * AJAX: Enviar informe resumido por email
+     */
+    public function ajax_email_report()
+    {
+        Alquipress_Rate_Limiter::check_and_exit('email_report', 5, 60);
+        check_ajax_referer('alquipress_reports', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permisos insuficientes', 'alquipress')], 403);
+        }
+
+        $year = isset($_POST['year']) ? absint($_POST['year']) : date('Y');
+        if ($year < 2020 || $year > 2100) {
+            $year = date('Y');
+        }
+
+        $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
+        if (!is_email($email)) {
+            wp_send_json_error(['message' => __('Email no válido.', 'alquipress')], 400);
+        }
+
+        try {
+            $overview = $this->get_overview_with_yoy($year);
+            $revenue_monthly = $this->get_revenue_monthly($year);
+            $top_clients = $this->get_top_clients($year);
+            $top_properties = $this->get_top_properties($year);
+        } catch (Exception $e) {
+            error_log('ALQUIPRESS Email Report Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => __('No se pudo generar el informe.', 'alquipress')], 500);
+        }
+
+        $top_property = !empty($top_properties[0]) ? $top_properties[0] : null;
+        $best_month_label = '';
+        $best_month_value = 0;
+        if (!empty($revenue_monthly['data']) && !empty($revenue_monthly['labels'])) {
+            $best_index = array_keys($revenue_monthly['data'], max($revenue_monthly['data']))[0];
+            $best_month_label = $revenue_monthly['labels'][$best_index] ?? '';
+            $best_month_value = (float) ($revenue_monthly['data'][$best_index] ?? 0);
+        }
+
+        $subject = sprintf(__('Informe Alquipress %d', 'alquipress'), $year);
+        $lines = [
+            sprintf(__('Resumen anual %d', 'alquipress'), $year),
+            '',
+            sprintf(__('Ingresos totales: %s', 'alquipress'), wp_strip_all_tags((string) ($overview['total_revenue'] ?? '—'))),
+            sprintf(__('Reservas totales: %s', 'alquipress'), (string) ($overview['total_bookings'] ?? '—')),
+            sprintf(__('Tasa de ocupación: %s', 'alquipress'), (string) ($overview['occupancy_rate'] ?? '—')),
+            sprintf(__('Precio medio diario: %s', 'alquipress'), wp_strip_all_tags((string) ($overview['avg_daily_rate'] ?? '—'))),
+        ];
+
+        if ($best_month_label !== '') {
+            $lines[] = sprintf(__('Mejor mes: %1$s (%2$s €)', 'alquipress'), $best_month_label, number_format_i18n($best_month_value, 2));
+        }
+
+        if (!empty($top_property['name'])) {
+            $lines[] = sprintf(
+                __('Propiedad destacada: %1$s (%2$s €)', 'alquipress'),
+                $top_property['name'],
+                number_format_i18n((float) ($top_property['total_revenue'] ?? 0), 2)
+            );
+        }
+
+        $lines[] = '';
+        $lines[] = __('Se adjuntan dos archivos:', 'alquipress');
+        $lines[] = __('1) CSV con el detalle de datos.', 'alquipress');
+        $lines[] = __('2) HTML imprimible (si lo abres en navegador puedes guardarlo como PDF).', 'alquipress');
+
+        $attachments = [];
+        try {
+            $attachments = $this->build_report_email_attachments($year, $overview, $revenue_monthly, $top_clients, $top_properties);
+        } catch (Exception $e) {
+            error_log('ALQUIPRESS Email Report Attachment Error: ' . $e->getMessage());
+            wp_send_json_error(['message' => __('No se pudieron generar los adjuntos del informe.', 'alquipress')], 500);
+        }
+
+        $headers = ['Content-Type: text/plain; charset=UTF-8'];
+        $sent = wp_mail($email, $subject, implode("\n", $lines), $headers, $attachments);
+        $this->cleanup_temp_attachments($attachments);
+
+        if (!$sent) {
+            wp_send_json_error(['message' => __('No se pudo enviar el email.', 'alquipress')], 500);
+        }
+
+        wp_send_json_success([
+            'message' => sprintf(__('Informe enviado a %s', 'alquipress'), $email),
+        ]);
+    }
+
+    /**
      * Construir CSV para exportación
      */
     private function build_export_csv($year, $overview, $revenue_monthly, $top_clients, $top_properties)
@@ -441,6 +531,128 @@ class Alquipress_Advanced_Reports
             $lines[] = $this->csv_escape($p['name']) . ';' . ($p['total_bookings'] ?? 0) . ';' . ($p['total_nights'] ?? 0) . ';' . number_format($p['total_revenue'] ?? 0, 2, ',', '') . ';' . number_format($p['occupancy_rate'] ?? 0, 1, ',', '');
         }
         return implode("\r\n", $lines);
+    }
+
+    /**
+     * Crear adjuntos temporales del informe para envío por email.
+     */
+    private function build_report_email_attachments($year, $overview, $revenue_monthly, $top_clients, $top_properties)
+    {
+        $upload_dir = wp_upload_dir();
+        if (!empty($upload_dir['error'])) {
+            throw new Exception('Upload dir error: ' . $upload_dir['error']);
+        }
+
+        $base_dir = trailingslashit($upload_dir['basedir']) . 'alquipress-temp';
+        if (!wp_mkdir_p($base_dir)) {
+            throw new Exception('No se pudo crear el directorio temporal');
+        }
+
+        $token = gmdate('Ymd-His') . '-' . wp_generate_password(6, false, false);
+
+        $csv_filename = 'informes-alquipress-' . $year . '-' . $token . '.csv';
+        $csv_path = trailingslashit($base_dir) . $csv_filename;
+        $csv_content = "\xEF\xBB\xBF" . $this->build_export_csv($year, $overview, $revenue_monthly, $top_clients, $top_properties);
+        if (file_put_contents($csv_path, $csv_content) === false) {
+            throw new Exception('No se pudo escribir el CSV temporal');
+        }
+
+        $html_filename = 'informe-alquipress-' . $year . '-' . $token . '.html';
+        $html_path = trailingslashit($base_dir) . $html_filename;
+        $html_content = $this->build_report_email_html($year, $overview, $revenue_monthly, $top_properties);
+        if (file_put_contents($html_path, $html_content) === false) {
+            @unlink($csv_path);
+            throw new Exception('No se pudo escribir el HTML temporal');
+        }
+
+        return [$csv_path, $html_path];
+    }
+
+    /**
+     * Plantilla HTML simple del informe (imprimible para guardar como PDF).
+     */
+    private function build_report_email_html($year, $overview, $revenue_monthly, $top_properties)
+    {
+        $top_property = !empty($top_properties[0]) ? $top_properties[0] : null;
+
+        $best_month_label = '';
+        $best_month_value = 0;
+        if (!empty($revenue_monthly['data']) && !empty($revenue_monthly['labels'])) {
+            $best_index = array_keys($revenue_monthly['data'], max($revenue_monthly['data']))[0];
+            $best_month_label = $revenue_monthly['labels'][$best_index] ?? '';
+            $best_month_value = (float) ($revenue_monthly['data'][$best_index] ?? 0);
+        }
+
+        $rows = '';
+        if (!empty($revenue_monthly['labels']) && !empty($revenue_monthly['data'])) {
+            foreach ($revenue_monthly['labels'] as $index => $month) {
+                $value = (float) ($revenue_monthly['data'][$index] ?? 0);
+                $rows .= '<tr><td>' . esc_html($month) . '</td><td style="text-align:right;">' . esc_html(number_format_i18n($value, 2)) . ' €</td></tr>';
+            }
+        }
+
+        $top_property_line = '';
+        if (!empty($top_property['name'])) {
+            $top_property_line = '<li><strong>' . esc_html__('Propiedad destacada:', 'alquipress') . '</strong> ' . esc_html($top_property['name']) . ' (' . esc_html(number_format_i18n((float) ($top_property['total_revenue'] ?? 0), 2)) . ' €)</li>';
+        }
+
+        $best_month_line = '';
+        if ($best_month_label !== '') {
+            $best_month_line = '<li><strong>' . esc_html__('Mejor mes:', 'alquipress') . '</strong> ' . esc_html($best_month_label) . ' (' . esc_html(number_format_i18n($best_month_value, 2)) . ' €)</li>';
+        }
+
+        return '<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>' . esc_html(sprintf(__('Informe Alquipress %d', 'alquipress'), $year)) . '</title>
+<style>
+body{font-family:Inter,Arial,sans-serif;background:#f8fafb;color:#0f172a;margin:0;padding:24px;}
+.wrap{max-width:860px;margin:0 auto;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:24px;}
+h1{margin:0 0 8px;font-size:24px;}
+p{margin:0 0 16px;color:#475569;}
+.cards{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.card{flex:1;min-width:180px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px;}
+.card .label{font-size:12px;color:#64748b;margin-bottom:6px;}
+.card .value{font-size:20px;font-weight:700;}
+table{width:100%;border-collapse:collapse;margin-top:12px;}
+th,td{border-bottom:1px solid #e2e8f0;padding:8px;font-size:14px;}
+th{text-align:left;background:#f8fafc;}
+ul{margin:12px 0 0 18px;padding:0;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>' . esc_html(sprintf(__('Informe Alquipress %d', 'alquipress'), $year)) . '</h1>
+  <p>' . esc_html__('Archivo preparado para impresión. Si lo abres en el navegador, usa Imprimir > Guardar como PDF.', 'alquipress') . '</p>
+  <div class="cards">
+    <div class="card"><div class="label">' . esc_html__('Ingresos totales', 'alquipress') . '</div><div class="value">' . wp_kses_post((string) ($overview['total_revenue'] ?? '—')) . '</div></div>
+    <div class="card"><div class="label">' . esc_html__('Reservas totales', 'alquipress') . '</div><div class="value">' . esc_html((string) ($overview['total_bookings'] ?? '—')) . '</div></div>
+    <div class="card"><div class="label">' . esc_html__('Tasa de ocupación', 'alquipress') . '</div><div class="value">' . esc_html((string) ($overview['occupancy_rate'] ?? '—')) . '</div></div>
+  </div>
+  <h2>' . esc_html__('Resumen destacado', 'alquipress') . '</h2>
+  <ul>' . $best_month_line . $top_property_line . '</ul>
+  <h2>' . esc_html__('Ingresos mensuales', 'alquipress') . '</h2>
+  <table>
+    <thead><tr><th>' . esc_html__('Mes', 'alquipress') . '</th><th style="text-align:right;">' . esc_html__('Ingresos', 'alquipress') . '</th></tr></thead>
+    <tbody>' . $rows . '</tbody>
+  </table>
+</div>
+</body>
+</html>';
+    }
+
+    private function cleanup_temp_attachments($attachments)
+    {
+        if (!is_array($attachments)) {
+            return;
+        }
+        foreach ($attachments as $file) {
+            if (is_string($file) && file_exists($file)) {
+                @unlink($file);
+            }
+        }
     }
 
     private function csv_escape($val)
@@ -925,11 +1137,17 @@ class Alquipress_Advanced_Reports
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('alquipress_reports'),
             'currentYear' => date('Y'),
+            'currentUserEmail' => wp_get_current_user() ? wp_get_current_user()->user_email : '',
             'i18n' => [
                 'vsLastYear' => __('vs año ant.', 'alquipress'),
                 'vsAvg' => __('vs media', 'alquipress'),
                 'trend' => __('Tendencia', 'alquipress'),
                 'errorConnection' => __('Error de conexión al cargar los datos.', 'alquipress'),
+                'emailPrompt' => __('Introduce el email de destino para enviar el informe.', 'alquipress'),
+                'emailDefaultInvalid' => __('Email no válido.', 'alquipress'),
+                'emailSending' => __('Enviando informe por email...', 'alquipress'),
+                'emailSent' => __('Informe enviado correctamente.', 'alquipress'),
+                'refreshCooldown' => __('Espera unos segundos antes de volver a actualizar.', 'alquipress'),
             ]
         ]);
     }

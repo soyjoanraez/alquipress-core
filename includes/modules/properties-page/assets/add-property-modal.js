@@ -5,7 +5,7 @@
     'use strict';
 
     var config = window.alquipressAddProperty || {};
-    var $modal, $overlay, $input, $submit, $cancel, $error;
+    var $portal, $modal, $overlay, $input, $submit, $cancel, $error;
 
     function open() {
         if (!$modal) {
@@ -15,6 +15,7 @@
         $error.text('').hide();
         $modal.addClass('is-open');
         $overlay.addClass('is-open');
+        $('body').addClass('ap-add-property-modal-open');
         $input.focus();
     }
 
@@ -22,10 +23,17 @@
         if ($modal) {
             $modal.removeClass('is-open');
             $overlay.removeClass('is-open');
+            $('body').removeClass('ap-add-property-modal-open');
         }
     }
 
     function buildModal() {
+        if ($('#ap-add-property-portal').length) {
+            $('#ap-add-property-portal').remove();
+        }
+        $('body').append('<div id="ap-add-property-portal" class="ap-add-property-portal"></div>');
+        $portal = $('#ap-add-property-portal');
+
         var i18n = config.i18n || {};
         var html = '<div class="ap-add-property-overlay" id="ap-add-property-overlay"></div>' +
             '<div class="ap-add-property-modal" id="ap-add-property-modal" role="dialog" aria-labelledby="ap-add-property-title" aria-modal="true">' +
@@ -38,7 +46,7 @@
             '<button type="button" class="button ap-add-property-cancel">' + (i18n.cancel || 'Cancelar') + '</button>' +
             '<button type="button" class="button button-primary ap-add-property-submit">' + (i18n.create || 'Crear') + '</button>' +
             '</div></div></div>';
-        $('body').append(html);
+        $portal.append(html);
 
         $overlay = $('#ap-add-property-overlay');
         $modal = $('#ap-add-property-modal');
@@ -53,6 +61,12 @@
         $input.on('keydown', function (e) {
             if (e.key === 'Escape') close();
             if (e.key === 'Enter') { e.preventDefault(); submit(); }
+        });
+
+        $(document).on('keydown.apAddPropertyModal', function (e) {
+            if (e.key === 'Escape' && $modal.hasClass('is-open')) {
+                close();
+            }
         });
     }
 

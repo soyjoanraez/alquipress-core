@@ -20,6 +20,22 @@
         };
     }
 
+    function escapeHtml(text) {
+        if (typeof text !== 'string') {
+            return '';
+        }
+        var map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, function (m) {
+            return map[m];
+        });
+    }
+
     function renderDropdown(data, query) {
         var html = [];
         var hasAny = false;
@@ -29,7 +45,9 @@
             html.push('<div class="ap-live-search-group">');
             html.push('<div class="ap-live-search-group-title">' + (i18n.properties || 'Propiedades') + '</div>');
             data.properties.forEach(function (item) {
-                html.push('<a href="' + (item.url || '#') + '" class="ap-live-search-item">' + (item.title || '') + '</a>');
+                var url = escapeHtml(item.url || '#');
+                var title = escapeHtml(item.title || '');
+                html.push('<a href="' + url + '" class="ap-live-search-item">' + title + '</a>');
             });
             html.push('</div>');
         }
@@ -38,7 +56,9 @@
             html.push('<div class="ap-live-search-group">');
             html.push('<div class="ap-live-search-group-title">' + (i18n.bookings || 'Reservas') + '</div>');
             data.bookings.forEach(function (item) {
-                html.push('<a href="' + (item.url || '#') + '" class="ap-live-search-item">' + (item.title || '') + '</a>');
+                var url = escapeHtml(item.url || '#');
+                var title = escapeHtml(item.title || '');
+                html.push('<a href="' + url + '" class="ap-live-search-item">' + title + '</a>');
             });
             html.push('</div>');
         }
@@ -47,7 +67,9 @@
             html.push('<div class="ap-live-search-group">');
             html.push('<div class="ap-live-search-group-title">' + (i18n.clients || 'Clientes') + '</div>');
             data.clients.forEach(function (item) {
-                html.push('<a href="' + (item.url || '#') + '" class="ap-live-search-item">' + (item.title || '') + '</a>');
+                var url = escapeHtml(item.url || '#');
+                var title = escapeHtml(item.title || '');
+                html.push('<a href="' + url + '" class="ap-live-search-item">' + title + '</a>');
             });
             html.push('</div>');
         }

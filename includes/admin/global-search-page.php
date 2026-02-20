@@ -77,7 +77,7 @@ if (strlen($query) >= 2) {
                             <ul class="ap-search-list">
                                 <?php foreach ($props as $p) : ?>
                                     <li>
-                                        <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-edit-property&product_id=' . $p->ID)); ?>"><?php echo esc_html($p->post_title); ?></a>
+                                        <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-edit-property&post_id=' . $p->ID)); ?>"><?php echo esc_html($p->post_title); ?></a>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>

@@ -429,6 +429,12 @@ class Alquipress_Module_Manager
                 'description' => 'Export/import calendarios para Airbnb, Booking.com, VRBO',
                 'file' => 'ical-sync/ical-sync.php',
                 'dependencies' => []
+            ],
+            'frontend-blocks' => [
+                'name' => 'Bloques Gutenberg AlquiPress',
+                'description' => 'Bloques personalizados integrados con Astra y Spectra',
+                'file' => 'frontend-blocks/frontend-blocks.php',
+                'dependencies' => []
             ]
         ];
     }

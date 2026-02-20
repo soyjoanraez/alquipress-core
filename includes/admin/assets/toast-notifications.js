@@ -66,8 +66,8 @@
             // Iconos según el tipo
             var icons = {
                 success: '<span class="dashicons dashicons-yes-alt"></span>',
-                error: '<span class="dashicons dashicons-warning"></span>',
-                warning: '<span class="dashicons dashicons-info"></span>',
+                error: '<span class="dashicons dashicons-dismiss"></span>',
+                warning: '<span class="dashicons dashicons-warning"></span>',
                 info: '<span class="dashicons dashicons-info"></span>'
             };
 

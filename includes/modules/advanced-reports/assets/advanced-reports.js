@@ -33,10 +33,32 @@
     const ReportsApp = {
         charts: {},
         currentYear: alquipressReports.currentYear,
+        breakdownView: 'property',
+        refreshCooldownMs: 7000,
+        lastRefreshAt: 0,
+        refreshTimer: null,
+        isRefreshing: false,
 
         init: function () {
+            var activeBreakdown = $('.ap-reports-filter-pill.active').data('view');
+            if (activeBreakdown) {
+                this.breakdownView = activeBreakdown.toString();
+            }
+            $('#report-year').val(this.currentYear);
             this.bindEvents();
             this.loadAllReports();
+        },
+
+        showToast: function (type, message) {
+            if (typeof AlquipressToast !== 'undefined' && typeof AlquipressToast[type] === 'function') {
+                AlquipressToast[type](message);
+                return;
+            }
+            if (type === 'error') {
+                console.error(message);
+                return;
+            }
+            console.log(message);
         },
 
         bindEvents: function () {
@@ -46,10 +68,21 @@
                 ReportsApp.switchTab(tabId);
             });
 
+            // Filtros del gráfico de desglose
+            $('.ap-reports-filter-pill').on('click', function () {
+                var view = ($(this).data('view') || '').toString();
+                if (!view || view === ReportsApp.breakdownView) {
+                    return;
+                }
+                ReportsApp.breakdownView = view;
+                $('.ap-reports-filter-pill').removeClass('active');
+                $(this).addClass('active');
+                ReportsApp.loadRevenueBreakdownMainChart();
+            });
+
             // Refresh reports
             $('#refresh-reports').on('click', function () {
-                ReportsApp.currentYear = $('#report-year').val();
-                ReportsApp.loadAllReports();
+                ReportsApp.refreshReports();
             });
 
             // Export Excel (CSV)
@@ -76,6 +109,83 @@
                     $('body').removeClass('ap-reports-print-mode');
                 }, 500);
             });
+
+            // Enviar por email
+            $('#email-report').on('click', function () {
+                ReportsApp.emailReport();
+            });
+        },
+
+        refreshReports: function () {
+            if (this.isRefreshing) {
+                this.showToast('warning', (alquipressReports.i18n && alquipressReports.i18n.refreshCooldown) ? alquipressReports.i18n.refreshCooldown : 'Espera unos segundos antes de volver a actualizar.');
+                return;
+            }
+
+            var now = Date.now();
+            if (now - this.lastRefreshAt < this.refreshCooldownMs) {
+                this.showToast('warning', (alquipressReports.i18n && alquipressReports.i18n.refreshCooldown) ? alquipressReports.i18n.refreshCooldown : 'Espera unos segundos antes de volver a actualizar.');
+                return;
+            }
+
+            this.isRefreshing = true;
+            this.lastRefreshAt = now;
+            this.currentYear = $('#report-year').val() || this.currentYear;
+            this.loadAllReports();
+
+            var $refreshBtn = $('#refresh-reports');
+            var self = this;
+            $refreshBtn.prop('disabled', true).addClass('is-disabled');
+            if (this.refreshTimer) {
+                clearTimeout(this.refreshTimer);
+            }
+            this.refreshTimer = setTimeout(function () {
+                $refreshBtn.prop('disabled', false).removeClass('is-disabled');
+                self.isRefreshing = false;
+            }, this.refreshCooldownMs);
+        },
+
+        emailReport: function () {
+            var initialEmail = alquipressReports.currentUserEmail || '';
+            var promptText = (alquipressReports.i18n && alquipressReports.i18n.emailPrompt) ? alquipressReports.i18n.emailPrompt : 'Introduce el email de destino para enviar el informe.';
+            var email = window.prompt(promptText, initialEmail);
+
+            if (email === null) {
+                return;
+            }
+
+            email = $.trim(email);
+            if (!email || !/.+@.+\..+/.test(email)) {
+                this.showToast('error', (alquipressReports.i18n && alquipressReports.i18n.emailDefaultInvalid) ? alquipressReports.i18n.emailDefaultInvalid : 'Email no válido.');
+                return;
+            }
+
+            var year = $('#report-year').val() || this.currentYear;
+            var $emailBtn = $('#email-report');
+            $emailBtn.prop('disabled', true).addClass('is-disabled');
+            this.showToast('info', (alquipressReports.i18n && alquipressReports.i18n.emailSending) ? alquipressReports.i18n.emailSending : 'Enviando informe por email...');
+
+            $.ajax({
+                url: alquipressReports.ajaxurl,
+                method: 'POST',
+                data: {
+                    action: 'alquipress_email_report',
+                    nonce: alquipressReports.nonce,
+                    year: year,
+                    email: email
+                }
+            }).done(function (response) {
+                if (response && response.success) {
+                    ReportsApp.showToast('success', (response.data && response.data.message) ? response.data.message : ((alquipressReports.i18n && alquipressReports.i18n.emailSent) ? alquipressReports.i18n.emailSent : 'Informe enviado correctamente.'));
+                    return;
+                }
+                var msg = (response && response.data && response.data.message) ? response.data.message : 'No se pudo enviar el email.';
+                ReportsApp.showToast('error', msg);
+            }).fail(function () {
+                ReportsApp.showToast('error', (alquipressReports.i18n && alquipressReports.i18n.errorConnection) ? alquipressReports.i18n.errorConnection : 'Error de conexión al cargar los datos.');
+            }).always(function () {
+                $emailBtn.prop('disabled', false).removeClass('is-disabled');
+            });
         },
 
         switchTab: function (tabId) {
@@ -89,6 +199,7 @@
         loadAllReports: function () {
             this.loadOverviewYoy();
             this.loadRevenueMonthly();
+            this.loadRevenueBreakdownMainChart();
             this.loadRevenueSeason();
             this.loadOccupancyMonthly();
             this.loadOccupancyComparison();
@@ -114,21 +225,96 @@
                         callback(response.data);
                     } else {
                         var msg = (response.data && response.data.message) ? response.data.message : ('Error al cargar reporte: ' + reportType);
-                        if (typeof AlquipressToast !== 'undefined') {
-                            AlquipressToast.error(msg);
-                        } else {
-                            console.error(msg);
-                        }
+                        ReportsApp.showToast('error', msg);
                     }
                 },
                 error: function (xhr, status, error) {
                     var msg = (alquipressReports.i18n && alquipressReports.i18n.errorConnection) ? alquipressReports.i18n.errorConnection : 'Error de conexión al cargar los datos.';
-                    if (typeof AlquipressToast !== 'undefined') {
-                        AlquipressToast.error(msg);
-                    } else {
-                        console.error('Error AJAX:', error);
-                    }
+                    ReportsApp.showToast('error', msg);
+                    console.error('Error AJAX:', error);
                 }
+            });
+        },
+
+        renderChartById: function (id, config) {
+            var el = document.getElementById(id);
+            if (!el) {
+                return;
+            }
+            if (ReportsApp.charts[id]) {
+                ReportsApp.charts[id].destroy();
+                ReportsApp.charts[id] = null;
+            }
+            ReportsApp.charts[id] = new Chart(el.getContext('2d'), config);
+        },
+
+        loadRevenueBreakdownMainChart: function () {
+            if (this.breakdownView === 'month') {
+                this.loadRevenueMonthlyMain();
+                return;
+            }
+            this.loadRevenueByPropertyBreakdown();
+        },
+
+        loadRevenueMonthlyMain: function () {
+            this.ajaxCall('revenue_monthly_yoy', function (data) {
+                ReportsApp.renderChartById('chart-revenue-monthly', ReportsApp.buildRevenueMonthlyChartConfig(data));
+            });
+        },
+
+        loadRevenueByPropertyBreakdown: function () {
+            this.ajaxCall('top_properties', function (data) {
+                var labels = [];
+                var values = [];
+                (data || []).forEach(function (item) {
+                    labels.push(item.name || '—');
+                    values.push(Number(item.total_revenue || 0));
+                });
+
+                if (!labels.length) {
+                    labels = ['Sin datos'];
+                    values = [0];
+                }
+
+                var config = {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Ingresos (€)',
+                            data: values,
+                            backgroundColor: 'rgba(44, 153, 226, 0.75)',
+                            borderColor: '#2c99e2',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return 'Ingresos: ' + Number(context.parsed.y || 0).toFixed(2) + ' €';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return Number(value).toLocaleString() + ' €';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+                ReportsApp.renderChartById('chart-revenue-monthly', config);
             });
         },
 
@@ -155,91 +341,86 @@
 
         loadRevenueMonthly: function () {
             this.ajaxCall('revenue_monthly_yoy', function (data) {
-                var trendData = linearRegression(data.data);
-                var datasets = [{
-                    label: (data.year || ReportsApp.currentYear) + ' (€)',
-                    data: data.data,
-                    borderColor: '#2c99e2',
-                    backgroundColor: 'rgba(44, 153, 226, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    pointBackgroundColor: '#2c99e2',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2
-                }];
-                if (data.data_prev && data.data_prev.length) {
-                    datasets.push({
-                        label: (data.year_prev || (ReportsApp.currentYear - 1)) + ' (€)',
-                        data: data.data_prev,
-                        borderColor: '#94a3b8',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        fill: false,
-                        tension: 0.4,
-                        pointRadius: 3,
-                        pointHoverRadius: 5,
-                        pointBackgroundColor: '#94a3b8',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2
-                    });
-                }
+                ReportsApp.renderChartById('chart-revenue-monthly-tab', ReportsApp.buildRevenueMonthlyChartConfig(data));
+            });
+        },
+
+        buildRevenueMonthlyChartConfig: function (data) {
+            var trendData = linearRegression(data.data);
+            var datasets = [{
+                label: (data.year || ReportsApp.currentYear) + ' (€)',
+                data: data.data,
+                borderColor: '#2c99e2',
+                backgroundColor: 'rgba(44, 153, 226, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#2c99e2',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }];
+            if (data.data_prev && data.data_prev.length) {
                 datasets.push({
-                    label: (alquipressReports.i18n && alquipressReports.i18n.trend) ? alquipressReports.i18n.trend : 'Tendencia',
-                    data: trendData,
-                    borderColor: '#f59e0b',
+                    label: (data.year_prev || (ReportsApp.currentYear - 1)) + ' (€)',
+                    data: data.data_prev,
+                    borderColor: '#94a3b8',
                     backgroundColor: 'transparent',
                     borderWidth: 2,
-                    borderDash: [8, 4],
+                    borderDash: [5, 5],
                     fill: false,
-                    tension: 0,
-                    pointRadius: 0,
-                    pointHoverRadius: 0
+                    tension: 0.4,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    pointBackgroundColor: '#94a3b8',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
                 });
-                var chartConfig = {
-                    type: 'line',
-                    data: {
-                        labels: data.labels,
-                        datasets: datasets
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: true,
-                        plugins: {
-                            legend: { display: true },
-                            tooltip: {
-                                callbacks: {
-                                    label: function (context) {
-                                        return 'Ingresos: ' + context.parsed.y.toFixed(2) + ' €';
-                                    }
+            }
+            datasets.push({
+                label: (alquipressReports.i18n && alquipressReports.i18n.trend) ? alquipressReports.i18n.trend : 'Tendencia',
+                data: trendData,
+                borderColor: '#f59e0b',
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                borderDash: [8, 4],
+                fill: false,
+                tension: 0,
+                pointRadius: 0,
+                pointHoverRadius: 0
+            });
+            return {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return 'Ingresos: ' + context.parsed.y.toFixed(2) + ' €';
                                 }
                             }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function (value) {
-                                        return value.toLocaleString() + ' €';
-                                    }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toLocaleString() + ' €';
                                 }
                             }
                         }
                     }
-                };
-                ['chart-revenue-monthly', 'chart-revenue-monthly-tab'].forEach(function (id) {
-                    var el = document.getElementById(id);
-                    if (!el) return;
-                    if (ReportsApp.charts[id]) {
-                        ReportsApp.charts[id].destroy();
-                        ReportsApp.charts[id] = null;
-                    }
-                    ReportsApp.charts[id] = new Chart(el.getContext('2d'), chartConfig);
-                });
-            });
+                }
+            };
         },
 
         // ========== Cargar Ingresos por Temporada ==========

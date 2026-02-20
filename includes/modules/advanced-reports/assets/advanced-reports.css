@@ -87,6 +87,12 @@
     opacity: 0.9;
 }
 
+.ap-reports-refresh.is-disabled,
+.ap-reports-btn.is-disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
 /* Métricas (4 cards) */
 .ap-reports-metrics-row {
     display: grid;

@@ -29,6 +29,7 @@ class Alquipress_Communications
         add_action('wp_ajax_alquipress_comm_get_email_content', [$this, 'ajax_get_email_content']);
         add_action('wp_ajax_alquipress_comm_export_csv', [$this, 'ajax_export_csv']);
         add_action('wp_ajax_alquipress_comm_get_autocomplete', [$this, 'ajax_get_autocomplete']);
+        add_action('wp_ajax_alquipress_inbox_send_message', [$this, 'ajax_inbox_send_message']);
 
         add_action(self::CRON_HOOK, [$this, 'fetch_inbox']);
         add_filter('cron_schedules', [$this, 'register_cron_schedule']);
@@ -111,6 +112,23 @@ class Alquipress_Communications
                 ALQUIPRESS_VERSION,
                 true
             );
+
+            wp_localize_script('alquipress-inbox', 'alquipressInbox', [
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('alquipress_comm_nonce'),
+                'i18n' => [
+                    'placeholderMessage' => __('Escribe un mensaje...', 'alquipress'),
+                    'placeholderNote' => __('Nota interna (solo staff)...', 'alquipress'),
+                    'emptyMessage' => __('Escribe un mensaje antes de enviar.', 'alquipress'),
+                    'selectConversation' => __('Selecciona una conversación primero.', 'alquipress'),
+                    'tabNoItems' => __('No hay conversaciones en esta vista.', 'alquipress'),
+                    'templateExtend' => __('Hola, si quieres ampliar tu estancia puedo revisar disponibilidad y precio actualizado.', 'alquipress'),
+                    'templatePayment' => __('Te envío el recordatorio de pago pendiente de la reserva. En cuanto esté abonado te confirmo por aquí.', 'alquipress'),
+                    'sent' => __('Mensaje añadido en el hilo.', 'alquipress'),
+                    'sending' => __('Enviando mensaje...', 'alquipress'),
+                    'sendError' => __('No se pudo enviar el mensaje.', 'alquipress'),
+                ],
+            ]);
         }
     }
 
@@ -539,6 +557,113 @@ class Alquipress_Communications
         }
         
         wp_send_json_success(['results' => $results]);
+    }
+
+    /**
+     * AJAX: Enviar mensaje desde Inbox omnicanal.
+     * - Modo normal: intenta enviar email y registra en histórico
+     * - Modo nota: solo registra comunicación interna
+     */
+    public function ajax_inbox_send_message()
+    {
+        check_ajax_referer('alquipress_comm_nonce', 'nonce');
+
+        if (!current_user_can('edit_posts')) {
+            wp_send_json_error(['message' => __('Permisos insuficientes', 'alquipress')], 403);
+        }
+
+        $message = isset($_POST['message']) ? wp_kses_post(wp_unslash($_POST['message'])) : '';
+        $message = trim($message);
+        if ($message === '') {
+            wp_send_json_error(['message' => __('Mensaje vacío', 'alquipress')], 400);
+        }
+
+        $message_type = isset($_POST['message_type']) ? sanitize_key($_POST['message_type']) : 'message';
+        if (!in_array($message_type, ['message', 'note'], true)) {
+            $message_type = 'message';
+        }
+
+        $conversation_id = isset($_POST['conversation_id']) ? sanitize_key($_POST['conversation_id']) : '';
+        $guest_name = isset($_POST['guest_name']) ? sanitize_text_field(wp_unslash($_POST['guest_name'])) : '';
+        $channel = isset($_POST['channel']) ? sanitize_key($_POST['channel']) : 'email';
+        $to_email = isset($_POST['to_email']) ? sanitize_email(wp_unslash($_POST['to_email'])) : '';
+        $entity_type = isset($_POST['entity_type']) ? sanitize_text_field(wp_unslash($_POST['entity_type'])) : '';
+        $entity_id = isset($_POST['entity_id']) ? absint($_POST['entity_id']) : 0;
+
+        $base_subject = $message_type === 'note'
+            ? __('Nota interna', 'alquipress')
+            : __('Mensaje al huésped', 'alquipress');
+        $subject = $base_subject;
+        if ($guest_name !== '') {
+            $subject .= ' · ' . $guest_name;
+        }
+        if ($channel !== '') {
+            $subject .= ' (' . strtoupper($channel) . ')';
+        }
+
+        $sent = false;
+        $status = 'logged';
+        $error_message = '';
+        if ($message_type === 'message') {
+            if ($to_email !== '' && is_email($to_email)) {
+                $headers = ['Content-Type: text/html; charset=UTF-8'];
+                $template = $this->render_email_template($subject, $message);
+                $sent = wp_mail($to_email, $subject, $template, $headers);
+                $status = $sent ? 'sent' : 'error';
+                if (!$sent) {
+                    $error_message = __('Error al enviar el email.', 'alquipress');
+                }
+            } else {
+                $status = 'error';
+                $error_message = __('No hay un email válido para este contacto.', 'alquipress');
+            }
+        } else {
+            $status = 'note';
+        }
+
+        $post_id = wp_insert_post([
+            'post_type' => self::POST_TYPE,
+            'post_status' => 'publish',
+            'post_title' => $subject,
+            'post_content' => $message,
+            'post_author' => get_current_user_id(),
+        ]);
+
+        if (is_wp_error($post_id) || !$post_id) {
+            wp_send_json_error(['message' => __('No se pudo guardar la comunicación.', 'alquipress')], 500);
+        }
+
+        update_post_meta($post_id, 'ap_comm_direction', 'outbound');
+        update_post_meta($post_id, 'ap_comm_status', $status);
+        update_post_meta($post_id, 'ap_comm_entity_type', $entity_type);
+        update_post_meta($post_id, 'ap_comm_entity_id', $entity_id);
+        update_post_meta($post_id, 'ap_comm_channel', $channel);
+        update_post_meta($post_id, 'ap_comm_thread_id', $conversation_id);
+        update_post_meta($post_id, 'ap_comm_kind', $message_type);
+
+        if ($to_email !== '') {
+            update_post_meta($post_id, 'ap_comm_to', $to_email);
+        }
+        if ($error_message !== '') {
+            update_post_meta($post_id, 'ap_comm_error', $error_message);
+        }
+
+        if ($message_type === 'message' && $status === 'error') {
+            wp_send_json_error([
+                'message' => $error_message !== '' ? $error_message : __('No se pudo enviar el mensaje.', 'alquipress'),
+            ], 500);
+        }
+
+        wp_send_json_success([
+            'post_id' => (int) $post_id,
+            'status' => $status,
+            'sent' => (bool) $sent,
+            'time' => current_time('H:i'),
+            'preview' => wp_trim_words(wp_strip_all_tags($message), 12, '…'),
+            'message' => $message_type === 'note'
+                ? __('Nota guardada en el histórico.', 'alquipress')
+                : ($sent ? __('Mensaje enviado y registrado.', 'alquipress') : __('Mensaje registrado en el histórico.', 'alquipress')),
+        ]);
     }
 
     public function fetch_inbox()
@@ -970,33 +1095,48 @@ class Alquipress_Communications
             [
                 'id' => 'conv_1',
                 'guest' => 'María García',
+                'guest_email' => 'maria.garcia@example.com',
                 'channel' => 'whatsapp',
                 'last_message' => __('¿A qué hora es el check-in?', 'alquipress'),
                 'last_at' => __('Hace 5 min', 'alquipress'),
                 'booking_id' => 123,
+                'entity_type' => 'cliente',
+                'entity_id' => 0,
                 'prop_name' => 'Villa Sol',
+                'phone' => '+34900111222',
+                'bucket' => 'pending',
                 'checkin_today' => true,
                 'unread' => 1,
             ],
             [
                 'id' => 'conv_2',
                 'guest' => 'Juan Pérez',
+                'guest_email' => 'juan.perez@example.com',
                 'channel' => 'airbnb',
                 'last_message' => __('Confirmación de reserva recibida', 'alquipress'),
                 'last_at' => __('Hace 2 h', 'alquipress'),
                 'booking_id' => 124,
+                'entity_type' => 'cliente',
+                'entity_id' => 0,
                 'prop_name' => 'Apartamento Centro',
+                'phone' => '+34900111333',
+                'bucket' => 'mine',
                 'checkin_today' => false,
                 'unread' => 0,
             ],
             [
                 'id' => 'conv_3',
                 'guest' => 'Ana Martínez',
+                'guest_email' => 'ana.martinez@example.com',
                 'channel' => 'booking',
                 'last_message' => __('¿Hay parking disponible?', 'alquipress'),
                 'last_at' => __('Ayer', 'alquipress'),
                 'booking_id' => 125,
+                'entity_type' => 'cliente',
+                'entity_id' => 0,
                 'prop_name' => 'Casa Playa',
+                'phone' => '+34900111444',
+                'bucket' => 'archived',
                 'checkin_today' => false,
                 'unread' => 0,
             ],
@@ -1041,13 +1181,14 @@ class Alquipress_Communications
                     <div class="ap-inbox">
                         <div class="ap-inbox-conversations">
                             <div class="ap-inbox-tabs">
-                                <button type="button" class="ap-inbox-tab is-active"><?php esc_html_e('Pendientes', 'alquipress'); ?></button>
-                                <button type="button" class="ap-inbox-tab"><?php esc_html_e('Míos', 'alquipress'); ?></button>
-                                <button type="button" class="ap-inbox-tab"><?php esc_html_e('Archivados', 'alquipress'); ?></button>
+                                <button type="button" class="ap-inbox-tab is-active" data-tab="pending"><?php esc_html_e('Pendientes', 'alquipress'); ?></button>
+                                <button type="button" class="ap-inbox-tab" data-tab="mine"><?php esc_html_e('Míos', 'alquipress'); ?></button>
+                                <button type="button" class="ap-inbox-tab" data-tab="archived"><?php esc_html_e('Archivados', 'alquipress'); ?></button>
                             </div>
+                            <div class="ap-inbox-empty-list" style="display:none;"><?php esc_html_e('No hay conversaciones en esta vista.', 'alquipress'); ?></div>
                             <div class="ap-inbox-conversation-list">
                                 <?php foreach ($mock_conversations as $i => $conv) : ?>
-                                    <div class="ap-inbox-conv-item <?php echo $i === 0 ? 'is-active' : ''; ?> <?php echo $conv['checkin_today'] ? 'is-urgent' : ''; ?>" data-conv-id="<?php echo esc_attr($conv['id']); ?>">
+                                    <div class="ap-inbox-conv-item <?php echo $i === 0 ? 'is-active' : ''; ?> <?php echo $conv['checkin_today'] ? 'is-urgent' : ''; ?>" data-conv-id="<?php echo esc_attr($conv['id']); ?>" data-bucket="<?php echo esc_attr($conv['bucket']); ?>" data-guest="<?php echo esc_attr($conv['guest']); ?>" data-email="<?php echo esc_attr($conv['guest_email']); ?>" data-channel="<?php echo esc_attr($conv['channel']); ?>" data-entity-type="<?php echo esc_attr($conv['entity_type']); ?>" data-entity-id="<?php echo (int) $conv['entity_id']; ?>">
                                         <div class="ap-inbox-conv-avatar-wrap">
                                             <div class="ap-inbox-conv-avatar"><?php echo esc_html(strtoupper(substr($conv['guest'], 0, 1))); ?></div>
                                             <span class="ap-inbox-conv-channel" title="<?php echo esc_attr(ucfirst($conv['channel'])); ?>"><?php echo esc_html($channel_icons[$conv['channel']] ?? '?'); ?></span>
@@ -1103,9 +1244,9 @@ class Alquipress_Communications
                                     </div>
                                 </div>
                                 <div class="ap-inbox-context-actions">
-                                    <a href="#" class="ap-inbox-ctx-btn"><?php esc_html_e('Extender estancia', 'alquipress'); ?></a>
-                                    <a href="#" class="ap-inbox-ctx-btn"><?php esc_html_e('Solicitar pago', 'alquipress'); ?></a>
-                                    <a href="tel:" class="ap-inbox-ctx-btn"><span class="dashicons dashicons-phone" style="font-size:16px;width:16px;height:16px;"></span> <?php esc_html_e('Llamar ahora', 'alquipress'); ?></a>
+                                    <button type="button" class="ap-inbox-ctx-btn" data-template="extend"><?php esc_html_e('Extender estancia', 'alquipress'); ?></button>
+                                    <button type="button" class="ap-inbox-ctx-btn" data-template="payment"><?php esc_html_e('Solicitar pago', 'alquipress'); ?></button>
+                                    <a href="tel:<?php echo esc_attr($ctx['phone']); ?>" class="ap-inbox-ctx-btn"><span class="dashicons dashicons-phone" style="font-size:16px;width:16px;height:16px;"></span> <?php esc_html_e('Llamar ahora', 'alquipress'); ?></a>
                                 </div>
                             <?php else : ?>
                                 <div class="ap-inbox-context-empty"><?php esc_html_e('Selecciona una conversación para ver el contexto de la reserva.', 'alquipress'); ?></div>
