@@ -57,21 +57,41 @@ class Alquipress_Ical_Sync {
             exit('Acceso no autorizado.');
         }
         $name = get_the_title($product_id);
-        $bookings = $this->get_bookings_for_product($product_id);
+
+        // Exportar reservas del motor Ap_Booking (confirmadas/retenidas en próximos 12 meses)
+        $from_ts = time();
+        $to_ts   = strtotime('+12 months');
+        $bookings = class_exists('Ap_Booking_Store')
+            ? Ap_Booking_Store::get_bookings_for_product($product_id, $from_ts, $to_ts, ['held', 'confirmed'])
+            : [];
+
+        $dtstamp_now = gmdate('Ymd\THis\Z');
         $ical = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//ALQUIPRESS//" . sanitize_title($name) . "//ES\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nX-WR-CALNAME:" . $this->ical_escape($name) . "\r\nX-WR-TIMEZONE:Europe/Madrid\r\n";
         foreach ($bookings as $booking) {
-            $uid = 'booking-' . $booking->get_id() . '@alquipress';
-            $start = date('Ymd', $booking->get_start());
-            $end = date('Ymd', $booking->get_end());
-            $created = $booking->get_date_created() ? date('Ymd\THis\Z', strtotime($booking->get_date_created())) : date('Ymd\THis\Z');
+            $uid     = 'ap-booking-' . $booking->id . '@alquipress';
+            $start   = gmdate('Ymd', strtotime($booking->checkin));
+            $end     = gmdate('Ymd', strtotime($booking->checkout));
+            $created = $booking->created_at ? gmdate('Ymd\THis\Z', strtotime($booking->created_at)) : $dtstamp_now;
             $summary = 'Reservado — ' . $name;
             $ical .= "BEGIN:VEVENT\r\nUID:{$uid}\r\nDTSTART;VALUE=DATE:{$start}\r\nDTEND;VALUE=DATE:{$end}\r\nDTSTAMP:{$created}\r\nSUMMARY:{$summary}\r\nSTATUS:CONFIRMED\r\nTRANSP:OPAQUE\r\nEND:VEVENT\r\n";
         }
-        $blocks = get_post_meta($product_id, self::META_BLOCKS, true) ?: [];
-        foreach ($blocks as $idx => $block) {
-            if (empty($block['start']) || empty($block['end'])) continue;
-            $ical .= "BEGIN:VEVENT\r\nUID:block-{$product_id}-{$idx}@alquipress\r\nDTSTART;VALUE=DATE:" . date('Ymd', strtotime($block['start'])) . "\r\nDTEND;VALUE=DATE:" . date('Ymd', strtotime($block['end'])) . "\r\nSUMMARY:Bloqueado — Uso personal\r\nSTATUS:CONFIRMED\r\nEND:VEVENT\r\n";
+
+        // Incluir bloqueos manuales del motor Ap_Booking
+        $ap_blocks = class_exists('Ap_Booking_Store')
+            ? Ap_Booking_Store::get_blocks_for_product($product_id)
+            : [];
+        foreach ($ap_blocks as $idx => $block) {
+            $type_label = $block['type'] === 'owner_block' ? 'Uso personal' : ucfirst(str_replace('_', ' ', $block['type']));
+            $ical .= "BEGIN:VEVENT\r\nUID:ap-block-{$block['id']}@alquipress\r\nDTSTART;VALUE=DATE:" . gmdate('Ymd', strtotime($block['date_from'])) . "\r\nDTEND;VALUE=DATE:" . gmdate('Ymd', strtotime($block['date_to'])) . "\r\nDTSTAMP:{$dtstamp_now}\r\nSUMMARY:Bloqueado — {$type_label}\r\nSTATUS:CONFIRMED\r\nEND:VEVENT\r\n";
         }
+
+        // Compatibilidad: incluir bloqueos heredados del meta _alquipress_manual_blocks
+        $legacy_blocks = get_post_meta($product_id, self::META_BLOCKS, true) ?: [];
+        foreach ($legacy_blocks as $idx => $block) {
+            if (empty($block['start']) || empty($block['end'])) continue;
+            $ical .= "BEGIN:VEVENT\r\nUID:block-{$product_id}-{$idx}@alquipress\r\nDTSTART;VALUE=DATE:" . gmdate('Ymd', strtotime($block['start'])) . "\r\nDTEND;VALUE=DATE:" . gmdate('Ymd', strtotime($block['end'])) . "\r\nDTSTAMP:{$dtstamp_now}\r\nSUMMARY:Bloqueado — Uso personal\r\nSTATUS:CONFIRMED\r\nEND:VEVENT\r\n";
+        }
+
         $ical .= "END:VCALENDAR\r\n";
         header('Content-Type: text/calendar; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . sanitize_title($name) . '.ics"');
@@ -84,28 +104,7 @@ class Alquipress_Ical_Sync {
         return str_replace(["\r", "\n", ',', ';'], ['', '\n', '\,', '\;'], $s);
     }
 
-    private function get_bookings_for_product($product_id) {
-        if (!class_exists('WC_Booking')) {
-            return [];
-        }
-        if (class_exists('WC_Booking_Data_Store') && method_exists('WC_Booking_Data_Store', 'get_bookings_for_objects')) {
-            return WC_Booking_Data_Store::get_bookings_for_objects([$product_id], [
-                'start_date' => time(),
-                'end_date' => strtotime('+12 months'),
-                'status' => ['confirmed', 'paid', 'complete'],
-            ]);
-        }
-        global $wpdb;
-        $ids = $wpdb->get_col($wpdb->prepare(
-            "SELECT p.ID FROM {$wpdb->posts} p INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_booking_product_id' AND pm.meta_value = %s WHERE p.post_type = 'wc_booking' AND p.post_status IN ('confirmed','paid','complete')",
-            $product_id
-        ));
-        $out = [];
-        foreach ((array) $ids as $id) {
-            $out[] = new WC_Booking($id);
-        }
-        return $out;
-    }
+    // get_bookings_for_product() eliminado — el export_endpoint() usa Ap_Booking_Store directamente.
 
     public function add_cron_interval($schedules) {
         $schedules['every_15_minutes'] = ['interval' => 900, 'display' => __('Cada 15 minutos', 'alquipress')];
@@ -160,48 +159,59 @@ class Alquipress_Ical_Sync {
             return $result;
         }
         $events = $this->parse_ical_events($body);
+        $channel = sanitize_key($feed['channel'] ?? 'external');
+
         foreach ($events as $event) {
             $start_ts = $event['start'];
-            $end_ts = $event['end'];
-            $uid = $event['uid'] ?? '';
+            $end_ts   = $event['end'];
+            $uid      = $event['uid'] ?? '';
+
             if ($end_ts < time()) {
                 $result['skipped']++;
                 continue;
             }
-            $existing = get_posts([
-                'post_type' => 'wc_booking',
-                'posts_per_page' => 1,
-                'meta_query' => [
-                    ['key' => '_alquipress_ical_uid', 'value' => $uid],
-                    ['key' => '_booking_product_id', 'value' => $product_id],
-                ],
-            ]);
-            if (!empty($existing)) {
+
+            // De-duplicar: el UID se guarda en el campo note con el prefijo "ical:{uid}"
+            if ($uid && class_exists('Ap_Booking_Store') && $this->ical_block_exists($product_id, $uid)) {
                 $result['skipped']++;
                 continue;
             }
-            if (class_exists('WC_Booking')) {
-                try {
-                    $booking = new WC_Booking([
-                        'product_id' => $product_id,
-                        'status' => 'confirmed',
-                        'start_date' => $start_ts,
-                        'end_date' => $end_ts,
-                        'all_day' => true,
-                    ]);
-                    $id = method_exists($booking, 'create') ? $booking->create() : 0;
-                    if ($id) {
-                        update_post_meta($id, '_alquipress_ical_uid', $uid);
-                        update_post_meta($id, '_alquipress_ical_channel', $feed['channel'] ?? 'external');
-                        update_post_meta($id, '_booking_product_id', $product_id);
-                        $result['blocked']++;
-                    }
-                } catch (\Exception $e) {
-                    // skip this event
+
+            if (class_exists('Ap_Booking_Store')) {
+                $note = $uid ? 'ical:' . $uid . '|channel:' . $channel : 'channel:' . $channel;
+                $id   = Ap_Booking_Store::create_block(
+                    $product_id,
+                    gmdate('Y-m-d', $start_ts),
+                    gmdate('Y-m-d', $end_ts),
+                    'closed',
+                    $note
+                );
+                if ($id) {
+                    $result['blocked']++;
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * Comprobar si ya existe un bloqueo iCal para este producto y UID.
+     * El UID se almacena en el campo `note` con el prefijo "ical:".
+     */
+    private function ical_block_exists(int $product_id, string $uid): bool
+    {
+        if (!$uid) {
+            return false;
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking_availability_rules';
+        return (bool) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT id FROM {$table} WHERE product_id = %d AND note LIKE %s LIMIT 1",
+                $product_id,
+                'ical:' . $wpdb->esc_like($uid) . '%'
+            )
+        );
     }
 
     private function parse_ical_events($content) {

@@ -44,29 +44,31 @@ class Alquipress_Email_Flows {
      */
     private static function send_arrival_guide_t7() {
         $target_ts = strtotime('+7 days');
-        $bookings = self::get_bookings_checkin_on_date($target_ts);
+        $bookings  = self::get_bookings_checkin_on_date($target_ts);
         foreach ($bookings as $booking) {
-            $sent = get_post_meta($booking->get_id(), '_alquipress_arrival_guide_sent', true);
-            if ($sent) {
+            $meta_key = '_alquipress_arrival_guide_sent_' . $booking->id;
+            if (get_post_meta($booking->order_id, $meta_key, true)) {
                 continue;
             }
-            $order = $booking->get_order();
+            $order = $booking->order_id ? wc_get_order($booking->order_id) : null;
             if (!$order) {
                 continue;
             }
-            $product_id = $booking->get_product_id();
-            $subject = sprintf(__('Tu guía de llegada — %s te espera en 7 días', 'alquipress'), get_the_title($product_id));
+            $subject = sprintf(
+                __('Tu guía de llegada — %s te espera en 7 días', 'alquipress'),
+                get_the_title($booking->product_id)
+            );
             $body = sprintf(
                 __("Hola %s,\n\nTu check-in es el %s.\n\nRecibirás el código de acceso y las instrucciones 2 días antes.\n\nSi tienes dudas, responde a este email.\n\nSaludos,", 'alquipress'),
                 $order->get_billing_first_name(),
-                date_i18n('j \d\e F', $booking->get_start())
+                date_i18n('j \d\e F', strtotime($booking->checkin))
             );
             if (function_exists('alquipress_send_custom_email')) {
                 alquipress_send_custom_email($order->get_billing_email(), $subject, nl2br(esc_html($body)));
             } else {
                 wp_mail($order->get_billing_email(), $subject, $body);
             }
-            update_post_meta($booking->get_id(), '_alquipress_arrival_guide_sent', '1');
+            update_post_meta($booking->order_id, $meta_key, '1');
         }
     }
 
@@ -75,23 +77,26 @@ class Alquipress_Email_Flows {
      */
     private static function send_reminder_t2() {
         $target_ts = strtotime('+2 days');
-        $bookings = self::get_bookings_checkin_on_date($target_ts);
+        $bookings  = self::get_bookings_checkin_on_date($target_ts);
         foreach ($bookings as $booking) {
-            $sent = get_post_meta($booking->get_id(), '_alquipress_reminder_t2_sent', true);
-            if ($sent) {
+            $meta_key = '_alquipress_reminder_t2_sent_' . $booking->id;
+            if (get_post_meta($booking->order_id, $meta_key, true)) {
                 continue;
             }
-            $order = $booking->get_order();
+            $order = $booking->order_id ? wc_get_order($booking->order_id) : null;
             if (!$order) {
                 continue;
             }
-            $product_id = $booking->get_product_id();
-            $code = get_field('codigo_caja_llaves', $product_id) ?: __('[Ver instrucciones en el email de llegada]', 'alquipress');
-            $subject = sprintf(__('Tu código de acceso — Llegada el %s', 'alquipress'), date_i18n('j \d\e F', $booking->get_start()));
+            $code = get_field('codigo_caja_llaves', $booking->product_id)
+                ?: __('[Ver instrucciones en el email de llegada]', 'alquipress');
+            $subject = sprintf(
+                __('Tu código de acceso — Llegada el %s', 'alquipress'),
+                date_i18n('j \d\e F', strtotime($booking->checkin))
+            );
             $body = sprintf(
                 __("Hola %s,\n\nRecuerda: llegas el %s.\n\nCódigo de la caja de llaves: %s\n\nSaludos,", 'alquipress'),
                 $order->get_billing_first_name(),
-                date_i18n('j \d\e F', $booking->get_start()),
+                date_i18n('j \d\e F', strtotime($booking->checkin)),
                 $code
             );
             if (function_exists('alquipress_send_custom_email')) {
@@ -99,28 +104,31 @@ class Alquipress_Email_Flows {
             } else {
                 wp_mail($order->get_billing_email(), $subject, $body);
             }
-            update_post_meta($booking->get_id(), '_alquipress_reminder_t2_sent', '1');
+            update_post_meta($booking->order_id, $meta_key, '1');
         }
     }
 
-    private static function get_bookings_checkin_on_date($target_ts) {
-        if (!class_exists('WC_Booking')) {
+    /**
+     * Devuelve Ap_Booking[] cuyo checkin coincide con la fecha del timestamp dado.
+     */
+    private static function get_bookings_checkin_on_date(int $target_ts): array
+    {
+        if (!class_exists('Ap_Booking_Store')) {
             return [];
         }
         global $wpdb;
-        $date_start = date('Y-m-d 00:00:00', $target_ts);
-        $date_end = date('Y-m-d 23:59:59', $target_ts);
-        $ids = $wpdb->get_col($wpdb->prepare(
-            "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_booking_start' AND meta_value BETWEEN %s AND %s",
-            $date_start,
-            $date_end
-        ));
+        $table = $wpdb->prefix . 'ap_booking';
+        $date  = gmdate('Y-m-d', $target_ts);
+        $rows  = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$table} WHERE checkin = %s AND status IN ('held','confirmed') ORDER BY id",
+                $date
+            ),
+            ARRAY_A
+        );
         $out = [];
-        foreach ((array) $ids as $id) {
-            $b = new WC_Booking($id);
-            if ($b->get_id() && in_array($b->get_status(), ['confirmed', 'paid'], true)) {
-                $out[] = $b;
-            }
+        foreach ((array) $rows as $row) {
+            $out[] = Ap_Booking::from_row($row);
         }
         return $out;
     }
@@ -244,23 +252,22 @@ class Alquipress_Email_Flows {
      */
     private static function alert_team_pending_checkins() {
         $tomorrow_start = strtotime('tomorrow 00:00:00');
-        $tomorrow_end = strtotime('tomorrow 23:59:59');
+        $tomorrow_end   = strtotime('tomorrow 23:59:59');
         $bookings = self::get_bookings_between($tomorrow_start, $tomorrow_end);
-        $pending = [];
+        $pending  = [];
         foreach ($bookings as $booking) {
-            $order = method_exists($booking, 'get_order') ? $booking->get_order() : null;
-            $order_id = $order ? $order->get_id() : 0;
+            $order_id = $booking->order_id;
             if (!$order_id) {
                 continue;
             }
-            $ses = get_post_meta($order_id, '_alq_ses_status', true);
+            $ses      = get_post_meta($order_id, '_alq_ses_status', true);
             $cleaning = get_post_meta($order_id, '_alquipress_cleaning_scheduled', true);
-            $keys = get_post_meta($order_id, '_alquipress_keys_delivered', true);
+            $keys     = get_post_meta($order_id, '_alquipress_keys_delivered', true);
             if (in_array($ses, ['sent', 'accepted', 'xml_generated'], true) && $cleaning && $keys) {
                 continue;
             }
             $pending[] = [
-                'property' => get_the_title($booking->get_product_id()),
+                'property' => get_the_title($booking->product_id),
                 'order_id' => $order_id,
             ];
         }
@@ -280,22 +287,29 @@ class Alquipress_Email_Flows {
         );
     }
 
-    private static function get_bookings_between($start_ts, $end_ts) {
-        if (!class_exists('WC_Booking')) {
+    /**
+     * Devuelve Ap_Booking[] cuyo checkin cae dentro del rango de timestamps dado.
+     */
+    private static function get_bookings_between(int $start_ts, int $end_ts): array
+    {
+        if (!class_exists('Ap_Booking_Store')) {
             return [];
         }
         global $wpdb;
-        $ids = $wpdb->get_col($wpdb->prepare(
-            "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_booking_start' AND meta_value BETWEEN %s AND %s",
-            date('Y-m-d H:i:s', $start_ts),
-            date('Y-m-d H:i:s', $end_ts)
-        ));
+        $table      = $wpdb->prefix . 'ap_booking';
+        $date_from  = gmdate('Y-m-d', $start_ts);
+        $date_to    = gmdate('Y-m-d', $end_ts);
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$table} WHERE checkin BETWEEN %s AND %s AND status IN ('held','confirmed') ORDER BY checkin",
+                $date_from,
+                $date_to
+            ),
+            ARRAY_A
+        );
         $out = [];
-        foreach ((array) $ids as $id) {
-            $b = new WC_Booking($id);
-            if ($b->get_id() && in_array($b->get_status(), ['confirmed', 'paid'], true)) {
-                $out[] = $b;
-            }
+        foreach ((array) $rows as $row) {
+            $out[] = Ap_Booking::from_row($row);
         }
         return $out;
     }

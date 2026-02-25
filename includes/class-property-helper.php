@@ -251,92 +251,39 @@ class Alquipress_Property_Helper
             return self::$cache[$cache_key];
         }
 
-        if (!function_exists('wc_get_product') || !class_exists('WC_Bookings_Cost_Calculation')) {
-            self::$cache[$cache_key] = null;
-            return null;
-        }
-
-        $product = wc_get_product($product_id);
-        if (!$product || $product->get_type() !== 'booking') {
-            self::$cache[$cache_key] = null;
-            return null;
-        }
-
-        $costs = method_exists($product, 'get_costs') ? $product->get_costs() : [];
-        if (empty($costs)) {
-            self::$cache[$cache_key] = null;
-            return null;
-        }
-
-        $persons = [];
-        if (method_exists($product, 'has_persons') && $product->has_persons() && method_exists($product, 'has_person_types') && $product->has_person_types()) {
-            $person_types = $product->get_person_types();
-            $min_total = max(1, (int) $product->get_min_persons());
-            $total = 0;
-            foreach ($person_types as $person_type) {
-                $min = method_exists($person_type, 'get_min') ? (int) $person_type->get_min() : 0;
-                $count = max(0, $min);
-                $persons[$person_type->get_id()] = $count;
-                $total += $count;
-            }
-            if ($total < $min_total && !empty($persons)) {
-                $first_key = array_key_first($persons);
-                $persons[$first_key] += ($min_total - $total);
-            } elseif (empty($persons)) {
-                $persons[0] = $min_total;
-            }
-        } else {
-            $persons[0] = 1;
-        }
-
-        $resource_id = null;
-        if (method_exists($product, 'has_resources') && $product->has_resources()) {
-            $ids = $product->get_resource_ids();
-            if (!empty($ids) && is_array($ids)) {
-                $resource_id = (int) $ids[0];
-            }
-        }
-
-        $year = (int) gmdate('Y');
-        $prices = [];
-        for ($m = 1; $m <= 12; $m++) {
-            $ts = strtotime(sprintf('%d-%02d-01 12:00:00', $year, $m));
-            $data = [
-                '_start_date'    => $ts,
-                '_end_date'      => strtotime('+1 day', $ts),
-                '_duration'      => 1,
-                '_persons'       => $persons,
-                '_qty'           => max(1, (int) array_sum($persons)),
-                '_date'          => gmdate('Y-m-d', $ts),
-                'date'           => gmdate('Y-m-d', $ts),
-                '_time'          => '',
-                'time'           => '',
-            ];
-            if ($resource_id) {
-                $data['_resource_id'] = $resource_id;
+        // Usar Ap_Booking_Pricing_Service si el producto tiene el motor de reservas propio
+        if (class_exists('Ap_Booking_Pricing_Service') && get_post_meta($product_id, 'ap_booking_enabled', true)) {
+            $prices = [];
+            $today  = strtotime('today');
+            // Muestrear el primer día de cada uno de los próximos 12 meses
+            for ($m = 0; $m < 12; $m++) {
+                $ts   = strtotime('+' . $m . ' months', $today);
+                $day  = Ap_Booking_Pricing_Service::get_day_price($product_id, $ts, 2);
+                if ($day && isset($day['price']) && (float) $day['price'] > 0) {
+                    $prices[] = (float) $day['price'];
+                }
             }
 
-            $cost = WC_Bookings_Cost_Calculation::calculate_booking_cost($data, $product);
-            if (!is_wp_error($cost) && is_numeric($cost) && (float) $cost > 0) {
-                $prices[] = (float) $cost;
+            if (empty($prices)) {
+                self::$cache[$cache_key] = null;
+                return null;
             }
+
+            $min = min($prices);
+            $max = max($prices);
+            if ($min === $max) {
+                self::$cache[$cache_key] = null;
+                return null;
+            }
+
+            $result = ['min' => $min, 'max' => $max];
+            self::$cache[$cache_key] = $result;
+            return $result;
         }
 
-        if (empty($prices)) {
-            self::$cache[$cache_key] = null;
-            return null;
-        }
-
-        $min = min($prices);
-        $max = max($prices);
-        if ($min === $max) {
-            self::$cache[$cache_key] = null;
-            return null;
-        }
-
-        $result = ['min' => $min, 'max' => $max];
-        self::$cache[$cache_key] = $result;
-        return $result;
+        // Sin motor de reservas configurado
+        self::$cache[$cache_key] = null;
+        return null;
     }
 
     /**

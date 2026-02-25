@@ -8,13 +8,25 @@ if (!defined('ABSPATH'))
     exit;
 
 /**
- * Verificar si ACF está activo
+ * Verificar si ACF (el plugin externo) está activo.
+ * Los campos siempre están disponibles a través del shim Ap_Fields,
+ * por lo que este check solo es necesario para características exclusivas de ACF.
  *
- * @return bool True si ACF está disponible
+ * @return bool True si el plugin ACF está instalado y activo.
  */
-function alquipress_is_acf_active()
+function alquipress_is_acf_active(): bool
 {
-    return class_exists('ACF') || function_exists('get_field');
+    return class_exists('ACF');
+}
+
+/**
+ * Verificar si los campos de Alquipress están disponibles (siempre true).
+ *
+ * @return bool
+ */
+function alquipress_has_field_support(): bool
+{
+    return true;
 }
 
 /**
@@ -58,9 +70,7 @@ function alquipress_check_dependencies()
 {
     $missing = [];
 
-    if (!alquipress_is_acf_active()) {
-        $missing[] = 'Advanced Custom Fields PRO';
-    }
+    // ACF ya no es una dependencia obligatoria (usamos el shim Ap_Fields)
 
     if (!alquipress_is_woocommerce_active()) {
         $missing[] = 'WooCommerce';

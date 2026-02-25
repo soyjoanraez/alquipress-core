@@ -35,6 +35,7 @@ class Alquipress_Module_Manager
                 'payment-pipeline' => true,
                 'communications' => true,
                 'ical-sync' => true,
+                'ap-bookings' => true,
                 'payments' => false,
                 'alquipress-tester' => false,
             ];
@@ -262,6 +263,12 @@ class Alquipress_Module_Manager
                 'file' => 'booking-enforcer/booking-enforcer.php',
                 'dependencies' => []
             ],
+            'ap-bookings' => [
+                'name' => 'Motor de reservas Alquipress',
+                'description' => 'Motor propio de reservas para alquiler vacacional (sustituye WooCommerce Bookings a medio plazo)',
+                'file' => 'ap-bookings/ap-bookings.php',
+                'dependencies' => []
+            ],
             'order-columns' => [
                 'name' => 'Columnas de Pedidos',
                 'description' => 'Añade columnas personalizadas en listado de pedidos WooCommerce: Propiedad, Fechas, Propietario, Semáforo',
@@ -346,10 +353,10 @@ class Alquipress_Module_Manager
                 'file' => 'bookings-page/bookings-page.php',
                 'dependencies' => []
             ],
-            'wc-bookings-dashboard' => [
-                'name' => 'Dashboard WC Bookings integrado',
-                'description' => 'Calendario, nueva reserva, notificaciones y configuración de WooCommerce Bookings en el diseño Alquipress',
-                'file' => 'wc-bookings-dashboard/wc-bookings-dashboard.php',
+            'ap-bookings-dashboard' => [
+                'name' => 'Dashboard Ap Bookings',
+                'description' => 'Próximas entradas/salidas y reservas activas desde el motor Ap_Booking',
+                'file' => 'ap-bookings-dashboard/ap-bookings-dashboard.php',
                 'dependencies' => ['bookings-page']
             ],
             'clients-page' => [
@@ -562,7 +569,7 @@ class Alquipress_Module_Manager
         }
         
         // Forzar siempre la carga de los módulos de páginas del menú para que Panel, Propiedades, Reservas, Clientes y Propietarios funcionen
-        $page_modules = ['dashboard-widgets', 'properties-page', 'owners-page', 'bookings-page', 'wc-bookings-dashboard', 'clients-page', 'communications'];
+        $page_modules = ['dashboard-widgets', 'properties-page', 'owners-page', 'bookings-page', 'ap-bookings-dashboard', 'clients-page', 'communications'];
         foreach ($page_modules as $module_id) {
             if (!isset($this->modules[$module_id])) {
                 continue;
@@ -806,6 +813,34 @@ class Alquipress_Module_Manager
                 'alquipress_messages',
                 'alquipress_message',
                 '✓ Módulos y plantilla de dashboard actualizados correctamente.',
+                'success'
+            );
+        } elseif (isset($_POST['alquipress_save_bookings_settings']) && check_admin_referer('alquipress_bookings_settings_nonce')) {
+            $deposit = isset($_POST['ap_bookings_default_deposit_pct']) ? (float) wp_unslash($_POST['ap_bookings_default_deposit_pct']) : 40.0;
+            $min_nights = isset($_POST['ap_bookings_default_min_nights']) ? (int) wp_unslash($_POST['ap_bookings_default_min_nights']) : 1;
+            $max_nights = isset($_POST['ap_bookings_default_max_nights']) ? (int) wp_unslash($_POST['ap_bookings_default_max_nights']) : 365;
+
+            if ($deposit < 0) {
+                $deposit = 0;
+            }
+            if ($deposit > 100) {
+                $deposit = 100;
+            }
+            if ($min_nights < 1) {
+                $min_nights = 1;
+            }
+            if ($max_nights < $min_nights) {
+                $max_nights = $min_nights;
+            }
+
+            update_option('ap_bookings_default_deposit_pct', $deposit);
+            update_option('ap_bookings_default_min_nights', $min_nights);
+            update_option('ap_bookings_default_max_nights', $max_nights);
+
+            add_settings_error(
+                'alquipress_messages',
+                'alquipress_bookings_message',
+                '✓ Ajustes del motor de reservas actualizados correctamente.',
                 'success'
             );
         }

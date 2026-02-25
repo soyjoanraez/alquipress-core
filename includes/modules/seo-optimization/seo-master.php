@@ -9,10 +9,7 @@
 if (!defined('ABSPATH'))
     exit;
 
-// Verificar que ACF esté disponible (opcional para algunas funciones)
-if (!function_exists('get_field')) {
-    alquipress_log('SEO Master: ACF no está disponible, algunas funciones limitadas');
-}
+// get_field() siempre está disponible (shim Ap_Fields o ACF)
 
 class Alquipress_SEO_Master
 {

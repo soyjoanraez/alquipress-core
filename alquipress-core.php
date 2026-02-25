@@ -15,6 +15,9 @@ define('ALQUIPRESS_VERSION', '1.0.0');
 define('ALQUIPRESS_PATH', plugin_dir_path(__FILE__));
 define('ALQUIPRESS_URL', plugin_dir_url(__FILE__));
 
+// Cargar compatibilidad de campos (antes que cualquier módulo, para que get_field() esté disponible)
+require_once ALQUIPRESS_PATH . 'includes/class-ap-fields.php';
+
 // Cargar helpers primero
 require_once ALQUIPRESS_PATH . 'includes/helpers.php';
 require_once ALQUIPRESS_PATH . 'includes/email-helpers.php';
@@ -62,6 +65,7 @@ function alquipress_activate()
             'email-automation' => true,
             'seo-master' => true,
             'booking-enforcer' => true,
+            'ap-bookings' => true,
             'order-columns' => true,
             'dashboard-widgets' => true,
             'properties-page' => true,

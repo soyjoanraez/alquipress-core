@@ -36,7 +36,6 @@ class Alquipress_Owner_Revenue
         // Invalidación de cache en cambios relevantes
         add_action('save_post_propietario', [$this, 'invalidate_owner_cache_on_save'], 20, 3);
         add_action('save_post_product', [$this, 'invalidate_cache_on_product_save'], 20, 3);
-        add_action('acf/save_post', [$this, 'invalidate_owner_cache_on_acf_save'], 20);
         add_action('woocommerce_order_status_changed', [$this, 'invalidate_cache_for_order'], 10, 4);
         add_action('woocommerce_new_order', [$this, 'invalidate_cache_for_order_id'], 10, 1);
         add_action('woocommerce_update_order', [$this, 'invalidate_cache_for_order_id'], 10, 1);

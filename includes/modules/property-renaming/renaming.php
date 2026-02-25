@@ -26,7 +26,8 @@ class Alquipress_Property_Renaming
         // Modificar URLs para incluir referencia interna
         add_filter('post_type_link', [$this, 'custom_property_permalink'], 10, 2);
         add_action('save_post_product', [$this, 'update_property_slug'], 10, 3);
-        add_action('acf/save_post', [$this, 'update_property_slug_on_acf_save'], 20);
+        // Segunda pasada tras el guardado de Alquipress_Product_Fields (priority 15)
+        add_action('save_post_product', [$this, 'update_property_slug_on_acf_save'], 20, 1);
 
         // flush rules on activation (handled by module manager or manual trigger)
     }
@@ -289,9 +290,10 @@ class Alquipress_Property_Renaming
     }
 
     /**
-     * Actualizar slug cuando se guarda un campo ACF (especialmente referencia_interna)
+     * Segunda pasada tras el guardado de campos del producto para actualizar el slug
+     * cuando referencia_interna cambia (se engancha a save_post_product priority 20).
      */
-    public function update_property_slug_on_acf_save($post_id)
+    public function update_property_slug_on_acf_save(int $post_id): void
     {
         // Solo procesar productos
         if (get_post_type($post_id) !== 'product') {

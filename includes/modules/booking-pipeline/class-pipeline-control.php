@@ -215,24 +215,49 @@ class Alquipress_Pipeline_Control {
 
     private static function get_cleaning_email_body($order) {
         $order_id = $order->get_id();
-        $lines = [
+        $lines    = [
             sprintf(__('Reserva #%s', 'alquipress'), $order_id),
             sprintf(__('Cliente: %s', 'alquipress'), $order->get_formatted_billing_full_name()),
             sprintf(__('Email: %s', 'alquipress'), $order->get_billing_email()),
             '',
         ];
-        if (class_exists('WC_Booking_Data_Store') && method_exists('WC_Booking_Data_Store', 'get_booking_ids_from_order_id')) {
-            $booking_ids = WC_Booking_Data_Store::get_booking_ids_from_order_id($order_id);
-            if (!empty($booking_ids) && class_exists('WC_Booking')) {
-                $booking = new WC_Booking($booking_ids[0]);
-                if ($booking && method_exists($booking, 'get_start') && method_exists($booking, 'get_end')) {
-                    $lines[] = sprintf(__('Check-in: %s', 'alquipress'), date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $booking->get_start()));
-                    $lines[] = sprintf(__('Check-out: %s', 'alquipress'), date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $booking->get_end()));
-                }
+
+        // Leer checkin/checkout desde Ap_Booking (campo order_id en wp_ap_booking)
+        $ap_booking = self::get_ap_booking_for_order($order_id);
+        if ($ap_booking) {
+            $fmt = get_option('date_format');
+            $lines[] = sprintf(__('Check-in: %s', 'alquipress'), date_i18n($fmt, strtotime($ap_booking->checkin)));
+            $lines[] = sprintf(__('Check-out: %s', 'alquipress'), date_i18n($fmt, strtotime($ap_booking->checkout)));
+        } else {
+            // Fallback: leer metadatos guardados en el pedido por el booking widget
+            $checkin  = get_post_meta($order_id, 'ap_checkin', true);
+            $checkout = get_post_meta($order_id, 'ap_checkout', true);
+            if ($checkin) {
+                $fmt = get_option('date_format');
+                $lines[] = sprintf(__('Check-in: %s', 'alquipress'), date_i18n($fmt, strtotime($checkin)));
+                $lines[] = sprintf(__('Check-out: %s', 'alquipress'), date_i18n($fmt, strtotime($checkout)));
             }
         }
+
         $lines[] = '';
         $lines[] = admin_url('post.php?post=' . $order_id . '&action=edit');
         return implode("\n", $lines);
+    }
+
+    /**
+     * Obtener la primera Ap_Booking asociada a un pedido.
+     */
+    private static function get_ap_booking_for_order(int $order_id): ?Ap_Booking
+    {
+        if (!class_exists('Ap_Booking')) {
+            return null;
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking';
+        $row   = $wpdb->get_row(
+            $wpdb->prepare("SELECT * FROM {$table} WHERE order_id = %d LIMIT 1", $order_id),
+            ARRAY_A
+        );
+        return $row ? Ap_Booking::from_row($row) : null;
     }
 }
