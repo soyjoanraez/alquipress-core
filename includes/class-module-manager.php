@@ -794,6 +794,17 @@ class Alquipress_Module_Manager
 
     public function handle_form_submit()
     {
+        $is_modules_submit = isset($_POST['alquipress_save_modules']);
+        $is_bookings_submit = isset($_POST['alquipress_save_bookings_settings']);
+
+        if (!$is_modules_submit && !$is_bookings_submit) {
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_die(esc_html__('No tienes permisos para modificar esta configuración.', 'alquipress'), 403);
+        }
+
         if (isset($_POST['alquipress_save_modules']) && check_admin_referer('alquipress_modules_nonce')) {
             $new_modules = [];
             foreach ($this->modules as $id => $module) {
