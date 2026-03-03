@@ -178,6 +178,112 @@ function alquipress_get_client_ip()
 }
 
 /**
+ * Comprobar si una URL remota es segura para evitar SSRF.
+ *
+ * Reglas:
+ * - Solo http/https.
+ * - Host obligatorio.
+ * - Bloquea localhost y dominios locales/internos.
+ * - Bloquea destinos con IP privada o reservada.
+ *
+ * @param string $url URL a validar.
+ * @return bool
+ */
+function alquipress_is_safe_remote_url($url)
+{
+    if (!is_string($url) || trim($url) === '') {
+        return false;
+    }
+
+    $url = esc_url_raw(trim($url));
+    $validated = wp_http_validate_url($url);
+    if (!$validated) {
+        return false;
+    }
+
+    $parts = wp_parse_url($validated);
+    if (empty($parts['scheme']) || empty($parts['host'])) {
+        return false;
+    }
+
+    $scheme = strtolower((string) $parts['scheme']);
+    if (!in_array($scheme, ['http', 'https'], true)) {
+        return false;
+    }
+
+    $host = strtolower((string) $parts['host']);
+    $blocked_hosts = ['localhost', '127.0.0.1', '::1'];
+    if (in_array($host, $blocked_hosts, true)) {
+        return false;
+    }
+
+    foreach (['.local', '.localhost', '.internal', '.home', '.test'] as $suffix) {
+        if (substr($host, -strlen($suffix)) === $suffix) {
+            return false;
+        }
+    }
+
+    if (filter_var($host, FILTER_VALIDATE_IP)) {
+        return filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false;
+    }
+
+    $resolved_ips = [];
+    if (function_exists('dns_get_record')) {
+        $records = @dns_get_record($host, DNS_A + DNS_AAAA);
+        if (is_array($records)) {
+            foreach ($records as $record) {
+                if (!empty($record['ip'])) {
+                    $resolved_ips[] = $record['ip'];
+                } elseif (!empty($record['ipv6'])) {
+                    $resolved_ips[] = $record['ipv6'];
+                }
+            }
+        }
+    }
+
+    if (empty($resolved_ips)) {
+        $fallback = @gethostbynamel($host);
+        if (is_array($fallback)) {
+            $resolved_ips = $fallback;
+        }
+    }
+
+    if (empty($resolved_ips)) {
+        return false;
+    }
+
+    foreach ($resolved_ips as $ip) {
+        if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Wrapper seguro para peticiones remotas.
+ *
+ * @param string $url URL de destino.
+ * @param array  $args Args para wp_remote_get.
+ * @return array|WP_Error
+ */
+function alquipress_safe_remote_get($url, $args = [])
+{
+    if (!alquipress_is_safe_remote_url($url)) {
+        return new WP_Error('alquipress_unsafe_url', __('URL remota no permitida por seguridad.', 'alquipress'));
+    }
+
+    $defaults = [
+        'timeout' => 15,
+        'redirection' => 3,
+        'reject_unsafe_urls' => true,
+    ];
+
+    return wp_remote_get($url, wp_parse_args($args, $defaults));
+}
+
+/**
  * Formatear precio con símbolo de moneda
  *
  * @param float $amount Cantidad

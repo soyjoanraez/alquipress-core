@@ -142,7 +142,24 @@ class Alquipress_Ical_Sync {
 
     public function import_feed($product_id, $feed) {
         $result = ['status' => 'ok', 'blocked' => 0, 'skipped' => 0, 'error' => ''];
-        $response = wp_remote_get($feed['url'], ['timeout' => 15, 'user-agent' => 'ALQUIPRESS/1.0 (iCal sync)']);
+        $feed_url = isset($feed['url']) ? esc_url_raw($feed['url']) : '';
+        if (!$feed_url || (function_exists('alquipress_is_safe_remote_url') && !alquipress_is_safe_remote_url($feed_url))) {
+            $result['status'] = 'error';
+            $result['error'] = 'URL no permitida por seguridad';
+            return $result;
+        }
+
+        $response = function_exists('alquipress_safe_remote_get')
+            ? alquipress_safe_remote_get($feed_url, [
+                'timeout' => 15,
+                'user-agent' => 'ALQUIPRESS/1.0 (iCal sync)',
+                'limit_response_size' => MB_IN_BYTES,
+            ])
+            : wp_remote_get($feed_url, [
+                'timeout' => 15,
+                'user-agent' => 'ALQUIPRESS/1.0 (iCal sync)',
+                'reject_unsafe_urls' => true,
+            ]);
         if (is_wp_error($response)) {
             $result['status'] = 'error';
             $result['error'] = $response->get_error_message();
@@ -308,9 +325,13 @@ class Alquipress_Ical_Sync {
         if (!empty($_POST['alquipress_ical_feeds']) && is_array($_POST['alquipress_ical_feeds'])) {
             foreach ($_POST['alquipress_ical_feeds'] as $f) {
                 if (empty($f['url'])) continue;
+                $url = esc_url_raw($f['url']);
+                if (!$url || (function_exists('alquipress_is_safe_remote_url') && !alquipress_is_safe_remote_url($url))) {
+                    continue;
+                }
                 $feeds[] = [
                     'channel' => sanitize_key($f['channel'] ?? 'other'),
-                    'url' => esc_url_raw($f['url']),
+                    'url' => $url,
                     'active' => !empty($f['active']),
                     'last_sync' => '',
                     'last_status' => 'pendiente',
