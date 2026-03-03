@@ -1,5 +1,22 @@
 # 🔍 AUDITORÍA DE SEGURIDAD Y OPTIMIZACIÓN - Código Nuevo
 
+## Actualización de Remediación (2026-03-03)
+
+Se han aplicado correcciones incrementales con commits atómicos para los hallazgos activos del plugin:
+
+| Hallazgo | Estado | Resultado |
+|----------|--------|-----------|
+| Callback AJAX faltante en Quick Actions | ✅ Corregido | Se implementó `ajax_quick_status_change()` con validación de nonce, permisos y estado |
+| Endpoints REST públicos de precios/calendario | ✅ Corregido | `/calendar` y `/price` requieren acceso a producto publicado o permisos de staff |
+| Riesgo SSRF en importadores remotos (Kyero/iCal) | ✅ Corregido | Validación de URL segura + wrapper `alquipress_safe_remote_get()` + filtros en guardado/consumo |
+| Falta de `current_user_can()` en guardado de ajustes | ✅ Corregido | `handle_form_submit()` exige `manage_options` antes de procesar |
+| `wp_cache_flush()` global en cron diario | ✅ Corregido | Sustituido por invalidación acotada de caché Alquipress |
+| Dependencia CDN Leaflet en admin | ✅ Corregido | Leaflet se sirve localmente desde `includes/assets/vendor/leaflet/` |
+
+También se añadió una guía reproducible de verificación en `docs/SECURITY-SMOKE-TESTS.md`.
+
+---
+
 **Proyecto:** ALQUIPRESS Core
 **Versión:** 1.0.0
 **Fecha de Auditoría:** 2026-01-24
