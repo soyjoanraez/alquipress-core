@@ -38,7 +38,7 @@ class Ap_Bookings_REST_API
         register_rest_route($ns, '/calendar', [
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => [__CLASS__, 'get_calendar'],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [__CLASS__, 'check_public_product_access'],
             'args'                => [
                 'product_id' => ['required' => true, 'sanitize_callback' => 'absint'],
                 'from'       => ['required' => true, 'sanitize_callback' => 'sanitize_text_field'],
@@ -50,7 +50,7 @@ class Ap_Bookings_REST_API
         register_rest_route($ns, '/price', [
             'methods'             => WP_REST_Server::READABLE,
             'callback'            => [__CLASS__, 'get_price'],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [__CLASS__, 'check_public_product_access'],
             'args'                => [
                 'product_id' => ['required' => true, 'sanitize_callback' => 'absint'],
                 'checkin'    => ['required' => true, 'sanitize_callback' => 'sanitize_text_field'],
@@ -139,6 +139,25 @@ class Ap_Bookings_REST_API
     public static function check_admin(\WP_REST_Request $request): bool
     {
         return current_user_can('manage_woocommerce') || current_user_can('edit_products');
+    }
+
+    public static function check_public_product_access(\WP_REST_Request $request): bool
+    {
+        $product_id = absint($request->get_param('product_id'));
+        if (!$product_id) {
+            return false;
+        }
+
+        $post = get_post($product_id);
+        if (!$post || $post->post_type !== 'product') {
+            return false;
+        }
+
+        if (get_post_status($product_id) === 'publish') {
+            return true;
+        }
+
+        return current_user_can('edit_post', $product_id) || current_user_can('manage_woocommerce');
     }
 
     // ── Calendar ─────────────────────────────────────────────────────────────
