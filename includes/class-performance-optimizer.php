@@ -512,9 +512,11 @@ class Alquipress_Performance_Optimizer
     public static function clear_daily_cache()
     {
         delete_transient('alquipress_preferences_stats');
+        self::clear_all_alquipress_cache();
 
-        // Limpiar caché de WordPress
-        wp_cache_flush();
+        $today = date('Y-m-d');
+        wp_cache_delete('alquipress_checkins_today_' . $today);
+        wp_cache_delete('alquipress_checkouts_today_' . $today);
     }
 
     /**
