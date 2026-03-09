@@ -132,7 +132,16 @@ class Alquipress_Ical_Sync {
                 $result = $this->import_feed($product->ID, $feed);
                 $feeds[$idx]['last_sync'] = current_time('mysql');
                 $feeds[$idx]['last_status'] = $result['status'];
-                $log[] = sprintf('[%s] %s — %s: %s', current_time('mysql'), get_the_title($product->ID), $feed['channel'] ?? 'feed', $result['status']);
+                $log[] = sprintf(
+                    '[%s] %s — %s: %s | +%d bloqueados, -%d eliminados, %d omitidos',
+                    current_time('mysql'),
+                    get_the_title($product->ID),
+                    $feed['channel'] ?? 'feed',
+                    $result['status'],
+                    $result['blocked'],
+                    $result['removed'],
+                    $result['skipped']
+                );
             }
             update_post_meta($product->ID, self::META_FEEDS, $feeds);
         }
@@ -141,7 +150,7 @@ class Alquipress_Ical_Sync {
     }
 
     public function import_feed($product_id, $feed) {
-        $result = ['status' => 'ok', 'blocked' => 0, 'skipped' => 0, 'error' => ''];
+        $result = ['status' => 'ok', 'blocked' => 0, 'skipped' => 0, 'removed' => 0, 'error' => ''];
         $feed_url = isset($feed['url']) ? esc_url_raw($feed['url']) : '';
         if (!$feed_url || (function_exists('alquipress_is_safe_remote_url') && !alquipress_is_safe_remote_url($feed_url))) {
             $result['status'] = 'error';
@@ -175,9 +184,19 @@ class Alquipress_Ical_Sync {
             $result['status'] = 'empty';
             return $result;
         }
-        $events = $this->parse_ical_events($body);
+
+        $events  = $this->parse_ical_events($body);
         $channel = sanitize_key($feed['channel'] ?? 'external');
 
+        // UIDs presentes en el feed actual (solo los futuros, para no tocar histórico)
+        $current_uids = [];
+        foreach ($events as $event) {
+            if (!empty($event['uid']) && $event['end'] >= time()) {
+                $current_uids[] = $event['uid'];
+            }
+        }
+
+        // ── Fase 1: Añadir bloqueos nuevos ─────────────────────────────────
         foreach ($events as $event) {
             $start_ts = $event['start'];
             $end_ts   = $event['end'];
@@ -188,7 +207,7 @@ class Alquipress_Ical_Sync {
                 continue;
             }
 
-            // De-duplicar: el UID se guarda en el campo note con el prefijo "ical:{uid}"
+            // De-duplicar por UID
             if ($uid && class_exists('Ap_Booking_Store') && $this->ical_block_exists($product_id, $uid)) {
                 $result['skipped']++;
                 continue;
@@ -208,7 +227,66 @@ class Alquipress_Ical_Sync {
                 }
             }
         }
+
+        // ── Fase 2: Eliminar bloqueos obsoletos (cancelados en el canal) ────
+        // Buscamos todos los bloqueos iCal de este canal que ya no aparecen en el feed.
+        if (class_exists('Ap_Booking_Store')) {
+            $removed = $this->remove_stale_blocks($product_id, $channel, $current_uids);
+            $result['removed'] = $removed;
+        }
+
         return $result;
+    }
+
+    /**
+     * Eliminar bloqueos iCal de un canal que ya no existen en el feed actual.
+     * Solo afecta a bloqueos futuros (date_to >= hoy) para no alterar histórico.
+     *
+     * @param int    $product_id   ID del producto.
+     * @param string $channel      Canal (airbnb, booking, etc.).
+     * @param array  $current_uids UIDs presentes en el feed actual.
+     * @return int Número de bloqueos eliminados.
+     */
+    private function remove_stale_blocks(int $product_id, string $channel, array $current_uids): int
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking_availability_rules';
+        $today = gmdate('Y-m-d');
+
+        // Obtener todos los bloqueos iCal de este canal para el producto (solo futuros)
+        $stored_blocks = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT id, note FROM {$table}
+                 WHERE product_id = %d
+                   AND note LIKE %s
+                   AND date_to >= %s",
+                $product_id,
+                $wpdb->esc_like('ical:') . '%' . $wpdb->esc_like('|channel:' . $channel),
+                $today
+            ),
+            ARRAY_A
+        );
+
+        if (empty($stored_blocks)) {
+            return 0;
+        }
+
+        $removed = 0;
+        foreach ($stored_blocks as $block) {
+            // Extraer el UID del campo note (formato: "ical:{uid}|channel:{channel}")
+            if (!preg_match('/^ical:(.+?)\|channel:/', $block['note'], $m)) {
+                continue;
+            }
+            $stored_uid = $m[1];
+
+            // Si el UID ya no está en el feed actual, el evento fue cancelado
+            if (!in_array($stored_uid, $current_uids, true)) {
+                $wpdb->delete($table, ['id' => (int) $block['id']], ['%d']);
+                $removed++;
+            }
+        }
+
+        return $removed;
     }
 
     /**
@@ -376,7 +454,13 @@ class Alquipress_Ical_Sync {
             $result = $this->import_feed($product_id, $feed);
             $feeds[$idx]['last_sync'] = current_time('mysql');
             $feeds[$idx]['last_status'] = $result['status'];
-            $summary[] = ($feed['channel'] ?? 'feed') . ': ' . $result['status'] . ' (' . $result['blocked'] . ' bloqueados)';
+            $summary[] = sprintf(
+                '%s: %s (+%d bloqueados, -%d eliminados)',
+                $feed['channel'] ?? 'feed',
+                $result['status'],
+                $result['blocked'],
+                $result['removed']
+            );
         }
         update_post_meta($product_id, self::META_FEEDS, $feeds);
         wp_send_json_success(['summary' => implode(' | ', $summary)]);

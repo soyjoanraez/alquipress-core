@@ -204,28 +204,6 @@ class Alquipress_WC_Deposits_Payments {
             }
         }
 
-        // WC Bookings (legacy)
-        if (class_exists('WC_Booking_Data_Store') && method_exists('WC_Booking_Data_Store', 'get_booking_ids_from_order_id')) {
-            $booking_ids = WC_Booking_Data_Store::get_booking_ids_from_order_id($order_id);
-            if (!empty($booking_ids) && class_exists('WC_Booking')) {
-                $booking = new WC_Booking($booking_ids[0]);
-                if ($booking && method_exists($booking, 'get_start') && $booking->get_start()) {
-                    return date_i18n(get_option('date_format'), $booking->get_start());
-                }
-            }
-        }
-
-        global $wpdb;
-        $booking_id = $wpdb->get_var($wpdb->prepare(
-            "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_booking_order_id' AND meta_value = %s LIMIT 1",
-            (string) $order_id
-        ));
-        if ($booking_id) {
-            $start = get_post_meta($booking_id, '_booking_start', true);
-            if ($start) {
-                return date_i18n(get_option('date_format'), strtotime($start));
-            }
-        }
         return '';
     }
 }

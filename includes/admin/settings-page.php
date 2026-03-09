@@ -162,10 +162,6 @@ require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
                             <strong><?php echo defined('WC_VERSION') ? esc_html(constant('WC_VERSION')) : esc_html__('No instalado', 'alquipress'); ?></strong>
                         </div>
                         <div class="ap-settings-status-card">
-                            <span class="ap-settings-status-label"><?php esc_html_e('ACF PRO', 'alquipress'); ?></span>
-                            <strong><?php echo class_exists('ACF') ? esc_html__('Instalado', 'alquipress') : esc_html__('Opcional (shim integrado)', 'alquipress'); ?></strong>
-                        </div>
-                        <div class="ap-settings-status-card">
                             <span class="ap-settings-status-label"><?php esc_html_e('MailPoet', 'alquipress'); ?></span>
                             <strong><?php echo class_exists('\MailPoet\API\API') ? esc_html__('Instalado', 'alquipress') : esc_html__('No instalado', 'alquipress'); ?></strong>
                         </div>

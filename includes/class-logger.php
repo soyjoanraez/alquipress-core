@@ -45,6 +45,10 @@ class Alquipress_Logger
     const CONTEXT_CACHE = 'cache';
     const CONTEXT_MODULE = 'module';
     const CONTEXT_SECURITY = 'security';
+    const CONTEXT_PAYMENT = 'payment';
+    const CONTEXT_BOOKING = 'booking';
+    const CONTEXT_EMAIL = 'email';
+    const CONTEXT_ICAL = 'ical';
 
     /**
      * Log un mensaje con nivel y contexto específicos

@@ -141,8 +141,28 @@ class Ap_Bookings_REST_API
         return current_user_can('manage_woocommerce') || current_user_can('edit_products');
     }
 
-    public static function check_public_product_access(\WP_REST_Request $request): bool
+    /**
+     * Límites de rate para endpoints públicos:
+     * - 60 peticiones por minuto por IP (uso legítimo normal).
+     * - Usuarios autenticados tienen el doble de margen.
+     */
+    private const RATE_LIMIT_PUBLIC = 60;
+    private const RATE_LIMIT_WINDOW = 60; // segundos
+
+    public static function check_public_product_access(\WP_REST_Request $request): bool|\WP_Error
     {
+        // Rate limiting: protege /calendar y /price de abuso
+        if (class_exists('Alquipress_Rate_Limiter')) {
+            $max = is_user_logged_in() ? self::RATE_LIMIT_PUBLIC * 2 : self::RATE_LIMIT_PUBLIC;
+            if (!Alquipress_Rate_Limiter::check_limit('rest_public', $max, self::RATE_LIMIT_WINDOW)) {
+                return new \WP_Error(
+                    'too_many_requests',
+                    __('Demasiadas peticiones. Por favor, espera un momento.', 'alquipress'),
+                    ['status' => 429]
+                );
+            }
+        }
+
         $product_id = absint($request->get_param('product_id'));
         if (!$product_id) {
             return false;
@@ -161,6 +181,9 @@ class Ap_Bookings_REST_API
     }
 
     // ── Calendar ─────────────────────────────────────────────────────────────
+
+    /** TTL del cache de calendario en segundos (10 minutos). */
+    private const CALENDAR_CACHE_TTL = 600;
 
     public static function get_calendar(\WP_REST_Request $request): WP_REST_Response
     {
@@ -185,9 +208,35 @@ class Ap_Bookings_REST_API
 
         $to_date = gmdate('Y-m-d', $to_ts);
 
-        $matrix = Ap_Booking_Availability_Service::get_calendar_matrix($product_id, $from, $to_date);
+        // Cache por producto + rango de fechas. Se invalida al crear/modificar reservas o bloqueos.
+        $cache_key = 'ap_cal_' . $product_id . '_' . md5($from . '_' . $to_date);
+        $matrix    = get_transient($cache_key);
+
+        if ($matrix === false) {
+            $matrix = Ap_Booking_Availability_Service::get_calendar_matrix($product_id, $from, $to_date);
+            set_transient($cache_key, $matrix, self::CALENDAR_CACHE_TTL);
+        }
 
         return rest_ensure_response($matrix);
+    }
+
+    /**
+     * Invalidar el cache de calendario de un producto.
+     * Llamar desde Ap_Booking_Store al crear/modificar/eliminar reservas o bloqueos.
+     *
+     * @param int $product_id
+     */
+    public static function invalidate_calendar_cache(int $product_id): void
+    {
+        global $wpdb;
+        // Buscar y eliminar todos los transients de este producto
+        $like = $wpdb->esc_like('_transient_ap_cal_' . $product_id . '_') . '%';
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+                $like
+            )
+        );
     }
 
     // ── Price breakdown ──────────────────────────────────────────────────────
@@ -339,6 +388,8 @@ class Ap_Bookings_REST_API
             return self::error('No se pudo crear el bloqueo');
         }
 
+        self::invalidate_calendar_cache($product_id);
+
         global $wpdb;
         $row = $wpdb->get_row(
             $wpdb->prepare("SELECT * FROM {$wpdb->prefix}ap_booking_availability_rules WHERE id = %d", $id),
@@ -361,6 +412,8 @@ class Ap_Bookings_REST_API
         if (!$deleted) {
             return self::error('Bloqueo no encontrado', 404);
         }
+
+        self::invalidate_calendar_cache($product_id);
 
         return new WP_REST_Response(['deleted' => true, 'id' => $id]);
     }

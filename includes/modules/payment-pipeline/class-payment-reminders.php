@@ -13,59 +13,143 @@ if (!defined('ABSPATH')) {
 
 class Alquipress_Payment_Reminders
 {
+    const DB_VERSION_OPTION = 'alquipress_reminders_db_version';
+    const DB_VERSION        = '1.0';
+    const REMINDERS_TABLE   = 'alquipress_payment_reminders';
+
     /**
      * Constructor
      */
     public function __construct()
     {
+        $this->maybe_create_table();
+
         // Programar evento diario para enviar recordatorios
         add_action('alquipress_payment_reminders_daily', [$this, 'send_scheduled_reminders']);
-        
+
         // Registrar cron job si no existe
         if (!wp_next_scheduled('alquipress_payment_reminders_daily')) {
             wp_schedule_event(time(), 'daily', 'alquipress_payment_reminders_daily');
         }
     }
-    
+
     /**
-     * Enviar recordatorios programados (ejecutado por cron diario)
+     * Crear tabla de recordatorios si no existe.
+     * Sustituye el almacenamiento en wp_postmeta, que requería consultas LIKE ineficientes.
      */
-    public function send_scheduled_reminders()
+    private function maybe_create_table(): void
+    {
+        if (get_option(self::DB_VERSION_OPTION) === self::DB_VERSION) {
+            return;
+        }
+
+        global $wpdb;
+        $table           = $wpdb->prefix . self::REMINDERS_TABLE;
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE {$table} (
+            id                  BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            payment_schedule_id BIGINT UNSIGNED NOT NULL,
+            order_id            BIGINT UNSIGNED NOT NULL,
+            reminder_key        VARCHAR(20)     NOT NULL,
+            sent_at             DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY uq_schedule_reminder (payment_schedule_id, reminder_key),
+            KEY idx_order_id (order_id)
+        ) {$charset_collate};";
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta($sql);
+
+        // Migrar datos legacy de postmeta a la nueva tabla
+        $this->migrate_legacy_postmeta_reminders();
+
+        update_option(self::DB_VERSION_OPTION, self::DB_VERSION);
+    }
+
+    /**
+     * Migrar recordatorios guardados en postmeta a la tabla SQL.
+     * Formato legacy: meta_key = '_payment_reminder_{schedule_id}_{key}' en el pedido.
+     */
+    private function migrate_legacy_postmeta_reminders(): void
     {
         global $wpdb;
-        
-        $table = $wpdb->prefix . 'apm_payment_schedule';
-        $today = current_time('Y-m-d');
-        
-        // Obtener todos los pagos pendientes
-        $pending_payments = $wpdb->get_results(
-            "SELECT * FROM {$table} WHERE status = 'pending' ORDER BY scheduled_date ASC",
+        $table = $wpdb->prefix . self::REMINDERS_TABLE;
+        $sched = $wpdb->prefix . 'apm_payment_schedule';
+
+        $legacy_meta = $wpdb->get_results(
+            "SELECT post_id AS order_id, meta_key, meta_value
+             FROM {$wpdb->postmeta}
+             WHERE meta_key LIKE '_payment_reminder_%'",
             ARRAY_A
         );
-        
-        foreach ($pending_payments as $payment) {
-            $scheduled_date = date('Y-m-d', strtotime($payment['scheduled_date']));
-            $days_until_due = floor((strtotime($scheduled_date) - strtotime($today)) / DAY_IN_SECONDS);
-            $days_overdue = -$days_until_due; // Negativo si está vencido
-            
-            // Enviar recordatorio 7 días antes
-            if ($days_until_due === 7 && !$this->was_reminder_sent($payment['id'], '7d')) {
-                $this->send_reminder($payment['id'], 7);
+
+        foreach ((array) $legacy_meta as $row) {
+            // Extraer schedule_id y reminder_key del meta_key
+            if (!preg_match('/^_payment_reminder_(\d+)_([a-z0-9]+)$/', $row['meta_key'], $m)) {
+                continue;
             }
-            
-            // Enviar recordatorio 3 días antes
-            if ($days_until_due === 3 && !$this->was_reminder_sent($payment['id'], '3d')) {
-                $this->send_reminder($payment['id'], 3);
-            }
-            
-            // Enviar recordatorio el día del vencimiento
-            if ($days_until_due === 0 && !$this->was_reminder_sent($payment['id'], 'due')) {
-                $this->send_reminder($payment['id'], 0);
-            }
-            
-            // Enviar recordatorio 3 días después del vencimiento (overdue)
-            if ($days_overdue === 3 && !$this->was_reminder_sent($payment['id'], 'overdue')) {
-                $this->send_reminder($payment['id'], -3);
+            $schedule_id  = (int) $m[1];
+            $reminder_key = $m[2];
+
+            $wpdb->insert(
+                $table,
+                [
+                    'payment_schedule_id' => $schedule_id,
+                    'order_id'            => (int) $row['order_id'],
+                    'reminder_key'        => $reminder_key,
+                    'sent_at'             => $row['meta_value'] ?: current_time('mysql'),
+                ],
+                ['%d', '%d', '%s', '%s']
+            );
+        }
+    }
+    
+    /**
+     * Enviar recordatorios programados (ejecutado por cron diario).
+     * Carga los estados de recordatorio en una sola query JOIN para evitar N+1.
+     */
+    public function send_scheduled_reminders(): void
+    {
+        global $wpdb;
+
+        $sched_table     = $wpdb->prefix . 'apm_payment_schedule';
+        $reminder_table  = $wpdb->prefix . self::REMINDERS_TABLE;
+        $today           = current_time('Y-m-d');
+
+        // Obtener pagos pendientes junto con sus recordatorios ya enviados en una sola query
+        $rows = $wpdb->get_results(
+            "SELECT s.id, s.order_id, s.scheduled_date,
+                    GROUP_CONCAT(r.reminder_key) AS sent_keys
+             FROM {$sched_table} s
+             LEFT JOIN {$reminder_table} r ON r.payment_schedule_id = s.id
+             WHERE s.status = 'pending'
+             GROUP BY s.id
+             ORDER BY s.scheduled_date ASC",
+            ARRAY_A
+        );
+
+        foreach ((array) $rows as $payment) {
+            $scheduled_date = gmdate('Y-m-d', strtotime($payment['scheduled_date']));
+            $days_until_due = (int) floor((strtotime($scheduled_date) - strtotime($today)) / DAY_IN_SECONDS);
+            $days_overdue   = -$days_until_due;
+
+            // Conjunto de claves ya enviadas para este pago (lookup O(1))
+            $sent = $payment['sent_keys']
+                ? array_flip(explode(',', $payment['sent_keys']))
+                : [];
+
+            $schedule = [
+                ['key' => '7d',      'days' => 7,  'condition' => $days_until_due === 7],
+                ['key' => '3d',      'days' => 3,  'condition' => $days_until_due === 3],
+                ['key' => 'due',     'days' => 0,  'condition' => $days_until_due === 0],
+                ['key' => 'overdue', 'days' => -3, 'condition' => $days_overdue === 3],
+            ];
+
+            foreach ($schedule as $item) {
+                if ($item['condition'] && !isset($sent[$item['key']])) {
+                    $this->send_reminder((int) $payment['id'], $item['days']);
+                }
             }
         }
     }
@@ -223,45 +307,55 @@ class Alquipress_Payment_Reminders
     }
     
     /**
-     * Verificar si un recordatorio ya fue enviado
+     * Verificar si un recordatorio ya fue enviado.
+     * Consulta la tabla SQL dedicada (O(1) con índice UNIQUE).
      */
-    private function was_reminder_sent($payment_schedule_id, $reminder_key)
+    private function was_reminder_sent(int $payment_schedule_id, string $reminder_key): bool
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'apm_payment_schedule';
-        
-        $meta_key = '_reminder_sent_' . $reminder_key;
-        $meta_value = $wpdb->get_var($wpdb->prepare(
-            "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s",
-            $payment_schedule_id,
-            $meta_key
-        ));
-        
-        return !empty($meta_value);
+        $table = $wpdb->prefix . self::REMINDERS_TABLE;
+
+        return (bool) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT id FROM {$table}
+                 WHERE payment_schedule_id = %d AND reminder_key = %s
+                 LIMIT 1",
+                $payment_schedule_id,
+                $reminder_key
+            )
+        );
     }
-    
+
     /**
-     * Marcar recordatorio como enviado
+     * Marcar recordatorio como enviado en la tabla SQL.
+     * El índice UNIQUE previene duplicados de forma garantizada.
      */
-    private function mark_reminder_sent($payment_schedule_id, $reminder_key)
+    private function mark_reminder_sent(int $payment_schedule_id, string $reminder_key): void
     {
         global $wpdb;
-        $table = $wpdb->prefix . 'apm_payment_schedule';
-        
-        // Usar meta del pedido para almacenar recordatorios enviados
-        $payment = $wpdb->get_row($wpdb->prepare(
-            "SELECT order_id FROM {$table} WHERE id = %d",
-            $payment_schedule_id
-        ), ARRAY_A);
-        
-        if ($payment) {
-            $order = wc_get_order($payment['order_id']);
-            if ($order) {
-                $meta_key = '_payment_reminder_' . $payment_schedule_id . '_' . $reminder_key;
-                $order->update_meta_data($meta_key, current_time('mysql'));
-                $order->save();
-            }
+        $table = $wpdb->prefix . self::REMINDERS_TABLE;
+        $sched = $wpdb->prefix . 'apm_payment_schedule';
+
+        $order_id = (int) $wpdb->get_var(
+            $wpdb->prepare("SELECT order_id FROM {$sched} WHERE id = %d", $payment_schedule_id)
+        );
+
+        if (!$order_id) {
+            return;
         }
+
+        // INSERT IGNORE para respetar el UNIQUE KEY sin lanzar error si ya existe
+        $wpdb->query(
+            $wpdb->prepare(
+                "INSERT IGNORE INTO {$table}
+                 (payment_schedule_id, order_id, reminder_key, sent_at)
+                 VALUES (%d, %d, %s, %s)",
+                $payment_schedule_id,
+                $order_id,
+                $reminder_key,
+                current_time('mysql')
+            )
+        );
     }
     
     /**

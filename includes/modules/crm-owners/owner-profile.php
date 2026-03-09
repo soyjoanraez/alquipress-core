@@ -360,7 +360,7 @@ class Alquipress_Owner_Profile
                                         ]);
                                         ?>
                                     <?php else : ?>
-                                        <p class="ap-owner-empty"><?php esc_html_e('ACF no está activo. No se puede editar desde esta vista.', 'alquipress'); ?></p>
+                                <p class="ap-owner-empty"><?php esc_html_e('Los campos avanzados del propietario no están disponibles en esta vista.', 'alquipress'); ?></p>
                                     <?php endif; ?>
                                 </div>
                             <?php else : ?>

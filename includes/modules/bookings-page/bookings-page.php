@@ -45,6 +45,9 @@ class Alquipress_Bookings_Page
      */
     private function get_bookings_by_checkin_date(string $date): array
     {
+        if (!$this->has_ap_booking_table()) {
+            return [];
+        }
         global $wpdb;
         $table = $wpdb->prefix . 'ap_booking';
         return $wpdb->get_col(
@@ -57,6 +60,9 @@ class Alquipress_Bookings_Page
      */
     private function get_bookings_by_checkout_date(string $date): array
     {
+        if (!$this->has_ap_booking_table()) {
+            return [];
+        }
         global $wpdb;
         $table = $wpdb->prefix . 'ap_booking';
         return $wpdb->get_col(
@@ -106,26 +112,28 @@ class Alquipress_Bookings_Page
             $checkouts_week += count($this->get_bookings_by_checkout_date(date('Y-m-d', $d)));
         }
 
-        // KPIs desde wp_ap_booking
-        global $wpdb;
-        $ap_table = $wpdb->prefix . 'ap_booking';
-        $active = (int) $wpdb->get_var(
-            $wpdb->prepare("SELECT COUNT(*) FROM {$ap_table} WHERE checkin <= %s AND checkout >= %s AND status IN ('held','confirmed')", $today, $today)
-        );
-
-        // Ingresos del mes: suma totales de pedidos vinculados a reservas Ap_Booking creadas este mes
+        // KPIs desde wp_ap_booking (si la tabla existe)
         $revenue = 0;
-        $order_ids_month = $wpdb->get_col(
-            $wpdb->prepare(
-                "SELECT order_id FROM {$ap_table} WHERE DATE(created_at) BETWEEN %s AND %s AND order_id > 0 AND status IN ('held','confirmed')",
-                $month_start, $month_end
-            )
-        );
-        foreach ((array) $order_ids_month as $oid) {
-            $order = function_exists('wc_get_order') ? wc_get_order((int) $oid) : null;
-            if ($order) {
-                $real_total = $order->get_meta('_apm_booking_total');
-                $revenue += (float) ($real_total !== '' && is_numeric($real_total) ? $real_total : $order->get_total());
+        if ($this->has_ap_booking_table()) {
+            global $wpdb;
+            $ap_table = $wpdb->prefix . 'ap_booking';
+            $active = (int) $wpdb->get_var(
+                $wpdb->prepare("SELECT COUNT(*) FROM {$ap_table} WHERE checkin <= %s AND checkout >= %s AND status IN ('held','confirmed')", $today, $today)
+            );
+
+            // Ingresos del mes: suma totales de pedidos vinculados a reservas Ap_Booking creadas este mes
+            $order_ids_month = $wpdb->get_col(
+                $wpdb->prepare(
+                    "SELECT order_id FROM {$ap_table} WHERE DATE(created_at) BETWEEN %s AND %s AND order_id > 0 AND status IN ('held','confirmed')",
+                    $month_start, $month_end
+                )
+            );
+            foreach ((array) $order_ids_month as $oid) {
+                $order = function_exists('wc_get_order') ? wc_get_order((int) $oid) : null;
+                if ($order) {
+                    $real_total = $order->get_meta('_apm_booking_total');
+                    $revenue += (float) ($real_total !== '' && is_numeric($real_total) ? $real_total : $order->get_total());
+                }
             }
         }
 
@@ -184,6 +192,9 @@ class Alquipress_Bookings_Page
 
     private function get_recent_bookings($limit = 8)
     {
+        if (!$this->has_ap_booking_table()) {
+            return [];
+        }
         global $wpdb;
         $table = $wpdb->prefix . 'ap_booking';
         $rows  = $wpdb->get_results(
@@ -222,6 +233,17 @@ class Alquipress_Bookings_Page
             ];
         }
         return $bookings;
+    }
+
+    /**
+     * Comprobar si la tabla wp_ap_booking existe antes de lanzar queries.
+     */
+    private function has_ap_booking_table(): bool
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking';
+        $found = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table));
+        return $found === $table;
     }
 
     private function get_booking_tabs()

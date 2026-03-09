@@ -348,7 +348,7 @@ function alquipress_render_property_edit_layout($post, $args = [])
                     </div>
                     <div class="ap-prop-card ap-prop-card-amenities">
                         <h3 class="ap-prop-card-title"><?php esc_html_e('Características y equipamiento', 'alquipress'); ?></h3>
-                        <p class="ap-prop-card-muted"><?php esc_html_e('Definidas en los campos personalizados (taxonomías, ACF).', 'alquipress'); ?></p>
+                        <p class="ap-prop-card-muted"><?php esc_html_e('Definidas en los campos personalizados y taxonomías de la propiedad.', 'alquipress'); ?></p>
                     </div>
                     <div class="ap-prop-card ap-prop-card-rooms">
                         <h3 class="ap-prop-card-title"><?php esc_html_e('Configuración de habitaciones', 'alquipress'); ?></h3>
@@ -360,7 +360,7 @@ function alquipress_render_property_edit_layout($post, $args = [])
                     </div>
                     <div class="ap-prop-card ap-prop-card-rules">
                         <h3 class="ap-prop-card-title"><?php esc_html_e('Normas y políticas', 'alquipress'); ?></h3>
-                        <p class="ap-prop-card-muted"><?php esc_html_e('Configurables en el producto o campos ACF.', 'alquipress'); ?></p>
+                        <p class="ap-prop-card-muted"><?php esc_html_e('Configurables en el producto y campos personalizados.', 'alquipress'); ?></p>
                     </div>
                 </div>
                 <aside class="ap-prop-overview-sidebar">

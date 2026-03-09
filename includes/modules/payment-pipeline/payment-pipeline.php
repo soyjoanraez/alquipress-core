@@ -737,13 +737,18 @@ class Alquipress_Payment_Pipeline
 
         // OPTIMIZACIÓN: Obtener todos los metadatos de recordatorios de una sola vez
         $order_ids = array_unique(wp_list_pluck($payments, 'order_id'));
-        $order_ids_string = implode(',', array_map('intval', $order_ids));
-        
+        $order_ids_int = array_map('intval', $order_ids);
+        $placeholders = implode(',', array_fill(0, count($order_ids_int), '%d'));
+
         // Buscamos todas las claves de recordatorios para estos pedidos
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
         $meta_results = $wpdb->get_results(
-            "SELECT post_id, meta_key FROM {$wpdb->postmeta} 
-             WHERE post_id IN ($order_ids_string) 
-             AND meta_key LIKE '_payment_reminder_%'"
+            $wpdb->prepare(
+                "SELECT post_id, meta_key FROM {$wpdb->postmeta}
+                 WHERE post_id IN ({$placeholders})
+                 AND meta_key LIKE %s",
+                array_merge($order_ids_int, ['_payment_reminder_%'])
+            )
         );
         
         // Mapear metadatos para acceso rápido O(1)
@@ -870,8 +875,17 @@ class Alquipress_Payment_Pipeline
 
         // OPTIMIZACIÓN: Cargar metadatos de una vez
         $order_ids = array_unique(wp_list_pluck($pending_payments, 'order_id'));
-        $order_ids_string = implode(',', array_map('intval', $order_ids));
-        $meta_results = $wpdb->get_results("SELECT post_id, meta_key FROM {$wpdb->postmeta} WHERE post_id IN ($order_ids_string) AND meta_key LIKE '_payment_reminder_%'");
+        $order_ids_int = array_map('intval', $order_ids);
+        $placeholders = implode(',', array_fill(0, count($order_ids_int), '%d'));
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+        $meta_results = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT post_id, meta_key FROM {$wpdb->postmeta}
+                 WHERE post_id IN ({$placeholders})
+                 AND meta_key LIKE %s",
+                array_merge($order_ids_int, ['_payment_reminder_%'])
+            )
+        );
         
         $sent_map = [];
         foreach ($meta_results as $meta) {

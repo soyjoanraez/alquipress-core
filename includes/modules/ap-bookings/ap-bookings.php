@@ -98,16 +98,25 @@ function ap_bookings_maybe_create_tables()
     global $wpdb;
 
     $installed = get_option('ap_bookings_db_version');
-    if ($installed === AP_BOOKINGS_DB_VERSION) {
+    $booking_table = $wpdb->prefix . 'ap_booking';
+    $pricing_table = $wpdb->prefix . 'ap_booking_pricing_rules';
+    $availability_table = $wpdb->prefix . 'ap_booking_availability_rules';
+    $guests_table = $wpdb->prefix . 'ap_booking_guests';
+
+    // Comprobar si las tablas existen realmente. Es posible que la opción de versión
+    // se haya actualizado en algún momento sin que dbDelta llegara a crear las tablas.
+    $booking_table_exists = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $booking_table)) === $booking_table);
+
+    if ($installed === AP_BOOKINGS_DB_VERSION && $booking_table_exists) {
         return;
     }
 
     require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
     $charset_collate = $wpdb->get_charset_collate();
-    $booking_table = $wpdb->prefix . 'ap_booking';
     $pricing_table = $wpdb->prefix . 'ap_booking_pricing_rules';
     $availability_table = $wpdb->prefix . 'ap_booking_availability_rules';
+    $guests_table = $wpdb->prefix . 'ap_booking_guests';
 
     $sql_booking = "CREATE TABLE {$booking_table} (
         id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -163,9 +172,27 @@ function ap_bookings_maybe_create_tables()
         KEY type (type)
     ) {$charset_collate};";
 
+    $sql_guests = "CREATE TABLE {$guests_table} (
+        id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+        booking_id BIGINT(20) UNSIGNED NOT NULL,
+        first_name VARCHAR(80) NOT NULL,
+        last_name VARCHAR(120) NOT NULL,
+        document_type VARCHAR(20) NOT NULL DEFAULT 'dni',
+        document_number VARCHAR(50) NOT NULL,
+        birth_date DATE NOT NULL,
+        nationality VARCHAR(3) DEFAULT '',
+        is_main_guest TINYINT(1) NOT NULL DEFAULT 0,
+        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        KEY booking_id (booking_id),
+        KEY document_number (document_number)
+    ) {$charset_collate};";
+
     dbDelta($sql_booking);
     dbDelta($sql_pricing);
     dbDelta($sql_availability);
+    dbDelta($sql_guests);
 
     update_option('ap_bookings_db_version', AP_BOOKINGS_DB_VERSION);
 }
@@ -563,6 +590,98 @@ class Ap_Booking_Store
 
         $rows = $wpdb->get_results($sql, ARRAY_A);
         return array_map([Ap_Booking::class, 'from_row'], $rows ?: []);
+    }
+
+    /**
+     * Obtener una reserva concreta por ID.
+     */
+    public static function get_booking(int $booking_id): ?Ap_Booking
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking';
+        $row = $wpdb->get_row(
+            $wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", $booking_id),
+            ARRAY_A
+        );
+        if (!$row) {
+            return null;
+        }
+        return Ap_Booking::from_row($row);
+    }
+}
+
+/**
+ * Gestión de huéspedes asociados a una reserva (para Guardia Civil, etc.).
+ */
+class Ap_Booking_Guests
+{
+    /**
+     * Obtener todos los huéspedes de una reserva.
+     *
+     * @return array<int, array<string,mixed>>
+     */
+    public static function get_for_booking(int $booking_id): array
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking_guests';
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$table} WHERE booking_id = %d ORDER BY id ASC",
+                $booking_id
+            ),
+            ARRAY_A
+        );
+        return $rows ?: [];
+    }
+
+    /**
+     * Reemplazar la lista completa de huéspedes de una reserva.
+     *
+     * @param int   $booking_id
+     * @param array $guests Cada elemento: [
+     *   'first_name','last_name','document_type','document_number','birth_date','nationality','is_main_guest'
+     * ]
+     */
+    public static function save_for_booking(int $booking_id, array $guests): void
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking_guests';
+        $booking_id = (int) $booking_id;
+        if ($booking_id <= 0) {
+            return;
+        }
+
+        // Borrar huéspedes existentes.
+        $wpdb->delete($table, ['booking_id' => $booking_id], ['%d']);
+
+        foreach ($guests as $g) {
+            $first_name = isset($g['first_name']) ? sanitize_text_field($g['first_name']) : '';
+            $last_name  = isset($g['last_name']) ? sanitize_text_field($g['last_name']) : '';
+            $doc_type   = isset($g['document_type']) ? sanitize_key($g['document_type']) : 'dni';
+            $doc_number = isset($g['document_number']) ? sanitize_text_field($g['document_number']) : '';
+            $birth_date = isset($g['birth_date']) ? sanitize_text_field($g['birth_date']) : '';
+            $nationality = isset($g['nationality']) ? strtoupper(sanitize_text_field($g['nationality'])) : '';
+            $is_main    = !empty($g['is_main_guest']) ? 1 : 0;
+
+            if ($first_name === '' || $last_name === '' || $doc_number === '' || $birth_date === '') {
+                continue;
+            }
+
+            $wpdb->insert(
+                $table,
+                [
+                    'booking_id'      => $booking_id,
+                    'first_name'      => $first_name,
+                    'last_name'       => $last_name,
+                    'document_type'   => $doc_type,
+                    'document_number' => $doc_number,
+                    'birth_date'      => $birth_date,
+                    'nationality'     => $nationality,
+                    'is_main_guest'   => $is_main,
+                ],
+                ['%d', '%s', '%s', '%s', '%s', '%s', '%d']
+            );
+        }
     }
 }
 
@@ -990,5 +1109,143 @@ class Ap_Booking_Compatibility
         return $results;
     }
 }
+/**
+ * Shortcode frontal para que el propio huésped complete los datos de viajeros
+ * (nombre, DNI/pasaporte, fecha de nacimiento, nacionalidad).
+ *
+ * Uso básico:
+ *   [alquipress_guest_registration booking_id="123"]
+ *
+ * En esta primera versión se asume que la URL solo la recibe el cliente que
+ * debe rellenar los datos (enlaces enviados por email).
+ */
+function alquipress_guest_registration_shortcode($atts)
+{
+    $atts = shortcode_atts(
+        [
+            'booking_id' => 0,
+        ],
+        $atts,
+        'alquipress_guest_registration'
+    );
 
+    $booking_id = (int) $atts['booking_id'];
+    if ($booking_id <= 0) {
+        return '<p>' . esc_html__('Reserva no encontrada.', 'alquipress') . '</p>';
+    }
 
+    $booking = Ap_Booking_Store::get_booking($booking_id);
+    if (!$booking) {
+        return '<p>' . esc_html__('Reserva no válida.', 'alquipress') . '</p>';
+    }
+
+    $output = '';
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ap_guest_reg_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['ap_guest_reg_nonce'])), 'ap_guest_registration_' . $booking_id)) {
+        $guests = [];
+        $first_names = isset($_POST['guest_first_name']) ? (array) $_POST['guest_first_name'] : [];
+        $last_names  = isset($_POST['guest_last_name']) ? (array) $_POST['guest_last_name'] : [];
+        $doc_types   = isset($_POST['guest_document_type']) ? (array) $_POST['guest_document_type'] : [];
+        $doc_numbers = isset($_POST['guest_document_number']) ? (array) $_POST['guest_document_number'] : [];
+        $birth_dates = isset($_POST['guest_birth_date']) ? (array) $_POST['guest_birth_date'] : [];
+        $nationalities = isset($_POST['guest_nationality']) ? (array) $_POST['guest_nationality'] : [];
+        $main_flags  = isset($_POST['guest_is_main']) ? (array) $_POST['guest_is_main'] : [];
+
+        $rows = max(count($first_names), count($last_names), count($doc_numbers), count($birth_dates));
+        for ($i = 0; $i < $rows; $i++) {
+            $guests[] = [
+                'first_name'      => $first_names[$i] ?? '',
+                'last_name'       => $last_names[$i] ?? '',
+                'document_type'   => $doc_types[$i] ?? 'dni',
+                'document_number' => $doc_numbers[$i] ?? '',
+                'birth_date'      => $birth_dates[$i] ?? '',
+                'nationality'     => $nationalities[$i] ?? '',
+                'is_main_guest'   => in_array((string) $i, $main_flags, true),
+            ];
+        }
+
+        Ap_Booking_Guests::save_for_booking($booking_id, $guests);
+        $output .= '<div class="ap-guest-reg-notice ap-guest-reg-success"><p>' . esc_html__('Datos de huéspedes guardados correctamente.', 'alquipress') . '</p></div>';
+    }
+
+    $existing   = Ap_Booking_Guests::get_for_booking($booking_id);
+    $guest_rows = !empty($existing) ? $existing : [];
+
+    if (empty($guest_rows)) {
+        $total_slots = max(1, (int) $booking->guests);
+        for ($i = 0; $i < $total_slots; $i++) {
+            $guest_rows[] = [
+                'first_name'      => '',
+                'last_name'       => '',
+                'document_type'   => 'dni',
+                'document_number' => '',
+                'birth_date'      => '',
+                'nationality'     => '',
+                'is_main_guest'   => $i === 0 ? 1 : 0,
+            ];
+        }
+    }
+
+    ob_start();
+    ?>
+    <form method="post" class="ap-guest-registration-form">
+        <?php wp_nonce_field('ap_guest_registration_' . $booking_id, 'ap_guest_reg_nonce'); ?>
+        <input type="hidden" name="ap_booking_id" value="<?php echo (int) $booking_id; ?>">
+
+        <h2><?php esc_html_e('Datos de los huéspedes', 'alquipress'); ?></h2>
+        <p><?php esc_html_e('Rellena los datos de todos los viajeros tal y como aparecen en su documento de identidad. Esta información se utiliza para el parte de viajeros de Guardia Civil.', 'alquipress'); ?></p>
+
+        <table class="ap-guest-reg-table">
+            <thead>
+                <tr>
+                    <th><?php esc_html_e('Titular', 'alquipress'); ?></th>
+                    <th><?php esc_html_e('Nombre', 'alquipress'); ?></th>
+                    <th><?php esc_html_e('Apellidos', 'alquipress'); ?></th>
+                    <th><?php esc_html_e('Tipo doc.', 'alquipress'); ?></th>
+                    <th><?php esc_html_e('Nº documento', 'alquipress'); ?></th>
+                    <th><?php esc_html_e('Fecha nacimiento', 'alquipress'); ?></th>
+                    <th><?php esc_html_e('Nacionalidad (ISO-3)', 'alquipress'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($guest_rows as $index => $g) : ?>
+                    <tr>
+                        <td>
+                            <label>
+                                <input type="radio" name="guest_is_main[]" value="<?php echo (int) $index; ?>" <?php checked(!empty($g['is_main_guest']), true); ?> />
+                            </label>
+                        </td>
+                        <td><input type="text" name="guest_first_name[]" value="<?php echo esc_attr((string) ($g['first_name'] ?? '')); ?>" required></td>
+                        <td><input type="text" name="guest_last_name[]" value="<?php echo esc_attr((string) ($g['last_name'] ?? '')); ?>" required></td>
+                        <td>
+                            <select name="guest_document_type[]">
+                                <?php
+                                $doc_type_val = isset($g['document_type']) ? (string) $g['document_type'] : 'dni';
+                                ?>
+                                <option value="dni" <?php selected($doc_type_val, 'dni'); ?>><?php esc_html_e('DNI', 'alquipress'); ?></option>
+                                <option value="nie" <?php selected($doc_type_val, 'nie'); ?>><?php esc_html_e('NIE', 'alquipress'); ?></option>
+                                <option value="passport" <?php selected($doc_type_val, 'passport'); ?>><?php esc_html_e('Pasaporte', 'alquipress'); ?></option>
+                            </select>
+                        </td>
+                        <td><input type="text" name="guest_document_number[]" value="<?php echo esc_attr((string) ($g['document_number'] ?? '')); ?>" required></td>
+                        <td><input type="date" name="guest_birth_date[]" value="<?php echo esc_attr((string) ($g['birth_date'] ?? '')); ?>" required></td>
+                        <td><input type="text" name="guest_nationality[]" value="<?php echo esc_attr((string) ($g['nationality'] ?? '')); ?>" maxlength="3" placeholder="ESP"></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+
+        <p class="ap-guest-reg-help">
+            <?php esc_html_e('Ejemplo de regla: 1 niño (hasta 3 años) puede alojarse gratis usando cuna; los niños de 4 a 17 años pueden tener suplemento por cama supletoria según la política de la propiedad.', 'alquipress'); ?>
+        </p>
+
+        <p>
+            <button type="submit" class="button button-primary"><?php esc_html_e('Guardar datos de huéspedes', 'alquipress'); ?></button>
+        </p>
+    </form>
+    <?php
+
+    $output .= ob_get_clean();
+    return $output;
+}
+add_shortcode('alquipress_guest_registration', 'alquipress_guest_registration_shortcode');

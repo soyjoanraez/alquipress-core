@@ -49,6 +49,9 @@ function alquipress_bootstrap()
     $module_manager = new Alquipress_Module_Manager();
     $module_manager->load_active_modules();
     new Alquipress_Live_Search();
+
+    // Aplicar índices de BD en instalaciones existentes (comprueba versión, es idempotente)
+    alquipress_create_database_indexes();
 }
 add_action('plugins_loaded', 'alquipress_bootstrap', 20);
 
@@ -93,22 +96,61 @@ function alquipress_activate()
 }
 
 /**
- * Crear índices de base de datos para optimizar queries
+ * Crear índices de base de datos en las tablas propias de Alquipress.
+ * Se ejecuta en la activación y al actualizar el plugin si la versión cambia.
  */
 function alquipress_create_database_indexes()
 {
     global $wpdb;
-    
-    // Verificar si los índices ya existen
-    $indexes_exist = get_option('alquipress_db_indexes_created', false);
-    if ($indexes_exist) {
+
+    $current_version = get_option('alquipress_db_indexes_version', '0');
+    $target_version  = '1.1';
+
+    if (version_compare($current_version, $target_version, '>=')) {
         return;
     }
-    
-    // Índices para meta_query de fechas de reservas
-    // Nota: WordPress no soporta índices directamente en postmeta, pero podemos optimizar las queries
-    // En su lugar, documentamos las mejores prácticas y optimizamos a nivel de código
-    
-    // Marcar que los índices fueron "creados" (en realidad, optimizamos a nivel de código)
-    update_option('alquipress_db_indexes_created', true);
+
+    $ap_rules = $wpdb->prefix . 'ap_booking_pricing_rules';
+    $ap_avail = $wpdb->prefix . 'ap_booking_availability_rules';
+    $ap_books = $wpdb->prefix . 'ap_bookings';
+
+    $indexes = [
+        [$ap_rules, 'idx_apr_product_id', 'product_id'],
+        [$ap_rules, 'idx_apr_date_from',  'date_from'],
+        [$ap_rules, 'idx_apr_date_to',    'date_to'],
+        [$ap_avail, 'idx_apav_product',   'product_id'],
+        [$ap_avail, 'idx_apav_from',      'date_from'],
+        [$ap_avail, 'idx_apav_to',        'date_to'],
+        [$ap_books, 'idx_apb_product',    'product_id'],
+        [$ap_books, 'idx_apb_checkin',    'checkin'],
+        [$ap_books, 'idx_apb_checkout',   'checkout'],
+        [$ap_books, 'idx_apb_status',     'status'],
+        [$ap_books, 'idx_apb_order',      'order_id'],
+    ];
+
+    foreach ($indexes as [$table, $index_name, $column]) {
+        $table_exists = $wpdb->get_var(
+            $wpdb->prepare('SHOW TABLES LIKE %s', $table)
+        );
+        if (!$table_exists) {
+            continue;
+        }
+
+        $index_exists = $wpdb->get_var(
+            $wpdb->prepare(
+                'SELECT COUNT(1) FROM information_schema.statistics
+                 WHERE table_schema = %s AND table_name = %s AND index_name = %s',
+                DB_NAME,
+                $table,
+                $index_name
+            )
+        );
+
+        if (!$index_exists) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $wpdb->query("ALTER TABLE `{$table}` ADD INDEX `{$index_name}` (`{$column}`)");
+        }
+    }
+
+    update_option('alquipress_db_indexes_version', $target_version);
 }
