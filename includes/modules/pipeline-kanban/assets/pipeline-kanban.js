@@ -1,5 +1,5 @@
 /**
- * JavaScript para Pipeline Kanban
+ * JavaScript para Pipeline Kanban Alquipress
  */
 
 (function ($) {
@@ -7,195 +7,187 @@
 
     $(document).ready(function () {
 
-        // ==========  Funcionalidades del Pipeline ==========
+        // ========== Inicialización de SortableJS ==========
+
+        const columns = document.querySelectorAll('.column-cards');
+        
+        columns.forEach(column => {
+            new Sortable(column, {
+                group: 'pipeline',
+                animation: 150,
+                ghostClass: 'card-ghost',
+                dragClass: 'card-dragging',
+                
+                // Al soltar una tarjeta en una nueva columna
+                onEnd: function (evt) {
+                    const orderId = evt.item.getAttribute('data-order-id');
+                    const newStatus = evt.to.closest('.pipeline-column').getAttribute('data-status');
+                    const oldStatus = evt.from.closest('.pipeline-column').getAttribute('data-status');
+
+                    if (newStatus === oldStatus) return;
+
+                    updateOrderStatus(orderId, newStatus, evt.item);
+                }
+            });
+        });
 
         /**
-         * Resaltar tarjetas al pasar el mouse
+         * AJAX: Actualizar estado de pedido
          */
-        $('.order-card').on('mouseenter', function () {
-            $(this).addClass('hover');
-        }).on('mouseleave', function () {
-            $(this).removeClass('hover');
-        });
+        function updateOrderStatus(orderId, status, cardElement) {
+            const $card = $(cardElement);
+            const $originalContent = $card.html();
+            
+            // Agregar estado de carga
+            $card.addClass('updating').css('opacity', '0.6');
+            $card.html('<div style="text-align: center; padding: 20px;"><span class="spinner is-active" style="float: none; margin: 0;"></span><p style="margin: 10px 0 0; font-size: 12px; color: #666;">Actualizando...</p></div>');
+            
+            // Deshabilitar drag & drop temporalmente
+            const column = $card.closest('.column-cards')[0];
+            const sortableInstance = Sortable.get(column);
+            if (sortableInstance) {
+                sortableInstance.option('disabled', true);
+            }
+
+            $.ajax({
+                url: alquipressPipeline.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'alquipress_update_order_status',
+                    order_id: orderId,
+                    status: status,
+                    nonce: alquipressPipeline.nonce
+                },
+                success: function (response) {
+                    if (response.success) {
+                        updateColumnCounts();
+                        // Restaurar contenido y mostrar éxito
+                        $card.html($originalContent).removeClass('updating').addClass('update-success').css('opacity', '1');
+                        
+                        // Mostrar toast de éxito
+                        if (typeof AlquipressToast !== 'undefined') {
+                            AlquipressToast.success(
+                                response.data && response.data.message 
+                                    ? response.data.message 
+                                    : 'Estado actualizado correctamente'
+                            );
+                        }
+                        
+                        setTimeout(() => {
+                            $card.removeClass('update-success');
+                        }, 2000);
+                    } else {
+                        // Restaurar contenido y mostrar error
+                        $card.html($originalContent).removeClass('updating').addClass('update-error').css('opacity', '1');
+                        
+                        // Mostrar toast de error
+                        if (typeof AlquipressToast !== 'undefined') {
+                            AlquipressToast.error(
+                                response.data && response.data.message 
+                                    ? response.data.message 
+                                    : 'Error al actualizar el estado'
+                            );
+                        }
+                        
+                        setTimeout(() => {
+                            $card.removeClass('update-error');
+                            location.reload(); // Recargar para volver al estado anterior
+                        }, 2000);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Restaurar contenido y mostrar error
+                    $card.html($originalContent).removeClass('updating').addClass('update-error').css('opacity', '1');
+                    
+                    // Mostrar toast de error
+                    if (typeof AlquipressToast !== 'undefined') {
+                        AlquipressToast.error('Error de conexión al actualizar el estado. Por favor, intenta de nuevo.');
+                    }
+                    
+                    setTimeout(() => {
+                        $card.removeClass('update-error');
+                        location.reload();
+                    }, 2000);
+                },
+                complete: function() {
+                    // Rehabilitar drag & drop
+                    if (sortableInstance) {
+                        sortableInstance.option('disabled', false);
+                    }
+                }
+            });
+        }
+
+        /**
+         * Actualizar los contadores de las columnas
+         */
+        function updateColumnCounts() {
+            $('.pipeline-column').each(function () {
+                const count = $(this).find('.order-card').length;
+                $(this).find('.column-count').text(count);
+            });
+            
+            // Actualizar total general
+            let total = 0;
+            $('.column-count').each(function() {
+                total += parseInt($(this).text()) || 0;
+            });
+            $('.total-orders-count').text('(' + total + ' reservas)');
+        }
+
+        // ========== Otras Funcionalidades ==========
 
         /**
          * Smooth scroll horizontal en el tablero
          */
         const pipelineBoard = $('.alquipress-pipeline-board');
-
         if (pipelineBoard.length) {
-            // Detectar si el usuario puede hacer scroll horizontal
-            const hasHorizontalScroll = pipelineBoard[0].scrollWidth > pipelineBoard[0].clientWidth;
-
-            if (hasHorizontalScroll) {
-                // Añadir indicador visual de scroll
-                pipelineBoard.addClass('has-scroll');
-
-                // Scroll suave con la rueda del mouse
-                pipelineBoard.on('wheel', function (e) {
-                    if (e.originalEvent.deltaY !== 0) {
-                        e.preventDefault();
-                        this.scrollLeft += e.originalEvent.deltaY;
-                    }
-                });
-            }
-        }
-
-        /**
-         * Contador total de pedidos
-         */
-        function updateTotalCount() {
-            let total = 0;
-            $('.column-count').each(function () {
-                total += parseInt($(this).text()) || 0;
-            });
-
-            // Añadir al título si no existe
-            if (!$('.total-orders-count').length) {
-                $('.wp-heading-inline').after(
-                    '<span class="total-orders-count" style="color: #666; font-size: 16px; font-weight: 400; margin-left: 10px;">(' + total + ' reservas)</span>'
-                );
-            } else {
-                $('.total-orders-count').text('(' + total + ' reservas)');
-            }
-        }
-
-        updateTotalCount();
-
-        /**
-         * Animación de entrada de tarjetas
-         */
-        $('.order-card').each(function (index) {
-            $(this).css({
-                'opacity': '0',
-                'transform': 'translateY(20px)'
-            });
-
-            setTimeout(() => {
-                $(this).css({
-                    'opacity': '1',
-                    'transform': 'translateY(0)',
-                    'transition': 'all 0.3s ease'
-                });
-            }, index * 50); // Delay escalonado
-        });
-
-        /**
-         * Abrir pedido en nueva pestaña al hacer click en la tarjeta
-         */
-        $('.order-card').on('click', function (e) {
-            // No abrir si se hizo click en un enlace o botón
-            if ($(e.target).is('a') || $(e.target).is('button') || $(e.target).closest('a, button').length) {
-                return;
-            }
-
-            const orderUrl = $(this).data('order-url');
-            if (orderUrl) {
-                window.open(orderUrl, '_blank');
-            }
-        });
-
-        /**
-         * Añadir tooltip a tarjetas urgentes
-         */
-        $('.order-card.urgent').each(function () {
-            $(this).attr('title', 'Check-in en menos de 3 días');
-        });
-
-        /**
-         * Resaltar columna al hacer hover sobre tarjeta
-         */
-        $('.order-card').on('mouseenter', function () {
-            $(this).closest('.pipeline-column').addClass('column-highlighted');
-        }).on('mouseleave', function () {
-            $('.pipeline-column').removeClass('column-highlighted');
-        });
-
-        /**
-         * Añadir clase CSS para columnas resaltadas
-         */
-        $('<style>')
-            .prop('type', 'text/css')
-            .html(`
-                .column-highlighted .column-header {
-                    background: #f0f6fc;
-                    transition: background 0.2s;
+            pipelineBoard.on('wheel', function (e) {
+                if (e.originalEvent.deltaY !== 0) {
+                    e.preventDefault();
+                    this.scrollLeft += e.originalEvent.deltaY;
                 }
-            `)
-            .appendTo('head');
+            });
+        }
 
         /**
-         * Búsqueda rápida de pedidos
+         * Búsqueda rápida
          */
-        function addQuickSearch() {
+        function initQuickSearch() {
             const searchHTML = `
-                <div class="quick-search-wrapper" style="margin-bottom: 15px;">
-                    <input type="text" id="quick-search" class="regular-text" placeholder="🔍 Buscar por pedido, cliente o propiedad..." style="width: 100%; max-width: 400px;" />
+                <div class="quick-search-wrapper" style="margin-bottom: 20px;">
+                    <div class="search-input-group" style="position: relative; max-width: 400px;">
+                        <span class="dashicons dashicons-search" style="position: absolute; left: 10px; top: 8px; color: #94a3b8;"></span>
+                        <input type="text" id="quick-search" placeholder="Buscar por pedido, cliente o propiedad..." 
+                               style="width: 100%; padding: 8px 12px 8px 35px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 13px;">
+                    </div>
                 </div>
             `;
 
             $('.alquipress-pipeline-filters').before(searchHTML);
 
             $('#quick-search').on('input', function () {
-                const searchTerm = $(this).val().toLowerCase();
-
+                const term = $(this).val().toLowerCase();
                 $('.order-card').each(function () {
-                    const cardText = $(this).text().toLowerCase();
-
-                    if (cardText.includes(searchTerm)) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
+                    const text = $(this).text().toLowerCase();
+                    $(this).toggle(text.includes(term));
                 });
-
-                // Actualizar contadores
-                $('.pipeline-column').each(function () {
-                    const visibleCards = $(this).find('.order-card:visible').length;
-                    $(this).find('.column-count').text(visibleCards);
-                });
-
-                // Mostrar mensaje si no hay resultados
-                $('.pipeline-column').each(function () {
-                    const $column = $(this);
-                    const visibleCards = $column.find('.order-card:visible').length;
-
-                    if (visibleCards === 0 && searchTerm !== '') {
-                        if (!$column.find('.no-results-message').length) {
-                            $column.find('.column-cards').append(
-                                '<div class="no-results-message" style="text-align: center; padding: 20px; color: #999; font-size: 12px;">Sin resultados</div>'
-                            );
-                        }
-                    } else {
-                        $column.find('.no-results-message').remove();
-                    }
-                });
+                updateColumnCounts();
             });
         }
 
-        addQuickSearch();
+        initQuickSearch();
 
         /**
-         * Mostrar loading state al recargar
+         * Abrir pedido en nueva pestaña al hacer click
          */
-        $('#refresh-pipeline').on('click', function () {
-            const $button = $(this);
-            const originalText = $button.text();
-
-            $button.prop('disabled', true).text('🔄 Cargando...');
-
-            setTimeout(function () {
-                location.reload();
-            }, 300);
+        $('.order-card').on('click', function (e) {
+            if ($(e.target).is('a, button') || $(e.target).closest('a, button').length) return;
+            const url = $(this).data('order-url');
+            if (url) window.open(url, '_blank');
         });
 
-        /**
-         * Log para debugging
-         */
-        console.log('[ALQUIPRESS Pipeline] Inicializado correctamente');
-        console.log('[ALQUIPRESS Pipeline] Total de tarjetas:', $('.order-card').length);
-        console.log('[ALQUIPRESS Pipeline] Total de columnas:', $('.pipeline-column').length);
-
+        console.log('[ALQUIPRESS Pipeline] Kanban con Drag & Drop inicializado');
     });
 
 })(jQuery);

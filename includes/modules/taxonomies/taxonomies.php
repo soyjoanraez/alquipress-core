@@ -12,24 +12,71 @@ class Alquipress_Taxonomies
     public function __construct()
     {
         add_action('init', [$this, 'register_taxonomies']);
-        add_action('acf/init', [$this, 'load_acf_fields']);
         add_action('init', [$this, 'populate_caracteristicas'], 99);
         add_action('init', [$this, 'populate_marina_alta'], 99);
         add_action('init', [$this, 'populate_tipo_vivienda'], 99);
+
+        // Validar y normalizar coordenadas GPS al guardar (hook nativo, sin ACF)
+        add_action('save_post_product', [$this, 'validate_coordenadas_gps'], 25);
+
+        // Campos nativos para términos de "caracteristicas" (icono_clase)
+        add_action('caracteristicas_edit_form_fields',  [$this, 'render_icono_clase_field'], 10, 1);
+        add_action('caracteristicas_add_form_fields',   [$this, 'render_icono_clase_field_add'], 10, 1);
+        add_action('edited_caracteristicas',            [$this, 'save_icono_clase_field'], 10, 2);
+        add_action('create_caracteristicas',            [$this, 'save_icono_clase_field'], 10, 2);
+
+        // Cargar meta box nativo de productos y save handler
+        require_once dirname(__FILE__) . '/class-product-fields.php';
+        new Alquipress_Product_Fields();
     }
 
-    public function load_acf_fields()
+    /**
+     * Renderizar campo icono_clase en edición de término "caracteristicas".
+     */
+    public function render_icono_clase_field(\WP_Term $term): void
     {
-        $json_file = dirname(__FILE__) . '/acf-fields.json';
-        if (file_exists($json_file)) {
-            $json = file_get_contents($json_file);
-            $fields = json_decode($json, true);
-            if (function_exists('acf_add_local_field_group') && is_array($fields)) {
-                foreach ($fields as $field_group) {
-                    acf_add_local_field_group($field_group);
-                }
-            }
+        $icon = (string) get_term_meta($term->term_id, 'icono_clase', true);
+        ?>
+        <tr class="form-field">
+            <th scope="row"><label for="icono_clase"><?php esc_html_e('Clase de icono (CSS)', 'alquipress'); ?></label></th>
+            <td>
+                <?php wp_nonce_field('alquipress_term_meta_save', 'alquipress_term_meta_nonce'); ?>
+                <input type="text" id="icono_clase" name="icono_clase" value="<?php echo esc_attr($icon); ?>" style="width:220px" placeholder="dashicons-star-filled" />
+                <p class="description"><?php esc_html_e('Clase CSS del icono (ej: dashicons-star-filled, fa-home).', 'alquipress'); ?></p>
+            </td>
+        </tr>
+        <?php
+    }
+
+    /**
+     * Renderizar campo icono_clase al añadir nuevo término.
+     */
+    public function render_icono_clase_field_add(string $taxonomy): void
+    {
+        ?>
+        <div class="form-field">
+            <?php wp_nonce_field('alquipress_term_meta_save', 'alquipress_term_meta_nonce'); ?>
+            <label for="icono_clase"><?php esc_html_e('Clase de icono (CSS)', 'alquipress'); ?></label>
+            <input type="text" id="icono_clase" name="icono_clase" value="" placeholder="dashicons-star-filled" />
+            <p><?php esc_html_e('Clase CSS del icono (ej: dashicons-star-filled, fa-home).', 'alquipress'); ?></p>
+        </div>
+        <?php
+    }
+
+    /**
+     * Guardar campo icono_clase al guardar/crear un término.
+     */
+    public function save_icono_clase_field(int $term_id, int $tt_id): void
+    {
+        if (!isset($_POST['icono_clase'])) {
+            return;
         }
+        if (isset($_POST['alquipress_term_meta_nonce']) &&
+            !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['alquipress_term_meta_nonce'])), 'alquipress_term_meta_save')) {
+            return;
+        }
+        $icon = sanitize_text_field(wp_unslash($_POST['icono_clase']));
+        update_term_meta($term_id, 'icono_clase', $icon);
     }
 
     public function register_taxonomies()
@@ -301,6 +348,67 @@ class Alquipress_Taxonomies
         }
 
         update_option('alquipress_tipo_vivienda_populated_hash', $hash);
+    }
+
+    /**
+     * Valida y normaliza el campo de coordenadas GPS al guardar.
+     * Se engancha a save_post_product (priority 25, después del save handler de Alquipress_Product_Fields).
+     *
+     * @param int $post_id ID del producto.
+     */
+    public function validate_coordenadas_gps(int $post_id): void
+    {
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        // Obtener el valor actual del campo (ya guardado por Alquipress_Product_Fields)
+        $coordenadas = get_post_meta($post_id, 'coordenadas_gps', true);
+        if (!is_array($coordenadas)) {
+            $coordenadas = [];
+        }
+
+        // Si no hay coordenadas, no hacer nada
+        if (empty($coordenadas)) {
+            return;
+        }
+
+        // Normalizar el formato del campo
+        // ACF google_map puede devolver array con 'lat', 'lng', 'address'
+        // Asegurarse de que tenga el formato correcto
+        $normalized = [];
+
+        // Si es un array asociativo con lat/lng
+        if (is_array($coordenadas)) {
+            // Formato estándar de ACF google_map
+            if (isset($coordenadas['lat']) && isset($coordenadas['lng'])) {
+                $normalized = [
+                    'lat' => (float) $coordenadas['lat'],
+                    'lng' => (float) $coordenadas['lng'],
+                ];
+                
+                // Preservar address si existe
+                if (isset($coordenadas['address'])) {
+                    $normalized['address'] = sanitize_text_field($coordenadas['address']);
+                }
+            }
+            // Formato alternativo (latitud/longitud como claves diferentes)
+            elseif (isset($coordenadas['latitude']) && isset($coordenadas['longitude'])) {
+                $normalized = [
+                    'lat' => (float) $coordenadas['latitude'],
+                    'lng' => (float) $coordenadas['longitude'],
+                ];
+                
+                if (isset($coordenadas['address'])) {
+                    $normalized['address'] = sanitize_text_field($coordenadas['address']);
+                }
+            }
+        }
+
+        // Si se normalizó correctamente y es diferente al original, actualizar
+        if (!empty($normalized) && $normalized !== $coordenadas) {
+            update_post_meta($post_id, 'coordenadas_gps', $normalized);
+        }
     }
 }
 

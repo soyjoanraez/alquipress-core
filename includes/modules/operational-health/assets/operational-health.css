@@ -1,0 +1,329 @@
+/**
+ * Estilos para Panel de Salud Operativa
+ * 
+ * @package Alquipress
+ * @since 1.0.0
+ */
+
+/* ========== Widget Principal ========== */
+
+.alquipress-health-widget {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.health-widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #f0f0f1;
+}
+
+.health-widget-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.health-icon {
+    font-size: 24px;
+}
+
+.health-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.health-badge-critical {
+    background: #dc3232;
+}
+
+/* ========== Filtros ========== */
+
+.health-filters {
+    display: flex;
+    gap: 8px;
+}
+
+.health-filter-btn {
+    padding: 6px 12px;
+    border: 1px solid #dcdcde;
+    background: #fff;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.health-filter-btn:hover {
+    background: #f6f7f7;
+    border-color: #8c8f94;
+}
+
+.health-filter-btn.active {
+    background: #2271b1;
+    color: #fff;
+    border-color: #2271b1;
+}
+
+/* ========== Estado Vacío ========== */
+
+.health-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #646970;
+}
+
+.health-empty-state p {
+    margin: 0;
+    font-size: 15px;
+}
+
+/* ========== Contenedor de Alertas ========== */
+
+.health-alerts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+/* ========== Card de Alerta ========== */
+
+.health-alert-card {
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    transition: all 0.2s ease;
+}
+
+.health-alert-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.health-priority-critical {
+    border-left: 4px solid #dc3232;
+}
+
+.health-priority-high {
+    border-left: 4px solid #dba617;
+}
+
+.health-priority-medium {
+    border-left: 4px solid #f0b849;
+}
+
+.health-priority-low {
+    border-left: 4px solid #2271b1;
+}
+
+/* ========== Header de Alerta ========== */
+
+.health-alert-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.health-alert-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.health-alert-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.health-alert-title {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.health-alert-count {
+    display: block;
+    font-size: 13px;
+    color: #646970;
+}
+
+.health-alert-priority {
+    flex-shrink: 0;
+}
+
+.health-priority-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.health-priority-badge.health-priority-critical {
+    background: #fdedec;
+    color: #dc3232;
+}
+
+.health-priority-badge.health-priority-high {
+    background: #fef5e7;
+    color: #dba617;
+}
+
+.health-priority-badge.health-priority-medium {
+    background: #fff8e5;
+    color: #f0b849;
+}
+
+.health-priority-badge.health-priority-low {
+    background: #e8f0fe;
+    color: #2271b1;
+}
+
+/* ========== Items de Alerta ========== */
+
+.health-alert-items {
+    margin: 12px 0;
+    padding: 12px;
+    background: #f6f7f7;
+    border-radius: 6px;
+}
+
+.health-alert-items ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.health-alert-items li {
+    padding: 6px 0;
+    font-size: 13px;
+    color: #1d2327;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.health-alert-items li:last-child {
+    border-bottom: none;
+}
+
+.health-alert-items a {
+    color: #2271b1;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.health-alert-items a:hover {
+    text-decoration: underline;
+}
+
+.health-item-meta {
+    color: #646970;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+/* ========== Acciones ========== */
+
+.health-alert-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f1;
+}
+
+.health-action-btn {
+    flex: 1;
+    padding: 8px 16px;
+    border: 1px solid #2271b1;
+    background: #2271b1;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.health-action-btn:hover {
+    background: #135e96;
+    border-color: #135e96;
+    color: #fff;
+}
+
+.health-action-btn.health-view-all {
+    background: #fff;
+    color: #2271b1;
+    border-color: #2271b1;
+}
+
+.health-action-btn.health-view-all:hover {
+    background: #f0f6fc;
+}
+
+/* ========== Admin Bar Counter ========== */
+
+#wpadminbar .alquipress-health-counter .ab-icon {
+    margin-right: 6px;
+}
+
+#wpadminbar .alquipress-health-counter .ab-label {
+    color: #dc3232;
+    font-weight: 600;
+}
+
+/* ========== Responsive ========== */
+
+@media screen and (max-width: 782px) {
+    .health-widget-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .health-filters {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    
+    .health-alerts-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ========== Animaciones ========== */
+
+@keyframes health-alert-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.health-priority-critical {
+    animation: health-alert-pulse 2s ease-in-out infinite;
+}

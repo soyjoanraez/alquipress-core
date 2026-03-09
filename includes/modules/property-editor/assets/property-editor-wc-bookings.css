@@ -1,0 +1,226 @@
+/**
+ * Estilos dashboard para el panel WC Bookings en el editor de propiedad.
+ * Solo aplica dentro de #ap-prop-overview-content para no afectar el editor nativo.
+ */
+#ap-prop-overview-content #woocommerce-product-data {
+    margin-bottom: 24px;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .postbox-header,
+#ap-prop-overview-content #woocommerce-product-data .hndle {
+    display: none;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .inside {
+    padding: 0;
+    margin: 0;
+}
+
+/* ========== Tabs estilo dashboard ========== */
+#ap-prop-overview-content #woocommerce-product-data .panel-wrap.product_data {
+    padding: 0;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .product_data_tabs.wc-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0 0 20px 0;
+    padding: 0;
+    list-style: none;
+    border: none;
+    background: transparent;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .product_data_tabs.wc-tabs li {
+    margin: 0;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .product_data_tabs.wc-tabs li a {
+    display: inline-block;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ap-pencil-muted);
+    text-decoration: none;
+    border-radius: var(--ap-pencil-radius-md);
+    transition: background 0.15s, color 0.15s;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .product_data_tabs.wc-tabs li a:hover {
+    color: var(--ap-pencil-primary);
+    background: rgba(44, 153, 226, 0.06);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .product_data_tabs.wc-tabs li.active a {
+    background: rgba(44, 153, 226, 0.1);
+    color: var(--ap-pencil-primary);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    #ap-prop-overview-content #woocommerce-product-data .product_data_tabs.wc-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 8px;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ========== Paneles tipo card ========== */
+#ap-prop-overview-content #woocommerce-product-data .woocommerce_options_panel {
+    background: var(--ap-pencil-surface);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .woocommerce_options_panel.panel {
+    padding: 20px;
+}
+
+/* ========== Campos (options_group) ========== */
+#ap-prop-overview-content #woocommerce-product-data .options_group {
+    padding: 0 0 16px 0;
+    margin: 0 0 16px 0;
+    border-bottom: 1px solid var(--ap-pencil-border);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .options_group:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .form-field,
+#ap-prop-overview-content #woocommerce-product-data p.form-field {
+    margin: 0 0 16px 0;
+    padding: 0;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .form-field:last-child,
+#ap-prop-overview-content #woocommerce-product-data p.form-field:last-child {
+    margin-bottom: 0;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .form-field label,
+#ap-prop-overview-content #woocommerce-product-data p.form-field label {
+    font-weight: 600;
+    color: var(--ap-pencil-text);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .form-field input[type="text"],
+#ap-prop-overview-content #woocommerce-product-data .form-field input[type="number"],
+#ap-prop-overview-content #woocommerce-product-data .form-field input[type="time"],
+#ap-prop-overview-content #woocommerce-product-data .form-field select,
+#ap-prop-overview-content #woocommerce-product-data p.form-field input[type="text"],
+#ap-prop-overview-content #woocommerce-product-data p.form-field input[type="number"],
+#ap-prop-overview-content #woocommerce-product-data p.form-field input[type="time"],
+#ap-prop-overview-content #woocommerce-product-data p.form-field select {
+    border-radius: var(--ap-pencil-radius-md);
+    padding: 8px 12px;
+    border-color: var(--ap-pencil-border);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .form-field .description,
+#ap-prop-overview-content #woocommerce-product-data p.form-field .description {
+    font-size: 12px;
+    color: var(--ap-pencil-muted);
+    margin-top: 4px;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .form-field .checkbox,
+#ap-prop-overview-content #woocommerce-product-data .woocommerce_wp_checkbox .checkbox {
+    margin-right: 8px;
+}
+
+/* ========== Tablas Add Range ========== */
+#ap-prop-overview-content #woocommerce-product-data .table_grid {
+    margin-top: 16px;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid table.widefat {
+    border-radius: var(--ap-pencil-radius-md);
+    overflow: hidden;
+    box-shadow: var(--ap-pencil-shadow);
+    border: 1px solid var(--ap-pencil-border);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid table.widefat thead th {
+    background: var(--ap-pencil-bg);
+    padding: 12px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--ap-pencil-muted);
+    border-bottom: 1px solid var(--ap-pencil-border);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid table.widefat tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--ap-pencil-border);
+    vertical-align: middle;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid table.widefat tbody tr:last-child td {
+    border-bottom: none;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid table.widefat tbody tr:hover {
+    background: rgba(44, 153, 226, 0.04);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid table.widefat tfoot th {
+    padding: 12px 14px;
+    background: var(--ap-pencil-bg);
+    border-top: 1px solid var(--ap-pencil-border);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid tfoot .add_row {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--ap-pencil-primary);
+    color: #fff;
+    border-color: var(--ap-pencil-primary);
+    border-radius: var(--ap-pencil-radius-md);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid tfoot .add_row:hover {
+    background: #2380c9;
+    border-color: #2380c9;
+    color: #fff;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid tfoot .description {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--ap-pencil-muted);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid .remove {
+    color: var(--ap-pencil-danger);
+    cursor: pointer;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .table_grid .remove:hover {
+    color: #dc2626;
+}
+
+/* day_table_grid (restricción días semana) */
+#ap-prop-overview-content #woocommerce-product-data .day_table_grid table,
+#ap-prop-overview-content #woocommerce-product-data .booking-day-restriction .day_table_grid {
+    margin-top: 12px;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .booking-day-restriction .day_table_grid td {
+    padding: 8px 12px;
+}
+
+#ap-prop-overview-content #woocommerce-product-data .booking-day-restriction label.checkbox {
+    font-weight: 500;
+}

@@ -1,0 +1,1244 @@
+/**
+ * Tema admin Pencil – CPTs (propietarios, inmuebles/product, pedidos/shop_order)
+ * Carga solo en listados (edit.php) y edición (post.php, post-new.php) de esos tipos.
+ * Tokens y estilos alineados con Dashboard, Propiedades, Propietarios, Reservas, Informes, Ajustes.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --ap-pencil-bg: #f8fafb;
+    --ap-pencil-surface: #ffffff;
+    --ap-pencil-border: #e8eef3;
+    --ap-pencil-primary: #2c99e2;
+    --ap-pencil-text: #0e161b;
+    --ap-pencil-muted: #507a95;
+    --ap-pencil-success: #10b981;
+    --ap-pencil-warning: #f59e0b;
+    --ap-pencil-danger: #ef4444;
+    --ap-pencil-radius: 12px;
+    --ap-pencil-radius-md: 8px;
+    --ap-pencil-radius-sm: 4px;
+    --ap-pencil-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --ap-pencil-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Fondo zona de contenido cuando estamos en un CPT Pencil */
+body.post-type-propietario #wpcontent,
+body.post-type-product #wpcontent,
+body.post-type-shop_order #wpcontent,
+body.woocommerce_page_wc-orders #wpcontent,
+body.admin_page_wc-orders #wpcontent {
+    background: var(--ap-pencil-bg);
+}
+
+/* ========== .wrap (contenedor principal) ========== */
+body.post-type-propietario .wrap,
+body.post-type-product .wrap,
+body.post-type-shop_order .wrap,
+body.woocommerce_page_wc-orders .wrap,
+body.admin_page_wc-orders .wrap {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 1400px;
+    margin-top: 12px;
+    padding: 24px 20px 32px;
+    color: var(--ap-pencil-text);
+}
+
+body.post-type-propietario .wrap h1,
+body.post-type-product .wrap h1,
+body.post-type-shop_order .wrap h1,
+body.woocommerce_page_wc-orders .wrap h1,
+body.admin_page_wc-orders .wrap h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ap-pencil-text);
+    margin-bottom: 4px;
+}
+
+body.post-type-propietario .wrap .wp-heading-inline,
+body.post-type-product .wrap .wp-heading-inline,
+body.post-type-shop_order .wrap .wp-heading-inline {
+    font-size: 23px;
+    font-weight: 700;
+    color: var(--ap-pencil-text);
+}
+
+/* ========== Página de edición: mismo diseño que Dashboard ========== */
+/* Header row: título + acciones (como .ap-header del Dashboard) */
+body.post-type-propietario .wrap > h1,
+body.post-type-product .wrap > h1,
+body.post-type-shop_order .wrap > h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ap-pencil-text);
+    margin: 0 0 4px 0;
+}
+
+body.post-type-propietario .wrap .page-title-action,
+body.post-type-product .wrap .page-title-action,
+body.post-type-shop_order .wrap .page-title-action {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: var(--ap-pencil-radius-md);
+    border: 1px solid var(--ap-pencil-border);
+    background: var(--ap-pencil-surface);
+    color: var(--ap-pencil-primary);
+    box-shadow: var(--ap-pencil-shadow);
+    vertical-align: middle;
+    height: auto;
+    line-height: 1.4;
+}
+
+body.post-type-propietario .wrap .page-title-action:hover,
+body.post-type-product .wrap .page-title-action:hover,
+body.post-type-shop_order .wrap .page-title-action:hover {
+    background: var(--ap-pencil-bg);
+    border-color: var(--ap-pencil-primary);
+    color: var(--ap-pencil-primary);
+}
+
+/* Barra bajo el título (Volver al listado + subtítulo) */
+.ap-edit-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ap-pencil-border);
+}
+
+.ap-edit-back-link {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ap-pencil-primary);
+    text-decoration: none;
+}
+
+.ap-edit-back-link:hover {
+    text-decoration: underline;
+    color: #2380c9;
+}
+
+.ap-edit-subtitle {
+    font-size: 14px;
+    color: var(--ap-pencil-muted);
+}
+
+/* Área principal de edición: mismo espaciado y cards que Dashboard */
+body.post-type-propietario #poststuff,
+body.post-type-product #poststuff,
+body.post-type-shop_order #poststuff {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+body.post-type-propietario #post-body-content,
+body.post-type-product #post-body-content,
+body.post-type-shop_order #post-body-content {
+    margin-bottom: 20px;
+}
+
+/* ========== Tablas (listados) ========== */
+body.post-type-propietario .wp-list-table,
+body.post-type-product .wp-list-table,
+body.post-type-shop_order .wp-list-table,
+body.woocommerce_page_wc-orders .wp-list-table,
+body.admin_page_wc-orders .wp-list-table {
+    background: var(--ap-pencil-surface);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius-md);
+    box-shadow: var(--ap-pencil-shadow);
+    overflow: hidden;
+}
+
+body.post-type-propietario .wp-list-table thead th,
+body.post-type-product .wp-list-table thead th,
+body.post-type-shop_order .wp-list-table thead th,
+body.woocommerce_page_wc-orders .wp-list-table thead th,
+body.admin_page_wc-orders .wp-list-table thead th {
+    background: var(--ap-pencil-bg);
+    color: var(--ap-pencil-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--ap-pencil-border);
+}
+
+body.post-type-propietario .wp-list-table tbody td,
+body.post-type-product .wp-list-table tbody td,
+body.post-type-shop_order .wp-list-table tbody td,
+body.woocommerce_page_wc-orders .wp-list-table tbody td,
+body.admin_page_wc-orders .wp-list-table tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--ap-pencil-border);
+    color: var(--ap-pencil-text);
+    font-size: 14px;
+}
+
+body.post-type-propietario .wp-list-table tbody tr:hover,
+body.post-type-product .wp-list-table tbody tr:hover,
+body.post-type-shop_order .wp-list-table tbody tr:hover,
+body.woocommerce_page_wc-orders .wp-list-table tbody tr:hover,
+body.admin_page_wc-orders .wp-list-table tbody tr:hover {
+    background: rgba(44, 153, 226, 0.04);
+}
+
+body.post-type-propietario .wp-list-table .row-actions,
+body.post-type-product .wp-list-table .row-actions,
+body.post-type-shop_order .wp-list-table .row-actions {
+    color: var(--ap-pencil-muted);
+}
+
+body.post-type-propietario .wp-list-table .row-actions a,
+body.post-type-product .wp-list-table .row-actions a,
+body.post-type-shop_order .wp-list-table .row-actions a {
+    color: var(--ap-pencil-primary);
+}
+
+/* ========== Tablenav (filtros, búsqueda, paginación) ========== */
+body.post-type-propietario .tablenav,
+body.post-type-product .tablenav,
+body.post-type-shop_order .tablenav,
+body.woocommerce_page_wc-orders .tablenav,
+body.admin_page_wc-orders .tablenav {
+    background: var(--ap-pencil-surface);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius-md);
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+body.post-type-propietario .tablenav .actions select,
+body.post-type-product .tablenav .actions select,
+body.post-type-shop_order .tablenav .actions select,
+body.woocommerce_page_wc-orders .tablenav .actions select,
+body.admin_page_wc-orders .tablenav .actions select,
+body.post-type-propietario .tablenav .search-input,
+body.post-type-product .tablenav .search-input,
+body.post-type-shop_order .tablenav .search-input,
+body.woocommerce_page_wc-orders .tablenav .search-input,
+body.admin_page_wc-orders .tablenav .search-input {
+    border-radius: var(--ap-pencil-radius-sm);
+    border-color: var(--ap-pencil-border);
+    font-size: 14px;
+}
+
+body.post-type-propietario .subsubsub,
+body.post-type-product .subsubsub,
+body.post-type-shop_order .subsubsub,
+body.woocommerce_page_wc-orders .subsubsub,
+body.admin_page_wc-orders .subsubsub {
+    color: var(--ap-pencil-muted);
+    font-size: 13px;
+}
+
+body.post-type-propietario .subsubsub a,
+body.post-type-product .subsubsub a,
+body.post-type-shop_order .subsubsub a,
+body.woocommerce_page_wc-orders .subsubsub a,
+body.admin_page_wc-orders .subsubsub a {
+    color: var(--ap-pencil-primary);
+}
+
+body.post-type-propietario .subsubsub a.current,
+body.post-type-product .subsubsub a.current,
+body.post-type-shop_order .subsubsub a.current,
+body.woocommerce_page_wc-orders .subsubsub a.current,
+body.admin_page_wc-orders .subsubsub a.current {
+    color: var(--ap-pencil-text);
+    font-weight: 600;
+}
+
+/* ============================================================
+ * Editor propio de propiedades (alquipress-edit-property)
+ * Forzar layout de metaboxes en una sola columna para que
+ * "Más campos editables" no se solape con la sidebar de datos.
+ * ============================================================ */
+
+body.ap-edit-property #poststuff #post-body.metabox-holder.columns-2 {
+    display: block;
+}
+
+body.ap-edit-property #postbox-container-1,
+body.ap-edit-property #postbox-container-2 {
+    width: 100%;
+    float: none;
+    max-width: 100%;
+}
+
+body.ap-edit-property #postbox-container-1 .postbox,
+body.ap-edit-property #postbox-container-2 .postbox {
+    margin-right: 0;
+}
+
+/* ========== Postbox (metaboxes en edición) ========== */
+body.post-type-propietario .postbox,
+body.post-type-product .postbox,
+body.post-type-shop_order .postbox {
+    background: var(--ap-pencil-surface);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius);
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+body.post-type-propietario .postbox .postbox-header,
+body.post-type-product .postbox .postbox-header,
+body.post-type-shop_order .postbox .postbox-header {
+    background: var(--ap-pencil-bg);
+    border-bottom: 1px solid var(--ap-pencil-border);
+    padding: 12px 16px;
+}
+
+body.post-type-propietario .postbox .postbox-header h2,
+body.post-type-product .postbox .postbox-header h2,
+body.post-type-shop_order .postbox .postbox-header h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ap-pencil-text);
+}
+
+body.post-type-propietario .postbox .inside,
+body.post-type-product .postbox .inside,
+body.post-type-shop_order .postbox .inside {
+    padding: 16px;
+}
+
+/* ========== Botones ========== */
+body.post-type-propietario .button,
+body.post-type-product .button,
+body.post-type-shop_order .button,
+body.woocommerce_page_wc-orders .button,
+body.admin_page_wc-orders .button {
+    border-radius: var(--ap-pencil-radius-sm);
+    font-weight: 500;
+    transition: box-shadow 0.15s;
+}
+
+body.post-type-propietario .button-primary,
+body.post-type-product .button-primary,
+body.post-type-shop_order .button-primary,
+body.woocommerce_page_wc-orders .button-primary,
+body.admin_page_wc-orders .button-primary {
+    background: var(--ap-pencil-primary) !important;
+    border-color: var(--ap-pencil-primary) !important;
+    color: #fff !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+body.post-type-propietario .button-primary:hover,
+body.post-type-product .button-primary:hover,
+body.post-type-shop_order .button-primary:hover,
+body.woocommerce_page_wc-orders .button-primary:hover,
+body.admin_page_wc-orders .button-primary:hover {
+    background: #2380c9 !important;
+    border-color: #2380c9 !important;
+    box-shadow: var(--ap-pencil-shadow-md);
+}
+
+/* ========== Notices ========== */
+body.post-type-propietario .notice,
+body.post-type-product .notice,
+body.post-type-shop_order .notice {
+    border-radius: var(--ap-pencil-radius-md);
+    border-left-width: 4px;
+}
+
+body.post-type-propietario .notice-success,
+body.post-type-product .notice-success,
+body.post-type-shop_order .notice-success {
+    border-left-color: var(--ap-pencil-success);
+}
+
+/* ========== Paginación ========== */
+body.post-type-propietario .pagination-links .current,
+body.post-type-product .pagination-links .current,
+body.post-type-shop_order .pagination-links .current {
+    background: var(--ap-pencil-primary);
+    color: #fff;
+    border-color: var(--ap-pencil-primary);
+    border-radius: var(--ap-pencil-radius-sm);
+}
+
+/* ========== Título del post (edición) ========== */
+body.post-type-propietario #titlediv #title,
+body.post-type-product #titlediv #title,
+body.post-type-shop_order #titlediv #title {
+    font-size: 18px;
+    font-weight: 600;
+    padding: 12px 14px;
+    border-radius: var(--ap-pencil-radius-md);
+    border-color: var(--ap-pencil-border);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ========== ACF (cuando está presente) ========== */
+body.post-type-propietario .acf-tab-wrap .acf-tab-group li.active,
+body.post-type-product .acf-tab-wrap .acf-tab-group li.active,
+body.post-type-shop_order .acf-tab-wrap .acf-tab-group li.active {
+    background: var(--ap-pencil-primary);
+    color: #fff;
+}
+
+body.post-type-propietario .acf-tab-wrap .acf-tab-group li,
+body.post-type-product .acf-tab-wrap .acf-tab-group li,
+body.post-type-shop_order .acf-tab-wrap .acf-tab-group li {
+    border-radius: var(--ap-pencil-radius-sm);
+}
+
+/* ========== WooCommerce (product / shop_order) ========== */
+body.post-type-product .woocommerce .form-table th,
+body.post-type-shop_order .woocommerce .form-table th {
+    color: var(--ap-pencil-muted);
+    font-weight: 600;
+}
+
+body.post-type-product #woocommerce-product-data .hndle,
+body.post-type-shop_order .woocommerce-order-data .hndle {
+    font-weight: 600;
+    color: var(--ap-pencil-text);
+}
+
+/* ========== Edit Property Screen (Pencil layout) ========== */
+.ap-property-edit-pencil {
+    margin-bottom: 28px;
+}
+
+.ap-prop-edit-header {
+    margin-bottom: 20px;
+}
+
+.ap-prop-edit-back-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.ap-prop-edit-back {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ap-pencil-primary);
+    text-decoration: none;
+}
+
+.ap-prop-edit-back:hover {
+    text-decoration: underline;
+    color: #2380c9;
+}
+
+.ap-prop-edit-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ap-prop-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: var(--ap-pencil-radius-md);
+    text-decoration: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.ap-prop-btn-secondary {
+    background: var(--ap-pencil-surface);
+    border-color: var(--ap-pencil-border);
+    color: var(--ap-pencil-primary);
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+.ap-prop-btn-secondary:hover {
+    background: var(--ap-pencil-bg);
+    border-color: var(--ap-pencil-primary);
+}
+
+.ap-prop-btn-primary {
+    background: var(--ap-pencil-primary);
+    color: #fff;
+    border-color: var(--ap-pencil-primary);
+}
+
+.ap-prop-btn-primary:hover {
+    background: #2380c9;
+    border-color: #2380c9;
+}
+
+.ap-prop-btn-full-edit {
+    background: transparent;
+    border-color: var(--ap-pencil-border);
+    color: var(--ap-pencil-text);
+}
+
+.ap-prop-btn-full-edit:hover {
+    background: var(--ap-pencil-bg);
+    border-color: var(--ap-pencil-primary);
+    color: var(--ap-pencil-primary);
+}
+
+.ap-prop-breadcrumb {
+    font-size: 13px;
+    color: var(--ap-pencil-muted);
+}
+
+.ap-prop-breadcrumb a {
+    color: var(--ap-pencil-primary);
+    text-decoration: none;
+}
+
+.ap-prop-breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.ap-prop-bc-sep {
+    margin: 0 6px;
+    color: var(--ap-pencil-border);
+}
+
+.ap-prop-bc-current {
+    color: var(--ap-pencil-text);
+    font-weight: 500;
+}
+
+/* Hero: main image + thumbs (Pencil: fill + 340px thumbnail grid) */
+.ap-prop-hero {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 16px;
+    margin-bottom: 24px;
+    border-radius: var(--ap-pencil-radius);
+    overflow: hidden;
+    background: var(--ap-pencil-surface);
+    border: 1px solid var(--ap-pencil-border);
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+.ap-prop-hero-main {
+    min-height: 400px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--ap-pencil-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ap-prop-hero-placeholder {
+    font-size: 14px;
+    color: var(--ap-pencil-muted);
+}
+
+.ap-prop-hero-thumbs {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ap-prop-thumb {
+    flex: 1;
+    min-height: 94px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--ap-pencil-bg);
+    border-radius: var(--ap-pencil-radius-sm);
+}
+
+.ap-prop-thumb-empty {
+    background: var(--ap-pencil-bg);
+    border: 1px dashed var(--ap-pencil-border);
+}
+
+@media (max-width: 782px) {
+    .ap-prop-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .ap-prop-hero-thumbs {
+        flex-direction: row;
+        padding: 0 12px 12px;
+    }
+
+    .ap-prop-thumb {
+        min-height: 60px;
+    }
+}
+
+/* Property header block */
+.ap-prop-header-block {
+    background: var(--ap-pencil-surface);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+.ap-prop-title-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.ap-prop-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ap-pencil-text);
+    margin: 0;
+}
+
+.ap-prop-title-input {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ap-pencil-text);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius-md);
+    padding: 6px 12px;
+    min-width: 240px;
+    width: min(520px, 100%);
+    background: #ffffff;
+}
+
+.ap-prop-title-input:focus {
+    outline: none;
+    border-color: var(--ap-pencil-primary);
+    box-shadow: 0 0 0 2px rgba(44, 153, 226, 0.15);
+}
+
+.ap-prop-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+}
+
+.ap-prop-status-active {
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--ap-pencil-success);
+}
+
+.ap-prop-status-draft {
+    background: rgba(245, 158, 11, 0.12);
+    color: var(--ap-pencil-warning);
+}
+
+.ap-prop-badge-featured {
+    background: rgba(44, 153, 226, 0.12);
+    color: var(--ap-pencil-primary);
+}
+
+.ap-prop-meta-row {
+    font-size: 13px;
+    color: var(--ap-pencil-muted);
+    margin-bottom: 8px;
+}
+
+.ap-prop-ref-label {
+    margin-right: 6px;
+}
+
+.ap-prop-ref {
+    font-size: 13px;
+    padding: 2px 6px;
+    background: var(--ap-pencil-bg);
+    border-radius: var(--ap-pencil-radius-sm);
+    color: var(--ap-pencil-text);
+}
+
+.ap-prop-address-row,
+.ap-prop-url-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--ap-pencil-muted);
+    margin-top: 8px;
+}
+
+.ap-prop-address-row .dashicons,
+.ap-prop-url-row .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--ap-pencil-primary);
+}
+
+.ap-prop-url-row .ap-prop-url {
+    color: var(--ap-pencil-primary);
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.ap-prop-url-row .ap-prop-url:hover {
+    text-decoration: underline;
+}
+
+.ap-prop-copy-url {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    background: transparent;
+    border: none;
+    border-radius: var(--ap-pencil-radius-sm);
+    color: var(--ap-pencil-muted);
+    cursor: pointer;
+}
+
+.ap-prop-copy-url:hover {
+    color: var(--ap-pencil-primary);
+    background: var(--ap-pencil-bg);
+}
+
+.ap-prop-copy-url .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+/* Quick stats bar (Pencil: padding 20 0, border top/bottom, space-between) */
+.ap-prop-quick-stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px 32px;
+    padding: 20px 0;
+    background: var(--ap-pencil-surface);
+    border: none;
+    border-top: 1px solid var(--ap-pencil-border);
+    border-bottom: 1px solid var(--ap-pencil-border);
+    border-radius: 0;
+    margin-bottom: 20px;
+    box-shadow: none;
+}
+
+.ap-prop-stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ap-prop-stat .dashicons {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: var(--ap-pencil-primary);
+}
+
+.ap-prop-stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.ap-prop-stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ap-pencil-text);
+}
+
+.ap-prop-stat-label {
+    font-size: 12px;
+    color: var(--ap-pencil-muted);
+}
+
+/* Subtitle bar before meta boxes */
+.ap-property-edit-pencil .ap-prop-edit-header-bar {
+    margin-bottom: 0;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--ap-pencil-border);
+}
+
+.ap-property-edit-pencil .ap-prop-edit-subtitle {
+    font-size: 14px;
+    color: var(--ap-pencil-muted);
+}
+
+/* ========== Tabs Navigation (Overview, Calendario, Rendimiento, Documentos, Propietario) ========== */
+.ap-prop-tabs-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    margin-bottom: 0;
+    padding: 0 0 12px;
+    border-bottom: 1px solid var(--ap-pencil-border);
+    list-style: none;
+}
+
+.ap-prop-tab {
+    display: inline-flex;
+    align-items: center;
+    padding: 16px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ap-pencil-muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    margin: 0;
+    font-family: inherit;
+    position: relative;
+    bottom: -1px;
+}
+
+.ap-prop-tab:hover {
+    color: var(--ap-pencil-text);
+}
+
+.ap-prop-tab.is-active {
+    font-weight: 600;
+    color: var(--ap-pencil-primary);
+    border-bottom-color: var(--ap-pencil-primary);
+}
+
+.ap-prop-tab-panel {
+    display: none;
+    padding-top: 20px;
+}
+
+.ap-prop-tab-panel.is-active {
+    display: block;
+}
+
+.ap-prop-tab-panel[hidden] {
+    display: none !important;
+}
+
+.ap-prop-tab-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 48px 24px;
+    background: var(--ap-pencil-surface);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius);
+    color: var(--ap-pencil-muted);
+    text-align: center;
+}
+
+.ap-prop-tab-placeholder .dashicons {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: var(--ap-pencil-border);
+}
+
+.ap-prop-tab-placeholder p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.ap-prop-tab-placeholder-note {
+    font-size: 13px;
+    color: var(--ap-pencil-muted);
+    opacity: 0.9;
+}
+
+/* Sección de metaboxes con enlace a edición completa */
+.ap-prop-metaboxes-section {
+    margin: 24px 0 16px;
+    padding: 20px 24px;
+    background: #f8fafb;
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius-md);
+}
+
+.ap-prop-metaboxes-header .ap-prop-metaboxes-title {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ap-pencil-text);
+}
+
+.ap-prop-metaboxes-desc {
+    margin: 0 0 12px;
+    font-size: 13px;
+    color: var(--ap-pencil-muted);
+}
+
+.ap-prop-metaboxes-full-link {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ap-pencil-primary);
+    text-decoration: none;
+}
+
+.ap-prop-metaboxes-full-link:hover {
+    text-decoration: underline;
+}
+
+.ap-prop-widget-action-full-edit {
+    background: #e8f4fc !important;
+    border-color: var(--ap-pencil-primary) !important;
+    color: var(--ap-pencil-primary) !important;
+}
+
+.ap-prop-widget-actions-note {
+    margin-top: 12px !important;
+    font-size: 12px !important;
+    line-height: 1.4;
+}
+
+/* Ocultar sidebar de meta boxes cuando no está en Overview */
+body.ap-prop-tab-non-overview.post-type-product #postbox-container-1,
+body.ap-prop-tab-non-overview.post-type-product #postbox-container-2 {
+    display: none;
+}
+
+/* Asegurar que los meta boxes movidos al overview se muestren correctamente */
+#ap-prop-overview-content .postbox {
+    margin-bottom: 20px;
+    background: var(--ap-pencil-surface);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius-md);
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+#ap-prop-overview-content .postbox .postbox-header {
+    background: var(--ap-pencil-bg);
+    border-bottom: 1px solid var(--ap-pencil-border);
+    padding: 12px 16px;
+}
+
+#ap-prop-overview-content .postbox .inside {
+    padding: 16px;
+}
+
+/* Sección "Datos del producto" a 100% de ancho */
+.ap-prop-card-fullwidth {
+    width: 100%;
+    max-width: none;
+    margin-top: 32px;
+}
+
+/* Panel WC Bookings "Datos del producto" en overview */
+#ap-prop-overview-content #woocommerce-product-data {
+    margin-bottom: 24px;
+}
+
+/* Ocultar meta boxes duplicados que puedan quedar fuera del contenedor overview */
+body.post-type-product #normal-sortables .postbox:empty,
+body.post-type-product #post-body-content .postbox:empty {
+    display: none !important;
+}
+
+/* Ocultar contenedores vacíos después de mover los meta boxes */
+body.post-type-product #normal-sortables:empty,
+body.post-type-product #post-body-content:empty {
+    display: none;
+}
+
+/* Quick stats: Rating (star) y Occupancy según Pencil */
+.ap-prop-stat-rating .dashicons {
+    color: var(--ap-pencil-warning);
+}
+
+.ap-prop-stat-occupancy .ap-prop-stat-value {
+    color: var(--ap-pencil-success);
+}
+
+/* ========== Overview Tab Content: 2 columnas (Pencil) ========== */
+.ap-prop-overview-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    align-items: start;
+    padding-top: 20px;
+}
+
+.ap-prop-overview-left {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-width: 0;
+}
+
+.ap-prop-overview-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 360px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 1200px) {
+    .ap-prop-overview-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .ap-prop-overview-sidebar {
+        width: 100%;
+    }
+}
+
+/* Cards izquierda (Description, Amenities, Location, etc.) */
+.ap-prop-card {
+    background: var(--ap-pencil-surface);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius);
+    padding: 24px;
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+.ap-prop-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ap-pencil-text);
+    margin: 0 0 12px 0;
+}
+
+.ap-prop-card-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ap-pencil-muted);
+    margin: 0;
+}
+
+.ap-prop-description-editor .wp-editor-wrap {
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius-md);
+    overflow: hidden;
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+.ap-prop-description-editor .wp-editor-container {
+    border: 0;
+}
+
+.ap-prop-description-editor textarea {
+    min-height: 160px;
+}
+
+.ap-prop-card-muted {
+    font-size: 14px;
+    color: var(--ap-pencil-muted);
+    margin: 0;
+}
+
+/* Widgets sidebar derecha (Pencil) */
+.ap-prop-widget {
+    background: var(--ap-pencil-surface);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius);
+    padding: 24px;
+    box-shadow: var(--ap-pencil-shadow);
+}
+
+.ap-prop-widget-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ap-pencil-text);
+    margin: 0 0 12px 0;
+}
+
+.ap-prop-widget-meta,
+.ap-prop-widget-muted {
+    font-size: 13px;
+    color: var(--ap-pencil-muted);
+    margin: 0;
+}
+
+/* Status Widget: badge grande */
+.ap-prop-widget-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    border-radius: var(--ap-pencil-radius);
+    margin-bottom: 8px;
+    border: 2px solid transparent;
+}
+
+.ap-prop-widget-status-badge.ap-prop-status-active {
+    background: rgba(16, 185, 129, 0.08);
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.ap-prop-widget-status-badge.ap-prop-status-draft {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.ap-prop-widget-status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.ap-prop-status-active .ap-prop-widget-status-dot {
+    background: var(--ap-pencil-success);
+}
+
+.ap-prop-status-draft .ap-prop-widget-status-dot {
+    background: var(--ap-pencil-warning);
+}
+
+.ap-prop-widget-status-text {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.ap-prop-status-active .ap-prop-widget-status-text {
+    color: var(--ap-pencil-success);
+}
+
+.ap-prop-status-draft .ap-prop-widget-status-text {
+    color: var(--ap-pencil-warning);
+}
+
+/* Next Booking Widget: fondo degradado Pencil */
+.ap-prop-widget-next-booking {
+    background: linear-gradient(135deg, rgba(44, 153, 226, 0.08) 0%, rgba(44, 153, 226, 0.15) 100%);
+    border-color: rgba(44, 153, 226, 0.3);
+}
+
+/* Quick Stats Widget: filas */
+.ap-prop-widget-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0 16px 0;
+    border-bottom: 1px solid var(--ap-pencil-border);
+    margin-bottom: 16px;
+}
+
+.ap-prop-widget-stat-row:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.ap-prop-widget-stat-label {
+    font-size: 13px;
+    color: var(--ap-pencil-muted);
+}
+
+.ap-prop-widget-stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ap-pencil-text);
+}
+
+/* Quick Actions: botones */
+.ap-prop-widget-actions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ap-prop-widget-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ap-pencil-text);
+    background: var(--ap-pencil-bg);
+    border: 1px solid var(--ap-pencil-border);
+    border-radius: var(--ap-pencil-radius-md);
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.ap-prop-widget-action-btn:hover {
+    background: var(--ap-pencil-surface);
+    border-color: var(--ap-pencil-primary);
+    color: var(--ap-pencil-primary);
+}
+
+/* ========== Estilos específicos para página de órdenes de WooCommerce (wc-orders) ========== */
+body.woocommerce_page_wc-orders .wp-list-table .row-actions,
+body.admin_page_wc-orders .wp-list-table .row-actions {
+    color: var(--ap-pencil-muted);
+}
+
+body.woocommerce_page_wc-orders .wp-list-table .row-actions a,
+body.admin_page_wc-orders .wp-list-table .row-actions a {
+    color: var(--ap-pencil-primary);
+}
+
+body.woocommerce_page_wc-orders .page-title-action,
+body.admin_page_wc-orders .page-title-action {
+    font-size: 13px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: var(--ap-pencil-radius-md);
+    border: 1px solid var(--ap-pencil-border);
+    background: var(--ap-pencil-surface);
+    color: var(--ap-pencil-primary);
+    box-shadow: var(--ap-pencil-shadow);
+    vertical-align: middle;
+    height: auto;
+    line-height: 1.4;
+}
+
+body.woocommerce_page_wc-orders .page-title-action:hover,
+body.admin_page_wc-orders .page-title-action:hover {
+    background: var(--ap-pencil-bg);
+    border-color: var(--ap-pencil-primary);
+    color: var(--ap-pencil-primary);
+}
+
+/* Estilos para filtros y búsqueda en la página de órdenes */
+body.woocommerce_page_wc-orders .tablenav .tablenav-pages,
+body.admin_page_wc-orders .tablenav .tablenav-pages {
+    color: var(--ap-pencil-muted);
+    font-size: 13px;
+}
+
+body.woocommerce_page_wc-orders .tablenav .tablenav-pages a,
+body.admin_page_wc-orders .tablenav .tablenav-pages a {
+    color: var(--ap-pencil-primary);
+}
+
+body.woocommerce_page_wc-orders .tablenav .tablenav-pages .current,
+body.admin_page_wc-orders .tablenav .tablenav-pages .current {
+    color: var(--ap-pencil-text);
+    font-weight: 600;
+}
+
+/* Estilos para inputs y selects en la página de órdenes */
+body.woocommerce_page_wc-orders input[type="text"],
+body.woocommerce_page_wc-orders input[type="search"],
+body.woocommerce_page_wc-orders select,
+body.admin_page_wc-orders input[type="text"],
+body.admin_page_wc-orders input[type="search"],
+body.admin_page_wc-orders select {
+    border-radius: var(--ap-pencil-radius-sm);
+    border-color: var(--ap-pencil-border);
+    font-size: 14px;
+    padding: 6px 10px;
+}
+
+body.woocommerce_page_wc-orders input[type="text"]:focus,
+body.woocommerce_page_wc-orders input[type="search"]:focus,
+body.woocommerce_page_wc-orders select:focus,
+body.admin_page_wc-orders input[type="text"]:focus,
+body.admin_page_wc-orders input[type="search"]:focus,
+body.admin_page_wc-orders select:focus {
+    border-color: var(--ap-pencil-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(44, 153, 226, 0.1);
+}

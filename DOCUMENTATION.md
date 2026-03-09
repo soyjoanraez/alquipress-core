@@ -881,6 +881,8 @@ AND meta_value = CURDATE();
 
 ## Hooks y Filtros
 
+> **📚 Documentación Completa:** Para una referencia completa de todos los hooks y filtros disponibles en Alquipress Core, consulta [`includes/HOOKS.md`](includes/HOOKS.md).
+
 ### Hooks de WordPress
 
 **Acciones:**

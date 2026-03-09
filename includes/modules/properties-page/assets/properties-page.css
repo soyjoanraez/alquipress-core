@@ -1,0 +1,789 @@
+/**
+ * Página Propiedades - Diseño Pencil
+ * Reutiliza variables del dashboard cuando se carga en la misma área admin
+ */
+
+.alquipress-properties-page {
+    max-width: 1400px;
+    margin-top: 12px;
+    padding: 32px;
+    background: #f8fafb;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Header */
+.ap-props-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.ap-props-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ap-props-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #0e161b;
+}
+
+.ap-props-subtitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: #507a95;
+}
+
+.ap-props-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ap-props-search-form {
+    display: flex;
+    align-items: center;
+    width: 240px;
+    height: 40px;
+    padding: 0 12px;
+    background: #fff;
+    border: 1px solid #e8eef3;
+    border-radius: 8px;
+    gap: 8px;
+}
+
+.ap-props-search-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #507a95;
+    flex-shrink: 0;
+}
+
+.ap-props-search-input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font-size: 14px;
+    color: #0e161b;
+}
+
+.ap-props-search-input::placeholder {
+    color: #507a95;
+}
+
+.ap-props-search-input:focus {
+    outline: none;
+}
+
+.ap-props-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 16px;
+    background: #fff;
+    border: 1px solid #e8eef3;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #0e161b;
+    text-decoration: none;
+}
+
+.ap-props-filter-btn .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #507a95;
+}
+
+.ap-props-filter-btn.ap-props-filter-toggle {
+    cursor: pointer;
+    border: 1px solid #e8eef3;
+    font-family: inherit;
+}
+
+.ap-props-filter-btn.ap-props-filter-toggle[aria-expanded="true"] {
+    background: #e8eef3;
+    border-color: #2c99e2;
+    color: #2c99e2;
+}
+
+/* Panel de filtros (precio, taxonomías, habitaciones, baños) */
+.ap-props-filter-panel {
+    margin-bottom: 24px;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #e8eef3;
+    border-radius: 12px;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.ap-props-filter-form {
+    display: block;
+}
+
+.ap-props-filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.ap-props-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ap-props-filter-field.ap-props-filter-field-full {
+    grid-column: 1 / -1;
+}
+
+.ap-props-filter-field label,
+.ap-props-filter-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #507a95;
+}
+
+.ap-props-filter-field input[type="number"],
+.ap-props-filter-field select {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid #e8eef3;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #0e161b;
+}
+
+.ap-props-filter-checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.ap-props-filter-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #0e161b;
+    cursor: pointer;
+}
+
+.ap-props-filter-checkbox input {
+    margin: 0;
+}
+
+.ap-props-filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ap-props-filter-submit {
+    border-radius: 6px;
+}
+
+.ap-props-filter-reset {
+    border-radius: 6px;
+}
+
+.ap-props-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 16px;
+    background: #2c99e2;
+    border: 0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.ap-props-add-btn .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.ap-props-add-btn:hover {
+    background: #217dbb;
+    color: #fff;
+}
+
+/* Toolbar - segunda pantalla CRM Propiedades (Pencil) */
+.ap-props-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.ap-props-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.ap-props-view-toggle {
+    display: inline-flex;
+    background: #fff;
+    border: 1px solid #e8eef3;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.ap-props-view-btn {
+    width: 40px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    color: #507a95;
+    text-decoration: none;
+}
+
+.ap-props-view-btn:first-child {
+    border-radius: 8px 0 0 8px;
+}
+
+.ap-props-view-btn:last-child {
+    border-radius: 0 8px 8px 0;
+}
+
+.ap-props-view-btn .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.ap-props-view-btn.active,
+.ap-props-view-btn[aria-pressed="true"] {
+    background: #2c99e2;
+    color: #fff;
+}
+
+.ap-props-view-btn + .ap-props-view-btn {
+    border-left: 1px solid #e8eef3;
+}
+
+.ap-props-showing {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 400;
+    color: #507a95;
+}
+
+/* Filter Tabs - pills con punto de color (Pencil) */
+.ap-props-filter-tabs {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ap-props-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #507a95;
+    text-decoration: none;
+    background: #fff;
+    border: 1px solid #e8eef3;
+}
+
+.ap-props-pill:hover {
+    color: #0e161b;
+    border-color: #2c99e2;
+}
+
+.ap-props-pill-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.ap-props-pill-dot-success {
+    background: #10b981;
+}
+
+.ap-props-pill-dot-warning {
+    background: #f59e0b;
+}
+
+.ap-props-pill-dot-muted {
+    background: #6b7280;
+}
+
+/* Activas - activo: fondo verde suave, texto verde */
+.ap-props-pill.ap-props-pill-active.active {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: transparent;
+    color: #10b981;
+}
+
+/* Mantenimiento - activo: fondo warning suave, texto warning */
+.ap-props-pill.ap-props-pill-maint.active {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: transparent;
+    color: #f59e0b;
+}
+
+/* Todas - activo: primary */
+.ap-props-pill.active:not(.ap-props-pill-active):not(.ap-props-pill-maint) {
+    background: rgba(44, 153, 226, 0.1);
+    border-color: transparent;
+    color: #2c99e2;
+}
+
+/* Cards grid */
+.ap-props-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.ap-props-grid[data-view="list"] {
+    grid-template-columns: 1fr;
+}
+
+.ap-props-grid[data-view="list"] .ap-props-card {
+    display: grid;
+    grid-template-columns: 200px 1fr auto;
+    gap: 20px;
+}
+
+.ap-props-grid[data-view="list"] .ap-props-card-image {
+    height: 120px;
+    min-height: 120px;
+}
+
+.ap-props-grid[data-view="list"] .ap-props-card-content {
+    padding: 16px 0;
+}
+
+/* Card */
+.ap-props-card {
+    background: #fff;
+    border: 1px solid #e8eef3;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s ease;
+}
+
+.ap-props-card:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.ap-props-card-image {
+    width: 100%;
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    background-color: #E0EDF8;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.ap-props-card-badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.ap-props-card-badge.status-active {
+    background: rgba(16, 185, 129, 0.9);
+}
+
+.ap-props-card-badge.status-draft {
+    background: rgba(107, 114, 128, 0.9);
+}
+
+.ap-props-card-menu {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 6px;
+    color: #0e161b;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.ap-props-card-menu:hover {
+    background: #fff;
+    color: #2c99e2;
+}
+
+.ap-props-card-menu-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+.ap-props-card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.ap-props-card-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #0e161b;
+    line-height: 1.3;
+}
+
+.ap-props-card-title a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.ap-props-card-title a:hover {
+    color: #2c99e2;
+}
+
+.ap-props-card-location {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 400;
+    color: #507a95;
+}
+
+.ap-props-card-location .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.ap-props-card-specs {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    font-weight: 500;
+    color: #507a95;
+}
+
+.ap-props-spec {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Iconos Lucide (habitaciones, baños, personas) - Pencil */
+.ap-props-icon {
+    flex-shrink: 0;
+    width: 14px;
+    height: 14px;
+    color: inherit;
+    vertical-align: middle;
+}
+
+.ap-props-spec .ap-props-icon {
+    color: #507a95;
+}
+
+.ap-props-card-occ .ap-props-icon {
+    margin-right: 2px;
+    opacity: 0.9;
+}
+
+.ap-props-spec .dashicons {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+/* Valoración de clientes en tarjeta */
+.ap-props-spec-rating .dashicons-star-filled {
+    color: #f59e0b;
+}
+.ap-props-rating-value {
+    font-weight: 600;
+    color: #0e161b;
+}
+.ap-props-rating-count {
+    font-size: 12px;
+    color: #507a95;
+    font-weight: 400;
+}
+
+.ap-props-card-footer {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #e8eef3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ap-props-card-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0e161b;
+}
+
+.ap-props-card-unit {
+    font-size: 13px;
+    font-weight: 400;
+    color: #507a95;
+}
+
+.ap-props-card-occ {
+    font-size: 12px;
+    font-weight: 500;
+    color: #10b981;
+}
+
+.ap-props-card-view {
+    font-size: 13px;
+    font-weight: 500;
+    color: #2c99e2;
+    text-decoration: none;
+}
+
+.ap-props-card-view:hover {
+    text-decoration: underline;
+}
+
+/* Empty state */
+.ap-props-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    background: #fff;
+    border: 1px solid #e8eef3;
+    border-radius: 12px;
+}
+
+.ap-props-empty .dashicons {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #507a95;
+    margin-bottom: 16px;
+}
+
+.ap-props-empty p {
+    margin: 0 0 20px;
+    font-size: 16px;
+    color: #507a95;
+}
+
+@media screen and (max-width: 782px) {
+    .alquipress-properties-page {
+        padding: 16px;
+    }
+    .ap-props-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .ap-props-header-right {
+        width: 100%;
+    }
+    .ap-props-search-form {
+        flex: 1;
+        min-width: 0;
+    }
+    .ap-props-grid {
+        grid-template-columns: 1fr;
+    }
+    .ap-props-grid[data-view="list"] .ap-props-card {
+        grid-template-columns: 1fr;
+    }
+    .ap-props-grid[data-view="list"] .ap-props-card-image {
+        height: 180px;
+    }
+}
+
+/* Paginación */
+.ap-props-pagination {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: center;
+}
+
+.ap-props-pagination .page-numbers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ap-props-pagination .page-numbers li {
+    margin: 0;
+}
+
+.ap-props-pagination .page-numbers a,
+.ap-props-pagination .page-numbers span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.ap-props-pagination .page-numbers a:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: #1e293b;
+}
+
+.ap-props-pagination .page-numbers .current {
+    background: #2c99e2;
+    border-color: #2c99e2;
+    color: #fff;
+}
+
+.ap-props-pagination .page-numbers .dots {
+    border: none;
+    background: transparent;
+}
+
+/* Modal Añadir propiedad */
+.ap-add-property-portal {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483600;
+    pointer-events: none;
+}
+
+.ap-add-property-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(14, 22, 27, 0.5);
+    z-index: 1;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+
+.ap-add-property-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.ap-add-property-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 24px 48px rgba(14, 22, 27, 0.2);
+    z-index: 2;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+
+.ap-add-property-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.ap-add-property-modal h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #0e161b;
+}
+
+.ap-add-property-desc {
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: #507a95;
+}
+
+.ap-add-property-input {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    border: 1px solid #e8eef3;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.ap-add-property-input:focus {
+    outline: none;
+    border-color: #2c99e2;
+}
+
+.ap-add-property-error {
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #ef4444;
+    display: none;
+}
+
+.ap-add-property-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}

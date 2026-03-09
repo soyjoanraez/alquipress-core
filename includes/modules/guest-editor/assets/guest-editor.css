@@ -1,47 +1,67 @@
 /**
  * Estilos para Editor de Huésped
+ * Diseño consistente con el resto del dashboard Alquipress
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --ap-background: #f8fafb;
+    --ap-surface: #ffffff;
+    --ap-border: #e8eef3;
+    --ap-primary: #2c99e2;
+    --ap-text-primary: #0e161b;
+    --ap-text-secondary: #507a95;
+    --ap-success: #10b981;
+    --ap-warning: #f59e0b;
+    --ap-radius-lg: 12px;
+    --ap-radius-md: 8px;
+}
+
 .alquipress-edit-guest-wrap {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.alquipress-edit-guest-wrap .ap-owners-main {
     max-width: 1400px;
-    margin: 30px auto;
-    padding: 0 20px;
 }
 
-/* ========== Header ========== */
-
-.edit-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #e5e7eb;
+/* Estilos para campos con error de validación */
+.edit-guest-form input.error,
+.edit-guest-form select.error {
+    border-color: #dc3232 !important;
+    box-shadow: 0 0 0 1px #dc3232 !important;
 }
 
-.header-left h1 {
-    font-size: 28px;
-    margin: 0 0 8px;
-    color: #2c3338;
+.edit-guest-form input.error:focus,
+.edit-guest-form select.error:focus {
+    border-color: #dc3232 !important;
+    box-shadow: 0 0 0 3px rgba(220, 50, 50, 0.1) !important;
 }
 
-.header-left .subtitle {
-    color: #666;
-    font-size: 14px;
-    margin: 0;
+/* Asegurar que todos los elementos usen la fuente Inter */
+.alquipress-edit-guest-wrap,
+.alquipress-edit-guest-wrap * {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.header-right {
-    display: flex;
-    gap: 10px;
+/* Sobrescribir estilos de WordPress para inputs */
+.alquipress-edit-guest-wrap input[type="text"],
+.alquipress-edit-guest-wrap input[type="email"],
+.alquipress-edit-guest-wrap input[type="tel"],
+.alquipress-edit-guest-wrap input[type="number"],
+.alquipress-edit-guest-wrap select {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
+
+/* ========== Header - Usar estilos de Clientes ========== */
+/* Los estilos del header se heredan de ap-clients-header */
 
 /* ========== Form Layout ========== */
 
 .edit-guest-form {
-    background: #f9fafb;
-    padding: 30px;
-    border-radius: 12px;
+    background: transparent;
+    padding: 0;
 }
 
 .form-grid {
@@ -51,32 +71,33 @@
     margin-bottom: 30px;
 }
 
-/* ========== Form Cards ========== */
+/* ========== Form Cards - Estilo consistente con dashboard ========== */
 
 .form-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 25px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-lg);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 .form-card .card-title {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     margin: 0 0 20px;
     padding-bottom: 15px;
-    border-bottom: 2px solid #f0f0f1;
-    color: #2c3338;
+    border-bottom: 2px solid var(--ap-border);
+    color: var(--ap-text-primary);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .form-card .card-title .dashicons {
-    font-size: 22px;
-    color: #2271b1;
+    font-size: 20px;
+    color: var(--ap-primary);
 }
 
 /* ========== Form Fields ========== */
@@ -92,35 +113,47 @@
 .form-field label {
     display: block;
     font-weight: 600;
-    font-size: 13px;
-    color: #1d2327;
-    margin-bottom: 8px;
+    font-size: 12px;
+    color: var(--ap-text-secondary);
+    margin-bottom: 6px;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .form-field input[type="text"],
 .form-field input[type="email"],
 .form-field input[type="tel"],
-.form-field select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #c3c4c7;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: border-color 0.2s;
+.form-field input[type="number"],
+.form-field select,
+.form-field .regular-text,
+.form-field .small-text {
+    width: 100% !important;
+    height: 36px !important;
+    padding: 0 10px !important;
+    border: 1px solid var(--ap-border) !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    color: var(--ap-text-primary) !important;
+    background: #fff !important;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    transition: border-color 0.2s, box-shadow 0.2s !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
 }
 
 .form-field input:focus,
-.form-field select:focus {
-    border-color: #2271b1;
-    outline: none;
-    box-shadow: 0 0 0 1px #2271b1;
+.form-field select:focus,
+.form-field .regular-text:focus,
+.form-field .small-text:focus {
+    border-color: var(--ap-primary) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(44, 153, 226, 0.1) !important;
 }
 
 .form-field .description {
     font-size: 12px;
-    color: #666;
+    color: var(--ap-text-secondary);
     font-style: italic;
     margin-top: 6px;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 /* ========== Rating Input ========== */
@@ -131,12 +164,14 @@
     gap: 15px;
 }
 
-.rating-input input[type="number"] {
-    width: 80px;
-    font-size: 18px;
-    font-weight: 700;
-    text-align: center;
-    padding: 8px;
+.rating-input input[type="number"],
+.rating-input .small-text {
+    width: 80px !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    padding: 8px !important;
+    height: auto !important;
 }
 
 #rating-stars-display {
@@ -179,22 +214,22 @@
     align-items: center;
     gap: 10px;
     padding: 15px;
-    background: #f9fafb;
-    border: 2px solid #e5e7eb;
-    border-radius: 8px;
+    background: var(--ap-background);
+    border: 2px solid var(--ap-border);
+    border-radius: var(--ap-radius-md);
     transition: all 0.2s;
     cursor: pointer;
 }
 
 .checkbox-card:hover {
-    background: #f0f6fc;
-    border-color: #2ea2cc;
+    background: rgba(44, 153, 226, 0.06);
+    border-color: var(--ap-primary);
 }
 
 .preference-checkbox input:checked + .checkbox-card {
-    background: #dbeafe;
-    border-color: #2271b1;
-    box-shadow: 0 2px 8px rgba(34, 113, 177, 0.2);
+    background: rgba(44, 153, 226, 0.1);
+    border-color: var(--ap-primary);
+    box-shadow: 0 2px 8px rgba(44, 153, 226, 0.2);
 }
 
 .checkbox-card .pref-icon {
@@ -237,37 +272,56 @@
 
 .form-actions {
     display: flex;
-    gap: 15px;
-    justify-content: center;
-    padding: 30px 0 0;
-    border-top: 2px solid #e5e7eb;
+    gap: 12px;
+    justify-content: flex-start;
+    padding: 24px 0 0;
+    border-top: 1px solid var(--ap-border);
+    margin-top: 24px;
 }
 
+.form-actions .button,
 .form-actions .button-large {
-    padding: 12px 30px;
-    height: auto;
-    font-size: 15px;
-    font-weight: 600;
+    padding: 10px 18px !important;
+    height: 36px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    border-radius: var(--ap-radius-md) !important;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    transition: background 0.2s, border-color 0.2s, color 0.2s !important;
+    border: 1px solid var(--ap-border) !important;
+    background: var(--ap-surface) !important;
+    color: var(--ap-text-primary) !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
 }
 
-.form-actions .button-primary {
-    background: #00a32a;
-    border-color: #00a32a;
-    box-shadow: 0 2px 8px rgba(0, 163, 42, 0.3);
+.form-actions .button:hover {
+    background: var(--ap-background) !important;
+    border-color: var(--ap-primary) !important;
+    color: var(--ap-text-primary) !important;
+}
+
+.form-actions .button-primary,
+.form-actions .button-primary.button-large {
+    background: var(--ap-primary) !important;
+    border-color: var(--ap-primary) !important;
+    color: #fff !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
 }
 
 .form-actions .button-primary:hover {
-    background: #008a00;
-    border-color: #008a00;
-    box-shadow: 0 4px 12px rgba(0, 163, 42, 0.4);
+    background: #2380c7 !important;
+    border-color: #2380c7 !important;
+    color: #fff !important;
 }
 
 /* ========== Select Mejorado ========== */
 
-#guest_status {
-    font-size: 15px;
-    padding: 12px;
-    font-weight: 600;
+#guest_status,
+.form-field select.regular-text {
+    font-size: 14px !important;
+    padding: 0 10px !important;
+    font-weight: 500 !important;
+    height: 36px !important;
 }
 
 #guest_status option[value="vip"] {
@@ -293,23 +347,8 @@
 }
 
 @media screen and (max-width: 782px) {
-    .edit-header {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .header-right {
-        width: 100%;
-        flex-direction: column;
-    }
-
-    .header-right .button {
-        width: 100%;
-        text-align: center;
-    }
-
     .form-grid {
-        padding: 15px;
+        grid-template-columns: 1fr;
     }
 
     .form-card {
@@ -329,31 +368,63 @@
         flex-direction: column;
         align-items: flex-start;
     }
+
+    .preferences-checkboxes {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ========== Notice de Éxito ========== */
 
 .notice-success {
-    background: #d5f4e6;
-    border-left-color: #00a32a;
-    padding: 15px;
-    margin: 0 0 20px;
+    background: #d5f4e6 !important;
+    border-left: 4px solid var(--ap-success) !important;
+    border-radius: var(--ap-radius-md) !important;
+    padding: 16px 20px !important;
+    margin: 0 0 24px !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
 }
 
 .notice-success p {
-    margin: 0;
-    font-size: 14px;
+    margin: 0 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: #065f46 !important;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 /* ========== WP Editor Styling ========== */
 
-.wp-editor-wrap {
-    background: white;
-    border-radius: 4px;
+.form-field .wp-editor-wrap {
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-md);
+    overflow: hidden;
 }
 
-.mce-toolbar-grp {
-    background: #f9fafb;
+.form-field .mce-toolbar-grp {
+    background: var(--ap-background);
+    border-bottom: 1px solid var(--ap-border);
+}
+
+.form-field .mce-edit-area {
+    border: none !important;
+}
+
+.form-field .wp-editor-container textarea {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: var(--ap-text-primary) !important;
+    padding: 12px !important;
+}
+
+.notes-card .wp-editor-wrap {
+    border-color: var(--ap-warning);
+}
+
+.notes-card .mce-toolbar-grp {
+    background: #fffbeb;
 }
 
 /* ========== Loading State ========== */
