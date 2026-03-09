@@ -256,6 +256,28 @@ body.admin_page_wc-orders .subsubsub a.current {
     font-weight: 600;
 }
 
+/* ============================================================
+ * Editor propio de propiedades (alquipress-edit-property)
+ * Forzar layout de metaboxes en una sola columna para que
+ * "Más campos editables" no se solape con la sidebar de datos.
+ * ============================================================ */
+
+body.ap-edit-property #poststuff #post-body.metabox-holder.columns-2 {
+    display: block;
+}
+
+body.ap-edit-property #postbox-container-1,
+body.ap-edit-property #postbox-container-2 {
+    width: 100%;
+    float: none;
+    max-width: 100%;
+}
+
+body.ap-edit-property #postbox-container-1 .postbox,
+body.ap-edit-property #postbox-container-2 .postbox {
+    margin-right: 0;
+}
+
 /* ========== Postbox (metaboxes en edición) ========== */
 body.post-type-propietario .postbox,
 body.post-type-product .postbox,

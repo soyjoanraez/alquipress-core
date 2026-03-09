@@ -348,7 +348,7 @@ function alquipress_render_property_edit_layout($post, $args = [])
                     </div>
                     <div class="ap-prop-card ap-prop-card-amenities">
                         <h3 class="ap-prop-card-title"><?php esc_html_e('Características y equipamiento', 'alquipress'); ?></h3>
-                        <p class="ap-prop-card-muted"><?php esc_html_e('Definidas en los campos personalizados (taxonomías, ACF).', 'alquipress'); ?></p>
+                        <p class="ap-prop-card-muted"><?php esc_html_e('Definidas en los campos personalizados y taxonomías de la propiedad.', 'alquipress'); ?></p>
                     </div>
                     <div class="ap-prop-card ap-prop-card-rooms">
                         <h3 class="ap-prop-card-title"><?php esc_html_e('Configuración de habitaciones', 'alquipress'); ?></h3>
@@ -360,7 +360,7 @@ function alquipress_render_property_edit_layout($post, $args = [])
                     </div>
                     <div class="ap-prop-card ap-prop-card-rules">
                         <h3 class="ap-prop-card-title"><?php esc_html_e('Normas y políticas', 'alquipress'); ?></h3>
-                        <p class="ap-prop-card-muted"><?php esc_html_e('Configurables en el producto o campos ACF.', 'alquipress'); ?></p>
+                        <p class="ap-prop-card-muted"><?php esc_html_e('Configurables en el producto y campos personalizados.', 'alquipress'); ?></p>
                     </div>
                 </div>
                 <aside class="ap-prop-overview-sidebar">
@@ -409,10 +409,103 @@ function alquipress_render_property_edit_layout($post, $args = [])
         </div>
 
         <div id="ap-prop-panel-calendario" class="ap-prop-tab-panel" role="tabpanel" aria-labelledby="ap-prop-tab-calendario" hidden>
-            <div class="ap-prop-tab-placeholder">
-                <span class="dashicons dashicons-calendar-alt"></span>
-                <p><?php esc_html_e('Calendario de reservas de esta propiedad.', 'alquipress'); ?></p>
-                <p class="ap-prop-tab-placeholder-note"><?php esc_html_e('Próximamente: vista de calendario integrada.', 'alquipress'); ?></p>
+            <div class="ap-prop-calendar-layout">
+                <div class="ap-prop-card ap-prop-card-calendar-config">
+                    <h3 class="ap-prop-card-title"><?php esc_html_e('Motor de reservas Alquipress', 'alquipress'); ?></h3>
+                    <p class="ap-prop-card-muted"><?php esc_html_e('Activa el motor de reservas propio para esta propiedad y define un precio base por noche. Las reglas de temporada y bloqueos avanzados se gestionarán en siguientes iteraciones.', 'alquipress'); ?></p>
+                    <?php
+                    $ap_booking_enabled = get_post_meta($post->ID, 'ap_booking_enabled', true);
+                    $ap_base_price = get_post_meta($post->ID, 'ap_base_price', true);
+                    ?>
+                    <div class="ap-prop-field-row">
+                        <label for="ap_booking_enabled">
+                            <input type="checkbox" id="ap_booking_enabled" name="ap_booking_enabled" value="1" <?php checked((bool) $ap_booking_enabled, true); ?> />
+                            <?php esc_html_e('Usar motor de reservas Alquipress en lugar de WC Bookings para esta propiedad', 'alquipress'); ?>
+                        </label>
+                    </div>
+                    <div class="ap-prop-field-row">
+                        <label for="ap_base_price">
+                            <?php esc_html_e('Precio base por noche (€)', 'alquipress'); ?>
+                        </label>
+                        <input
+                            type="number"
+                            id="ap_base_price"
+                            name="ap_base_price"
+                            step="0.01"
+                            min="0"
+                            value="<?php echo esc_attr($ap_base_price !== '' ? $ap_base_price : ''); ?>"
+                            class="ap-prop-input"
+                        />
+                    </div>
+                    <p class="ap-prop-card-note">
+                        <?php esc_html_e('En esta primera versión el precio base se aplica a todas las noches. Más adelante se podrán definir reglas de temporada (verano, invierno, puentes, etc.).', 'alquipress'); ?>
+                    </p>
+                </div>
+
+                <div class="ap-prop-card ap-prop-card-deposit-config">
+                    <h3 class="ap-prop-card-title"><?php esc_html_e('Sistema de depósitos propio', 'alquipress'); ?></h3>
+                    <p class="ap-prop-card-muted"><?php esc_html_e('Configura el pago a cuenta y el cobro del saldo restante para esta propiedad. Si está vacío se usarán los valores globales del Payment Manager.', 'alquipress'); ?></p>
+                    <?php
+                    $ap_deposit_enabled      = get_post_meta($post->ID, 'ap_deposit_enabled', true);
+                    $ap_deposit_type         = get_post_meta($post->ID, 'ap_deposit_type', true) ?: 'percent';
+                    $ap_deposit_percent      = get_post_meta($post->ID, 'ap_deposit_percent', true);
+                    $ap_deposit_fixed        = get_post_meta($post->ID, 'ap_deposit_fixed_amount', true);
+                    $ap_deposit_days         = get_post_meta($post->ID, 'ap_deposit_balance_days_before', true);
+                    $ap_security_amount      = get_post_meta($post->ID, 'ap_security_deposit_amount', true);
+                    ?>
+                    <div class="ap-prop-field-row">
+                        <label for="ap_deposit_enabled">
+                            <input type="checkbox" id="ap_deposit_enabled" name="ap_deposit_enabled" value="1" <?php checked((bool) $ap_deposit_enabled, true); ?> />
+                            <?php esc_html_e('Activar depósitos propios para esta propiedad', 'alquipress'); ?>
+                        </label>
+                    </div>
+                    <div class="ap-prop-field-row" id="ap-deposit-config-fields" <?php echo $ap_deposit_enabled ? '' : 'style="display:none"'; ?>>
+                        <label for="ap_deposit_type"><?php esc_html_e('Tipo de depósito', 'alquipress'); ?></label>
+                        <select id="ap_deposit_type" name="ap_deposit_type" class="ap-prop-input">
+                            <option value="percent" <?php selected($ap_deposit_type, 'percent'); ?>><?php esc_html_e('Porcentaje (%)', 'alquipress'); ?></option>
+                            <option value="fixed" <?php selected($ap_deposit_type, 'fixed'); ?>><?php esc_html_e('Importe fijo (€)', 'alquipress'); ?></option>
+                        </select>
+                    </div>
+                    <div class="ap-prop-field-row" id="ap-deposit-percent-row" <?php echo ($ap_deposit_enabled && $ap_deposit_type === 'percent') ? '' : 'style="display:none"'; ?>>
+                        <label for="ap_deposit_percent"><?php esc_html_e('Porcentaje del depósito (%)', 'alquipress'); ?></label>
+                        <input type="number" id="ap_deposit_percent" name="ap_deposit_percent" step="1" min="1" max="100"
+                            value="<?php echo esc_attr($ap_deposit_percent !== '' ? $ap_deposit_percent : ''); ?>"
+                            class="ap-prop-input" placeholder="<?php esc_attr_e('Ej: 40', 'alquipress'); ?>" />
+                    </div>
+                    <div class="ap-prop-field-row" id="ap-deposit-fixed-row" <?php echo ($ap_deposit_enabled && $ap_deposit_type === 'fixed') ? '' : 'style="display:none"'; ?>>
+                        <label for="ap_deposit_fixed_amount"><?php esc_html_e('Importe fijo del depósito (€)', 'alquipress'); ?></label>
+                        <input type="number" id="ap_deposit_fixed_amount" name="ap_deposit_fixed_amount" step="0.01" min="0"
+                            value="<?php echo esc_attr($ap_deposit_fixed !== '' ? $ap_deposit_fixed : ''); ?>"
+                            class="ap-prop-input" placeholder="<?php esc_attr_e('Ej: 300', 'alquipress'); ?>" />
+                    </div>
+                    <div class="ap-prop-field-row" id="ap-deposit-days-row" <?php echo $ap_deposit_enabled ? '' : 'style="display:none"'; ?>>
+                        <label for="ap_deposit_balance_days_before"><?php esc_html_e('Días antes del check-in para cobrar el saldo', 'alquipress'); ?></label>
+                        <input type="number" id="ap_deposit_balance_days_before" name="ap_deposit_balance_days_before" step="1" min="0"
+                            value="<?php echo esc_attr($ap_deposit_days !== '' ? $ap_deposit_days : ''); ?>"
+                            class="ap-prop-input" placeholder="<?php esc_attr_e('Ej: 7 (global por defecto)', 'alquipress'); ?>" />
+                    </div>
+                    <div class="ap-prop-field-row" id="ap-deposit-security-row" <?php echo $ap_deposit_enabled ? '' : 'style="display:none"'; ?>>
+                        <label for="ap_security_deposit_amount"><?php esc_html_e('Fianza (retención Stripe, €)', 'alquipress'); ?></label>
+                        <input type="number" id="ap_security_deposit_amount" name="ap_security_deposit_amount" step="0.01" min="0"
+                            value="<?php echo esc_attr($ap_security_amount !== '' ? $ap_security_amount : ''); ?>"
+                            class="ap-prop-input" placeholder="<?php esc_attr_e('Ej: 300', 'alquipress'); ?>" />
+                    </div>
+                    <p class="ap-prop-card-note">
+                        <?php esc_html_e('Si no se configura aquí, se aplicará el porcentaje global definido en Ajustes → Payment Manager. WooCommerce Deposits quedará inactivo para reservas de esta propiedad.', 'alquipress'); ?>
+                    </p>
+                </div>
+
+                <?php if ($ap_booking_enabled) : ?>
+                <div class="ap-prop-card" style="grid-column:1/-1">
+                    <h3 class="ap-prop-card-title"><?php esc_html_e('Calendario de disponibilidad y precios', 'alquipress'); ?></h3>
+                    <p class="ap-prop-card-muted"><?php esc_html_e('Selecciona un rango de días para crear una regla de precio de temporada o bloquear fechas. Los días con precios de temporada se muestran en azul.', 'alquipress'); ?></p>
+                    <div id="ap-booking-admin-calendar-root"></div>
+                </div>
+                <?php else : ?>
+                <div class="ap-prop-card" style="grid-column:1/-1">
+                    <p class="ap-prop-card-muted"><?php esc_html_e('Activa el motor de reservas Alquipress para gestionar el calendario de precios y disponibilidad.', 'alquipress'); ?></p>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -524,6 +617,33 @@ function alquipress_render_property_edit_layout($post, $args = [])
                 tab.addEventListener('click', function() { setActiveTab(tab); });
             });
         }
+
+        // ── Lógica de visibilidad para configuración de depósitos ──
+        (function() {
+            var toggleDepositFields = function() {
+                var enabled = document.getElementById('ap_deposit_enabled');
+                var configFields = ['ap-deposit-config-fields', 'ap-deposit-days-row', 'ap-deposit-security-row'];
+                configFields.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) el.style.display = (enabled && enabled.checked) ? '' : 'none';
+                });
+                if (enabled && enabled.checked) {
+                    toggleDepositType();
+                }
+            };
+            var toggleDepositType = function() {
+                var typeSelect = document.getElementById('ap_deposit_type');
+                var percentRow = document.getElementById('ap-deposit-percent-row');
+                var fixedRow = document.getElementById('ap-deposit-fixed-row');
+                if (!typeSelect) return;
+                if (percentRow) percentRow.style.display = typeSelect.value === 'percent' ? '' : 'none';
+                if (fixedRow)   fixedRow.style.display   = typeSelect.value === 'fixed' ? '' : 'none';
+            };
+            var depositCheckbox = document.getElementById('ap_deposit_enabled');
+            var depositType     = document.getElementById('ap_deposit_type');
+            if (depositCheckbox) depositCheckbox.addEventListener('change', toggleDepositFields);
+            if (depositType)     depositType.addEventListener('change', toggleDepositType);
+        })();
     })();
     </script>
     <?php

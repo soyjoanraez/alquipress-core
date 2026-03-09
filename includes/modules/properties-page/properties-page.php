@@ -37,13 +37,13 @@ class Alquipress_Properties_Page
         );
         wp_enqueue_style(
             'leaflet-css',
-            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
+            ALQUIPRESS_URL . 'includes/assets/vendor/leaflet/leaflet.css',
             [],
             '1.9.4'
         );
         wp_enqueue_script(
             'leaflet-js',
-            'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
+            ALQUIPRESS_URL . 'includes/assets/vendor/leaflet/leaflet.js',
             [],
             '1.9.4',
             true

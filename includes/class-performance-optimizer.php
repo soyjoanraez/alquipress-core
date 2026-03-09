@@ -37,6 +37,7 @@ class Alquipress_Performance_Optimizer
 
         // Optimizar carga de scripts
         add_action('admin_enqueue_scripts', [$this, 'optimize_script_loading'], 1);
+        add_action('admin_enqueue_scripts', [$this, 'fix_missing_astra_command_palette_style'], 100);
     }
 
     // ========== Caché de Informes ==========
@@ -454,6 +455,39 @@ class Alquipress_Performance_Optimizer
         }
     }
 
+    /**
+     * Evita 404 recurrentes si Astra registra command-palette CSS con ruta inexistente.
+     */
+    public function fix_missing_astra_command_palette_style()
+    {
+        if (!wp_style_is('astra-command-palette', 'registered') && !wp_style_is('astra-command-palette', 'enqueued')) {
+            return;
+        }
+
+        $styles = wp_styles();
+        if (!$styles || empty($styles->registered['astra-command-palette'])) {
+            return;
+        }
+
+        $style = $styles->registered['astra-command-palette'];
+        if (empty($style->src)) {
+            return;
+        }
+
+        $style_url_path = parse_url($style->src, PHP_URL_PATH);
+        if (!$style_url_path) {
+            return;
+        }
+
+        $absolute_path = ABSPATH . ltrim($style_url_path, '/');
+        if (file_exists($absolute_path)) {
+            return;
+        }
+
+        wp_dequeue_style('astra-command-palette');
+        wp_deregister_style('astra-command-palette');
+    }
+
     // ========== Helpers Públicos ==========
 
     /**
@@ -512,9 +546,11 @@ class Alquipress_Performance_Optimizer
     public static function clear_daily_cache()
     {
         delete_transient('alquipress_preferences_stats');
+        self::clear_all_alquipress_cache();
 
-        // Limpiar caché de WordPress
-        wp_cache_flush();
+        $today = date('Y-m-d');
+        wp_cache_delete('alquipress_checkins_today_' . $today);
+        wp_cache_delete('alquipress_checkouts_today_' . $today);
     }
 
     /**

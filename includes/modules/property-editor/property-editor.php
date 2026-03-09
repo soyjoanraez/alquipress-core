@@ -197,52 +197,50 @@ class Alquipress_Property_Editor
         wp_enqueue_media();
         wp_enqueue_editor();
 
-        if (function_exists('acf_enqueue_scripts')) {
-            acf_enqueue_scripts();
-        }
-
-        $this->enqueue_wc_bookings_product_assets();
+        $this->enqueue_ap_booking_admin_assets();
     }
 
     /**
-     * Forzar carga de assets de WooCommerce Bookings en el editor de propiedad.
-     * La pantalla personalizada (admin.php?page=alquipress-edit-property) no dispara
-     * la carga automática de WC Bookings; sin estos scripts el tab "Reservas" no aparece.
+     * Encolar el calendario admin interactivo de Ap_Bookings.
      */
-    private function enqueue_wc_bookings_product_assets()
+    private function enqueue_ap_booking_admin_assets(): void
     {
-        if (!class_exists('WC_Bookings') || !defined('WC_BOOKINGS_PLUGIN_URL') || !defined('WC_BOOKINGS_VERSION')) {
-            return;
+        global $post;
+        if (!$post) return;
+
+        // Solo si el producto tiene ap_booking_enabled
+        if (!get_post_meta($post->ID, 'ap_booking_enabled', true)) {
+            // Encolar igualmente para que el CSS/JS esté disponible si el usuario activa la opción y guarda
+            // (el div raíz solo se renderiza cuando está activo, pero los assets se precachean)
         }
 
-        $plugin_url = WC_BOOKINGS_PLUGIN_URL;
-        $version = WC_BOOKINGS_VERSION;
-
-        wp_enqueue_style('wc_bookings_admin_styles', $plugin_url . 'dist/admin.css', ['wp-components'], $version);
-
         wp_enqueue_style(
-            'alquipress-property-editor-wc-bookings',
-            ALQUIPRESS_URL . 'includes/modules/property-editor/assets/property-editor-wc-bookings.css',
-            ['wc_bookings_admin_styles', 'alquipress-admin-pencil'],
+            'ap-booking-admin-calendar',
+            ALQUIPRESS_URL . 'includes/modules/ap-bookings/assets/ap-booking-admin-calendar.css',
+            [],
             ALQUIPRESS_VERSION
         );
 
-        if (!wp_script_is('wc_bookings_admin_js', 'registered')) {
-            wp_register_script('wc_bookings_admin_js', $plugin_url . 'dist/admin.js', ['jquery', 'jquery-ui-datepicker', 'jquery-ui-sortable'], $version, true);
-        }
-        wp_enqueue_script('wc_bookings_admin_js');
+        wp_enqueue_script(
+            'ap-booking-admin-calendar',
+            ALQUIPRESS_URL . 'includes/modules/ap-bookings/assets/ap-booking-admin-calendar.js',
+            [],
+            ALQUIPRESS_VERSION,
+            true
+        );
 
-        if (!wp_script_is('wc_bookings_admin_edit_bookable_product_js', 'registered')) {
-            $deps = function_exists('wc_booking_get_script_dependencies')
-                ? wc_booking_get_script_dependencies('admin-edit-bookable-product', ['wc_bookings_admin_js'])
-                : ['jquery', 'wc_bookings_admin_js'];
-            wp_register_script('wc_bookings_admin_edit_bookable_product_js', $plugin_url . 'dist/admin-edit-bookable-product.js', $deps, $version, true);
-        }
-        wp_enqueue_script('wc_bookings_admin_edit_bookable_product_js');
-
-        wp_localize_script('wc_bookings_admin_js', 'wc_bookings_admin_params', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'plugin_url' => WC()->plugin_url(),
+        wp_localize_script('ap-booking-admin-calendar', 'apBookingAdmin', [
+            'restBase'   => esc_url_raw(rest_url('ap-bookings/v1')),
+            'nonce'      => wp_create_nonce('wp_rest'),
+            'productId'  => (string) $post->ID,
+            'currency'   => function_exists('get_woocommerce_currency_symbol') ? get_woocommerce_currency_symbol() : '€',
+            'monthNames' => [
+                __('Enero', 'alquipress'), __('Febrero', 'alquipress'), __('Marzo', 'alquipress'),
+                __('Abril', 'alquipress'), __('Mayo', 'alquipress'), __('Junio', 'alquipress'),
+                __('Julio', 'alquipress'), __('Agosto', 'alquipress'), __('Septiembre', 'alquipress'),
+                __('Octubre', 'alquipress'), __('Noviembre', 'alquipress'), __('Diciembre', 'alquipress'),
+            ],
+            'dayNames'   => ['L', 'M', 'X', 'J', 'V', 'S', 'D'],
         ]);
     }
 

@@ -41,39 +41,33 @@ class Alquipress_Bookings_Page
     }
 
     /**
-     * IDs de pedidos con check-in en la fecha dada. Compatible con HPOS y almacenamiento legacy (postmeta).
+     * IDs de pedido con check-in en la fecha dada (desde wp_ap_booking).
      */
-    private function get_bookings_by_checkin_date($date)
+    private function get_bookings_by_checkin_date(string $date): array
     {
-        if (!function_exists('wc_get_orders')) {
+        if (!$this->has_ap_booking_table()) {
             return [];
         }
-        $orders = wc_get_orders([
-            'limit' => -1,
-            'return' => 'ids',
-            'meta_query' => [
-                ['key' => '_booking_checkin_date', 'value' => $date, 'compare' => '='],
-            ],
-        ]);
-        return is_array($orders) ? $orders : [];
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking';
+        return $wpdb->get_col(
+            $wpdb->prepare("SELECT order_id FROM {$table} WHERE checkin = %s AND status IN ('held','confirmed') AND order_id > 0", $date)
+        ) ?: [];
     }
 
     /**
-     * IDs de pedidos con check-out en la fecha dada. Compatible con HPOS y almacenamiento legacy (postmeta).
+     * IDs de pedido con check-out en la fecha dada (desde wp_ap_booking).
      */
-    private function get_bookings_by_checkout_date($date)
+    private function get_bookings_by_checkout_date(string $date): array
     {
-        if (!function_exists('wc_get_orders')) {
+        if (!$this->has_ap_booking_table()) {
             return [];
         }
-        $orders = wc_get_orders([
-            'limit' => -1,
-            'return' => 'ids',
-            'meta_query' => [
-                ['key' => '_booking_checkout_date', 'value' => $date, 'compare' => '='],
-            ],
-        ]);
-        return is_array($orders) ? $orders : [];
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking';
+        return $wpdb->get_col(
+            $wpdb->prepare("SELECT order_id FROM {$table} WHERE checkout = %s AND status IN ('held','confirmed') AND order_id > 0", $date)
+        ) ?: [];
     }
 
     private function get_order_property_name($order)
@@ -118,22 +112,28 @@ class Alquipress_Bookings_Page
             $checkouts_week += count($this->get_bookings_by_checkout_date(date('Y-m-d', $d)));
         }
 
-        $orders = function_exists('wc_get_orders') ? wc_get_orders([
-            'status' => ['processing', 'deposito-ok', 'in-progress', 'completed'],
-            'limit' => -1,
-            'return' => 'objects',
-        ]) : [];
+        // KPIs desde wp_ap_booking (si la tabla existe)
         $revenue = 0;
-        foreach ($orders as $order) {
-            $checkin = $order->get_meta('_booking_checkin_date');
-            $checkout = $order->get_meta('_booking_checkout_date');
-            if ($checkin && $checkout && $checkin <= $today && $checkout >= $today) {
-                $active++;
-            }
-            $created = $order->get_date_created();
-            if ($created && $month_start <= $created->format('Y-m-d') && $created->format('Y-m-d') <= $month_end) {
-                $real_total = $order->get_meta('_apm_booking_total');
-                $revenue += (float) ($real_total !== '' && is_numeric($real_total) ? $real_total : $order->get_total());
+        if ($this->has_ap_booking_table()) {
+            global $wpdb;
+            $ap_table = $wpdb->prefix . 'ap_booking';
+            $active = (int) $wpdb->get_var(
+                $wpdb->prepare("SELECT COUNT(*) FROM {$ap_table} WHERE checkin <= %s AND checkout >= %s AND status IN ('held','confirmed')", $today, $today)
+            );
+
+            // Ingresos del mes: suma totales de pedidos vinculados a reservas Ap_Booking creadas este mes
+            $order_ids_month = $wpdb->get_col(
+                $wpdb->prepare(
+                    "SELECT order_id FROM {$ap_table} WHERE DATE(created_at) BETWEEN %s AND %s AND order_id > 0 AND status IN ('held','confirmed')",
+                    $month_start, $month_end
+                )
+            );
+            foreach ((array) $order_ids_month as $oid) {
+                $order = function_exists('wc_get_order') ? wc_get_order((int) $oid) : null;
+                if ($order) {
+                    $real_total = $order->get_meta('_apm_booking_total');
+                    $revenue += (float) ($real_total !== '' && is_numeric($real_total) ? $real_total : $order->get_total());
+                }
             }
         }
 
@@ -192,71 +192,67 @@ class Alquipress_Bookings_Page
 
     private function get_recent_bookings($limit = 8)
     {
-        if (!function_exists('wc_get_orders')) {
+        if (!$this->has_ap_booking_table()) {
             return [];
         }
-        $orders = wc_get_orders([
-            'limit' => $limit * 3,
-            'orderby' => 'date',
-            'order' => 'DESC',
-            'return' => 'objects',
-        ]);
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking';
+        $rows  = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$table} WHERE status IN ('held','confirmed') ORDER BY created_at DESC LIMIT %d",
+                $limit
+            ),
+            ARRAY_A
+        );
+
         $bookings = [];
-        foreach ($orders as $order) {
-            if (!$order->get_meta('_booking_checkin_date')) {
-                continue;
-            }
-            $product_id = (int) $order->get_meta('_booking_product_id');
-            if (!$product_id) {
-                foreach ($order->get_items() as $item) {
-                    $product = is_object($item) && method_exists($item, 'get_product') ? $item->get_product() : null;
-                    if ($product) {
-                        $product_id = $product->get_id();
-                        break;
-                    }
-                }
-            }
-            $checkin = $order->get_meta('_booking_checkin_date');
-            $checkout = $order->get_meta('_booking_checkout_date');
-            $guest = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) ?: $order->get_billing_company() ?: '-';
-            $dates = ($checkin && $checkout) ? date_i18n('j M', strtotime($checkin)) . ' - ' . date_i18n('j M', strtotime($checkout)) : '';
-            list($status_label, $status_class) = $this->get_booking_status_badge($order->get_status(), $checkin);
+        foreach ((array) $rows as $row) {
+            $booking    = class_exists('Ap_Booking') ? Ap_Booking::from_row($row) : null;
+            $order      = ($booking && $booking->order_id && function_exists('wc_get_order'))
+                ? wc_get_order($booking->order_id)
+                : null;
+            $checkin    = $row['checkin'] ?? '';
+            $checkout   = $row['checkout'] ?? '';
+            $guest      = $order
+                ? (trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) ?: $order->get_billing_company() ?: '-')
+                : '-';
+            $prop_name  = get_the_title((int) ($row['product_id'] ?? 0)) ?: '-';
+            $amount     = $order ? (float) $order->get_total() : (float) ($row['total'] ?? 0);
+            $status     = $order ? $order->get_status() : '';
+            list($status_label, $status_class) = $this->get_booking_status_badge($status, $checkin);
+            $edit_url   = $order ? $order->get_edit_order_url() : '';
             $bookings[] = [
-                'order_id' => $order->get_id(),
-                'date' => $order->get_date_created() ? $order->get_date_created()->format('j M Y') : '',
-                'guest' => $guest,
-                'prop_name' => $this->get_order_property_name($order),
-                'amount' => $order->get_total(),
+                'order_id'     => $row['order_id'] ?? 0,
+                'date'         => $checkin ? date_i18n('j M Y', strtotime($checkin)) : '',
+                'guest'        => $guest,
+                'prop_name'    => $prop_name,
+                'amount'       => $amount,
                 'status_label' => $status_label,
                 'status_class' => $status_class,
-                'edit_url' => $order->get_edit_order_url(),
+                'edit_url'     => $edit_url,
             ];
-            if (count($bookings) >= $limit) {
-                break;
-            }
         }
         return $bookings;
     }
 
-    private function wc_bookings_active()
+    /**
+     * Comprobar si la tabla wp_ap_booking existe antes de lanzar queries.
+     */
+    private function has_ap_booking_table(): bool
     {
-        return class_exists('WC_Bookings') && class_exists('WC_Bookings_Admin');
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking';
+        $found = $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table));
+        return $found === $table;
     }
 
     private function get_booking_tabs()
     {
         $base = admin_url('admin.php?page=alquipress-bookings');
-        $tabs = [
-            'resumen' => ['label' => __('Resumen', 'alquipress'), 'icon' => 'dashicons-calendar-alt', 'url' => $base],
+        return [
+            'resumen'  => ['label' => __('Resumen', 'alquipress'), 'icon' => 'dashicons-calendar-alt', 'url' => $base],
             'pipeline' => ['label' => __('Pipeline', 'alquipress'), 'icon' => 'dashicons-editor-table', 'url' => admin_url('admin.php?page=alquipress-pipeline')],
         ];
-        if ($this->wc_bookings_active()) {
-            $tabs['calendario'] = ['label' => __('Calendario', 'alquipress'), 'icon' => 'dashicons-calendar', 'url' => add_query_arg('view', 'calendario', $base)];
-            $tabs['create'] = ['label' => __('Nueva reserva', 'alquipress'), 'icon' => 'dashicons-plus-alt2', 'url' => add_query_arg('view', 'create', $base)];
-            $tabs['notifications'] = ['label' => __('Notificaciones', 'alquipress'), 'icon' => 'dashicons-email-alt', 'url' => add_query_arg('view', 'notifications', $base)];
-            $tabs['settings'] = ['label' => __('Config. reservas', 'alquipress'), 'icon' => 'dashicons-admin-generic', 'url' => add_query_arg('view', 'settings', $base)];
-        }
-        return $tabs;
     }
 
     private function render_booking_tabs($current)
@@ -280,9 +276,6 @@ class Alquipress_Bookings_Page
         <div class="ap-bookings-header-actions">
             <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-ses-export')); ?>" class="ap-bookings-new-btn ap-bookings-btn-ses" style="background:#0f766e;"><span class="dashicons dashicons-media-spreadsheet"></span> <?php esc_html_e('SES XML', 'alquipress'); ?></a>
             <a href="<?php echo esc_url(admin_url('post-new.php?post_type=shop_order')); ?>" class="ap-bookings-new-btn"><span class="dashicons dashicons-plus-alt2"></span> <?php esc_html_e('Nueva reserva', 'alquipress'); ?></a>
-            <?php if ($this->wc_bookings_active()) : ?>
-                <a href="<?php echo esc_url(admin_url('edit.php?post_type=wc_booking')); ?>" class="ap-bookings-new-btn ap-bookings-btn-wc" target="_blank" rel="noopener"><span class="dashicons dashicons-external"></span> <?php esc_html_e('Lista WC Bookings', 'alquipress'); ?></a>
-            <?php endif; ?>
         </div>
         <?php
     }

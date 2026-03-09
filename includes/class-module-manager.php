@@ -8,87 +8,89 @@ class Alquipress_Module_Manager
     private $modules = [];
     private $active_modules = [];
 
+    /**
+     * Valores por defecto para módulos nuevos.
+     * Cuando se añade un módulo al registro, si no existe en la opción guardada
+     * se usa el valor de este array (true = activo, false = inactivo).
+     * Solo hay que editar aquí al añadir nuevos módulos.
+     */
+    private const MODULE_DEFAULTS = [
+        'taxonomies'               => true,
+        'crm-guests'               => true,
+        'crm-owners'               => true,
+        'booking-pipeline'         => true,
+        'email-automation'         => true,
+        'seo-master'               => true,
+        'booking-enforcer'         => true,
+        'order-columns'            => true,
+        'dashboard-widgets'        => true,
+        'properties-page'          => true,
+        'property-editor'          => true,
+        'owners-page'              => true,
+        'bookings-page'            => true,
+        'clients-page'             => true,
+        'booking-calendar-prices'  => true,
+        'ses-compliance'           => true,
+        'operational-health'       => true,
+        'payment-pipeline'         => true,
+        'communications'           => true,
+        'ical-sync'                => true,
+        'ap-bookings'              => true,
+        'property-pricing-fields'  => true,
+        'accounting'               => true,
+        'owner-invoicing'          => true,
+        'checkout-document-fields' => true,
+        'owner-portal'             => true,
+        'email-campaigns'          => true,
+        'payments'                 => false,
+        'alquipress-tester'        => false,
+    ];
+
     public function __construct()
     {
         $this->register_modules();
-        $this->active_modules = get_option('alquipress_modules', []);
-        // Si la opción está vacía (plugin no activado por hook o opción borrada), usar defaults para que Panel/Propiedades/Propietarios funcionen
-        if (empty($this->active_modules)) {
-            $this->active_modules = [
-                'taxonomies' => true,
-                'crm-guests' => true,
-                'crm-owners' => true,
-                'booking-pipeline' => true,
-                'email-automation' => true,
-                'seo-master' => true,
-                'booking-enforcer' => true,
-                'order-columns' => true,
-                'dashboard-widgets' => true,
-                'properties-page' => true,
-                'property-editor' => true,
-                'owners-page' => true,
-                'bookings-page' => true,
-                'clients-page' => true,
-                'booking-calendar-prices' => true,
-                'ses-compliance' => true,
-                'operational-health' => true,
-                'payment-pipeline' => true,
-                'communications' => true,
-                'ical-sync' => true,
-                'payments' => false,
-                'alquipress-tester' => false,
-            ];
-            update_option('alquipress_modules', $this->active_modules);
-        }
-        if (!array_key_exists('booking-calendar-prices', $this->active_modules)) {
-            $this->active_modules['booking-calendar-prices'] = true;
-            update_option('alquipress_modules', $this->active_modules);
-        }
-        if (!array_key_exists('communications', $this->active_modules)) {
-            $this->active_modules['communications'] = true;
-            update_option('alquipress_modules', $this->active_modules);
-        }
-        if (!array_key_exists('property-editor', $this->active_modules)) {
-            $this->active_modules['property-editor'] = true;
-            update_option('alquipress_modules', $this->active_modules);
-        }
-        if (!array_key_exists('property-pricing-fields', $this->active_modules)) {
-            $this->active_modules['property-pricing-fields'] = true;
-            update_option('alquipress_modules', $this->active_modules);
-        }
-        if (!array_key_exists('accounting', $this->active_modules)) {
-            $this->active_modules['accounting'] = true;
-            update_option('alquipress_modules', $this->active_modules);
-        }
-        if (!array_key_exists('owner-invoicing', $this->active_modules)) {
-            $this->active_modules['owner-invoicing'] = true;
-            update_option('alquipress_modules', $this->active_modules);
-        }
-        if (!array_key_exists('checkout-document-fields', $this->active_modules)) {
-            $this->active_modules['checkout-document-fields'] = true;
-            update_option('alquipress_modules', $this->active_modules);
-        }
-        if (!array_key_exists('owner-portal', $this->active_modules)) {
-            $this->active_modules['owner-portal'] = true;
-            update_option('alquipress_modules', $this->active_modules);
-        }
-        if (!array_key_exists('email-campaigns', $this->active_modules)) {
-            $this->active_modules['email-campaigns'] = true;
-            update_option('alquipress_modules', $this->active_modules);
-        }
-        if (!array_key_exists('ses-compliance', $this->active_modules)) {
-            $this->active_modules['ses-compliance'] = true;
-            update_option('alquipress_modules', $this->active_modules);
-        }
+        $this->active_modules = $this->resolve_active_modules();
+
         $saved_template = get_option(self::DASHBOARD_TEMPLATE_OPTION, '');
         if (!is_string($saved_template) || $saved_template === '') {
             update_option(self::DASHBOARD_TEMPLATE_OPTION, self::DASHBOARD_TEMPLATE_DEFAULT);
         }
+
         add_action('admin_menu', [$this, 'add_settings_page']);
         add_action('admin_init', [$this, 'handle_form_submit']);
         add_action('admin_init', [$this, 'redirect_wp_dashboard_to_alquipress'], 5);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_settings_assets']);
         add_filter('admin_body_class', [$this, 'add_fullscreen_body_class']);
+    }
+
+    /**
+     * Resolver el estado de los módulos activos:
+     * - Si no hay opción guardada, usar los defaults.
+     * - Si hay opción guardada, fusionar con los defaults para que los módulos
+     *   nuevos (no presentes en la opción) reciban su valor por defecto.
+     * - Solo llama a update_option() una vez si hubo cambios, nunca en bucle.
+     */
+    private function resolve_active_modules(): array
+    {
+        $saved = get_option('alquipress_modules', null);
+
+        if (!is_array($saved) || empty($saved)) {
+            update_option('alquipress_modules', self::MODULE_DEFAULTS);
+            return self::MODULE_DEFAULTS;
+        }
+
+        // Detectar módulos nuevos que no están en la opción guardada
+        $new_modules = array_diff_key(self::MODULE_DEFAULTS, $saved);
+
+        if (empty($new_modules)) {
+            return $saved;
+        }
+
+        // Fusionar en una sola operación y guardar una sola vez
+        $merged = array_merge(self::MODULE_DEFAULTS, $saved, $new_modules);
+        update_option('alquipress_modules', $merged);
+
+        return $merged;
     }
 
     /**
@@ -262,6 +264,12 @@ class Alquipress_Module_Manager
                 'file' => 'booking-enforcer/booking-enforcer.php',
                 'dependencies' => []
             ],
+            'ap-bookings' => [
+                'name' => 'Motor de reservas Alquipress',
+                'description' => 'Motor propio de reservas para alquiler vacacional (sustituye WooCommerce Bookings a medio plazo)',
+                'file' => 'ap-bookings/ap-bookings.php',
+                'dependencies' => []
+            ],
             'order-columns' => [
                 'name' => 'Columnas de Pedidos',
                 'description' => 'Añade columnas personalizadas en listado de pedidos WooCommerce: Propiedad, Fechas, Propietario, Semáforo',
@@ -346,10 +354,10 @@ class Alquipress_Module_Manager
                 'file' => 'bookings-page/bookings-page.php',
                 'dependencies' => []
             ],
-            'wc-bookings-dashboard' => [
-                'name' => 'Dashboard WC Bookings integrado',
-                'description' => 'Calendario, nueva reserva, notificaciones y configuración de WooCommerce Bookings en el diseño Alquipress',
-                'file' => 'wc-bookings-dashboard/wc-bookings-dashboard.php',
+            'ap-bookings-dashboard' => [
+                'name' => 'Dashboard Ap Bookings',
+                'description' => 'Próximas entradas/salidas y reservas activas desde el motor Ap_Booking',
+                'file' => 'ap-bookings-dashboard/ap-bookings-dashboard.php',
                 'dependencies' => ['bookings-page']
             ],
             'clients-page' => [
@@ -561,23 +569,10 @@ class Alquipress_Module_Manager
             }
         }
         
-        // Forzar siempre la carga de los módulos de páginas del menú para que Panel, Propiedades, Reservas, Clientes y Propietarios funcionen
-        $page_modules = ['dashboard-widgets', 'properties-page', 'owners-page', 'bookings-page', 'wc-bookings-dashboard', 'clients-page', 'communications'];
-        foreach ($page_modules as $module_id) {
-            if (!isset($this->modules[$module_id])) {
-                continue;
-            }
-            
-            // Solo cargar si no se cargó ya
-            if (in_array($module_id, $loaded_modules, true)) {
-                continue;
-            }
-            
-            $file = ALQUIPRESS_PATH . 'includes/modules/' . $this->modules[$module_id]['file'];
-            if (file_exists($file)) {
-                require_once $file;
-            }
-        }
+        // Ya no forzamos módulos desactivados: si el usuario los desactivó en Ajustes,
+        // la página correspondiente mostrará un mensaje de módulo inactivo a través
+        // del fallback del router (sección no disponible). Esto respeta la configuración
+        // del usuario y evita cargar código innecesario.
     }
 
     public function add_settings_page()
@@ -787,6 +782,17 @@ class Alquipress_Module_Manager
 
     public function handle_form_submit()
     {
+        $is_modules_submit = isset($_POST['alquipress_save_modules']);
+        $is_bookings_submit = isset($_POST['alquipress_save_bookings_settings']);
+
+        if (!$is_modules_submit && !$is_bookings_submit) {
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            wp_die(esc_html__('No tienes permisos para modificar esta configuración.', 'alquipress'), 403);
+        }
+
         if (isset($_POST['alquipress_save_modules']) && check_admin_referer('alquipress_modules_nonce')) {
             $new_modules = [];
             foreach ($this->modules as $id => $module) {
@@ -806,6 +812,34 @@ class Alquipress_Module_Manager
                 'alquipress_messages',
                 'alquipress_message',
                 '✓ Módulos y plantilla de dashboard actualizados correctamente.',
+                'success'
+            );
+        } elseif (isset($_POST['alquipress_save_bookings_settings']) && check_admin_referer('alquipress_bookings_settings_nonce')) {
+            $deposit = isset($_POST['ap_bookings_default_deposit_pct']) ? (float) wp_unslash($_POST['ap_bookings_default_deposit_pct']) : 40.0;
+            $min_nights = isset($_POST['ap_bookings_default_min_nights']) ? (int) wp_unslash($_POST['ap_bookings_default_min_nights']) : 1;
+            $max_nights = isset($_POST['ap_bookings_default_max_nights']) ? (int) wp_unslash($_POST['ap_bookings_default_max_nights']) : 365;
+
+            if ($deposit < 0) {
+                $deposit = 0;
+            }
+            if ($deposit > 100) {
+                $deposit = 100;
+            }
+            if ($min_nights < 1) {
+                $min_nights = 1;
+            }
+            if ($max_nights < $min_nights) {
+                $max_nights = $min_nights;
+            }
+
+            update_option('ap_bookings_default_deposit_pct', $deposit);
+            update_option('ap_bookings_default_min_nights', $min_nights);
+            update_option('ap_bookings_default_max_nights', $max_nights);
+
+            add_settings_error(
+                'alquipress_messages',
+                'alquipress_bookings_message',
+                '✓ Ajustes del motor de reservas actualizados correctamente.',
                 'success'
             );
         }

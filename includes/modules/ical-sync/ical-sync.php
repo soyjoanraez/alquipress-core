@@ -57,21 +57,41 @@ class Alquipress_Ical_Sync {
             exit('Acceso no autorizado.');
         }
         $name = get_the_title($product_id);
-        $bookings = $this->get_bookings_for_product($product_id);
+
+        // Exportar reservas del motor Ap_Booking (confirmadas/retenidas en próximos 12 meses)
+        $from_ts = time();
+        $to_ts   = strtotime('+12 months');
+        $bookings = class_exists('Ap_Booking_Store')
+            ? Ap_Booking_Store::get_bookings_for_product($product_id, $from_ts, $to_ts, ['held', 'confirmed'])
+            : [];
+
+        $dtstamp_now = gmdate('Ymd\THis\Z');
         $ical = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//ALQUIPRESS//" . sanitize_title($name) . "//ES\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\nX-WR-CALNAME:" . $this->ical_escape($name) . "\r\nX-WR-TIMEZONE:Europe/Madrid\r\n";
         foreach ($bookings as $booking) {
-            $uid = 'booking-' . $booking->get_id() . '@alquipress';
-            $start = date('Ymd', $booking->get_start());
-            $end = date('Ymd', $booking->get_end());
-            $created = $booking->get_date_created() ? date('Ymd\THis\Z', strtotime($booking->get_date_created())) : date('Ymd\THis\Z');
+            $uid     = 'ap-booking-' . $booking->id . '@alquipress';
+            $start   = gmdate('Ymd', strtotime($booking->checkin));
+            $end     = gmdate('Ymd', strtotime($booking->checkout));
+            $created = $booking->created_at ? gmdate('Ymd\THis\Z', strtotime($booking->created_at)) : $dtstamp_now;
             $summary = 'Reservado — ' . $name;
             $ical .= "BEGIN:VEVENT\r\nUID:{$uid}\r\nDTSTART;VALUE=DATE:{$start}\r\nDTEND;VALUE=DATE:{$end}\r\nDTSTAMP:{$created}\r\nSUMMARY:{$summary}\r\nSTATUS:CONFIRMED\r\nTRANSP:OPAQUE\r\nEND:VEVENT\r\n";
         }
-        $blocks = get_post_meta($product_id, self::META_BLOCKS, true) ?: [];
-        foreach ($blocks as $idx => $block) {
-            if (empty($block['start']) || empty($block['end'])) continue;
-            $ical .= "BEGIN:VEVENT\r\nUID:block-{$product_id}-{$idx}@alquipress\r\nDTSTART;VALUE=DATE:" . date('Ymd', strtotime($block['start'])) . "\r\nDTEND;VALUE=DATE:" . date('Ymd', strtotime($block['end'])) . "\r\nSUMMARY:Bloqueado — Uso personal\r\nSTATUS:CONFIRMED\r\nEND:VEVENT\r\n";
+
+        // Incluir bloqueos manuales del motor Ap_Booking
+        $ap_blocks = class_exists('Ap_Booking_Store')
+            ? Ap_Booking_Store::get_blocks_for_product($product_id)
+            : [];
+        foreach ($ap_blocks as $idx => $block) {
+            $type_label = $block['type'] === 'owner_block' ? 'Uso personal' : ucfirst(str_replace('_', ' ', $block['type']));
+            $ical .= "BEGIN:VEVENT\r\nUID:ap-block-{$block['id']}@alquipress\r\nDTSTART;VALUE=DATE:" . gmdate('Ymd', strtotime($block['date_from'])) . "\r\nDTEND;VALUE=DATE:" . gmdate('Ymd', strtotime($block['date_to'])) . "\r\nDTSTAMP:{$dtstamp_now}\r\nSUMMARY:Bloqueado — {$type_label}\r\nSTATUS:CONFIRMED\r\nEND:VEVENT\r\n";
         }
+
+        // Compatibilidad: incluir bloqueos heredados del meta _alquipress_manual_blocks
+        $legacy_blocks = get_post_meta($product_id, self::META_BLOCKS, true) ?: [];
+        foreach ($legacy_blocks as $idx => $block) {
+            if (empty($block['start']) || empty($block['end'])) continue;
+            $ical .= "BEGIN:VEVENT\r\nUID:block-{$product_id}-{$idx}@alquipress\r\nDTSTART;VALUE=DATE:" . gmdate('Ymd', strtotime($block['start'])) . "\r\nDTEND;VALUE=DATE:" . gmdate('Ymd', strtotime($block['end'])) . "\r\nDTSTAMP:{$dtstamp_now}\r\nSUMMARY:Bloqueado — Uso personal\r\nSTATUS:CONFIRMED\r\nEND:VEVENT\r\n";
+        }
+
         $ical .= "END:VCALENDAR\r\n";
         header('Content-Type: text/calendar; charset=utf-8');
         header('Content-Disposition: attachment; filename="' . sanitize_title($name) . '.ics"');
@@ -84,28 +104,7 @@ class Alquipress_Ical_Sync {
         return str_replace(["\r", "\n", ',', ';'], ['', '\n', '\,', '\;'], $s);
     }
 
-    private function get_bookings_for_product($product_id) {
-        if (!class_exists('WC_Booking')) {
-            return [];
-        }
-        if (class_exists('WC_Booking_Data_Store') && method_exists('WC_Booking_Data_Store', 'get_bookings_for_objects')) {
-            return WC_Booking_Data_Store::get_bookings_for_objects([$product_id], [
-                'start_date' => time(),
-                'end_date' => strtotime('+12 months'),
-                'status' => ['confirmed', 'paid', 'complete'],
-            ]);
-        }
-        global $wpdb;
-        $ids = $wpdb->get_col($wpdb->prepare(
-            "SELECT p.ID FROM {$wpdb->posts} p INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_booking_product_id' AND pm.meta_value = %s WHERE p.post_type = 'wc_booking' AND p.post_status IN ('confirmed','paid','complete')",
-            $product_id
-        ));
-        $out = [];
-        foreach ((array) $ids as $id) {
-            $out[] = new WC_Booking($id);
-        }
-        return $out;
-    }
+    // get_bookings_for_product() eliminado — el export_endpoint() usa Ap_Booking_Store directamente.
 
     public function add_cron_interval($schedules) {
         $schedules['every_15_minutes'] = ['interval' => 900, 'display' => __('Cada 15 minutos', 'alquipress')];
@@ -133,7 +132,16 @@ class Alquipress_Ical_Sync {
                 $result = $this->import_feed($product->ID, $feed);
                 $feeds[$idx]['last_sync'] = current_time('mysql');
                 $feeds[$idx]['last_status'] = $result['status'];
-                $log[] = sprintf('[%s] %s — %s: %s', current_time('mysql'), get_the_title($product->ID), $feed['channel'] ?? 'feed', $result['status']);
+                $log[] = sprintf(
+                    '[%s] %s — %s: %s | +%d bloqueados, -%d eliminados, %d omitidos',
+                    current_time('mysql'),
+                    get_the_title($product->ID),
+                    $feed['channel'] ?? 'feed',
+                    $result['status'],
+                    $result['blocked'],
+                    $result['removed'],
+                    $result['skipped']
+                );
             }
             update_post_meta($product->ID, self::META_FEEDS, $feeds);
         }
@@ -142,8 +150,25 @@ class Alquipress_Ical_Sync {
     }
 
     public function import_feed($product_id, $feed) {
-        $result = ['status' => 'ok', 'blocked' => 0, 'skipped' => 0, 'error' => ''];
-        $response = wp_remote_get($feed['url'], ['timeout' => 15, 'user-agent' => 'ALQUIPRESS/1.0 (iCal sync)']);
+        $result = ['status' => 'ok', 'blocked' => 0, 'skipped' => 0, 'removed' => 0, 'error' => ''];
+        $feed_url = isset($feed['url']) ? esc_url_raw($feed['url']) : '';
+        if (!$feed_url || (function_exists('alquipress_is_safe_remote_url') && !alquipress_is_safe_remote_url($feed_url))) {
+            $result['status'] = 'error';
+            $result['error'] = 'URL no permitida por seguridad';
+            return $result;
+        }
+
+        $response = function_exists('alquipress_safe_remote_get')
+            ? alquipress_safe_remote_get($feed_url, [
+                'timeout' => 15,
+                'user-agent' => 'ALQUIPRESS/1.0 (iCal sync)',
+                'limit_response_size' => MB_IN_BYTES,
+            ])
+            : wp_remote_get($feed_url, [
+                'timeout' => 15,
+                'user-agent' => 'ALQUIPRESS/1.0 (iCal sync)',
+                'reject_unsafe_urls' => true,
+            ]);
         if (is_wp_error($response)) {
             $result['status'] = 'error';
             $result['error'] = $response->get_error_message();
@@ -159,49 +184,129 @@ class Alquipress_Ical_Sync {
             $result['status'] = 'empty';
             return $result;
         }
-        $events = $this->parse_ical_events($body);
+
+        $events  = $this->parse_ical_events($body);
+        $channel = sanitize_key($feed['channel'] ?? 'external');
+
+        // UIDs presentes en el feed actual (solo los futuros, para no tocar histórico)
+        $current_uids = [];
+        foreach ($events as $event) {
+            if (!empty($event['uid']) && $event['end'] >= time()) {
+                $current_uids[] = $event['uid'];
+            }
+        }
+
+        // ── Fase 1: Añadir bloqueos nuevos ─────────────────────────────────
         foreach ($events as $event) {
             $start_ts = $event['start'];
-            $end_ts = $event['end'];
-            $uid = $event['uid'] ?? '';
+            $end_ts   = $event['end'];
+            $uid      = $event['uid'] ?? '';
+
             if ($end_ts < time()) {
                 $result['skipped']++;
                 continue;
             }
-            $existing = get_posts([
-                'post_type' => 'wc_booking',
-                'posts_per_page' => 1,
-                'meta_query' => [
-                    ['key' => '_alquipress_ical_uid', 'value' => $uid],
-                    ['key' => '_booking_product_id', 'value' => $product_id],
-                ],
-            ]);
-            if (!empty($existing)) {
+
+            // De-duplicar por UID
+            if ($uid && class_exists('Ap_Booking_Store') && $this->ical_block_exists($product_id, $uid)) {
                 $result['skipped']++;
                 continue;
             }
-            if (class_exists('WC_Booking')) {
-                try {
-                    $booking = new WC_Booking([
-                        'product_id' => $product_id,
-                        'status' => 'confirmed',
-                        'start_date' => $start_ts,
-                        'end_date' => $end_ts,
-                        'all_day' => true,
-                    ]);
-                    $id = method_exists($booking, 'create') ? $booking->create() : 0;
-                    if ($id) {
-                        update_post_meta($id, '_alquipress_ical_uid', $uid);
-                        update_post_meta($id, '_alquipress_ical_channel', $feed['channel'] ?? 'external');
-                        update_post_meta($id, '_booking_product_id', $product_id);
-                        $result['blocked']++;
-                    }
-                } catch (\Exception $e) {
-                    // skip this event
+
+            if (class_exists('Ap_Booking_Store')) {
+                $note = $uid ? 'ical:' . $uid . '|channel:' . $channel : 'channel:' . $channel;
+                $id   = Ap_Booking_Store::create_block(
+                    $product_id,
+                    gmdate('Y-m-d', $start_ts),
+                    gmdate('Y-m-d', $end_ts),
+                    'closed',
+                    $note
+                );
+                if ($id) {
+                    $result['blocked']++;
                 }
             }
         }
+
+        // ── Fase 2: Eliminar bloqueos obsoletos (cancelados en el canal) ────
+        // Buscamos todos los bloqueos iCal de este canal que ya no aparecen en el feed.
+        if (class_exists('Ap_Booking_Store')) {
+            $removed = $this->remove_stale_blocks($product_id, $channel, $current_uids);
+            $result['removed'] = $removed;
+        }
+
         return $result;
+    }
+
+    /**
+     * Eliminar bloqueos iCal de un canal que ya no existen en el feed actual.
+     * Solo afecta a bloqueos futuros (date_to >= hoy) para no alterar histórico.
+     *
+     * @param int    $product_id   ID del producto.
+     * @param string $channel      Canal (airbnb, booking, etc.).
+     * @param array  $current_uids UIDs presentes en el feed actual.
+     * @return int Número de bloqueos eliminados.
+     */
+    private function remove_stale_blocks(int $product_id, string $channel, array $current_uids): int
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking_availability_rules';
+        $today = gmdate('Y-m-d');
+
+        // Obtener todos los bloqueos iCal de este canal para el producto (solo futuros)
+        $stored_blocks = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT id, note FROM {$table}
+                 WHERE product_id = %d
+                   AND note LIKE %s
+                   AND date_to >= %s",
+                $product_id,
+                $wpdb->esc_like('ical:') . '%' . $wpdb->esc_like('|channel:' . $channel),
+                $today
+            ),
+            ARRAY_A
+        );
+
+        if (empty($stored_blocks)) {
+            return 0;
+        }
+
+        $removed = 0;
+        foreach ($stored_blocks as $block) {
+            // Extraer el UID del campo note (formato: "ical:{uid}|channel:{channel}")
+            if (!preg_match('/^ical:(.+?)\|channel:/', $block['note'], $m)) {
+                continue;
+            }
+            $stored_uid = $m[1];
+
+            // Si el UID ya no está en el feed actual, el evento fue cancelado
+            if (!in_array($stored_uid, $current_uids, true)) {
+                $wpdb->delete($table, ['id' => (int) $block['id']], ['%d']);
+                $removed++;
+            }
+        }
+
+        return $removed;
+    }
+
+    /**
+     * Comprobar si ya existe un bloqueo iCal para este producto y UID.
+     * El UID se almacena en el campo `note` con el prefijo "ical:".
+     */
+    private function ical_block_exists(int $product_id, string $uid): bool
+    {
+        if (!$uid) {
+            return false;
+        }
+        global $wpdb;
+        $table = $wpdb->prefix . 'ap_booking_availability_rules';
+        return (bool) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT id FROM {$table} WHERE product_id = %d AND note LIKE %s LIMIT 1",
+                $product_id,
+                'ical:' . $wpdb->esc_like($uid) . '%'
+            )
+        );
     }
 
     private function parse_ical_events($content) {
@@ -298,9 +403,13 @@ class Alquipress_Ical_Sync {
         if (!empty($_POST['alquipress_ical_feeds']) && is_array($_POST['alquipress_ical_feeds'])) {
             foreach ($_POST['alquipress_ical_feeds'] as $f) {
                 if (empty($f['url'])) continue;
+                $url = esc_url_raw($f['url']);
+                if (!$url || (function_exists('alquipress_is_safe_remote_url') && !alquipress_is_safe_remote_url($url))) {
+                    continue;
+                }
                 $feeds[] = [
                     'channel' => sanitize_key($f['channel'] ?? 'other'),
-                    'url' => esc_url_raw($f['url']),
+                    'url' => $url,
                     'active' => !empty($f['active']),
                     'last_sync' => '',
                     'last_status' => 'pendiente',
@@ -345,7 +454,13 @@ class Alquipress_Ical_Sync {
             $result = $this->import_feed($product_id, $feed);
             $feeds[$idx]['last_sync'] = current_time('mysql');
             $feeds[$idx]['last_status'] = $result['status'];
-            $summary[] = ($feed['channel'] ?? 'feed') . ': ' . $result['status'] . ' (' . $result['blocked'] . ' bloqueados)';
+            $summary[] = sprintf(
+                '%s: %s (+%d bloqueados, -%d eliminados)',
+                $feed['channel'] ?? 'feed',
+                $result['status'],
+                $result['blocked'],
+                $result['removed']
+            );
         }
         update_post_meta($product_id, self::META_FEEDS, $feeds);
         wp_send_json_success(['summary' => implode(' | ', $summary)]);

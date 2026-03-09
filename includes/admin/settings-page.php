@@ -162,10 +162,6 @@ require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
                             <strong><?php echo defined('WC_VERSION') ? esc_html(constant('WC_VERSION')) : esc_html__('No instalado', 'alquipress'); ?></strong>
                         </div>
                         <div class="ap-settings-status-card">
-                            <span class="ap-settings-status-label"><?php esc_html_e('ACF PRO', 'alquipress'); ?></span>
-                            <strong><?php echo class_exists('ACF') ? esc_html__('Instalado', 'alquipress') : esc_html__('Requerido', 'alquipress'); ?></strong>
-                        </div>
-                        <div class="ap-settings-status-card">
                             <span class="ap-settings-status-label"><?php esc_html_e('MailPoet', 'alquipress'); ?></span>
                             <strong><?php echo class_exists('\MailPoet\API\API') ? esc_html__('Instalado', 'alquipress') : esc_html__('No instalado', 'alquipress'); ?></strong>
                         </div>
@@ -175,12 +171,83 @@ require_once ALQUIPRESS_PATH . 'includes/admin/alquipress-sidebar.php';
             <?php elseif ($current_tab === 'bookings') : ?>
                 <div class="ap-settings-section">
                     <h2 class="ap-settings-section-title"><?php esc_html_e('Ajustes de reservas', 'alquipress'); ?></h2>
-                    <p class="ap-settings-section-desc"><?php esc_html_e('Estados del pipeline, reglas de bloqueo y configuración del calendario.', 'alquipress'); ?></p>
+                    <p class="ap-settings-section-desc"><?php esc_html_e('Configura el motor de reservas propio (Ap_Booking) y enlaza con el pipeline y el calendario.', 'alquipress'); ?></p>
                 </div>
-                <div class="ap-settings-card ap-settings-placeholder">
-                    <p><?php esc_html_e('Los ajustes de reservas se gestionan desde el módulo Pipeline y las opciones de WooCommerce.', 'alquipress'); ?></p>
-                    <p><a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-pipeline')); ?>" class="ap-settings-btn ap-settings-btn-outline"><?php esc_html_e('Abrir Pipeline', 'alquipress'); ?></a></p>
-                </div>
+                <?php
+                $default_deposit = (float) get_option('ap_bookings_default_deposit_pct', 40);
+                $default_min_nights = (int) get_option('ap_bookings_default_min_nights', 1);
+                $default_max_nights = (int) get_option('ap_bookings_default_max_nights', 365);
+                ?>
+                <form method="post" action="" class="ap-settings-form">
+                    <?php wp_nonce_field('alquipress_bookings_settings_nonce'); ?>
+                    <div class="ap-settings-card">
+                        <div class="ap-settings-card-head">
+                            <span class="dashicons dashicons-calendar-alt"></span>
+                            <h3 class="ap-settings-card-title"><?php esc_html_e('Motor de reservas Alquipress', 'alquipress'); ?></h3>
+                        </div>
+                        <div class="ap-settings-grid-two">
+                            <div class="ap-settings-field">
+                                <label for="ap_bookings_default_deposit_pct">
+                                    <?php esc_html_e('Depósito por defecto (%)', 'alquipress'); ?>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="ap_bookings_default_deposit_pct"
+                                    name="ap_bookings_default_deposit_pct"
+                                    min="0"
+                                    max="100"
+                                    step="1"
+                                    value="<?php echo esc_attr($default_deposit); ?>"
+                                />
+                                <p class="description">
+                                    <?php esc_html_e('Porcentaje del total que se cobra como depósito inicial. Se puede sobreescribir por propiedad.', 'alquipress'); ?>
+                                </p>
+                            </div>
+                            <div class="ap-settings-field">
+                                <label for="ap_bookings_default_min_nights">
+                                    <?php esc_html_e('Noches mínimas por defecto', 'alquipress'); ?>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="ap_bookings_default_min_nights"
+                                    name="ap_bookings_default_min_nights"
+                                    min="1"
+                                    max="365"
+                                    step="1"
+                                    value="<?php echo esc_attr($default_min_nights); ?>"
+                                />
+                                <p class="description">
+                                    <?php esc_html_e('Número mínimo de noches si la propiedad no define una regla específica.', 'alquipress'); ?>
+                                </p>
+                            </div>
+                            <div class="ap-settings-field">
+                                <label for="ap_bookings_default_max_nights">
+                                    <?php esc_html_e('Noches máximas por defecto', 'alquipress'); ?>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="ap_bookings_default_max_nights"
+                                    name="ap_bookings_default_max_nights"
+                                    min="1"
+                                    max="730"
+                                    step="1"
+                                    value="<?php echo esc_attr($default_max_nights); ?>"
+                                />
+                                <p class="description">
+                                    <?php esc_html_e('Número máximo de noches permitidas en una sola reserva.', 'alquipress'); ?>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="ap-settings-form-actions">
+                            <button type="submit" name="alquipress_save_bookings_settings" class="ap-settings-btn ap-settings-btn-primary">
+                                <?php esc_html_e('Guardar ajustes de reservas', 'alquipress'); ?>
+                            </button>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=alquipress-pipeline')); ?>" class="ap-settings-btn ap-settings-btn-outline">
+                                <?php esc_html_e('Abrir Pipeline', 'alquipress'); ?>
+                            </a>
+                        </div>
+                    </div>
+                </form>
 
             <?php elseif ($current_tab === 'payments') : ?>
                 <div class="ap-settings-section">

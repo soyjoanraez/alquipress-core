@@ -212,9 +212,9 @@ function alquipress_kyero_admin_page() {
         // Validar y sanitizar URL de importación
         $import_url = isset($_POST['kyero_import_url']) ? esc_url_raw($_POST['kyero_import_url']) : '';
 
-        // Validar que sea una URL válida si no está vacía
-        if (!empty($import_url) && !filter_var($import_url, FILTER_VALIDATE_URL)) {
-            echo '<div class="ap-notice ap-notice--error"><span class="dashicons dashicons-warning"></span><p>La URL proporcionada no es válida</p></div>';
+        // Validar URL segura para importación remota (SSRF hardening)
+        if (!empty($import_url) && (!filter_var($import_url, FILTER_VALIDATE_URL) || (function_exists('alquipress_is_safe_remote_url') && !alquipress_is_safe_remote_url($import_url)))) {
+            echo '<div class="ap-notice ap-notice--error"><span class="dashicons dashicons-warning"></span><p>La URL proporcionada no es válida o no está permitida por seguridad</p></div>';
         } else {
             update_option('kyero_import_url', $import_url);
             update_option('kyero_auto_import', isset($_POST['kyero_auto_import']) ? 1 : 0);
@@ -241,6 +241,8 @@ function alquipress_kyero_admin_page() {
 
         if (!$import_url) {
             echo '<div class="ap-notice ap-notice--error"><span class="dashicons dashicons-warning"></span><p>No has configurado la URL de importación</p></div>';
+        } elseif (function_exists('alquipress_is_safe_remote_url') && !alquipress_is_safe_remote_url($import_url)) {
+            echo '<div class="ap-notice ap-notice--error"><span class="dashicons dashicons-warning"></span><p>La URL de importación configurada no está permitida por seguridad</p></div>';
         } else {
             $importer = new Alquipress_Kyero_Importer($import_url);
             $result = $importer->import_properties();

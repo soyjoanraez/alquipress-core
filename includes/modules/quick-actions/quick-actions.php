@@ -291,6 +291,56 @@ class Alquipress_Quick_Actions
     }
 
     /**
+     * AJAX: Cambio rápido de estado de pedido
+     */
+    public function ajax_quick_status_change()
+    {
+        check_ajax_referer('alquipress_quick_actions', 'nonce');
+
+        if (!current_user_can('edit_shop_orders')) {
+            wp_send_json_error(['message' => __('Permisos insuficientes', 'alquipress')], 403);
+        }
+
+        $order_id = isset($_POST['order_id']) ? absint($_POST['order_id']) : 0;
+        $new_status_raw = '';
+
+        if (isset($_POST['new_status'])) {
+            $new_status_raw = sanitize_text_field(wp_unslash($_POST['new_status']));
+        } elseif (isset($_POST['status'])) {
+            $new_status_raw = sanitize_text_field(wp_unslash($_POST['status']));
+        }
+
+        if (!$order_id || $new_status_raw === '') {
+            wp_send_json_error(['message' => __('Parámetros inválidos', 'alquipress')], 400);
+        }
+
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            wp_send_json_error(['message' => __('Pedido no encontrado', 'alquipress')], 404);
+        }
+
+        $new_status = str_replace('wc-', '', sanitize_key($new_status_raw));
+        $valid_statuses = array_map(
+            static function ($status_key) {
+                return str_replace('wc-', '', sanitize_key($status_key));
+            },
+            array_keys(wc_get_order_statuses())
+        );
+
+        if (!in_array($new_status, $valid_statuses, true)) {
+            wp_send_json_error(['message' => __('Estado no válido', 'alquipress')], 400);
+        }
+
+        $order->update_status($new_status);
+
+        wp_send_json_success([
+            'message' => __('Estado actualizado correctamente', 'alquipress'),
+            'status' => $new_status,
+            'status_label' => wc_get_order_status_name($new_status),
+        ]);
+    }
+
+    /**
      * AJAX: Vista rápida de pedido
      */
     public function ajax_quick_view()
