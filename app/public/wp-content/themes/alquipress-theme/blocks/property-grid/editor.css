@@ -1,0 +1,10 @@
+/**
+ * Estilos del editor para bloque Grid de Propiedades
+ */
+
+.wp-block-alquipress-property-grid {
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+}

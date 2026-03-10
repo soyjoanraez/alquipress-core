@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "alquipress/property-specs",
+  "title": "Ficha Técnica",
+  "category": "alquipress",
+  "icon": "list-view",
+  "description": "Muestra las características técnicas de la propiedad",
+  "keywords": ["ficha", "especificaciones", "características"],
+  "textdomain": "alquipress-theme",
+  "supports": {
+    "html": false
+  },
+  "attributes": {},
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

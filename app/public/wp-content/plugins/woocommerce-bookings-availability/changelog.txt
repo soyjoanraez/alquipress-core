@@ -1,0 +1,240 @@
+*** WooCommerce Bookings Availability Changelog ***
+
+2025-10-20 - version 1.3.4
+* Dev - Bump WooCommerce "tested up to" version 10.3.
+* Dev - Bump WooCommerce minimum supported version to 10.1.
+* Dev - Run PHP Compatibility sniffs against entire production code base.
+* Dev - Update PHP Compatibility sniffs to development version containing the key PHP 8.4 sniffs, ensuring we are compatible with PHP 8.4.
+* Dev - Updates to our QIT GitHub Action workflow.
+* Dev - Add new deploy workflow.
+
+2025-08-11 - version 1.3.3
+* Dev - Bump WooCommerce "tested up to" version 10.1.
+* Dev - Bump WooCommerce minimum supported version to 9.9.
+* Dev - Bump WordPress minimum supported version to 6.7.
+* Dev - Update NPM packages to fix security issues.
+
+2025-07-10 - version 1.3.2
+* Fix - Address issues with blocks not rendering as expected.
+* Dev - Bump WooCommerce "tested up to" version 10.0.
+* Dev - Bump WooCommerce minimum supported version to 9.8.
+
+2025-06-23 - version 1.3.1
+* Fix - Resolve issues flagged by WooCommerce's Quality Insights Toolkit (QIT).
+* Dev - Bump WooCommerce "tested up to" version 9.9.
+* Dev - Bump WooCommerce minimum supported version to 9.7.
+
+2025-04-28 - version 1.3.0
+* Fix - Ensure the activation notice is displayed only once and does not keep appearing repeatedly.
+* Dev - Bump WordPress "tested up to" version 6.8.
+* Dev - Update all third-party actions our workflows rely on to use versions based on specific commit hashes.
+
+2025-03-17 - version 1.2.12
+* Dev - Bump WooCommerce "tested up to" version 9.8.
+* Dev - Bump WooCommerce minimum supported version to 9.6.
+* Dev - Bump WordPress minimum supported version to 6.6.
+* Dev - Add the WordPress Plugin Check GitHub Action and fix all issues it flagged.
+
+2025-01-13 - version 1.2.11
+* Fix - Ensure the "Booking Schedule" block renders properly in block themes.
+* Dev - Bump WooCommerce "tested up to" version 9.6.
+* Dev - Bump WooCommerce minimum supported version to 9.4.
+
+2025-01-06 - version 1.2.10
+* Tweak - Removal of custom activation notices in favor of WordPress core plugin dependency notices.
+* Dev - Bump WooCommerce "tested up to" version 9.5.
+* Dev - Bump WooCommerce minimum supported version to 9.3.
+
+2024-11-18 - version 1.2.9
+* Dev - Bump WordPress "tested up to" version 6.7.
+
+2024-10-30 - version 1.2.8
+* Dev - Bump WooCommerce "tested up to" version 9.4.
+* Dev - Bump WooCommerce minimum supported version to 9.2.
+* Dev - Bump WordPress minimum supported version to 6.5.
+
+2024-08-05 - version 1.2.7
+* Dev - Bump WooCommerce "tested up to" version 9.1.
+* Dev - Bump WooCommerce minimum supported version to 8.9.
+* Dev - Bump WordPress "tested up to" version 6.6.
+* Dev - Bump WordPress minimum supported version to 6.4.
+* Dev - Update NPM packages and node version to v20 to modernize developer experience.
+* Dev - Fix QIT E2E tests and add support for a few new test types.
+* Dev - Exclude the Woo Comment Hook `@since` sniff.
+
+2024-04-22 - version 1.2.6
+* Dev - Bump WooCommerce "tested up to" version 8.8.
+* Dev - Bump WooCommerce minimum supported version to 8.6.
+* Dev - Bump WordPress "tested up to" version 6.5.
+* Dev - Bump WordPress minimum supported version to 6.3.
+
+2024-02-27 - version 1.2.5
+* Dev - Bump WooCommerce "tested up to" version 8.6.
+* Dev - Bump WooCommerce minimum supported version to 8.4.
+* Fix - Booking Calendar displays incorrect availability for Accommodation Products. Fix was added in v1.2.5 of the Accommodation Bookings plugin.
+
+2024-01-29 - version 1.2.4
+* Dev - Bump WooCommerce "tested up to" version 8.5.
+* Dev - Bump WooCommerce minimum supported version to 8.3.
+* Dev - Bump WordPress minimum supported version to 6.3.
+* Dev - Note compatibility with WooCommerce Blocks.
+* Fix - Date format translations in detail popups.
+
+2024-01-16 - version 1.2.3
+* Dev - Add Playwright end-to-end tests.
+* Dev - Bump PHP "tested up to" version 8.3.
+* Dev - Bump PHP minimum supported version to 7.4.
+* Dev - Bump WooCommerce "tested up to" version 8.4.
+* Dev - Bump WooCommerce minimum supported version to 8.2.
+* Dev - Note compatibility with WooPayments extension.
+
+2023-11-21 - version 1.2.2
+* Dev - Bump WooCommerce "tested up to" version 8.3.
+* Dev - Bump WooCommerce minimum supported version to 8.1.
+* Dev - Bump WordPress "tested up to" version 6.4.
+* Dev - Bump WordPress minimum supported version to 6.2.
+* Dev - Bump `woocommerce-sniffs` to `1.0.0`.
+* Fix - Ensure the Bookings Calendar and Schedule Block work on WordPress 6.4.
+
+2023-10-02 - version 1.2.1
+* Dev - Update PHPCS and PHPCompatibility GitHub Actions.
+
+2023-08-28 - version 1.2.0
+* Dev - Bump PHP minimum supported version from 7.0 to 7.3.
+* Dev - Bump WooCommerce "tested up to" version from 7.8 to 8.0.
+* Dev - Bump WooCommerce minimum supported version from 7.2 to 7.8.
+* Dev - Bump WordPress "tested up to" version from 6.2 to 6.3.
+* Dev - Link to plugin homepage to the plugin's entry on the plugin page.
+
+2023-07-05 - version 1.1.30
+* Dev - Bump WooCommerce "tested up to" version 7.8.
+* Dev - Bump WooCommerce minimum supported version from 6.0 to 7.2.
+* Dev - Bump WordPress minimum supported version from 5.6 to 6.1.
+
+2023-06-14 - version 1.1.29
+* Dev - Bump WooCommerce "tested up to" version to 7.6.
+* Dev - Bump WooCommerce minimum supported version from 6.0 to 6.8.
+* Dev - Bump WordPress "tested up to" version to 6.2.
+* Dev - Bump WordPress minimum supported version from 5.6 to 5.8.
+* Dev - Added new GitHub Workflow to run Quality Insights Toolkit tests.
+
+2023-05-12 - version 1.1.28
+* Fix - Respect "Display a Timezone" settings in Calendar & Schedule blocks.
+
+2023-03-13 - version 1.1.27
+* Dev - Bump WordPress "tested up to" version 6.1.
+* Fix - Compatibility issue with Gutenberg Popover.
+* Tweak - Bump WooCommerce "tested up to" from 6.8 to 7.3.
+
+2022-12-13 - version 1.1.25
+* Fix - Adjust styles of bookings calendar and schedule block UI when title is larger than block width.
+* Fix - Ensure the Booking Availability Calendar shows the availability of the product relative to the viewer's time.
+* Fix - Show sold out items on frontend when selected.
+* Update - Bump NPM to v8.
+* Update - Bump node to v16.
+
+2022-11-09 - version 1.1.24
+* Add - Declare support for High-Performance Order Storage ("HPOS").
+* Tweak - Minimum Version Bumps: WP 5.6, Woo 6.0, & PHP 7.0.
+
+2022-11-01 - version 1.1.23
+* Fix - Bookable products are sorted as per their menu order.
+* Fix - Mobile booking calendar issues.
+
+2022-08-24 - version 1.1.22
+* Add - PHP Compatibility GitHub Action.
+* Tweak - WC 6.8.0 compatibility.
+
+2022-08-23 - version 1.1.21
+* Add - PHP Compatibility GitHub Action.
+* Tweak - WC 6.8.0 compatibility.
+
+2022-05-26 - version 1.1.20
+* Fix - Security - Updated `npm` packages.
+* Fix - `Bookings Schedule` block does not work on frontend with Twenty Twenty-Two theme.
+* Tweak - Bump tested up to WordPress version 6.0.
+
+2021-05-11 - version 1.1.19
+* Fix - Page scrolling to the top when mouse is moved out of the popover modal on Bookings Calendar block.
+
+2021-03-15 - version 1.1.18
+* Fix - Correct an issue where the Bookings Calendar block wasn't shown on the frontend of the site after WordPress 5.7.
+* Tweak - WC 5.1 compatibility.
+* Tweak - WP 5.7 compatibility.
+
+2021-01-20 - version 1.1.17
+* Fix - Popover container on calendar block obscured when Gutenberg plugin is active.
+* Tweak - Remove set width of products selection screen to expand to container.
+* Tweak - WC 4.9 compatibility.
+* Tweak - WP 5.6 compatibility.
+
+2020-09-29 - version 1.1.16
+* Fix      - Weekly calendar block times are incorrect.
+* Tweak    - Filter for block parameters to e.g. allow overriding of checkout URL.
+* Fix      - `Book now` button changes to `Sold Out` for a split second.
+
+2020-08-19 - version 1.1.15
+* Tweak    - WordPress 5.5 compatibility.
+
+2020-07-14 - version 1.1.14
+* Fix      - Fix schedule displaying past slots for today when duration is hour or minute.
+
+2020-07-01 - version 1.1.13
+* Fix      - Fix number of slots available on calendar.
+
+2020-06-10 - version 1.1.12
+* Fix      - Fix rollover month error on calendar.
+* Tweak    - Show times on Bookings Schedule block based on WordPress time setting format.
+* Tweak - WC 4.2 compatibility.
+
+2020-05-12 - version 1.1.11
+* Fix      - Correct styling for calendar view for months with 4 and 6 rows.
+
+2020-04-29 - version 1.1.10
+* Tweak - WC 4.1 compatibility.
+
+2020-03-10 - version 1.1.9
+ * Tweak   - WC 4.0 compatibility.
+
+2020-02-05 - version 1.1.8
+ * Fix      - Adjust calendar display based on restricted days.
+ * Fix		- Fix issue with Popover display after removing All bookable products block.
+
+2020-01-30 - version 1.1.7
+ * Fix      - Respect show sold out setting on mobile.
+ * Fix      - Error representing day durations intervals in the schedule block.
+ * Fix      - 1-month long products crash the calendar view.
+
+2020-01-21 - version 1.1.6
+ * Fix     - Day bookings showing as unavailable when they should be available.
+ * Fix     - If a booking doesn't start at the top of the hour then format the duration using minutes.
+ * Tweak   - WC 3.9 compatibility.
+
+2019-11-12 - version 1.1.5
+ * Fix      - Calendar block queries all bookable products instead of just selected products.
+
+2019-11-05 - version 1.1.4
+ * Fix     - WC header update.
+
+2019-11-05 - version 1.1.3
+ * Tweak   - WC 3.8 compatibility.
+
+2019-09-25 - version 1.1.2
+ * Fix     - Calendar block error due to missing export of a constant.
+
+2019-09-24 - version 1.1.1
+ * Tweak   - Refetch from API instead of page reload on Try again click.
+ * Fix     - Slots fetch infinite loop on API error.
+ * Fix     - Calendar block mobile view shows no slots.
+
+2019-08-28 - version 1.1.0
+ * Add     - Option to show/hide dates from schedule view that do not contain any available time slots.
+ * Fix     - Translation not possible for some of the strings.
+ * Fix     - Long product names on top of admin checkbox.
+ * Tweak   - Generate block container HTML dynamically for backwards compatibility.
+
+2019-08-09 - version 1.0.1
+ * Tweak   - WC 3.7 compatibility.
+
+2019-06-12 - version 1.0.0
+ * First Release.

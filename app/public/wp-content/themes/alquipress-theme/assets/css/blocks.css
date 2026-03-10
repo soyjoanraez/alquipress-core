@@ -1,0 +1,32 @@
+/**
+ * Estilos globales para bloques ALQUIPRESS
+ */
+
+/* Variables CSS para bloques */
+:root {
+    --alq-block-spacing: 24px;
+    --alq-block-radius: 12px;
+    --alq-block-shadow: 0 4px 16px rgba(12, 23, 34, 0.08);
+}
+
+/* Utilidades para bloques */
+.alq-block-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--alq-block-spacing);
+}
+
+.alq-block-card {
+    background: var(--alq-surface);
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-block-radius);
+    box-shadow: var(--alq-block-shadow);
+    padding: var(--alq-block-spacing);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .alq-block-container {
+        padding: 0 16px;
+    }
+}

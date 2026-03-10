@@ -1,0 +1,155 @@
+/**
+ * Estilos para bloque Filtros de Propiedades
+ */
+
+.alq-property-filters {
+    background: var(--alq-surface);
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-block-radius);
+    padding: 24px;
+    position: sticky;
+    top: 20px;
+}
+
+.alq-property-filters-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.alq-property-filters-group {
+    border-bottom: 1px solid var(--alq-border);
+    padding-bottom: 20px;
+}
+
+.alq-property-filters-group:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.alq-property-filters-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--alq-text-primary);
+    margin: 0 0 12px 0;
+}
+
+.alq-property-filters-checkboxes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.alq-property-filters-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9375rem;
+    color: var(--alq-text-primary);
+    cursor: pointer;
+    padding: 6px 0;
+}
+
+.alq-property-filters-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--alq-primary);
+}
+
+.alq-property-filters-checkbox-icon {
+    gap: 10px;
+}
+
+.alq-property-filters-checkbox-icon i {
+    width: 18px;
+    text-align: center;
+    color: var(--alq-text-secondary);
+}
+
+.alq-property-filters-count {
+    color: var(--alq-text-secondary);
+    font-size: 0.875rem;
+}
+
+.alq-property-filters-range {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.alq-property-filters-range-input {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--alq-border);
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.alq-property-filters-range-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--alq-primary);
+    cursor: pointer;
+}
+
+.alq-property-filters-range-input::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--alq-primary);
+    cursor: pointer;
+    border: none;
+}
+
+.alq-property-filters-range-values {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--alq-text-primary);
+}
+
+.alq-property-filters-radio {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.alq-property-filters-radio label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9375rem;
+    color: var(--alq-text-primary);
+    cursor: pointer;
+    padding: 6px 0;
+}
+
+.alq-property-filters-radio input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--alq-primary);
+}
+
+.alq-property-filters-submit {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.alq-property-filters-clear {
+    text-align: center;
+    color: var(--alq-text-secondary);
+    text-decoration: none;
+    font-size: 0.875rem;
+    margin-top: -12px;
+}
+
+.alq-property-filters-clear:hover {
+    color: var(--alq-primary);
+}

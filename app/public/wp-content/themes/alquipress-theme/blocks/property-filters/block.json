@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "alquipress/property-filters",
+  "title": "Filtros de Propiedades",
+  "category": "alquipress",
+  "icon": "filter",
+  "description": "Filtros avanzados para buscar propiedades",
+  "keywords": ["filtros", "búsqueda", "propiedades"],
+  "textdomain": "alquipress-theme",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "showLocation": {
+      "type": "boolean",
+      "default": true
+    },
+    "showPrice": {
+      "type": "boolean",
+      "default": true
+    },
+    "showRooms": {
+      "type": "boolean",
+      "default": true
+    },
+    "showCharacteristics": {
+      "type": "boolean",
+      "default": true
+    },
+    "useAjax": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

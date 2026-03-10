@@ -1,0 +1,13 @@
+[10-Mar-2026 09:16:48 UTC] Error de evento de reprogramación de cron para el gancho: action_scheduler_run_queue. Código de error: invalid_schedule. Mensaje de error: El evento programado no existe.. Datos: {"schedule":"every_minute","args":["WP Cron"],"interval":60}
+[10-Mar-2026 09:16:48 UTC] Error de evento de reprogramación de cron para el gancho: alquipress_ical_sync_all. Código de error: invalid_schedule. Mensaje de error: El evento programado no existe.. Datos: {"schedule":"every_15_minutes","args":[],"interval":900}
+[10-Mar-2026 09:21:42 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4056)
+[10-Mar-2026 09:28:26 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 3866)
+[10-Mar-2026 09:32:24 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4058)
+[10-Mar-2026 09:34:16 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4058)
+[10-Mar-2026 09:34:49 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4058)
+[10-Mar-2026 09:47:25 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4058)
+[10-Mar-2026 09:51:12 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4058)
+[10-Mar-2026 09:53:51 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4059)
+[10-Mar-2026 10:46:17 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4059)
+[10-Mar-2026 10:54:06 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4059)
+[10-Mar-2026 11:26:47 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4059)

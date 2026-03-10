@@ -1,0 +1,10 @@
+/**
+ * Estilos del editor para Guía de la Casa
+ */
+
+.wp-block-alquipress-house-guide {
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
