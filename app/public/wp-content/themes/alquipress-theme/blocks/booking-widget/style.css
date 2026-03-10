@@ -1,0 +1,152 @@
+/**
+ * Estilos para Widget de Reserva
+ */
+
+.alq-booking-widget {
+    background: var(--alq-surface);
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-block-radius);
+    padding: 24px;
+    box-shadow: var(--alq-block-shadow);
+}
+
+.alq-booking-widget--sticky {
+    position: sticky;
+    top: 20px;
+}
+
+.alq-booking-widget-header {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--alq-border);
+}
+
+.alq-booking-widget-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--alq-primary);
+    margin-bottom: 8px;
+}
+
+.alq-booking-widget-price .woocommerce-Price-amount {
+    font-size: 1.75rem;
+}
+
+.alq-booking-widget-price-label {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--alq-text-secondary);
+}
+
+.alq-booking-widget-rating {
+    font-size: 0.875rem;
+    color: var(--alq-text-secondary);
+}
+
+.alq-booking-widget-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.alq-booking-widget-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.alq-booking-widget-field label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--alq-text-primary);
+}
+
+.alq-booking-widget-input,
+.alq-booking-widget-select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--alq-border);
+    border-radius: var(--alq-radius-md);
+    font-size: 15px;
+    font-family: var(--alq-font-body);
+    transition: border-color 0.2s;
+}
+
+.alq-booking-widget-input:focus,
+.alq-booking-widget-select:focus {
+    outline: none;
+    border-color: var(--alq-primary);
+    box-shadow: 0 0 0 3px rgba(11, 107, 203, 0.1);
+}
+
+.alq-booking-widget-time {
+    font-size: 0.75rem;
+    color: var(--alq-text-secondary);
+    margin-top: -4px;
+}
+
+.alq-booking-widget-summary {
+    background: var(--alq-bg-light);
+    border-radius: var(--alq-radius-md);
+    padding: 16px;
+    margin-top: 8px;
+}
+
+.alq-booking-widget-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9375rem;
+    color: var(--alq-text-primary);
+    margin-bottom: 8px;
+}
+
+.alq-booking-widget-summary-row:last-child {
+    margin-bottom: 0;
+}
+
+.alq-booking-widget-summary-divider {
+    height: 1px;
+    background: var(--alq-border);
+    margin: 12px 0;
+}
+
+.alq-booking-widget-summary-total {
+    font-weight: 600;
+    font-size: 1.125rem;
+    margin-top: 4px;
+}
+
+.alq-booking-widget-summary-total-amount {
+    color: var(--alq-primary);
+    font-size: 1.25rem;
+}
+
+.alq-booking-widget-summary-deposit,
+.alq-booking-widget-summary-balance {
+    font-size: 0.875rem;
+    color: var(--alq-text-secondary);
+}
+
+.alq-booking-widget-submit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 16px;
+    font-size: 16px;
+}
+
+.alq-booking-widget-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+    font-size: 0.875rem;
+    color: var(--alq-text-secondary);
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .alq-booking-widget--sticky {
+        position: static;
+    }
+}

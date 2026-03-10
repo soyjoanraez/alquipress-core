@@ -1,0 +1,70 @@
+{
+	"name": "woocommerce-bookings/booking-location",
+	"title": "Booking Location",
+	"description": "Displays the location of a booking.",
+	"category": "woocommerce-product-elements",
+	"attributes": {
+		"prefix": {
+			"type": "string",
+			"default": "Location: ",
+			"role": "content"
+		},
+		"suffix": {
+			"type": "string",
+			"default": "",
+			"role": "content"
+		},
+		"textAlign": {
+			"type": "string"
+		}
+	},
+	"usesContext": [ "postId" ],
+	"supports": {
+		"html": false,
+		"color": {
+			"gradients": true,
+			"link": true,
+			"__experimentalDefaultControls": {
+				"background": true,
+				"text": true,
+				"link": true
+			}
+		},
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true,
+			"__experimentalFontFamily": true,
+			"__experimentalFontWeight": true,
+			"__experimentalFontStyle": true,
+			"__experimentalTextTransform": true,
+			"__experimentalTextDecoration": true,
+			"__experimentalLetterSpacing": true,
+			"__experimentalDefaultControls": {
+				"fontSize": true,
+				"fontWeight": true
+			}
+		},
+		"__experimentalBorder": {
+			"radius": true,
+			"color": true,
+			"width": true,
+			"style": true,
+			"__experimentalDefaultControls": {
+				"radius": true,
+				"color": true,
+				"width": true,
+				"style": true
+			}
+		}
+	},
+	"keywords": [ "WooCommerce", "Bookings" ],
+	"textdomain": "woocommerce-bookings",
+	"editorScript": "file:./index.js",
+	"render": "file:./render.php",
+	"apiVersion": 3,
+	"$schema": "https://schemas.wp.org/trunk/block.json"
+}

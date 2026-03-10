@@ -1,0 +1,20 @@
+{
+	"name": "woocommerce-bookings/booking-modal",
+	"title": "Booking Modal",
+	"description": "Displays a modal where shoppers can select specific booking options before adding to cart.",
+	"category": "woocommerce-product-elements",
+	"inserter": false,
+	"usesContext": [ "postId" ],
+	"supports": {
+		"html": false,
+		"interactivity": true
+	},
+	"keywords": [ "WooCommerce", "Bookings" ],
+	"textdomain": "woocommerce-bookings",
+	"render": "file:./render.php",
+	"apiVersion": 3,
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"viewScriptModule": "file:./frontend.js",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

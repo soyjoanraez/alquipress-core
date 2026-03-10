@@ -1,0 +1,20 @@
+{
+	"name": "woocommerce-bookings/booking-team-member-selector",
+	"title": "Booking Team Member Selector",
+	"description": "Displays a selector to choose a team member for a booking.",
+	"category": "woocommerce-product-elements",
+	"inserter": false,
+	"usesContext": [ "postId" ],
+	"supports": {
+		"html": false,
+		"interactivity": true
+	},
+	"keywords": [ "WooCommerce", "Bookings" ],
+	"textdomain": "woocommerce-bookings",
+	"render": "file:./render.php",
+	"apiVersion": 3,
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"viewScriptModule": "file:./frontend.js",
+	"editorScript": "file:./index.js",
+	"style": "file:./style-index.css"
+}

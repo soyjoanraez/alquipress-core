@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "alquipress/availability-calendar",
+  "title": "Calendario de Disponibilidad",
+  "category": "alquipress",
+  "icon": "calendar",
+  "description": "Calendario que muestra disponibilidad y precios de la propiedad",
+  "keywords": ["calendario", "disponibilidad", "precios"],
+  "textdomain": "alquipress-theme",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "monthsToShow": {
+      "type": "number",
+      "default": 3
+    },
+    "showPrices": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

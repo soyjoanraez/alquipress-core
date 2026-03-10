@@ -1,0 +1,164 @@
+/**
+ * Estilos para Galería de Propiedad
+ */
+
+.alq-property-gallery {
+    margin-bottom: var(--alq-block-spacing);
+}
+
+.alq-property-gallery-main {
+    position: relative;
+    width: 100%;
+    padding-top: 66.67%; /* Aspect ratio 3:2 */
+    background: var(--alq-bg-light);
+    border-radius: var(--alq-block-radius);
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.alq-property-gallery-main-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: pointer;
+}
+
+.alq-property-gallery-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.alq-property-gallery-controls {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 16px;
+    pointer-events: none;
+}
+
+.alq-property-gallery-prev,
+.alq-property-gallery-next {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    pointer-events: all;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alq-property-gallery-prev:hover,
+.alq-property-gallery-next:hover {
+    background: #ffffff;
+    transform: scale(1.1);
+}
+
+.alq-property-gallery-count {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+}
+
+.alq-property-gallery-view-all {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 16px;
+    border-radius: var(--alq-radius-md);
+    text-decoration: none;
+    color: var(--alq-text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.alq-property-gallery-view-all:hover {
+    background: #ffffff;
+    color: var(--alq-primary);
+}
+
+.alq-property-gallery-video-tour {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 8px 16px;
+    border-radius: var(--alq-radius-md);
+    text-decoration: none;
+    color: var(--alq-text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.alq-property-gallery-video-tour:hover {
+    background: #ffffff;
+    color: var(--alq-primary);
+}
+
+.alq-property-gallery-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+}
+
+.alq-property-gallery-thumbnail {
+    position: relative;
+    padding-top: 75%; /* Aspect ratio 4:3 */
+    overflow: hidden;
+    border-radius: var(--alq-radius-md);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.alq-property-gallery-thumbnail:hover {
+    transform: scale(1.05);
+}
+
+.alq-property-gallery-thumbnail img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Layout Carousel */
+.alq-property-gallery--carousel .alq-property-gallery-main {
+    padding-top: 56.25%; /* 16:9 */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .alq-property-gallery-thumbnails {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .alq-property-gallery-controls {
+        padding: 0 8px;
+    }
+    
+    .alq-property-gallery-prev,
+    .alq-property-gallery-next {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+}
