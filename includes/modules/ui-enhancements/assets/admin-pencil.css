@@ -291,9 +291,12 @@ body.post-type-shop_order .postbox {
 body.post-type-propietario .postbox .postbox-header,
 body.post-type-product .postbox .postbox-header,
 body.post-type-shop_order .postbox .postbox-header {
+    display: flex;
+    align-items: flex-start;
     background: var(--ap-pencil-bg);
     border-bottom: 1px solid var(--ap-pencil-border);
     padding: 12px 16px;
+    overflow: visible;
 }
 
 body.post-type-propietario .postbox .postbox-header h2,
@@ -302,6 +305,23 @@ body.post-type-shop_order .postbox .postbox-header h2 {
     font-size: 14px;
     font-weight: 600;
     color: var(--ap-pencil-text);
+    white-space: normal;
+    line-height: 1.4;
+}
+
+/* Ocultar controles de reordenar metaboxes en el editor Pencil */
+body.ap-edit-property .postbox .handle-order-higher,
+body.ap-edit-property .postbox .handle-order-lower {
+    display: none !important;
+}
+
+/* Editor de extracto: quitar botones Código/Visual y compactar espacio */
+body.ap-edit-property #wp-excerpt-editor-tools .wp-switch-editor {
+    display: none;
+}
+
+body.ap-edit-property #wp-excerpt-editor-tools {
+    margin-bottom: 4px;
 }
 
 body.post-type-propietario .postbox .inside,
@@ -896,6 +916,34 @@ body.post-type-shop_order .woocommerce-order-data .hndle {
     margin-top: 12px !important;
     font-size: 12px !important;
     line-height: 1.4;
+}
+
+.ap-prop-hero-actions {
+    margin: 12px 0 20px;
+}
+
+.ap-prop-hero-add-images.button {
+    border-radius: var(--ap-pencil-radius-md);
+    border-color: var(--ap-pencil-border);
+    background: var(--ap-pencil-surface);
+    color: var(--ap-pencil-primary);
+}
+
+.ap-prop-hero-add-images.button:hover {
+    border-color: var(--ap-pencil-primary);
+    background: var(--ap-pencil-bg);
+}
+
+.ap-prop-widget-action-danger {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: var(--ap-pencil-danger);
+}
+
+.ap-prop-widget-action-danger:hover {
+    background: rgba(239, 68, 68, 0.16);
+    border-color: var(--ap-pencil-danger);
+    color: var(--ap-pencil-danger);
 }
 
 /* Ocultar sidebar de meta boxes cuando no está en Overview */

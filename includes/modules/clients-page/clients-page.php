@@ -716,10 +716,9 @@ class Alquipress_Clients_Page
                             if ($filter_property_id > 0) $paginate_args['filter_property'] = $filter_property_id;
                             if ($filter_segment !== '') $paginate_args['filter_segment'] = $filter_segment;
                             $paginate_base = add_query_arg($paginate_args, admin_url('admin.php'));
-                            $paginate_base = str_replace('%#%', '###PAGE###', $paginate_base);
                             echo wp_kses_post(paginate_links([
-                                'base' => str_replace('###PAGE###', '%#%', $paginate_base),
-                                'format' => '&paged=%#%',
+                                'base' => add_query_arg('paged', '%#%', $paginate_base),
+                                'format' => '',
                                 'prev_text' => '&larr; ' . __('Anterior', 'alquipress'),
                                 'next_text' => __('Siguiente', 'alquipress') . ' &rarr;',
                                 'total' => $total_pages,

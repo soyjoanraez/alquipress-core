@@ -58,11 +58,16 @@ function ap_bookings_save_product_meta($post_id, $post = null, $update = true)
     }
 
     if (isset($_POST['ap_base_price'])) {
-        $base_price = wc_clean(wp_unslash($_POST['ap_base_price']));
-        if ($base_price === '' || !is_numeric($base_price)) {
+        $base_price_raw = wc_clean(wp_unslash($_POST['ap_base_price']));
+        if ($base_price_raw === '' || !is_numeric($base_price_raw)) {
             delete_post_meta($post_id, 'ap_base_price');
         } else {
-            update_post_meta($post_id, 'ap_base_price', (float) $base_price);
+            $base_price = (float) $base_price_raw;
+            update_post_meta($post_id, 'ap_base_price', $base_price);
+
+            // Sincronizar también el precio base con el producto WooCommerce.
+            update_post_meta($post_id, '_regular_price', $base_price);
+            update_post_meta($post_id, '_price', $base_price);
         }
     }
 
