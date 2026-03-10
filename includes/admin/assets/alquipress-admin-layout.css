@@ -219,7 +219,7 @@
 }
 
 .ap-owners-sidebar-spacer {
-    flex: 1;
+    display: none;
 }
 
 .ap-owners-back-wp {

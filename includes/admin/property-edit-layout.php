@@ -223,6 +223,11 @@ function alquipress_render_property_edit_layout($post, $args = [])
                 <?php endfor; ?>
             </div>
         </div>
+        <div class="ap-prop-hero-actions">
+            <button type="button" class="ap-prop-hero-add-images button">
+                <?php esc_html_e('Añadir imágenes de la propiedad', 'alquipress'); ?>
+            </button>
+        </div>
 
         <div class="ap-prop-header-block">
             <div class="ap-prop-title-row">
@@ -396,6 +401,12 @@ function alquipress_render_property_edit_layout($post, $args = [])
                             <a href="<?php echo esc_url($native_edit_url); ?>" class="ap-prop-widget-action-btn ap-prop-widget-action-full-edit"><?php esc_html_e('Edición completa (WordPress)', 'alquipress'); ?></a>
                             <a href="<?php echo esc_url($view_url); ?>" target="_blank" rel="noopener" class="ap-prop-widget-action-btn"><?php esc_html_e('Ver en web', 'alquipress'); ?></a>
                             <a href="<?php echo esc_url($list_url); ?>" class="ap-prop-widget-action-btn"><?php esc_html_e('Volver a propiedades', 'alquipress'); ?></a>
+                            <?php
+                            $trash_url = get_delete_post_link($post->ID, '', true);
+                            ?>
+                            <a href="<?php echo esc_url($trash_url); ?>" class="ap-prop-widget-action-btn ap-prop-widget-action-danger ap-prop-delete-property" onclick="return confirm('<?php echo esc_js(__('¿Seguro que quieres eliminar esta propiedad? Esta acción moverá la propiedad a la papelera y afectará a su visibilidad en la web pública.', 'alquipress')); ?>');">
+                                <?php esc_html_e('Eliminar propiedad', 'alquipress'); ?>
+                            </a>
                         </div>
                         <p class="ap-prop-widget-muted ap-prop-widget-actions-note"><?php esc_html_e('La edición completa permite cambiar precio, galería, población, zona, características, habitaciones y todos los campos.', 'alquipress'); ?></p>
                     </div>
@@ -544,6 +555,20 @@ function alquipress_render_property_edit_layout($post, $args = [])
                         if (dashicons) { dashicons.className = 'dashicons dashicons-yes'; }
                         setTimeout(function() { if (dashicons) dashicons.className = 'dashicons dashicons-admin-page'; }, 1500);
                     });
+                }
+            });
+        }
+
+        // Botón \"Añadir imágenes\" bajo el héroe: dispara el flujo estándar de WooCommerce.
+        var addImagesBtn = document.querySelector('.ap-prop-hero-add-images');
+        if (addImagesBtn) {
+            addImagesBtn.addEventListener('click', function() {
+                var thumbBtn = document.querySelector('#set-post-thumbnail');
+                var galleryBtn = document.querySelector('#woocommerce-product-images .add_product_images');
+                if (galleryBtn) {
+                    galleryBtn.click();
+                } else if (thumbBtn) {
+                    thumbBtn.click();
                 }
             });
         }

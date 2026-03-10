@@ -536,6 +536,16 @@ class Alquipress_Properties_Page
                         $beds = $this->get_product_beds($post->ID);
                         $baths = $this->get_product_baths($post->ID);
                         $guests = $this->get_product_guests($post->ID);
+                        $surface = '';
+                        if (function_exists('get_field')) {
+                            $surface = get_field('superficie_m2', $post->ID);
+                            if ($surface === '' || $surface === null) {
+                                $surface = get_field('superficie', $post->ID);
+                            }
+                        }
+                        if ($surface === '' || $surface === null) {
+                            $surface = get_post_meta($post->ID, 'superficie_m2', true);
+                        }
                         $price = $product ? $product->get_price() : '';
                         $price_html = $product && $price !== '' ? wc_price($price) : '—';
                         $occupancy = $this->get_product_occupancy_text($post->ID);
@@ -581,7 +591,15 @@ class Alquipress_Properties_Page
                                         <span class="ap-props-spec" title="<?php esc_attr_e('Baños', 'alquipress'); ?>"><?php echo $this->icon_bath(); ?> <span class="ap-props-spec-num"><?php echo (int) $baths; ?></span></span>
                                     <?php endif; ?>
                                     <?php if ($guests !== null): ?>
-                                        <span class="ap-props-spec" title="<?php esc_attr_e('Personas', 'alquipress'); ?>"><?php echo $this->icon_users(); ?> <span class="ap-props-spec-num"><?php echo (int) $guests; ?></span></span>
+                                        <span class="ap-props-spec" title="<?php esc_attr_e('Plazas', 'alquipress'); ?>"><?php echo $this->icon_users(); ?> <span class="ap-props-spec-num"><?php echo (int) $guests; ?></span></span>
+                                    <?php endif; ?>
+                                    <?php if (!empty($surface)): ?>
+                                        <span class="ap-props-spec" title="<?php esc_attr_e('Superficie', 'alquipress'); ?>">
+                                            <span class="dashicons dashicons-editor-expand"></span>
+                                            <span class="ap-props-spec-num">
+                                                <?php echo esc_html(is_numeric($surface) ? (int) $surface : $surface); ?> m²
+                                            </span>
+                                        </span>
                                     <?php endif; ?>
                                     <?php if ($rating_value !== null || $rating_count > 0): ?>
                                         <span class="ap-props-spec ap-props-spec-rating" title="<?php esc_attr_e('Valoración de clientes', 'alquipress'); ?>">
@@ -628,13 +646,12 @@ class Alquipress_Properties_Page
                 if ($orderby !== 'date') $paginate_args['orderby'] = $orderby;
                 if (!empty($caracteristicas)) $paginate_args['caracteristicas'] = $caracteristicas;
                 $paginate_base = add_query_arg($paginate_args, admin_url('admin.php'));
-                $paginate_base = str_replace('%#%', '###PAGE###', $paginate_base);
                 ?>
                 <nav class="ap-props-pagination" aria-label="<?php esc_attr_e('Paginación', 'alquipress'); ?>">
                     <?php
                     echo paginate_links([
-                        'base' => esc_url(str_replace('###PAGE###', '%#%', $paginate_base)),
-                        'format' => '&paged=%#%',
+                        'base' => esc_url(add_query_arg('paged', '%#%', $paginate_base)),
+                        'format' => '',
                         'current' => max(1, $paged),
                         'total' => $total_pages,
                         'prev_text' => '&larr; ' . __('Anterior', 'alquipress'),

@@ -398,5 +398,8 @@ class Alquipress_Product_Fields
             ];
         }
         update_post_meta($post_id, 'distribucion_habitaciones', $habs);
+
+        // Sincronizar el campo escalar numero_habitaciones con el número real de filas.
+        update_post_meta($post_id, 'numero_habitaciones', count($habs));
     }
 }

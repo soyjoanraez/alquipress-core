@@ -6,9 +6,20 @@
     margin-bottom: 24px;
 }
 
-#ap-prop-overview-content #woocommerce-product-data .postbox-header,
-#ap-prop-overview-content #woocommerce-product-data .hndle {
-    display: none;
+#ap-prop-overview-content #woocommerce-product-data .postbox-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--ap-pencil-bg);
+    border-bottom: 1px solid var(--ap-pencil-border);
+}
+
+#ap-prop-overview-content #woocommerce-product-data .postbox-header .hndle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ap-pencil-text);
 }
 
 #ap-prop-overview-content #woocommerce-product-data .inside {
