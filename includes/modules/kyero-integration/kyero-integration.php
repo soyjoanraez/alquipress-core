@@ -195,7 +195,8 @@ function alquipress_kyero_admin_menu() {
         'alquipress-settings', // Parent slug from Alquipress_Module_Manager
         'Kyero Sync',
         'Kyero Sync',
-        'manage_options',
+        // Permiso alineado con Reservas (permitir a gestores de tienda acceder)
+        'edit_shop_orders',
         'alquipress-kyero',
         'alquipress_kyero_admin_page'
     );
