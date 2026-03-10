@@ -1,0 +1,84 @@
+# CI/CD para la rama pre (pre.alquipress.com)
+# Se ejecuta en cada push a pre y en PRs hacia pre.
+name: PRE branch CI
+
+on:
+  push:
+    branches: [pre]
+  pull_request:
+    branches: [pre]
+
+env:
+  # Ruta del plugin. Repo completo (alquipress) = esta; repo solo plugin (alquipress-core) = "."
+  PLUGIN_DIR: app/public/wp-content/plugins/alquipress-core
+
+jobs:
+  # Comprueba que el plugin no tenga errores de sintaxis PHP
+  php-lint:
+    name: PHP Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          tools: php
+
+      - name: Resolve plugin path
+        id: plugin
+        run: |
+          if [ -f "${{ env.PLUGIN_DIR }}/alquipress-core.php" ]; then
+            echo "path=${{ env.PLUGIN_DIR }}" >> $GITHUB_OUTPUT
+          elif [ -f "alquipress-core.php" ]; then
+            echo "path=." >> $GITHUB_OUTPUT
+          else
+            echo "::error::Plugin not found at ${{ env.PLUGIN_DIR }} nor at repo root"
+            exit 1
+          fi
+
+      - name: Lint PHP files
+        run: |
+          PLUGIN="${{ steps.plugin.outputs.path }}"
+          echo "Linting PHP in $PLUGIN"
+          find "$PLUGIN" -name "*.php" -not -path "*/vendor/*" | while read f; do
+            php -l "$f" || exit 1
+          done
+
+  # Opcional: validar que .cpanel.yml existe y el despliegue está configurado
+  deploy-config:
+    name: Deploy config check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check .cpanel.yml
+        run: |
+          DIR="${{ env.PLUGIN_DIR }}"
+          if [ -f "$DIR/.cpanel.yml" ]; then
+            echo "✓ .cpanel.yml found"
+            grep -q "DEPLOYPATH" "$DIR/.cpanel.yml" && echo "✓ DEPLOYPATH set" || exit 1
+          elif [ -f ".cpanel.yml" ]; then
+            echo "✓ .cpanel.yml at repo root"
+            grep -q "DEPLOYPATH" ".cpanel.yml" && echo "✓ DEPLOYPATH set" || exit 1
+          else
+            echo "::warning::No .cpanel.yml found (deploy may use another method)"
+          fi
+
+  # Despliegue opcional: si quieres que GitHub Actions despliegue en lugar de cPanel,
+  # descomenta este job y configura el secret PRE_DEPLOY_KEY (clave SSH) y variables.
+  # deploy-pre:
+  #   name: Deploy to PRE
+  #   needs: [php-lint, deploy-config]
+  #   if: github.ref == 'refs/heads/pre' && github.event_name == 'push'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Deploy via rsync/SSH
+  #       run: |
+  #         # Ejemplo: rsync sobre SSH (requiere PRE_HOST, PRE_USER, PRE_DEPLOY_KEY)
+  #         # mkdir -p ~/.ssh && echo "${{ secrets.PRE_DEPLOY_KEY }}" > ~/.ssh/deploy_key
+  #         # chmod 600 ~/.ssh/deploy_key
+  #         # rsync -avz -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+  #         #   ${{ env.PLUGIN_DIR }}/ ${{ secrets.PRE_USER }}@${{ secrets.PRE_HOST }}:${{ secrets.PRE_PATH }}
+  #         echo "Configure PRE_* secrets and uncomment this job to enable deploy"
