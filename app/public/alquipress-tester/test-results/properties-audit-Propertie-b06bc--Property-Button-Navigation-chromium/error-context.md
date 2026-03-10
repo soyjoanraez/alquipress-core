@@ -1,0 +1,871 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - navigation "Menú principal":
+      - link "Saltar al contenido principal" [ref=e3] [cursor=pointer]:
+        - /url: "#wpbody-content"
+      - link "Ir a la barra de herramientas" [ref=e4] [cursor=pointer]:
+        - /url: "#wp-toolbar"
+      - text:                  
+    - main [ref=e6]:
+      - generic [ref=e9]:
+        - complementary [ref=e10]:
+          - generic [ref=e11]:
+            - img [ref=e13]
+            - generic [ref=e15]:
+              - generic [ref=e16]: ALQUIPRESS
+              - generic [ref=e17]: Inmobiliaria
+          - search [ref=e19]:
+            - searchbox "Búsqueda global" [ref=e20]
+          - navigation [ref=e21]:
+            - link "Panel" [ref=e22] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-dashboard
+              - img [ref=e23]
+              - generic [ref=e28]: Panel
+            - link "Propiedades" [ref=e29] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-properties
+              - img [ref=e30]
+              - generic [ref=e32]: Propiedades
+            - link "Reservas" [ref=e33] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-bookings
+              - img [ref=e34]
+              - generic [ref=e36]: Reservas
+            - link "Guests" [ref=e37] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-clients
+              - img [ref=e38]
+              - generic [ref=e43]: Guests
+            - link "Owners" [ref=e44] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-owners
+              - img [ref=e45]
+              - generic [ref=e48]: Owners
+            - link "Finanzas" [ref=e49] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-finanzas
+              - img [ref=e50]
+              - generic [ref=e52]: Finanzas
+            - link "Contabilidad" [ref=e53] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-accounting
+              - img [ref=e54]
+              - generic [ref=e56]: Contabilidad
+            - link "Informes" [ref=e57] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-reports
+              - img [ref=e58]
+              - generic [ref=e59]: Informes
+            - link "Pipeline" [ref=e60] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-pipeline
+              - img [ref=e61]
+              - generic [ref=e65]: Pipeline
+            - link "Inbox" [ref=e66] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-comunicacion
+              - img [ref=e67]
+              - generic [ref=e70]: Inbox
+            - link "Feed Kyero" [ref=e71] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-kyero
+              - img [ref=e72]
+              - generic [ref=e74]: Feed Kyero
+            - link "Ajustes" [ref=e75] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-settings
+              - img [ref=e76]
+              - generic [ref=e79]: Ajustes
+            - link "Performance & Security" [ref=e80] [cursor=pointer]:
+              - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-suite
+              - img [ref=e81]
+              - generic [ref=e84]: Performance & Security
+          - link "Volver a WordPress" [ref=e86] [cursor=pointer]:
+            - /url: http://alquipress.local/wp-admin/edit.php
+            - img [ref=e87]
+            - generic [ref=e89]: Volver a WordPress
+          - generic [ref=e90]:
+            - generic [ref=e91]: J
+            - generic [ref=e92]:
+              - generic [ref=e93]: joanraez
+              - generic [ref=e94]: Administrador
+        - main [ref=e95]:
+          - generic [ref=e96]:
+            - generic [ref=e97]:
+              - heading "Propiedades" [level=1] [ref=e98]
+              - generic [ref=e99]:
+                - generic [ref=e100]:
+                  - generic [ref=e101]: ⚠️
+                  - generic [ref=e102]:
+                    - heading "Pedidos Pendientes de Pago" [level=3] [ref=e103]
+                    - paragraph [ref=e104]: Tienes 9 pedidos pendientes de pago. Revisa y haz seguimiento.
+                    - link "Ver Pedidos" [ref=e105] [cursor=pointer]:
+                      - /url: http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-pending
+                - button "Descartar este aviso." [ref=e106] [cursor=pointer]:
+                  - generic [ref=e107]: Descartar este aviso.
+              - generic [ref=e108]:
+                - generic [ref=e109]:
+                  - generic [ref=e110]: ⚠️
+                  - generic [ref=e111]:
+                    - heading "Propiedades en Revisión" [level=3] [ref=e112]
+                    - paragraph [ref=e113]: 14 propiedad(es) están pendientes de revisión de salida.
+                    - link "Ver Revisiones" [ref=e114] [cursor=pointer]:
+                      - /url: http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-checkout-review
+                - button "Descartar este aviso." [ref=e115] [cursor=pointer]:
+                  - generic [ref=e116]: Descartar este aviso.
+              - paragraph [ref=e117]: Gestiona tu cartera de alquileres vacacionales
+            - generic [ref=e118]:
+              - generic [ref=e119]:
+                - generic [ref=e120]: 
+                - searchbox "Buscar propiedades..." [ref=e121]
+              - button " Filtrar" [ref=e122] [cursor=pointer]:
+                - generic [ref=e123]: 
+                - generic [ref=e124]: Filtrar
+              - button " Añadir propiedad" [ref=e125] [cursor=pointer]:
+                - generic [ref=e126]: 
+                - generic [ref=e127]: Añadir propiedad
+          - generic [ref=e128]:
+            - generic [ref=e129]:
+              - generic [ref=e130]:
+                - button "" [pressed] [ref=e131] [cursor=pointer]:
+                  - generic [ref=e132]: 
+                - button "" [ref=e133] [cursor=pointer]:
+                  - generic [ref=e134]: 
+              - combobox [ref=e136] [cursor=pointer]:
+                - option "Más recientes" [selected]
+                - 'option "Precio: Menor a Mayor"'
+                - 'option "Precio: Mayor a Menor"'
+                - option "Mayor Capacidad"
+                - option "Más Habitaciones"
+                - option "Más Baños"
+                - option "Mejor valorados"
+                - option "Nombre (A-Z)"
+              - paragraph [ref=e137]: Mostrando 24 de 35 propiedades
+            - generic [ref=e138]:
+              - 'link "Todas: 35" [ref=e139] [cursor=pointer]':
+                - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-properties
+                - generic [ref=e141]: "Todas: 35"
+              - 'link "Activas: 35" [ref=e142] [cursor=pointer]':
+                - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-properties&status=active
+                - generic [ref=e144]: "Activas: 35"
+              - 'link "Mantenimiento: 0" [ref=e145] [cursor=pointer]':
+                - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-properties&status=maintenance
+                - generic [ref=e147]: "Mantenimiento: 0"
+          - generic [ref=e148]:
+            - article [ref=e149]:
+              - generic [ref=e150]:
+                - generic [ref=e151]: Activa
+                - link "Opciones" [ref=e152] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3873
+                  - img [ref=e153]
+              - generic [ref=e157]:
+                - 'heading "Villa Puerto en Moraira #10" [level=3] [ref=e158]':
+                  - 'link "Villa Puerto en Moraira #10" [ref=e159] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3873
+                - paragraph [ref=e160]:
+                  - generic [ref=e161]: 
+                  - text: Moraira
+                - generic [ref=e162]:
+                  - generic "Habitaciones" [ref=e163]:
+                    - img [ref=e164]
+                    - generic [ref=e167]: "1"
+                  - generic "Baños" [ref=e168]:
+                    - img [ref=e169]
+                    - generic [ref=e178]: "2"
+                  - generic "Personas" [ref=e179]:
+                    - img [ref=e180]
+                    - generic [ref=e185]: "4"
+                  - generic [ref=e186]:
+                    - generic [ref=e187]: 
+                    - generic [ref=e188]: 120,00 €
+                - generic [ref=e189]:
+                  - generic [ref=e190]:
+                    - generic [ref=e191]: 120,00 €
+                    - text: /noche
+                  - generic [ref=e192]:
+                    - img [ref=e193]
+                    - text: 0% ocupación
+            - article [ref=e198]:
+              - generic [ref=e199]:
+                - generic [ref=e200]: Activa
+                - link "Opciones" [ref=e201] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3872
+                  - img [ref=e202]
+              - generic [ref=e206]:
+                - 'heading "Apartamento Montaña en Calpe #9" [level=3] [ref=e207]':
+                  - 'link "Apartamento Montaña en Calpe #9" [ref=e208] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3872
+                - paragraph [ref=e209]:
+                  - generic [ref=e210]: 
+                  - text: Calpe
+                - generic [ref=e211]:
+                  - generic "Habitaciones" [ref=e212]:
+                    - img [ref=e213]
+                    - generic [ref=e216]: "1"
+                  - generic "Baños" [ref=e217]:
+                    - img [ref=e218]
+                    - generic [ref=e227]: "1"
+                  - generic "Personas" [ref=e228]:
+                    - img [ref=e229]
+                    - generic [ref=e234]: "1"
+                  - generic [ref=e235]:
+                    - generic [ref=e236]: 
+                    - generic [ref=e237]: 0,00 €
+                - generic [ref=e238]:
+                  - generic [ref=e239]:
+                    - generic [ref=e240]: 0,00 €
+                    - text: /noche
+                  - generic [ref=e241]:
+                    - img [ref=e242]
+                    - text: 0% ocupación
+            - article [ref=e247]:
+              - generic [ref=e248]:
+                - generic [ref=e249]: Activa
+                - link "Opciones" [ref=e250] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3871
+                  - img [ref=e251]
+              - generic [ref=e255]:
+                - 'heading "Casa de Pueblo Puerto en Altea #8" [level=3] [ref=e256]':
+                  - 'link "Casa de Pueblo Puerto en Altea #8" [ref=e257] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3871
+                - paragraph [ref=e258]:
+                  - generic [ref=e259]: 
+                  - text: Altea
+                - generic [ref=e260]:
+                  - generic "Habitaciones" [ref=e261]:
+                    - img [ref=e262]
+                    - generic [ref=e265]: "3"
+                  - generic "Personas" [ref=e266]:
+                    - img [ref=e267]
+                    - generic [ref=e272]: "1"
+                  - generic [ref=e273]:
+                    - generic [ref=e274]: 
+                    - generic [ref=e275]: 366,00 €
+                - generic [ref=e276]:
+                  - generic [ref=e277]:
+                    - generic [ref=e278]: 366,00 €
+                    - text: /noche
+                  - generic [ref=e279]:
+                    - img [ref=e280]
+                    - text: 0% ocupación
+            - article [ref=e285]:
+              - generic [ref=e286]:
+                - generic [ref=e287]: Activa
+                - link "Opciones" [ref=e288] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3870
+                  - img [ref=e289]
+              - generic [ref=e293]:
+                - 'heading "Apartamento Puerto en Calpe #7" [level=3] [ref=e294]':
+                  - 'link "Apartamento Puerto en Calpe #7" [ref=e295] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3870
+                - paragraph [ref=e296]:
+                  - generic [ref=e297]: 
+                  - text: Calpe
+                - generic [ref=e298]:
+                  - generic "Habitaciones" [ref=e299]:
+                    - img [ref=e300]
+                    - generic [ref=e303]: "3"
+                  - generic "Personas" [ref=e304]:
+                    - img [ref=e305]
+                    - generic [ref=e310]: "1"
+                  - generic [ref=e311]:
+                    - generic [ref=e312]: 
+                    - generic [ref=e313]: 369,00 €
+                - generic [ref=e314]:
+                  - generic [ref=e315]:
+                    - generic [ref=e316]: 369,00 €
+                    - text: /noche
+                  - generic [ref=e317]:
+                    - img [ref=e318]
+                    - text: 0% ocupación
+            - article [ref=e323]:
+              - generic [ref=e324]:
+                - generic [ref=e325]: Activa
+                - link "Opciones" [ref=e326] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3869
+                  - img [ref=e327]
+              - generic [ref=e331]:
+                - 'heading "Casa de Pueblo Centro en Calpe #6" [level=3] [ref=e332]':
+                  - 'link "Casa de Pueblo Centro en Calpe #6" [ref=e333] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3869
+                - paragraph [ref=e334]:
+                  - generic [ref=e335]: 
+                  - text: Calpe
+                - generic [ref=e336]:
+                  - generic "Habitaciones" [ref=e337]:
+                    - img [ref=e338]
+                    - generic [ref=e341]: "2"
+                  - generic "Personas" [ref=e342]:
+                    - img [ref=e343]
+                    - generic [ref=e348]: "1"
+                  - generic [ref=e349]:
+                    - generic [ref=e350]: 
+                    - generic [ref=e351]: 494,00 €
+                - generic [ref=e352]:
+                  - generic [ref=e353]:
+                    - generic [ref=e354]: 494,00 €
+                    - text: /noche
+                  - generic [ref=e355]:
+                    - img [ref=e356]
+                    - text: 0% ocupación
+            - article [ref=e361]:
+              - generic [ref=e362]:
+                - generic [ref=e363]: Activa
+                - link "Opciones" [ref=e364] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3868
+                  - img [ref=e365]
+              - generic [ref=e369]:
+                - 'heading "Bungalow Centro en Denia #5" [level=3] [ref=e370]':
+                  - 'link "Bungalow Centro en Denia #5" [ref=e371] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3868
+                - paragraph [ref=e372]:
+                  - generic [ref=e373]: 
+                  - text: Dénia
+                - generic [ref=e374]:
+                  - generic "Habitaciones" [ref=e375]:
+                    - img [ref=e376]
+                    - generic [ref=e379]: "2"
+                  - generic "Personas" [ref=e380]:
+                    - img [ref=e381]
+                    - generic [ref=e386]: "1"
+                  - generic [ref=e387]:
+                    - generic [ref=e388]: 
+                    - generic [ref=e389]: 198,00 €
+                - generic [ref=e390]:
+                  - generic [ref=e391]:
+                    - generic [ref=e392]: 198,00 €
+                    - text: /noche
+                  - generic [ref=e393]:
+                    - img [ref=e394]
+                    - text: 0% ocupación
+            - article [ref=e399]:
+              - generic [ref=e400]:
+                - generic [ref=e401]: Activa
+                - link "Opciones" [ref=e402] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3867
+                  - img [ref=e403]
+              - generic [ref=e407]:
+                - 'heading "Ático Montaña en Calpe #4" [level=3] [ref=e408]':
+                  - 'link "Ático Montaña en Calpe #4" [ref=e409] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3867
+                - paragraph [ref=e410]:
+                  - generic [ref=e411]: 
+                  - text: Calpe
+                - generic [ref=e412]:
+                  - generic "Habitaciones" [ref=e413]:
+                    - img [ref=e414]
+                    - generic [ref=e417]: "2"
+                  - generic "Personas" [ref=e418]:
+                    - img [ref=e419]
+                    - generic [ref=e424]: "1"
+                  - generic [ref=e425]:
+                    - generic [ref=e426]: 
+                    - generic [ref=e427]: 120,00 €
+                - generic [ref=e428]:
+                  - generic [ref=e429]:
+                    - generic [ref=e430]: 120,00 €
+                    - text: /noche
+                  - generic [ref=e431]:
+                    - img [ref=e432]
+                    - text: 0% ocupación
+            - article [ref=e437]:
+              - generic [ref=e438]:
+                - generic [ref=e439]: Activa
+                - link "Opciones" [ref=e440] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3866
+                  - img [ref=e441]
+              - generic [ref=e445]:
+                - 'heading "Villa Puerto en Jávea #3" [level=3] [ref=e446]':
+                  - 'link "Villa Puerto en Jávea #3" [ref=e447] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3866
+                - paragraph [ref=e448]:
+                  - generic [ref=e449]: 
+                  - text: Jávea
+                - generic [ref=e450]:
+                  - generic "Habitaciones" [ref=e451]:
+                    - img [ref=e452]
+                    - generic [ref=e455]: "1"
+                  - generic "Personas" [ref=e456]:
+                    - img [ref=e457]
+                    - generic [ref=e462]: "1"
+                  - generic [ref=e463]:
+                    - generic [ref=e464]: 
+                    - generic [ref=e465]: 403,00 €
+                - generic [ref=e466]:
+                  - generic [ref=e467]:
+                    - generic [ref=e468]: 403,00 €
+                    - text: /noche
+                  - generic [ref=e469]:
+                    - img [ref=e470]
+                    - text: 0% ocupación
+            - article [ref=e475]:
+              - generic [ref=e476]:
+                - generic [ref=e477]: Activa
+                - link "Opciones" [ref=e478] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3865
+                  - img [ref=e479]
+              - generic [ref=e483]:
+                - 'heading "Apartamento Casco Antiguo en Altea #2" [level=3] [ref=e484]':
+                  - 'link "Apartamento Casco Antiguo en Altea #2" [ref=e485] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3865
+                - paragraph [ref=e486]:
+                  - generic [ref=e487]: 
+                  - text: Altea
+                - generic [ref=e488]:
+                  - generic "Habitaciones" [ref=e489]:
+                    - img [ref=e490]
+                    - generic [ref=e493]: "2"
+                  - generic "Personas" [ref=e494]:
+                    - img [ref=e495]
+                    - generic [ref=e500]: "1"
+                  - generic [ref=e501]:
+                    - generic [ref=e502]: 
+                    - generic [ref=e503]: 486,00 €
+                - generic [ref=e504]:
+                  - generic [ref=e505]:
+                    - generic [ref=e506]: 486,00 €
+                    - text: /noche
+                  - generic [ref=e507]:
+                    - img [ref=e508]
+                    - text: 0% ocupación
+            - article [ref=e513]:
+              - generic [ref=e514]:
+                - generic [ref=e515]: Activa
+                - link "Opciones" [ref=e516] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3864
+                  - img [ref=e517]
+              - generic [ref=e521]:
+                - 'heading "Casa de Pueblo Playa en Calpe #1" [level=3] [ref=e522]':
+                  - 'link "Casa de Pueblo Playa en Calpe #1" [ref=e523] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3864
+                - paragraph [ref=e524]:
+                  - generic [ref=e525]: 
+                  - text: Calpe
+                - generic [ref=e526]:
+                  - generic "Habitaciones" [ref=e527]:
+                    - img [ref=e528]
+                    - generic [ref=e531]: "3"
+                  - generic "Personas" [ref=e532]:
+                    - img [ref=e533]
+                    - generic [ref=e538]: "1"
+                  - generic [ref=e539]:
+                    - generic [ref=e540]: 
+                    - generic [ref=e541]: 173,00 €
+                - generic [ref=e542]:
+                  - generic [ref=e543]:
+                    - generic [ref=e544]: 173,00 €
+                    - text: /noche
+                  - generic [ref=e545]:
+                    - img [ref=e546]
+                    - text: 0% ocupación
+            - article [ref=e551]:
+              - generic [ref=e552]:
+                - generic [ref=e553]: Activa
+                - link "Opciones" [ref=e554] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3798
+                  - img [ref=e555]
+              - generic [ref=e559]:
+                - 'heading "Villa Playa en Altea #3" [level=3] [ref=e560]':
+                  - 'link "Villa Playa en Altea #3" [ref=e561] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3798
+                - paragraph [ref=e562]:
+                  - generic [ref=e563]: 
+                  - text: Altea
+                - generic [ref=e564]:
+                  - generic "Habitaciones" [ref=e565]:
+                    - img [ref=e566]
+                    - generic [ref=e569]: "2"
+                  - generic "Personas" [ref=e570]:
+                    - img [ref=e571]
+                    - generic [ref=e576]: "1"
+                  - generic [ref=e577]:
+                    - generic [ref=e578]: 
+                    - generic [ref=e579]: 259,00 €
+                - generic [ref=e580]:
+                  - generic [ref=e581]:
+                    - generic [ref=e582]: 259,00 €
+                    - text: /noche
+                  - generic [ref=e583]:
+                    - img [ref=e584]
+                    - text: 0% ocupación
+            - article [ref=e589]:
+              - generic [ref=e590]:
+                - generic [ref=e591]: Activa
+                - link "Opciones" [ref=e592] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3796
+                  - img [ref=e593]
+              - generic [ref=e597]:
+                - 'heading "Casa de Pueblo Centro en Denia #1" [level=3] [ref=e598]':
+                  - 'link "Casa de Pueblo Centro en Denia #1" [ref=e599] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3796
+                - paragraph [ref=e600]:
+                  - generic [ref=e601]: 
+                  - text: Dénia
+                - generic [ref=e602]:
+                  - generic "Habitaciones" [ref=e603]:
+                    - img [ref=e604]
+                    - generic [ref=e607]: "3"
+                  - generic "Personas" [ref=e608]:
+                    - img [ref=e609]
+                    - generic [ref=e614]: "1"
+                  - generic [ref=e615]:
+                    - generic [ref=e616]: 
+                    - generic [ref=e617]: 417,00 €
+                - generic [ref=e618]:
+                  - generic [ref=e619]:
+                    - generic [ref=e620]: 417,00 €
+                    - text: /noche
+                  - generic [ref=e621]:
+                    - img [ref=e622]
+                    - text: 0% ocupación
+            - article [ref=e627]:
+              - generic [ref=e628]:
+                - generic [ref=e629]: Activa
+                - link "Opciones" [ref=e630] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3797
+                  - img [ref=e631]
+              - generic [ref=e635]:
+                - 'heading "Bungalow Montaña en Altea #2" [level=3] [ref=e636]':
+                  - 'link "Bungalow Montaña en Altea #2" [ref=e637] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3797
+                - paragraph [ref=e638]:
+                  - generic [ref=e639]: 
+                  - text: Altea
+                - generic [ref=e640]:
+                  - generic "Habitaciones" [ref=e641]:
+                    - img [ref=e642]
+                    - generic [ref=e645]: "3"
+                  - generic "Personas" [ref=e646]:
+                    - img [ref=e647]
+                    - generic [ref=e652]: "1"
+                  - generic [ref=e653]:
+                    - generic [ref=e654]: 
+                    - generic [ref=e655]: 484,00 €
+                - generic [ref=e656]:
+                  - generic [ref=e657]:
+                    - generic [ref=e658]: 484,00 €
+                    - text: /noche
+                  - generic [ref=e659]:
+                    - img [ref=e660]
+                    - text: 0% ocupación
+            - article [ref=e665]:
+              - generic [ref=e666]:
+                - generic [ref=e667]: Activa
+                - link "Opciones" [ref=e668] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3799
+                  - img [ref=e669]
+              - generic [ref=e673]:
+                - 'heading "Casa de Pueblo Playa en Calpe #4" [level=3] [ref=e674]':
+                  - 'link "Casa de Pueblo Playa en Calpe #4" [ref=e675] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3799
+                - paragraph [ref=e676]:
+                  - generic [ref=e677]: 
+                  - text: Calpe
+                - generic [ref=e678]:
+                  - generic "Habitaciones" [ref=e679]:
+                    - img [ref=e680]
+                    - generic [ref=e683]: "2"
+                  - generic "Personas" [ref=e684]:
+                    - img [ref=e685]
+                    - generic [ref=e690]: "1"
+                  - generic [ref=e691]:
+                    - generic [ref=e692]: 
+                    - generic [ref=e693]: 373,00 €
+                - generic [ref=e694]:
+                  - generic [ref=e695]:
+                    - generic [ref=e696]: 373,00 €
+                    - text: /noche
+                  - generic [ref=e697]:
+                    - img [ref=e698]
+                    - text: 0% ocupación
+            - article [ref=e703]:
+              - generic [ref=e704]:
+                - generic [ref=e705]: Activa
+                - link "Opciones" [ref=e706] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3800
+                  - img [ref=e707]
+              - generic [ref=e711]:
+                - 'heading "Villa Casco Antiguo en Altea #5" [level=3] [ref=e712]':
+                  - 'link "Villa Casco Antiguo en Altea #5" [ref=e713] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3800
+                - paragraph [ref=e714]:
+                  - generic [ref=e715]: 
+                  - text: Altea
+                - generic [ref=e716]:
+                  - generic "Habitaciones" [ref=e717]:
+                    - img [ref=e718]
+                    - generic [ref=e721]: "2"
+                  - generic "Personas" [ref=e722]:
+                    - img [ref=e723]
+                    - generic [ref=e728]: "1"
+                  - generic [ref=e729]:
+                    - generic [ref=e730]: 
+                    - generic [ref=e731]: 465,00 €
+                - generic [ref=e732]:
+                  - generic [ref=e733]:
+                    - generic [ref=e734]: 465,00 €
+                    - text: /noche
+                  - generic [ref=e735]:
+                    - img [ref=e736]
+                    - text: 0% ocupación
+            - article [ref=e741]:
+              - generic [ref=e742]:
+                - generic [ref=e743]: Activa
+                - link "Opciones" [ref=e744] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3801
+                  - img [ref=e745]
+              - generic [ref=e749]:
+                - 'heading "Ático Puerto en Jávea #6" [level=3] [ref=e750]':
+                  - 'link "Ático Puerto en Jávea #6" [ref=e751] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3801
+                - paragraph [ref=e752]:
+                  - generic [ref=e753]: 
+                  - text: Jávea
+                - generic [ref=e754]:
+                  - generic "Habitaciones" [ref=e755]:
+                    - img [ref=e756]
+                    - generic [ref=e759]: "2"
+                  - generic "Personas" [ref=e760]:
+                    - img [ref=e761]
+                    - generic [ref=e766]: "1"
+                  - generic [ref=e767]:
+                    - generic [ref=e768]: 
+                    - generic [ref=e769]: 431,00 €
+                - generic [ref=e770]:
+                  - generic [ref=e771]:
+                    - generic [ref=e772]: 431,00 €
+                    - text: /noche
+                  - generic [ref=e773]:
+                    - img [ref=e774]
+                    - text: 0% ocupación
+            - article [ref=e779]:
+              - generic [ref=e780]:
+                - generic [ref=e781]: Activa
+                - link "Opciones" [ref=e782] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3802
+                  - img [ref=e783]
+              - generic [ref=e787]:
+                - 'heading "Ático Casco Antiguo en Denia #7" [level=3] [ref=e788]':
+                  - 'link "Ático Casco Antiguo en Denia #7" [ref=e789] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3802
+                - paragraph [ref=e790]:
+                  - generic [ref=e791]: 
+                  - text: Dénia
+                - generic [ref=e792]:
+                  - generic "Habitaciones" [ref=e793]:
+                    - img [ref=e794]
+                    - generic [ref=e797]: "3"
+                  - generic "Personas" [ref=e798]:
+                    - img [ref=e799]
+                    - generic [ref=e804]: "1"
+                  - generic [ref=e805]:
+                    - generic [ref=e806]: 
+                    - generic [ref=e807]: 360,00 €
+                - generic [ref=e808]:
+                  - generic [ref=e809]:
+                    - generic [ref=e810]: 360,00 €
+                    - text: /noche
+                  - generic [ref=e811]:
+                    - img [ref=e812]
+                    - text: 0% ocupación
+            - article [ref=e817]:
+              - generic [ref=e818]:
+                - generic [ref=e819]: Activa
+                - link "Opciones" [ref=e820] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3803
+                  - img [ref=e821]
+              - generic [ref=e825]:
+                - 'heading "Bungalow Centro en Jávea #8" [level=3] [ref=e826]':
+                  - 'link "Bungalow Centro en Jávea #8" [ref=e827] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3803
+                - paragraph [ref=e828]:
+                  - generic [ref=e829]: 
+                  - text: Jávea
+                - generic [ref=e830]:
+                  - generic "Habitaciones" [ref=e831]:
+                    - img [ref=e832]
+                    - generic [ref=e835]: "2"
+                  - generic "Personas" [ref=e836]:
+                    - img [ref=e837]
+                    - generic [ref=e842]: "1"
+                  - generic [ref=e843]:
+                    - generic [ref=e844]: 
+                    - generic [ref=e845]: 255,00 €
+                - generic [ref=e846]:
+                  - generic [ref=e847]:
+                    - generic [ref=e848]: 255,00 €
+                    - text: /noche
+                  - generic [ref=e849]:
+                    - img [ref=e850]
+                    - text: 0% ocupación
+            - article [ref=e855]:
+              - generic [ref=e856]:
+                - generic [ref=e857]: Activa
+                - link "Opciones" [ref=e858] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3804
+                  - img [ref=e859]
+              - generic [ref=e863]:
+                - 'heading "Bungalow Centro en Moraira #9" [level=3] [ref=e864]':
+                  - 'link "Bungalow Centro en Moraira #9" [ref=e865] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3804
+                - paragraph [ref=e866]:
+                  - generic [ref=e867]: 
+                  - text: Moraira
+                - generic [ref=e868]:
+                  - generic "Habitaciones" [ref=e869]:
+                    - img [ref=e870]
+                    - generic [ref=e873]: "2"
+                  - generic "Personas" [ref=e874]:
+                    - img [ref=e875]
+                    - generic [ref=e880]: "1"
+                  - generic [ref=e881]:
+                    - generic [ref=e882]: 
+                    - generic [ref=e883]: 326,00 €
+                - generic [ref=e884]:
+                  - generic [ref=e885]:
+                    - generic [ref=e886]: 326,00 €
+                    - text: /noche
+                  - generic [ref=e887]:
+                    - img [ref=e888]
+                    - text: 0% ocupación
+            - article [ref=e893]:
+              - generic [ref=e894]:
+                - generic [ref=e895]: Activa
+                - link "Opciones" [ref=e896] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3805
+                  - img [ref=e897]
+              - generic [ref=e901]:
+                - 'heading "Bungalow Montaña en Altea #10" [level=3] [ref=e902]':
+                  - 'link "Bungalow Montaña en Altea #10" [ref=e903] [cursor=pointer]':
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3805
+                - paragraph [ref=e904]:
+                  - generic [ref=e905]: 
+                  - text: Altea
+                - generic [ref=e906]:
+                  - generic "Habitaciones" [ref=e907]:
+                    - img [ref=e908]
+                    - generic [ref=e911]: "1"
+                  - generic "Personas" [ref=e912]:
+                    - img [ref=e913]
+                    - generic [ref=e918]: "1"
+                  - generic [ref=e919]:
+                    - generic [ref=e920]: 
+                    - generic [ref=e921]: 452,00 €
+                - generic [ref=e922]:
+                  - generic [ref=e923]:
+                    - generic [ref=e924]: 452,00 €
+                    - text: /noche
+                  - generic [ref=e925]:
+                    - img [ref=e926]
+                    - text: 0% ocupación
+            - article [ref=e931]:
+              - generic [ref=e932]:
+                - generic [ref=e933]: Activa
+                - link "Opciones" [ref=e934] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3763
+                  - img [ref=e935]
+              - generic [ref=e939]:
+                - heading "Casa de Pueblo Booking 1 - Altea" [level=3] [ref=e940]:
+                  - link "Casa de Pueblo Booking 1 - Altea" [ref=e941] [cursor=pointer]:
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3763
+                - generic [ref=e942]:
+                  - generic "Personas" [ref=e943]:
+                    - img [ref=e944]
+                    - generic [ref=e949]: "1"
+                  - generic [ref=e950]:
+                    - generic [ref=e951]: 
+                    - generic [ref=e952]: 301,00 €
+                - generic [ref=e953]:
+                  - generic [ref=e954]:
+                    - generic [ref=e955]: 301,00 €
+                    - text: /noche
+                  - generic [ref=e956]:
+                    - img [ref=e957]
+                    - text: 0% ocupación
+            - article [ref=e962]:
+              - generic [ref=e963]:
+                - generic [ref=e964]: Activa
+                - link "Opciones" [ref=e965] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3764
+                  - img [ref=e966]
+              - generic [ref=e970]:
+                - heading "Ático Booking 2 - Moraira" [level=3] [ref=e971]:
+                  - link "Ático Booking 2 - Moraira" [ref=e972] [cursor=pointer]:
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3764
+                - generic [ref=e973]:
+                  - generic "Personas" [ref=e974]:
+                    - img [ref=e975]
+                    - generic [ref=e980]: "1"
+                  - generic [ref=e981]:
+                    - generic [ref=e982]: 
+                    - generic [ref=e983]: 215,00 €
+                - generic [ref=e984]:
+                  - generic [ref=e985]:
+                    - generic [ref=e986]: 215,00 €
+                    - text: /noche
+                  - generic [ref=e987]:
+                    - img [ref=e988]
+                    - text: 0% ocupación
+            - article [ref=e993]:
+              - generic [ref=e994]:
+                - generic [ref=e995]: Activa
+                - link "Opciones" [ref=e996] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3765
+                  - img [ref=e997]
+              - generic [ref=e1001]:
+                - heading "Bungalow Booking 3 - Denia" [level=3] [ref=e1002]:
+                  - link "Bungalow Booking 3 - Denia" [ref=e1003] [cursor=pointer]:
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3765
+                - generic [ref=e1004]:
+                  - generic "Personas" [ref=e1005]:
+                    - img [ref=e1006]
+                    - generic [ref=e1011]: "1"
+                  - generic [ref=e1012]:
+                    - generic [ref=e1013]: 
+                    - generic [ref=e1014]: 216,00 €
+                - generic [ref=e1015]:
+                  - generic [ref=e1016]:
+                    - generic [ref=e1017]: 216,00 €
+                    - text: /noche
+                  - generic [ref=e1018]:
+                    - img [ref=e1019]
+                    - text: 0% ocupación
+            - article [ref=e1024]:
+              - generic [ref=e1025]:
+                - generic [ref=e1026]: Activa
+                - link "Opciones" [ref=e1027] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3766
+                  - img [ref=e1028]
+              - generic [ref=e1032]:
+                - heading "Ático Booking 4 - Calpe" [level=3] [ref=e1033]:
+                  - link "Ático Booking 4 - Calpe" [ref=e1034] [cursor=pointer]:
+                    - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3766
+                - generic [ref=e1035]:
+                  - generic "Personas" [ref=e1036]:
+                    - img [ref=e1037]
+                    - generic [ref=e1042]: "1"
+                  - generic [ref=e1043]:
+                    - generic [ref=e1044]: 
+                    - generic [ref=e1045]: 236,00 €
+                - generic [ref=e1046]:
+                  - generic [ref=e1047]:
+                    - generic [ref=e1048]: 236,00 €
+                    - text: /noche
+                  - generic [ref=e1049]:
+                    - img [ref=e1050]
+                    - text: 0% ocupación
+          - navigation "Paginación" [ref=e1055]:
+            - list [ref=e1056]:
+              - listitem [ref=e1057]:
+                - generic "Página 1" [ref=e1058]: "1"
+              - listitem [ref=e1059]:
+                - link "Página 2" [ref=e1060] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-properties&status=all
+                  - text: "2"
+              - listitem [ref=e1061]:
+                - link "Siguiente →" [ref=e1062] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/admin.php?page=alquipress-properties&status=all
+    - contentinfo [ref=e1063]:
+      - paragraph
+      - paragraph [ref=e1064]: Versión 6.9.1
+  - dialog "Añadir propiedad" [ref=e1068]:
+    - heading "Añadir propiedad" [level=2] [ref=e1069]
+    - paragraph [ref=e1070]: Introduce el nombre o título de la propiedad.
+    - generic [ref=e1071]:
+      - textbox "Nombre de la propiedad" [active] [ref=e1072]
+      - generic [ref=e1073]:
+        - button "Cancelar" [ref=e1074] [cursor=pointer]
+        - button "Crear" [ref=e1075] [cursor=pointer]
+```

@@ -1,0 +1,2907 @@
+[2026-02-04 23:53:45] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+            [12] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/index.php
+                    [line] => 10
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                        )
+
+                    [function] => require_once
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:45] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/index.php
+                    [line] => 10
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                        )
+
+                    [function] => require_once
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:45] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:45] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:45] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:45] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:46] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:46] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:48] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:48] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:48] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+            [12] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/index.php
+                    [line] => 10
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                        )
+
+                    [function] => require_once
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:48] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/index.php
+                    [line] => 10
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                        )
+
+                    [function] => require_once
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:48] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:48] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:50] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:53:50] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:54:01] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:54:01] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:54:03] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:54:03] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:54:16] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:54:16] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:54:20] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+            [12] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/user-edit.php
+                    [line] => 10
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                        )
+
+                    [function] => require_once
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:54:20] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/user-edit.php
+                    [line] => 10
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                        )
+
+                    [function] => require_once
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:54:23] [deprecated_backtrace]: Array
+(
+    [message] => strpos(): Passing null to parameter #1 ($haystack) of type string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 7374
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 7374
+                    [function] => strpos
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2189
+                    [function] => wp_is_stream
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+            [12] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/users.php
+                    [line] => 11
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                        )
+
+                    [function] => require_once
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-04 23:54:23] [deprecated_backtrace]: Array
+(
+    [message] => str_replace(): Passing null to parameter #3 ($subject) of type array|string is deprecated
+    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+    [line] => 2196
+    [backtrace] => Array
+        (
+            [0] => Array
+                (
+                    [function] => aq_log_deprecation_backtrace
+                )
+
+            [1] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php
+                    [line] => 2196
+                    [function] => str_replace
+                )
+
+            [2] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 779
+                    [function] => wp_normalize_path
+                )
+
+            [3] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/plugin.php
+                    [line] => 1491
+                    [function] => plugin_basename
+                )
+
+            [4] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-content/plugins/alquipress-core/includes/modules/crm-owners/owner-profile.php
+                    [line] => 25
+                    [function] => add_submenu_page
+                )
+
+            [5] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 341
+                    [function] => add_owner_profile_page
+                    [class] => Alquipress_Owner_Profile
+                    [type] => ->
+                )
+
+            [6] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wp-hook.php
+                    [line] => 365
+                    [function] => apply_filters
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [7] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/plugin.php
+                    [line] => 522
+                    [function] => do_action
+                    [class] => WP_Hook
+                    [type] => ->
+                )
+
+            [8] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                    [line] => 161
+                    [function] => do_action
+                )
+
+            [9] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                    [line] => 437
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/includes/menu.php
+                        )
+
+                    [function] => require_once
+                )
+
+            [10] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                    [line] => 163
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/menu.php
+                        )
+
+                    [function] => require
+                )
+
+            [11] => Array
+                (
+                    [file] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/users.php
+                    [line] => 11
+                    [args] => Array
+                        (
+                            [0] => /Users/joanraez/Local Sites/alquipress/app/public/wp-admin/admin.php
+                        )
+
+                    [function] => require_once
+                )
+
+        )
+
+)
+
+----------------------------------------
+[2026-02-05 00:04:49] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:04:49] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:04:49] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:04:50] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:06:55] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:06:56] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:02] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:04] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:17] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:20] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:21] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:21] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:21] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:24] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:26] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:26] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:26] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:26] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:27] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-05 00:12:27] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------
+[2026-02-06 10:14:47] [MailPoet Sync Error]: Este suscriptor ya existe.
+----------------------------------------

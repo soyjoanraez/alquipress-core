@@ -1,0 +1,184 @@
+/**
+ * ALQUIPRESS Payment Manager - Admin Styles
+ */
+
+/* Product Tab Icon */
+#woocommerce-product-data ul.wc-tabs li.apm_payments_options a::before {
+    content: '\f482';
+    font-family: 'dashicons';
+}
+
+/* Payment Info Box in Order */
+.apm-payment-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f0f6fc;
+    border-left: 4px solid #2271b1;
+    border-radius: 0 4px 4px 0;
+}
+
+.apm-payment-info h4 {
+    margin: 0 0 10px;
+    color: #1d2327;
+}
+
+.apm-payment-info table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.apm-payment-info table td {
+    padding: 5px 0;
+    vertical-align: top;
+}
+
+.apm-payment-info table td:first-child {
+    width: 150px;
+}
+
+/* Payment Schedule Table */
+.apm-schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.apm-schedule-table th,
+.apm-schedule-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e1e5eb;
+}
+
+.apm-schedule-table th {
+    background: #f0f0f1;
+    font-weight: 600;
+}
+
+/* Status Badges */
+.apm-status {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.apm-status-pending {
+    background: #fef5e7;
+    color: #9a6700;
+}
+
+.apm-status-completed {
+    background: #e8f6ef;
+    color: #1e7e34;
+}
+
+.apm-status-failed {
+    background: #fdedec;
+    color: #c0392b;
+}
+
+.apm-status-manual_required {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* Settings Page */
+.apm-settings-info {
+    background: #fff;
+    padding: 15px;
+    border: 1px solid #c3c4c7;
+    border-left: 4px solid #72aee6;
+    margin-bottom: 20px;
+}
+
+/* Product Metabox */
+#apm_payments_data .options_group {
+    border-bottom: 1px solid #eee;
+    padding: 15px;
+}
+
+#apm_payments_data .options_group:last-child {
+    border-bottom: none;
+}
+
+#apm_payments_data .form-field label {
+    font-weight: 600;
+}
+
+/* Quick Actions */
+.apm-quick-actions {
+    margin-top: 10px;
+}
+
+.apm-quick-actions .button {
+    margin-right: 5px;
+}
+
+/* Order Status Column */
+.column-apm_payment_status {
+    width: 120px;
+}
+
+/* Custom Order Statuses Colors */
+.order-status.status-deposit-paid {
+    background: #fef5e7;
+    color: #9a6700;
+}
+
+.order-status.status-balance-pending {
+    background: #fdebd0;
+    color: #b35900;
+}
+
+.order-status.status-fully-paid {
+    background: #e8f6ef;
+    color: #1e7e34;
+}
+
+.order-status.status-security-held {
+    background: #f4ecf7;
+    color: #7b4ea3;
+}
+
+.order-status.status-payment-failed {
+    background: #fdedec;
+    color: #c0392b;
+}
+
+/* Logs Table */
+.apm-logs-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.apm-logs-table th,
+.apm-logs-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 13px;
+}
+
+.apm-logs-table th {
+    background: #f5f5f5;
+}
+
+.apm-logs-table tr:hover {
+    background: #f9f9f9;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+    .apm-payment-info table td {
+        display: block;
+        width: 100%;
+    }
+
+    .apm-payment-info table td:first-child {
+        width: 100%;
+        font-weight: 600;
+        padding-bottom: 2px;
+    }
+}

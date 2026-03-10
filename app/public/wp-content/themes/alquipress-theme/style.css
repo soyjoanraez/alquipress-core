@@ -1,0 +1,220 @@
+/*
+Theme Name: Alquipress Theme
+Theme URI: https://alquipress.com
+Description: Tema hijo de Astra personalizado para la plataforma Alquipress. Incluye estilos para el motor de reservas y diseño premium.
+Author: Antigravity AI
+Author URI: https://alquipress.com
+Template: astra
+Version: 1.0.0
+Text Domain: alquipress-theme
+*/
+
+/* =========================================
+   VARIABLES CSS (Modern SaaS)
+   ========================================= */
+:root {
+    --alq-primary: #0b6bcb;
+    --alq-primary-strong: #0a58a8;
+    --alq-secondary: #12b3a8;
+    --alq-dark: #0c1722;
+    --alq-text: #516173;
+    --alq-bg-light: #f5f7fb;
+    --alq-surface: #ffffff;
+    --alq-surface-muted: #eef2f6;
+    --alq-border: #e1e7ee;
+    --alq-success: #28a745;
+    --alq-warning: #ffc107;
+    --alq-danger: #dc3545;
+    --alq-radius: 10px;
+    --alq-radius-lg: 16px;
+    --alq-shadow-sm: 0 4px 16px rgba(12, 23, 34, 0.08);
+    --alq-shadow: 0 12px 32px rgba(12, 23, 34, 0.12);
+    --alq-font-body: "Manrope", "Helvetica Neue", sans-serif;
+    --alq-font-display: "Sora", "Helvetica Neue", sans-serif;
+}
+
+/* =========================================
+   ESTILOS GLOBALES
+   ========================================= */
+body {
+    background-color: var(--alq-bg-light);
+    background-image: radial-gradient(1200px 600px at 10% -10%, rgba(18, 179, 168, 0.08), transparent 60%),
+        radial-gradient(900px 500px at 90% -20%, rgba(11, 107, 203, 0.10), transparent 55%);
+    color: var(--alq-dark);
+    font-family: var(--alq-font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--alq-dark);
+    font-weight: 700;
+    font-family: var(--alq-font-display);
+    letter-spacing: -0.01em;
+}
+
+p, li {
+    color: var(--alq-text);
+}
+
+a {
+    color: var(--alq-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--alq-primary-strong);
+}
+
+/* =========================================
+   BUTTONS & FORMS
+   ========================================= */
+.button,
+button,
+input[type="submit"],
+.ast-button,
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button {
+    border-radius: 999px;
+    padding: 0.75rem 1.4rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, var(--alq-primary), var(--alq-secondary));
+    color: #fff;
+    box-shadow: var(--alq-shadow-sm);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+.ast-button:hover,
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--alq-shadow);
+    filter: saturate(1.05);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+    border-radius: 12px;
+    border: 1px solid var(--alq-border);
+    background: var(--alq-surface);
+    padding: 0.7rem 0.9rem;
+    box-shadow: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: rgba(11, 107, 203, 0.5);
+    box-shadow: 0 0 0 3px rgba(11, 107, 203, 0.15);
+    outline: none;
+}
+
+/* =========================================
+   FICHAS DE INMUEBLES (Single Product)
+   ========================================= */
+.single-product .product_title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.alquipress-price-box {
+    background: var(--alq-surface);
+    padding: 20px;
+    border-radius: var(--alq-radius);
+    box-shadow: var(--alq-shadow);
+    border: 1px solid var(--alq-border);
+}
+
+/* =========================================
+   BREADCRUMBS
+   ========================================= */
+.breadcrumb {
+    font-size: 0.9rem;
+    color: var(--alq-text);
+    margin-bottom: 2rem;
+}
+.breadcrumb a {
+    color: var(--alq-text);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.breadcrumb a:hover {
+    color: var(--alq-primary);
+}
+
+/* =========================================
+   CARDS & SECTIONS
+   ========================================= */
+.card,
+.wp-block-group.is-style-default,
+.woocommerce .products .product,
+.woocommerce ul.products li.product {
+    background: var(--alq-surface);
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-radius-lg);
+    box-shadow: var(--alq-shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.woocommerce ul.products li.product:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--alq-shadow);
+}
+
+.woocommerce ul.products li.product .price {
+    color: var(--alq-primary);
+    font-weight: 700;
+}
+
+.woocommerce ul.products li.product .button {
+    margin-top: 0.6rem;
+}
+
+/* =========================================
+   HERO / COVER
+   ========================================= */
+.wp-block-cover {
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--alq-shadow);
+}
+
+.wp-block-cover h1 {
+    text-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+/* =========================================
+   TABLES
+   ========================================= */
+table,
+.woocommerce table.shop_table {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--alq-border);
+    background: var(--alq-surface);
+}
+
+.woocommerce table.shop_table th,
+.woocommerce table.shop_table td {
+    padding: 0.9rem;
+}
+
+/* =========================================
+   LANDING PAGES (Gutenberg Fixes)
+   ========================================= */
+.wp-block-cover h1 {
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}

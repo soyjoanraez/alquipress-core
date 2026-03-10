@@ -1,0 +1,704 @@
+# Copyright (C) 2025 WooCommerce
+# This file is distributed under the same license as the WooCommerce Bookings Availability plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: WooCommerce Bookings Availability 1.3.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/target-repo\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-10-20T17:27:49+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: woocommerce-bookings-availability\n"
+
+#. Plugin Name of the plugin
+#: woocommerce-bookings-availability.php
+msgid "WooCommerce Bookings Availability"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: woocommerce-bookings-availability.php
+msgid "https://woocommerce.com/products/bookings-availability/"
+msgstr ""
+
+#. Description of the plugin
+#: woocommerce-bookings-availability.php
+msgid "Show booking availabilities via Gutenberg blocks."
+msgstr ""
+
+#. Author of the plugin
+#: woocommerce-bookings-availability.php
+msgid "WooCommerce"
+msgstr ""
+
+#. Author URI of the plugin
+#: woocommerce-bookings-availability.php
+msgid "https://woocommerce.com"
+msgstr ""
+
+#. translators: %s WC Bookings URL link.
+#: woocommerce-bookings-availability.php:43
+#, php-format
+msgid "Bookings Availability requires WooCommerce Bookings. You can purchase %s here."
+msgstr ""
+
+#. translators: %s WC Bookings version number.
+#: woocommerce-bookings-availability.php:53
+#, php-format
+msgid "Bookings Availability requires WooCommerce Bookings version %s or higher. Please update your current WooCommerce Bookings version."
+msgstr ""
+
+#: woocommerce-bookings-availability.php:75
+msgid "You've activated Bookings Availability for WooCommerce Bookings!"
+msgstr ""
+
+#. translators: first href link to wc-admin pages, second href link to wc-admin posts
+#: woocommerce-bookings-availability.php:77
+#, php-format
+msgid "You can now add a schedule or calendar into your <a href=\"%1$s\">pages</a> and <a href=\"%2$s\">posts</a>.<br><br>"
+msgstr ""
+
+#. translators: button to create a new pages
+#: woocommerce-bookings-availability.php:81
+msgid "Create a page"
+msgstr ""
+
+#. translators: button to create a new post
+#: woocommerce-bookings-availability.php:83
+msgid "Create a post"
+msgstr ""
+
+#: woocommerce-bookings-availability.php:159
+msgid "Cloning is forbidden."
+msgstr ""
+
+#: woocommerce-bookings-availability.php:168
+msgid "Unserializing instances of this class is forbidden."
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/book-button/index.js:58
+#: src/js/components/event-item/index.js:54
+msgid "Select options"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/book-button/index.js:60
+#: src/js/components/event-item/index.js:54
+msgid "Book now"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/book-button/index.js:65
+msgid "More details"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:43
+msgid "Today"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:44
+msgid "This week"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:45
+msgid "This month"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:370
+msgid " to "
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:400
+msgid " and "
+msgstr ""
+
+#. translators: %d number of month.
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:412
+#, js-format
+msgid "%d month"
+msgid_plural "%d months"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:437
+msgid "No available times this week."
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:439
+msgid "No available times this month."
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:442
+msgid "No available times this day."
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:458
+msgid "We weren't able to load times for this week."
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:460
+msgid "We weren't able to load times for this month."
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/date-utils.js:463
+msgid "We weren't able to load times for this day."
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/event-calendar-item/popover.js:77
+#, js-format
+msgid "%d slot available"
+msgid_plural "%d slots available"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/event-calendar-item/popover.js:83
+msgid "Date"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/event-calendar-item/popover.js:87
+msgid "Time"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/event-calendar-item/popover.js:19
+msgid "Multiple times available"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/event-calendar-item/popover.js:91
+msgid "Price"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/event-calendar-item/index.js:142
+msgid "(Sold out)"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/event-item/index.js:59
+msgid "Sold out"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/misc-utils.js:19
+msgid "All bookable products"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/products/screen/index.js:64
+#: src/js/includes/misc-utils.js:20
+msgid "Specific bookable products"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/misc-utils.js:21
+msgid "Specific categories"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/includes/misc-utils.js:22
+msgid "Specific resources"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/page-loader/index.js:78
+#, js-format
+msgid "%s additional listing."
+msgid_plural "%s additional listings."
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/page-loader/index.js:81
+msgid "Load more..."
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule-frontend.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/event-calendar/index.js:413
+#: src/js/components/event-table/index.js:295
+msgid "Try again"
+msgstr ""
+
+#: build/bookings-calendar-frontend.js:2
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/event-calendar/index.js:411
+msgid "We weren't able to load the store calendar."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/tag/index.js:77
+#, js-format
+msgid "Remove %s"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/search-list-control/index.js:27
+msgid "Clear all selected items"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/search-list-control/index.js:28
+msgid "Results"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/search-list-control/index.js:29
+msgid "No items found."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/search-list-control/index.js:31
+#, js-format
+msgid "No results for %s"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/search-list-control/index.js:32
+msgid "Search for items"
+msgstr ""
+
+#. translators: %s selection count. Number of selected items.
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/search-list-control/index.js:35
+#, js-format
+msgid "%d item selected"
+msgid_plural "%d items selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/search-list-control/index.js:36
+msgid "Search results updated."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/search-list-control/index.js:180
+msgid "Clear all"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/products/control/index.js:38
+msgid "Clear all products"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/products/control/index.js:39
+msgid "Products"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/products/control/index.js:40
+msgid "Your store doesn't have any products."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/products/control/index.js:44
+msgid "Search for products to display"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/products/control/index.js:51
+#, js-format
+msgid "%d product selected"
+msgid_plural "%d products selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/products/control/index.js:59
+msgid "Product search results updated."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-calendar/block.js:116
+#: src/js/blocks/bookings-schedule/block.js:154
+#: src/js/components/products/screen/index.js:107
+msgid "Edit"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/products/screen/index.js:69
+msgid "Display a selection of specific bookable products in a list"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/screen/index.js:76
+#: src/js/components/products/screen/index.js:75
+#: src/js/components/resources/screen/index.js:76
+msgid "Display different products"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/screen/index.js:85
+#: src/js/components/products/screen/index.js:84
+#: src/js/components/resources/screen/index.js:85
+msgid "Done"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/products/screen/index.js:135
+msgid "Specific Bookable Products"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/products/screen/index.js:141
+msgid "No products are selected."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/control/index.js:38
+msgid "Clear all categories"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/control/index.js:39
+msgid "Categories"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/control/index.js:40
+msgid "Your store doesn't have any categories."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/control/index.js:44
+msgid "Search for categories to display"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/control/index.js:51
+#, js-format
+msgid "%d category selected"
+msgid_plural "%d categories selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/control/index.js:59
+msgid "Category search results updated."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/screen/index.js:65
+msgid "Specific bookable categories"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/screen/index.js:70
+msgid "Display a selection of specific bookable categories in a grid"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/screen/index.js:136
+msgid "Specific Bookable Categories"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/categories/screen/index.js:142
+msgid "No categories are selected."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/resources/control/index.js:38
+msgid "Clear all resources"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/resources/control/index.js:39
+msgid "Resources"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/resources/control/index.js:40
+msgid "Your store doesn't have any resources."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/resources/control/index.js:44
+msgid "Search for resources to display"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/resources/control/index.js:51
+#, js-format
+msgid "%d resource selected"
+msgid_plural "%d resources selected"
+msgstr[0] ""
+msgstr[1] ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/resources/control/index.js:59
+msgid "Resource search results updated."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/resources/screen/index.js:65
+msgid "Specific bookable resources"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/resources/screen/index.js:70
+msgid "Display a selection of specific bookable resources in a grid"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/resources/screen/index.js:136
+msgid "Specific Bookable Resources"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/resources/screen/index.js:141
+msgid "No resources are selected."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-calendar/block.js:148
+#: src/js/blocks/bookings-calendar/index.js:25
+#: src/js/components/initial-products-screen/index.js:27
+msgid "Bookings Calendar"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-schedule/block.js:202
+#: src/js/blocks/bookings-schedule/index.js:26
+#: src/js/components/initial-products-screen/index.js:31
+msgid "Bookings Schedule"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/initial-products-screen/index.js:41
+msgid "Display a schedule of upcoming events or classes"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/components/initial-products-screen/index.js:48
+msgid "Select bookable products to display"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-calendar/block.js:153
+#: src/js/blocks/bookings-schedule/block.js:207
+msgid "You haven't created any bookable products."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-calendar/block.js:155
+#: src/js/blocks/bookings-schedule/block.js:209
+msgid "Create one now."
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-calendar/block.js:64
+#: src/js/blocks/bookings-schedule/block.js:94
+msgid "Schedule settings"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-calendar/block.js:68
+#: src/js/blocks/bookings-schedule/block.js:98
+msgid "Include"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-calendar/block.js:75
+#: src/js/blocks/bookings-schedule/block.js:105
+msgid "Display settings"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-calendar/block.js:79
+#: src/js/blocks/bookings-schedule/block.js:109
+msgid "Time range"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-calendar/block.js:86
+#: src/js/blocks/bookings-schedule/block.js:116
+msgid "Show date navigation"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: src/js/blocks/bookings-calendar/block.js:92
+msgid "Show sold out times"
+msgstr ""
+
+#: build/bookings-calendar.js:2
+#: src/js/blocks/bookings-calendar/index.js:26
+msgid "Show customers your upcoming availability in calendar form."
+msgstr ""
+
+#: build/bookings-schedule.js:2
+#: src/js/components/infinite-scroll-control/index.js:46
+msgid "Show all available times"
+msgstr ""
+
+#: build/bookings-schedule.js:2
+#: src/js/components/infinite-scroll-control/index.js:53
+msgid "Maximum number of times to show at first"
+msgstr ""
+
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-schedule/block.js:128
+msgid "Show empty dates"
+msgstr ""
+
+#: build/bookings-schedule.js:2
+#: src/js/blocks/bookings-schedule/index.js:27
+msgid "Show customers your upcoming availability in list form."
+msgstr ""
+
+#: src/js/components/product-preview/index.js:31
+msgid "Add to cart"
+msgstr ""

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "alquipress-child/property-kpis",
+  "title": "KPIs de propiedad",
+  "category": "alquipress",
+  "icon": "chart-bar",
+  "description": "Habitaciones, baños, plazas, superficie, precio/noche, limpieza.",
+  "textdomain": "alquipress-child",
+  "supports": { "html": false },
+  "attributes": {},
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

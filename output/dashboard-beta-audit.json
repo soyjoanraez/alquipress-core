@@ -1,0 +1,154 @@
+{
+  "generatedAt": "2026-02-19T11:45:34.732Z",
+  "checkedSections": [
+    {
+      "section": "Panel",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-dashboard",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-dashboard"
+    },
+    {
+      "section": "Propiedades",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties"
+    },
+    {
+      "section": "Reservas",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-bookings",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-bookings"
+    },
+    {
+      "section": "Guests",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-clients",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-clients"
+    },
+    {
+      "section": "Owners",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-owners",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-owners"
+    },
+    {
+      "section": "Finanzas",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-finanzas",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-finanzas"
+    },
+    {
+      "section": "Contabilidad",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-accounting",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-accounting"
+    },
+    {
+      "section": "Informes",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-reports",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-reports"
+    },
+    {
+      "section": "Pipeline",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-pipeline",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-pipeline"
+    },
+    {
+      "section": "Inbox (Histórico)",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-comunicacion&tab=manage",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-comunicacion&tab=manage"
+    },
+    {
+      "section": "Inbox (Omnicanal)",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-comunicacion&tab=inbox",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-comunicacion&tab=inbox"
+    },
+    {
+      "section": "Feed Kyero",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-kyero",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-kyero"
+    },
+    {
+      "section": "Ajustes",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-settings",
+      "loaded": true,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-settings"
+    },
+    {
+      "section": "Performance & Security",
+      "url": "http://alquipress.local/wp-admin/admin.php?page=alquipress-suite",
+      "loaded": false,
+      "finalUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-settings&tab=bookings"
+    }
+  ],
+  "failures": [
+    {
+      "severity": "high",
+      "section": "Reservas",
+      "pageUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-bookings",
+      "title": "Botón \"Ver todas\" no navega al listado de pedidos",
+      "details": "URL actual: http://alquipress.local/wp-admin/admin.php?page=wc-orders"
+    },
+    {
+      "severity": "medium",
+      "section": "Finanzas",
+      "pageUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-finanzas",
+      "title": "Error durante test manual de la sección",
+      "details": "locator.click: Element is not visible\nCall log:\n\u001b[2m  - waiting for locator('a:has-text(\"Ver Pedidos\")').first()\u001b[22m\n\u001b[2m    - locator resolved to <a class=\"ab-item\" role=\"menuitem\" href=\"http://alquipress.local/wp-admin/edit.php?post_type=shop_order\">📦 Ver Pedidos</a>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n"
+    },
+    {
+      "severity": "medium",
+      "section": "Inbox (Omnicanal)",
+      "pageUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-comunicacion&tab=inbox",
+      "title": "Enlace placeholder sin destino real",
+      "details": "Texto: \"Extender estancia\" href=\"#\""
+    },
+    {
+      "severity": "medium",
+      "section": "Inbox (Omnicanal)",
+      "pageUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-comunicacion&tab=inbox",
+      "title": "Enlace placeholder sin destino real",
+      "details": "Texto: \"Solicitar pago\" href=\"#\""
+    },
+    {
+      "severity": "medium",
+      "section": "Inbox (Omnicanal)",
+      "pageUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-comunicacion&tab=inbox",
+      "title": "Botón \"Enviar\" no muestra efecto en inbox omnicanal",
+      "details": "No se agrega mensaje nuevo ni estado visible"
+    },
+    {
+      "severity": "medium",
+      "section": "Ajustes",
+      "pageUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-settings",
+      "title": "Pestañas de Ajustes no cambian al clicar",
+      "details": "Pestaña activa: (vacío)"
+    },
+    {
+      "severity": "critical",
+      "section": "Performance & Security",
+      "pageUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-suite",
+      "title": "La sección no carga",
+      "details": "No se pudo abrir http://alquipress.local/wp-admin/admin.php?page=alquipress-suite"
+    },
+    {
+      "severity": "medium",
+      "section": "Console JS/PHP",
+      "pageUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-reports",
+      "title": "Error de consola",
+      "details": "Failed to load resource: the server responded with a status of 429 (Too Many Requests)"
+    }
+  ],
+  "totals": {
+    "sections": 14,
+    "failures": 8,
+    "critical": 1,
+    "high": 1,
+    "medium": 6
+  }
+}

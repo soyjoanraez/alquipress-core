@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 2,
+  "settings": {
+    "color": {
+      "palette": [
+        { "slug": "primary", "color": "#0b6bcb", "name": "Primario" },
+        { "slug": "primary-strong", "color": "#0a58a8", "name": "Primario fuerte" },
+        { "slug": "warning", "color": "#ffc107", "name": "Aviso" },
+        { "slug": "muted", "color": "#64748b", "name": "Suave" },
+        { "slug": "white", "color": "#ffffff", "name": "Blanco" },
+        { "slug": "dark", "color": "#0c1722", "name": "Oscuro" }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        { "slug": "body", "fontFamily": "Manrope, Helvetica Neue, sans-serif", "name": "Cuerpo" },
+        { "slug": "display", "fontFamily": "Sora, Helvetica Neue, sans-serif", "name": "Títulos" }
+      ]
+    },
+    "layout": {
+      "contentSize": "720px",
+      "wideSize": "1200px"
+    }
+  }
+}

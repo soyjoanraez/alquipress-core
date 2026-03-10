@@ -1,0 +1,875 @@
+{
+  "auditedAt": "2026-02-11T22:23:17.972Z",
+  "page": "alquipress-properties",
+  "heading": "Propiedades",
+  "sectionTitles": [
+    "Pedidos Pendientes de Pago",
+    "Propiedades en Revisión",
+    "Villa Puerto en Moraira #10",
+    "Apartamento Montaña en Calpe #9",
+    "Casa de Pueblo Puerto en Altea #8",
+    "Apartamento Puerto en Calpe #7",
+    "Casa de Pueblo Centro en Calpe #6",
+    "Bungalow Centro en Denia #5",
+    "Ático Montaña en Calpe #4",
+    "Villa Puerto en Jávea #3",
+    "Apartamento Casco Antiguo en Altea #2",
+    "Casa de Pueblo Playa en Calpe #1",
+    "Villa Playa en Altea #3",
+    "Casa de Pueblo Centro en Denia #1",
+    "Bungalow Montaña en Altea #2",
+    "Casa de Pueblo Playa en Calpe #4",
+    "Villa Casco Antiguo en Altea #5",
+    "Ático Puerto en Jávea #6",
+    "Ático Casco Antiguo en Denia #7",
+    "Bungalow Centro en Jávea #8",
+    "Bungalow Centro en Moraira #9",
+    "Bungalow Montaña en Altea #10",
+    "Casa de Pueblo Booking 1 - Altea",
+    "Ático Booking 2 - Moraira",
+    "Bungalow Booking 3 - Denia",
+    "Ático Booking 4 - Calpe",
+    "Villa Puerto en Altea #10",
+    "Apartamento Casco Antiguo en Denia #9",
+    "Apartamento Playa en Altea #8",
+    "Bungalow Casco Antiguo en Denia #7",
+    "Ático Montaña en Denia #6",
+    "Casa de Pueblo Montaña en Moraira #5",
+    "Ático Casco Antiguo en Calpe #4",
+    "Bungalow Montaña en Moraira #3",
+    "Apartamento Playa en Jávea #2",
+    "Apartamento Casco Antiguo en Denia #1",
+    "Villa Prueba"
+  ],
+  "actionsFound": [
+    {
+      "tag": "a",
+      "text": "Ver Pedidos",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-pending",
+      "id": "",
+      "className": "notification-action button",
+      "target": ""
+    },
+    {
+      "tag": "button",
+      "text": "Descartar este aviso.",
+      "href": "",
+      "id": "",
+      "className": "notice-dismiss",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Ver Revisiones",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-checkout-review",
+      "id": "",
+      "className": "notification-action button",
+      "target": ""
+    },
+    {
+      "tag": "button",
+      "text": "Filtrar",
+      "href": "",
+      "id": "ap-props-filter-toggle",
+      "className": "ap-props-filter-btn ap-props-filter-toggle",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Añadir propiedad",
+      "href": "http://alquipress.local/wp-admin/post-new.php?post_type=product",
+      "id": "",
+      "className": "ap-props-add-btn",
+      "target": ""
+    },
+    {
+      "tag": "button",
+      "text": "",
+      "href": "",
+      "id": "",
+      "className": "ap-props-view-btn ap-props-view-grid active",
+      "target": ""
+    },
+    {
+      "tag": "button",
+      "text": "",
+      "href": "",
+      "id": "",
+      "className": "ap-props-view-btn ap-props-view-list",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Todas: 35",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "id": "",
+      "className": "ap-props-pill active",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Activas: 35",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties&status=active",
+      "id": "",
+      "className": "ap-props-pill ap-props-pill-active",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Mantenimiento: 0",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties&status=maintenance",
+      "id": "",
+      "className": "ap-props-pill ap-props-pill-maint",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3873",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Villa Puerto en Moraira #10",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3873",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3872",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Apartamento Montaña en Calpe #9",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3872",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3871",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Casa de Pueblo Puerto en Altea #8",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3871",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3870",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Apartamento Puerto en Calpe #7",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3870",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3869",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Casa de Pueblo Centro en Calpe #6",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3869",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3868",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Bungalow Centro en Denia #5",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3868",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3867",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Ático Montaña en Calpe #4",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3867",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3866",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Villa Puerto en Jávea #3",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3866",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3865",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Apartamento Casco Antiguo en Altea #2",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3865",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3864",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Casa de Pueblo Playa en Calpe #1",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3864",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3798",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Villa Playa en Altea #3",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3798",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3796",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Casa de Pueblo Centro en Denia #1",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3796",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3797",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Bungalow Montaña en Altea #2",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3797",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3799",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Casa de Pueblo Playa en Calpe #4",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3799",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3800",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Villa Casco Antiguo en Altea #5",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3800",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3801",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Ático Puerto en Jávea #6",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3801",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3802",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Ático Casco Antiguo en Denia #7",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3802",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3803",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Bungalow Centro en Jávea #8",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3803",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3804",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Bungalow Centro en Moraira #9",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3804",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3805",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Bungalow Montaña en Altea #10",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3805",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3763",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Casa de Pueblo Booking 1 - Altea",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3763",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3764",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Ático Booking 2 - Moraira",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3764",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3765",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Bungalow Booking 3 - Denia",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3765",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3766",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Ático Booking 4 - Calpe",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3766",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3762",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Villa Puerto en Altea #10",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3762",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3761",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Apartamento Casco Antiguo en Denia #9",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3761",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3760",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Apartamento Playa en Altea #8",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3760",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3759",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Bungalow Casco Antiguo en Denia #7",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3759",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3758",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Ático Montaña en Denia #6",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3758",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3757",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Casa de Pueblo Montaña en Moraira #5",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3757",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3756",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Ático Casco Antiguo en Calpe #4",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3756",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3755",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Bungalow Montaña en Moraira #3",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3755",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3754",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Apartamento Playa en Jávea #2",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3754",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3753",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Apartamento Casco Antiguo en Denia #1",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3753",
+      "id": "",
+      "className": "",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=22",
+      "id": "",
+      "className": "ap-props-card-menu",
+      "target": ""
+    },
+    {
+      "tag": "a",
+      "text": "Villa Prueba",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=22",
+      "id": "",
+      "className": "",
+      "target": ""
+    }
+  ],
+  "priorityChecked": [
+    {
+      "label": "Ver Pedidos",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-pending",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=wc-orders&status=wc-pending"
+    },
+    {
+      "label": "Ver Revisiones",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-checkout-review",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=wc-orders&status=wc-checkout-review"
+    },
+    {
+      "label": "Añadir propiedad",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/post-new.php?post_type=product",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/post-new.php?post_type=product"
+    },
+    {
+      "label": "Todas: 35",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "status": "warn",
+      "note": "no-navigation",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties"
+    },
+    {
+      "label": "Activas: 35",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties&status=active",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties&status=active"
+    },
+    {
+      "label": "Mantenimiento: 0",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties&status=maintenance",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties&status=maintenance"
+    },
+    {
+      "label": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3873",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3873",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3873"
+    },
+    {
+      "label": "Villa Puerto en Moraira #10",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3873",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3873"
+    },
+    {
+      "label": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3872",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3872",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3872"
+    },
+    {
+      "label": "Apartamento Montaña en Calpe #9",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3872",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3872"
+    },
+    {
+      "label": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3871",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3871",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3871"
+    },
+    {
+      "label": "Casa de Pueblo Puerto en Altea #8",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3871",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3871"
+    },
+    {
+      "label": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3870",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3870",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3870"
+    },
+    {
+      "label": "Apartamento Puerto en Calpe #7",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3870",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3870"
+    },
+    {
+      "label": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3869",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3869",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3869"
+    },
+    {
+      "label": "Casa de Pueblo Centro en Calpe #6",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3869",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3869"
+    },
+    {
+      "label": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3868",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3868",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3868"
+    },
+    {
+      "label": "Bungalow Centro en Denia #5",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3868",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3868"
+    },
+    {
+      "label": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3867",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3867",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3867"
+    },
+    {
+      "label": "Ático Montaña en Calpe #4",
+      "tag": "a",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3867",
+      "status": "ok",
+      "note": "navigates",
+      "beforeUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-properties",
+      "afterUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-edit-property&post_id=3867"
+    }
+  ],
+  "summary": {
+    "totalActionsFound": 80,
+    "checked": 20,
+    "ok": 19,
+    "warn": 1,
+    "error": 0
+  }
+}

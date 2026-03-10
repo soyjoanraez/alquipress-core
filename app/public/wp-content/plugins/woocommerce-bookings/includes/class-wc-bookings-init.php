@@ -1,0 +1,686 @@
+<?php
+/**
+ * Initializes bookings.
+ *
+ * @package WooCommerce Bookings
+ * @since 1.13.0
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * WC_Bookings_Init class.
+ *
+ * Initializes bookings functionality.
+ */
+class WC_Bookings_Init {
+	/**
+	 * Constructor.
+	 *
+	 * @since 1.13.0
+	 */
+	public function __construct() {
+		add_action( 'init', array( $this, 'init_post_types' ), 9 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'booking_form_styles' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'booking_shared_dependencies' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'booking_shared_dependencies' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'booking_admin_dependencies' ) );
+		add_filter( 'woocommerce_data_stores', array( $this, 'register_data_stores' ) );
+
+		// Filter the Analytics data.
+		add_filter( 'woocommerce_analytics_products_query_args', array( $this, 'analytics_products_query_args' ) );
+		add_filter( 'woocommerce_analytics_products_stats_query_args', array( $this, 'analytics_products_query_args' ) );
+		add_filter( 'woocommerce_analytics_clauses_join', array( $this, 'analytics_clauses_join' ), 10, 2 );
+		add_filter( 'woocommerce_analytics_clauses_where', array( $this, 'analytics_clauses_where' ), 10, 2 );
+
+		// Load payment gateway name.
+		add_filter( 'woocommerce_payment_gateways', array( $this, 'include_gateway' ) );
+
+		// Dynamically add new bookings' capabilities for roles with deprecated manage_bookings cap.
+		add_filter( 'user_has_cap', array( $this, 'add_new_booking_caps' ), 10, 4 );
+
+		// Create action schedules or custom migration functions.
+		add_action( 'init', array( $this, 'booking_migrations' ), 10 );
+
+		// Add a new custom quick add menu item for bookable products.
+		add_filter( 'admin_bar_menu', array( $this, 'wp_admin_bar_new_content_menu' ), 999 );
+
+		// WooPayments compatibility.
+		add_filter( 'wcpay_payment_request_is_product_supported', array( $this, 'wcpay_is_product_supported' ), 10, 2 );
+		add_filter( 'wcpay_woopay_button_is_product_supported', array( $this, 'wcpay_is_product_supported' ), 10, 2 );
+		add_filter( 'wcpay_payment_request_is_cart_supported', array( $this, 'wcpay_is_cart_supported' ), 10, 2 );
+		add_filter( 'wcpay_platform_checkout_button_are_cart_items_supported', array( $this, 'platform_checkout_button_are_cart_items_supported' ) );
+
+		// Add a filter to allow the product template CSV file path to be overridden.
+		add_filter( 'woocommerce_product_template_csv_file_path', array( $this, 'product_booking_template_csv_file_path' ), 10, 2 );
+	}
+
+	/**
+	 * Filter the product template CSV file path.
+	 *
+	 * @param string $file_path The file path.
+	 * @param string $product_type The product type.
+	 *
+	 * @since 2.1.3
+	 *
+	 * @return string The file path.
+	 */
+	public function product_booking_template_csv_file_path( $file_path, $product_type ) {
+		if ( 'booking' === $product_type ) {
+			$file_path = WC_BOOKINGS_PLUGIN_PATH . '/includes/data/product-booking-template.csv';
+		}
+
+		return $file_path;
+	}
+
+	/**
+	 * Init post types
+	 */
+	public function init_post_types() {
+		register_post_type(
+			'bookable_person',
+			apply_filters( // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+				'woocommerce_register_post_type_bookable_person',
+				array(
+					'label'           => __( 'Person Type', 'woocommerce-bookings' ),
+					'public'          => false,
+					'hierarchical'    => false,
+					'supports'        => false,
+					'capability_type' => 'bookable_person',
+					'map_meta_cap'    => true,
+				)
+			)
+		);
+
+		register_post_type(
+			'bookable_resource',
+			apply_filters( // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+				'woocommerce_register_post_type_bookable_resource',
+				array(
+					'label'               => __( 'Resources', 'woocommerce-bookings' ),
+					'labels'              => array(
+						'name'               => __( 'Bookable resources', 'woocommerce-bookings' ),
+						'singular_name'      => __( 'Bookable resource', 'woocommerce-bookings' ),
+						'add_new'            => __( 'Add Resource', 'woocommerce-bookings' ),
+						'add_new_item'       => __( 'Add New Resource', 'woocommerce-bookings' ),
+						'edit'               => __( 'Edit', 'woocommerce-bookings' ),
+						'edit_item'          => __( 'Edit Resource', 'woocommerce-bookings' ),
+						'new_item'           => __( 'New Resource', 'woocommerce-bookings' ),
+						'view'               => __( 'View Resource', 'woocommerce-bookings' ),
+						'view_item'          => __( 'View Resource', 'woocommerce-bookings' ),
+						'search_items'       => __( 'Search Resource', 'woocommerce-bookings' ),
+						'not_found'          => __( 'No Resource found', 'woocommerce-bookings' ),
+						'not_found_in_trash' => __( 'No Resource found in trash', 'woocommerce-bookings' ),
+						'parent'             => __( 'Parent Resources', 'woocommerce-bookings' ),
+						'menu_name'          => _x( 'Resources', 'Admin menu name', 'woocommerce-bookings' ),
+						'all_items'          => __( 'Resources', 'woocommerce-bookings' ),
+					),
+					'description'         => __( 'Bookable resources are bookable within a bookings product.', 'woocommerce-bookings' ),
+					'public'              => false,
+					'show_ui'             => true,
+					'capability_type'     => 'bookable_resource',
+					'map_meta_cap'        => true,
+					'publicly_queryable'  => false,
+					'exclude_from_search' => true,
+					'hierarchical'        => false,
+					'show_in_nav_menus'   => false,
+					'rewrite'             => false,
+					'query_var'           => false,
+					'supports'            => array( 'title' ),
+					'has_archive'         => false,
+					'show_in_menu'        => 'edit.php?post_type=wc_booking',
+					'show_in_rest'        => true,
+				)
+			)
+		);
+
+		if ( defined( 'WC_BOOKINGS_EXPERIMENTAL_ENABLED' ) && WC_BOOKINGS_EXPERIMENTAL_ENABLED ) {
+			register_post_type(
+				'bookable_team_member',
+				/**
+				 * Filters the bookable team member post type arguments.
+				 *
+				 * @since 3.0.0
+				 *
+				 * @param array $args The post type arguments.
+				 * @return array The post type arguments.
+				 */
+				apply_filters(
+					'woocommerce_register_post_type_bookable_team_member',
+					array(
+						'label'               => __( 'Team Members', 'woocommerce-bookings' ),
+						'labels'              => array(
+							'name'               => __( 'Team Members', 'woocommerce-bookings' ),
+							'singular_name'      => __( 'Team Member', 'woocommerce-bookings' ),
+							'add_new'            => __( 'Add Team Member', 'woocommerce-bookings' ),
+							'add_new_item'       => __( 'Add New Team Member', 'woocommerce-bookings' ),
+							'edit'               => __( 'Edit', 'woocommerce-bookings' ),
+							'edit_item'          => __( 'Edit Team Member', 'woocommerce-bookings' ),
+							'new_item'           => __( 'New Team Member', 'woocommerce-bookings' ),
+							'view'               => __( 'View Team Member', 'woocommerce-bookings' ),
+							'view_item'          => __( 'View Team Member', 'woocommerce-bookings' ),
+							'search_items'       => __( 'Search Team Member', 'woocommerce-bookings' ),
+							'not_found'          => __( 'No Team Member found', 'woocommerce-bookings' ),
+							'not_found_in_trash' => __( 'No Team Member found in trash', 'woocommerce-bookings' ),
+							'parent'             => __( 'Parent Team Members', 'woocommerce-bookings' ),
+							'menu_name'          => _x( 'Team Members', 'Admin menu name', 'woocommerce-bookings' ),
+							'all_items'          => __( 'Team Members', 'woocommerce-bookings' ),
+						),
+						'description'         => __( 'Bookable team members are bookable within a bookings product.', 'woocommerce-bookings' ),
+						'public'              => true,
+						'show_ui'             => false,
+						'menu_icon'           => 'dashicons-admin-users',
+						'capability_type'     => 'bookable_team_member',
+						'map_meta_cap'        => true,
+						'publicly_queryable'  => true,
+						'exclude_from_search' => true,
+						'hierarchical'        => false,
+						'rewrite'             => array(
+							'slug'       => 'team',
+							'with_front' => false,
+							'feeds'      => false,
+						),
+						'query_var'           => true,
+						'has_archive'         => true,
+						'show_in_menu'        => false,
+						'show_in_nav_menus'   => false,
+						'show_in_rest'        => true,
+					)
+				)
+			);
+		}
+
+		register_post_type(
+			'wc_booking',
+			apply_filters( // phpcs:ignore WooCommerce.Commenting.CommentHooks.MissingHookComment
+				'woocommerce_register_post_type_wc_booking',
+				array(
+					'label'               => __( 'Booking', 'woocommerce-bookings' ),
+					'labels'              => array(
+						'name'               => __( 'Bookings', 'woocommerce-bookings' ),
+						'singular_name'      => __( 'Booking', 'woocommerce-bookings' ),
+						'add_new'            => __( 'Add Booking', 'woocommerce-bookings' ),
+						'add_new_item'       => __( 'Add New Booking', 'woocommerce-bookings' ),
+						'edit'               => __( 'Edit', 'woocommerce-bookings' ),
+						'edit_item'          => __( 'Edit Booking', 'woocommerce-bookings' ),
+						'new_item'           => __( 'New Booking', 'woocommerce-bookings' ),
+						'view'               => __( 'View Booking', 'woocommerce-bookings' ),
+						'view_item'          => __( 'View Booking', 'woocommerce-bookings' ),
+						'search_items'       => __( 'Search Bookings', 'woocommerce-bookings' ),
+						'not_found'          => __( 'No Bookings found', 'woocommerce-bookings' ),
+						'not_found_in_trash' => __( 'No Bookings found in trash', 'woocommerce-bookings' ),
+						'parent'             => __( 'Parent Bookings', 'woocommerce-bookings' ),
+						'menu_name'          => _x( 'Bookings', 'Admin menu name', 'woocommerce-bookings' ),
+						'all_items'          => __( 'All Bookings', 'woocommerce-bookings' ),
+					),
+					'description'         => __( 'This is where bookings are stored.', 'woocommerce-bookings' ),
+					'public'              => false,
+					'show_ui'             => true,
+					'capability_type'     => 'wc_booking',
+					'map_meta_cap'        => true,
+					'publicly_queryable'  => false,
+					'exclude_from_search' => true,
+					'show_in_menu'        => true,
+					'hierarchical'        => false,
+					'show_in_nav_menus'   => false,
+					'rewrite'             => false,
+					'query_var'           => false,
+					'supports'            => array( '' ),
+					'has_archive'         => false,
+					'menu_icon'           => 'dashicons-calendar-alt',
+					'show_in_rest'        => true,
+				)
+			)
+		);
+
+		/**
+		 * Post status
+		 */
+		register_post_status(
+			'complete',
+			array(
+				'label'                     => '<span class="status-complete tips" data-tip="' . wc_sanitize_tooltip( _x( 'Complete', 'woocommerce-bookings', 'woocommerce-bookings' ) ) . '">' . _x( 'Complete', 'woocommerce-bookings', 'woocommerce-bookings' ) . '</span>',
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				/* translators: 1: count, 2: count */
+				'label_count'               => _n_noop( 'Complete <span class="count">(%s)</span>', 'Complete <span class="count">(%s)</span>', 'woocommerce-bookings' ),
+			)
+		);
+		register_post_status(
+			'paid',
+			array(
+				'label'                     => '<span class="status-paid tips" data-tip="' . wc_sanitize_tooltip( _x( 'Paid &amp; Confirmed', 'woocommerce-bookings', 'woocommerce-bookings' ) ) . '">' . _x( 'Paid &amp; Confirmed', 'woocommerce-bookings', 'woocommerce-bookings' ) . '</span>',
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				/* translators: 1: count, 2: count */
+				'label_count'               => _n_noop( 'Paid &amp; Confirmed <span class="count">(%s)</span>', 'Paid &amp; Confirmed <span class="count">(%s)</span>', 'woocommerce-bookings' ),
+			)
+		);
+		register_post_status(
+			'confirmed',
+			array(
+				'label'                     => '<span class="status-confirmed tips" data-tip="' . wc_sanitize_tooltip( _x( 'Confirmed', 'woocommerce-bookings', 'woocommerce-bookings' ) ) . '">' . _x( 'Confirmed', 'woocommerce-bookings', 'woocommerce-bookings' ) . '</span>',
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				/* translators: 1: count, 2: count */
+				'label_count'               => _n_noop( 'Confirmed <span class="count">(%s)</span>', 'Confirmed <span class="count">(%s)</span>', 'woocommerce-bookings' ),
+			)
+		);
+		register_post_status(
+			'unpaid',
+			array(
+				'label'                     => '<span class="status-unpaid tips" data-tip="' . wc_sanitize_tooltip( _x( 'Un-paid', 'woocommerce-bookings', 'woocommerce-bookings' ) ) . '">' . _x( 'Un-paid', 'woocommerce-bookings', 'woocommerce-bookings' ) . '</span>',
+				'public'                    => true,
+				'exclude_from_search'       => true,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				/* translators: 1: count, 2: count */
+				'label_count'               => _n_noop( 'Un-paid <span class="count">(%s)</span>', 'Un-paid <span class="count">(%s)</span>', 'woocommerce-bookings' ),
+			)
+		);
+		register_post_status(
+			'pending-confirmation',
+			array(
+				'label'                     => '<span class="status-pending tips" data-tip="' . wc_sanitize_tooltip( _x( 'Pending Confirmation', 'woocommerce-bookings', 'woocommerce-bookings' ) ) . '">' . _x( 'Pending Confirmation', 'woocommerce-bookings', 'woocommerce-bookings' ) . '</span>',
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				/* translators: 1: count, 2: count */
+				'label_count'               => _n_noop( 'Pending Confirmation <span class="count">(%s)</span>', 'Pending Confirmation <span class="count">(%s)</span>', 'woocommerce-bookings' ),
+			)
+		);
+		register_post_status(
+			'cancelled',
+			array(
+				'label'                     => '<span class="status-cancelled tips" data-tip="' . wc_sanitize_tooltip( _x( 'Cancelled', 'woocommerce-bookings', 'woocommerce-bookings' ) ) . '">' . _x( 'Cancelled', 'woocommerce-bookings', 'woocommerce-bookings' ) . '</span>',
+				'public'                    => true,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				/* translators: 1: count, 2: count */
+				'label_count'               => _n_noop( 'Cancelled <span class="count">(%s)</span>', 'Cancelled <span class="count">(%s)</span>', 'woocommerce-bookings' ),
+			)
+		);
+		register_post_status(
+			'in-cart',
+			array(
+				'label'                     => '<span class="status-incart tips" data-tip="' . wc_sanitize_tooltip( _x( 'In Cart', 'woocommerce-bookings', 'woocommerce-bookings' ) ) . '">' . _x( 'In Cart', 'woocommerce-bookings', 'woocommerce-bookings' ) . '</span>',
+				'public'                    => false,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => false,
+				'show_in_admin_status_list' => true,
+				/* translators: 1: count, 2: count */
+				'label_count'               => _n_noop( 'In Cart <span class="count">(%s)</span>', 'In Cart <span class="count">(%s)</span>', 'woocommerce-bookings' ),
+			)
+		);
+		register_post_status(
+			'was-in-cart',
+			array(
+				'label'                     => false,
+				'public'                    => false,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => false,
+				'show_in_admin_status_list' => false,
+				'label_count'               => false,
+			)
+		);
+	}
+
+	/**
+	 * Filter whether to display express pay buttons on product pages.
+	 *
+	 * Runs on the `wcpay_payment_request_is_product_supported` and
+	 * `wcpay_woopay_button_is_product_supported` filters.
+	 *
+	 * @since 2.0.8
+	 *
+	 * @param bool        $is_supported Whether express pay buttons are supported on product pages.
+	 * @param \WC_Product $product      The product object.
+	 *
+	 * @return bool Modified support status.
+	 */
+	public function wcpay_is_product_supported( $is_supported, $product ) {
+		if ( ! ( $product instanceof WC_Product_Booking ) ) {
+			// Product unrelated to this extension.
+			return $is_supported;
+		}
+
+		// Express pay buttons are not supported on product pages.
+		return false;
+	}
+
+	/**
+	 * Filter whether to display Apple/Google express pay buttons on cart pages.
+	 *
+	 * Hide the express pay button on cart pages if the booking requires confirmation.
+	 *
+	 * Runs on the `wcpay_payment_request_is_cart_supported` filter.
+	 *
+	 * @since 2.0.8
+	 *
+	 * @param bool        $is_supported Whether Apple/Google express pay buttons are supported on cart pages.
+	 * @param \WC_Product $product      A product object in the cart.
+	 *
+	 * @return bool Modified support status.
+	 */
+	public function wcpay_is_cart_supported( $is_supported, $product ) {
+		if ( ! ( $product instanceof WC_Product_Booking ) ) {
+			// Product unrelated to this extension.
+			return $is_supported;
+		}
+
+		if ( $product->get_requires_confirmation() ) {
+			// Don't show the express pay button if the booking requires confirmation.
+			return false;
+		}
+
+		return $is_supported;
+	}
+
+	/**
+	 * Filter whether to display WooPay express pay buttons on cart pages.
+	 *
+	 * Hide the express WooPay button on cart pages containing bookings.
+	 *
+	 * Runs on the `wcpay_platform_checkout_button_are_cart_items_supported` filter.
+	 *
+	 * @link https://woocommerce.com/document/woopay-merchant-documentation/#incompatible-extensions
+	 *
+	 * @since 2.0.8
+	 *
+	 * @param bool $is_supported Whether express WooPay buttons are supported on cart pages.
+	 *
+	 * @return bool Modified support status.
+	 */
+	public function platform_checkout_button_are_cart_items_supported( $is_supported ) {
+		// Ensure the WooCommerce cart object is defined.
+		if ( ! WC()->cart instanceof WC_Cart ) {
+			return $is_supported;
+		}
+
+		// Check if the cart contains a booking product.
+		foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+			$product = $cart_item['data'];
+
+			if ( $product instanceof WC_Product_Booking ) {
+				// Product is a booking product.
+				return false;
+			}
+		}
+
+		return $is_supported;
+	}
+
+	/**
+	 * Register data stores for bookings.
+	 *
+	 * @param array $data_stores
+	 *
+	 * @return array
+	 */
+	public function register_data_stores( $data_stores = array() ) {
+		$data_stores['booking']                     = 'WC_Booking_Data_Store';
+		$data_stores['product-booking']             = 'WC_Product_Booking_Data_Store_CPT';
+		$data_stores['product-booking-resource']    = 'WC_Product_Booking_Resource_Data_Store_CPT';
+		$data_stores['product-booking-person-type'] = 'WC_Product_Booking_Person_Type_Data_Store_CPT';
+		$data_stores['booking-global-availability'] = 'WC_Global_Availability_Data_Store';
+
+		return $data_stores;
+	}
+
+	/**
+	 * Frontend booking form scripts
+	 */
+	public function booking_form_styles() {
+		wp_enqueue_style( 'jquery-ui-style', WC_BOOKINGS_PLUGIN_URL . '/dist/jquery-ui-styles.css', array(), '1.11.4-wc-bookings.' . WC_BOOKINGS_VERSION );
+		wp_enqueue_style( 'wc-bookings-styles', WC_BOOKINGS_PLUGIN_URL . '/dist/frontend.css', null, WC_BOOKINGS_VERSION );
+	}
+
+	/**
+	 * Register shared dependencies.
+	 *
+	 * @since 1.15.42
+	 */
+	public function booking_shared_dependencies() {
+		if ( version_compare( get_bloginfo( 'version' ), '5.0.0', '<' ) ) {
+			wp_register_script( 'wc-bookings-moment', WC_BOOKINGS_PLUGIN_URL . '/dist/js/lib/moment-with-locales.js', array(), WC_BOOKINGS_VERSION, true );
+			wp_register_script( 'wc-bookings-moment-timezone', WC_BOOKINGS_PLUGIN_URL . '/dist/js/lib/moment-timezone-with-data.js', array(), WC_BOOKINGS_VERSION, true );
+			wp_register_script( 'wc-bookings-date', false, array( 'wc-bookings-moment', 'wc-bookings-moment-timezone' ) );
+		} else {
+			wp_register_script( 'wc-bookings-date', false, array( 'wp-date' ) );
+		}
+	}
+
+	/**
+	 * Register/enqueue admin dependencies.
+	 *
+	 * @since 1.15.80
+	 */
+	public function booking_admin_dependencies() {
+		// Analytics Page JS.
+		wp_enqueue_script( 'wc_bookings_analytics_script', WC_BOOKINGS_PLUGIN_URL . '/dist/admin-bookings-analytics.js', wc_booking_get_script_dependencies( 'admin-bookings-analytics' ), WC_BOOKINGS_VERSION, true );
+	}
+
+	/**
+	 * Add a custom payment gateway
+	 * This gateway works with bookings that require confirmation.
+	 * It's only needed on the front-end so we make sure we hide
+	 * that gateway in the admin, as it has no options to configure.
+	 */
+	public function include_gateway( $gateways ) {
+		$page = isset( $_GET['page'] ) ? wc_clean( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		$tab  = isset( $_GET['tab'] ) ? wc_clean( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( is_admin() && 'wc-settings' === $page && 'checkout' === $tab ) {
+			return $gateways;
+		}
+
+		// Hide the gateway on the payment providers API request (New react-based payments settings page), as it has no options to configure.
+		if ( $this->is_payment_providers_api_request() ) {
+			return $gateways;
+		}
+
+		$gateways[] = 'WC_Bookings_Gateway';
+
+		return $gateways;
+	}
+
+	/**
+	 * Adds all bookings capabilities to roles with deprecated manage_bookings cap.
+	 *
+	 * @param array        $allcaps An array of all the user's capabilities.
+	 * @param array|string $caps Actual capabilities for meta capability.
+	 * @param array        $args Optional parameters passed to has_cap(), typically object ID.
+	 * @param WP_User      $user The user object.
+	 *
+	 * @return array
+	 */
+	public function add_new_booking_caps( array $allcaps, $caps, $args, WP_User $user ) {
+		if ( empty( $allcaps['manage_bookings'] ) ) {
+			return $allcaps;
+		}
+
+		$bookings_capabilities = WC_Bookings_Install::get_core_capabilities();
+		// Remove core capabilities as they are new caps previously restricted by the manage_woocommerce cap.
+		unset( $bookings_capabilities['core'] );
+
+		foreach ( $bookings_capabilities as $cap_group ) {
+			foreach ( $cap_group as $cap ) {
+				$allcaps[ $cap ] = true;
+			}
+		}
+
+		return $allcaps;
+	}
+
+	/**
+	 * Add a new custom add new item.
+	 *
+	 * @since 2.0.0
+	 *
+	 * return false or void.
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar
+	 */
+	public function wp_admin_bar_new_content_menu( WP_Admin_Bar $wp_admin_bar ) {
+		// Check if the current user has the capability to manage WooCommerce.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		// Create your custom menu item.
+		$custom_menu_item = array(
+			'parent' => 'new-content',
+			'id'     => 'new-bookable-product',
+			'title'  => __( 'Bookable product', 'woocommerce-bookings' ),
+			'href'   => admin_url( 'edit.php?post_type=wc_booking&page=wc_bookings_product_templates' ),
+		);
+
+		// Get the existing menu items.
+		$menu_items = $wp_admin_bar->get_nodes();
+
+		// Find the position of the item with ID "add-new-product".
+		$add_new_product_position = - 1;
+		foreach ( $menu_items as $position => $menu_item ) {
+			if ( 'new-product' === $menu_item->id ) {
+				$add_new_product_position = $position;
+				break;
+			}
+		}
+
+		// Re-add the menu items with the new custom menu item inserted.
+		foreach ( $menu_items as $position => $menu_item ) {
+			$wp_admin_bar->remove_menu( $menu_item->id );
+			$wp_admin_bar->add_node( $menu_item );
+
+			// Insert the custom menu item after the item with ID "add-new-product".
+			if ( $position === $add_new_product_position ) {
+				$wp_admin_bar->add_node( $custom_menu_item );
+			}
+		}
+	}
+
+	/**
+	 * Bookable Products filtered under the Analytics page.
+	 *
+	 * @param array $args Query arguments.
+	 *
+	 * @return array Updated query arguments.
+	 */
+	public function analytics_products_query_args( $args ) {
+		if ( 'bookings' === wc_clean( wp_unslash( $_GET['filter'] ?? '' ) ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended
+			if ( isset( $args['meta_query'] ) ) {
+				$args['meta_query'][] = array(
+					'relation' => 'AND',
+					array(
+						'key'     => '_wc_booking_availability',
+						'compare' => 'EXISTS',
+					),
+					array(
+						'key'     => '_regular_price',
+						'compare' => 'NOT EXISTS',
+					),
+				);
+			} else {
+				$args['meta_query'] = array(
+					'relation' => 'AND',
+					array(
+						'key'     => '_wc_booking_availability',
+						'compare' => 'EXISTS',
+					),
+					array(
+						'key'     => '_regular_price',
+						'compare' => 'NOT EXISTS',
+					),
+				);
+			}
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Bookable Products filtered via JOIN clause(s).
+	 *
+	 * @param array $clauses The existing clauses.
+	 * @param array $context The context of the clause.
+	 *
+	 * @return array Updated clauses.
+	 */
+	public function analytics_clauses_join( $clauses, $context ) {
+		global $wpdb;
+
+		if ( 'bookings' === wc_clean( wp_unslash( $_GET['filter'] ?? '' ) ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended
+			$clauses[] = " JOIN {$wpdb->prefix}term_relationships ON {$wpdb->prefix}wc_order_product_lookup.product_id = {$wpdb->prefix}term_relationships.object_id";
+			$clauses[] = " JOIN {$wpdb->prefix}term_taxonomy ON {$wpdb->prefix}term_taxonomy.term_taxonomy_id = {$wpdb->prefix}term_relationships.term_taxonomy_id";
+			$clauses[] = " JOIN {$wpdb->prefix}terms ON {$wpdb->prefix}term_taxonomy.term_id = {$wpdb->prefix}terms.term_id";
+		}
+
+		return $clauses;
+	}
+
+	/**
+	 * Bookable Products filtered via WHERE clause(s).
+	 *
+	 * @param array $clauses The existing clauses.
+	 * @param array $context The context of the clause.
+	 *
+	 * @return array Updated clauses.
+	 */
+	public function analytics_clauses_where( $clauses, $context ) {
+		global $wpdb;
+
+		if ( 'bookings' === wc_clean( wp_unslash( $_GET['filter'] ?? '' ) ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended
+			$clauses[] = " AND {$wpdb->prefix}term_taxonomy.taxonomy = 'product_type'";
+			$clauses[] = " AND {$wpdb->prefix}terms.slug = 'booking'";
+		}
+
+		return $clauses;
+	}
+
+	/**
+	 * Handle all action schedules and custom migrations for the plugin.
+	 */
+	public function booking_migrations() {
+		// Handle migration for issue-2966.
+		$this->booking_migration_2966();
+	}
+
+	/**
+	 * Update all booking products.
+	 * For https://github.com/woocommerce/woocommerce-bookings/issues/2966
+	 */
+	public function booking_migration_2966() {
+		$migration_done = (int) get_option( 'migration_2966_done' );
+
+		// Return if products are already updated.
+		if ( $migration_done ) {
+			return;
+		}
+
+		// Update products.
+		wc_update_product_lookup_tables_column( 'min_max_price' );
+		add_option( 'migration_2966_done', 1 );
+	}
+
+	/**
+	 * Returns true if the request is a payment settings providers REST API request.
+	 *
+	 * @return bool
+	 */
+	public function is_payment_providers_api_request() {
+		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+			return false;
+		}
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		return false !== strpos( $_SERVER['REQUEST_URI'], trailingslashit( rest_get_url_prefix() ) . 'wc-admin/settings/payments/providers' );
+	}
+}

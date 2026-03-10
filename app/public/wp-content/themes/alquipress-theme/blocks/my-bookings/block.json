@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "alquipress/my-bookings",
+  "title": "Mis Reservas",
+  "category": "alquipress",
+  "icon": "calendar-alt",
+  "description": "Muestra las reservas del usuario actual",
+  "keywords": ["reservas", "mis reservas", "bookings"],
+  "textdomain": "alquipress-theme",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "showUpcoming": {
+      "type": "boolean",
+      "default": true
+    },
+    "showHistory": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

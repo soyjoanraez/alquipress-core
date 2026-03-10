@@ -1,0 +1,277 @@
+{
+  "auditedAt": "2026-02-11T19:07:34.938Z",
+  "heading": "Dashboard",
+  "sectionTitles": [
+    "Pedidos Pendientes de Pago",
+    "Propiedades en Revisión",
+    "🏥\n                    Salud Operativa\n                                            11",
+    "Pagos Pendientes",
+    "Check-ins sin Documentación",
+    "Reservas sin Contrato",
+    "💳\n                    Pipeline de Cobros",
+    "Reservas recientes",
+    "Actividad reciente"
+  ],
+  "kpiCards": [],
+  "buttonsFound": [
+    {
+      "tag": "a",
+      "text": "Ver Pedidos",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-pending",
+      "id": "",
+      "className": "notification-action button"
+    },
+    {
+      "tag": "button",
+      "text": "Descartar este aviso.",
+      "href": "",
+      "id": "",
+      "className": "notice-dismiss"
+    },
+    {
+      "tag": "a",
+      "text": "Ver Revisiones",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-checkout-review",
+      "id": "",
+      "className": "notification-action button"
+    },
+    {
+      "tag": "a",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=product",
+      "id": "",
+      "className": "ap-notif-btn"
+    },
+    {
+      "tag": "button",
+      "text": "Todas",
+      "href": "",
+      "id": "",
+      "className": "health-filter-btn active"
+    },
+    {
+      "tag": "button",
+      "text": "Críticas",
+      "href": "",
+      "id": "",
+      "className": "health-filter-btn"
+    },
+    {
+      "tag": "button",
+      "text": "Altas",
+      "href": "",
+      "id": "",
+      "className": "health-filter-btn"
+    },
+    {
+      "tag": "button",
+      "text": "Medias",
+      "href": "",
+      "id": "",
+      "className": "health-filter-btn"
+    },
+    {
+      "tag": "a",
+      "text": "Ver Pedidos Pendientes",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-pending",
+      "id": "",
+      "className": "health-action-btn"
+    },
+    {
+      "tag": "button",
+      "text": "Ver todos (9)",
+      "href": "",
+      "id": "",
+      "className": "health-action-btn health-view-all"
+    },
+    {
+      "tag": "a",
+      "text": "Pedido #4017",
+      "href": "http://alquipress.local/wp-admin/post.php?post=4017&action=edit",
+      "id": "",
+      "className": ""
+    },
+    {
+      "tag": "a",
+      "text": "Pedido #3982",
+      "href": "http://alquipress.local/wp-admin/post.php?post=3982&action=edit",
+      "id": "",
+      "className": ""
+    },
+    {
+      "tag": "a",
+      "text": "Ver Pipeline",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-pipeline",
+      "id": "",
+      "className": "health-action-btn"
+    },
+    {
+      "tag": "a",
+      "text": "Ver Reservas",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-bookings",
+      "id": "",
+      "className": "health-action-btn"
+    },
+    {
+      "tag": "button",
+      "text": "Ver todos (52)",
+      "href": "",
+      "id": "",
+      "className": "health-action-btn health-view-all"
+    },
+    {
+      "tag": "a",
+      "text": "Ver todo",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-payment-pipeline",
+      "id": "",
+      "className": "pipeline-view-all"
+    },
+    {
+      "tag": "a",
+      "text": "Ver todo",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order",
+      "id": "",
+      "className": "ap-recent-bookings-view-all"
+    },
+    {
+      "tag": "a",
+      "text": "Ver todo",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order",
+      "id": "",
+      "className": "ap-recent-activity-view-all"
+    }
+  ],
+  "buttonChecks": [
+    {
+      "type": "link",
+      "text": "Ver Pedidos",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-pending",
+      "status": "ok",
+      "targetTitle": "Pedidos ‹ ALQUIPRESS — WordPress",
+      "targetUrl": "http://alquipress.local/wp-admin/admin.php?page=wc-orders&status=wc-pending"
+    },
+    {
+      "type": "link",
+      "text": "Ver Revisiones",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-checkout-review",
+      "status": "ok",
+      "targetTitle": "Pedidos ‹ ALQUIPRESS — WordPress",
+      "targetUrl": "http://alquipress.local/wp-admin/admin.php?page=wc-orders&status=wc-checkout-review"
+    },
+    {
+      "type": "link",
+      "text": "Ver Pedidos Pendientes",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-pending",
+      "status": "ok",
+      "targetTitle": "Pedidos ‹ ALQUIPRESS — WordPress",
+      "targetUrl": "http://alquipress.local/wp-admin/admin.php?page=wc-orders&status=wc-pending"
+    },
+    {
+      "type": "link",
+      "text": "Pedido #4017",
+      "href": "http://alquipress.local/wp-admin/post.php?post=4017&action=edit",
+      "status": "error",
+      "targetTitle": "",
+      "targetUrl": "",
+      "error": "page.waitForNavigation: Timeout 7000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"domcontentloaded\"\n============================================================"
+    },
+    {
+      "type": "link",
+      "text": "Pedido #3982",
+      "href": "http://alquipress.local/wp-admin/post.php?post=3982&action=edit",
+      "status": "error",
+      "targetTitle": "",
+      "targetUrl": "",
+      "error": "page.waitForNavigation: Timeout 7000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"domcontentloaded\"\n============================================================"
+    },
+    {
+      "type": "link",
+      "text": "Ver Pipeline",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-pipeline",
+      "status": "ok",
+      "targetTitle": "Pipeline < ALQUIPRESS — WordPress",
+      "targetUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-pipeline"
+    },
+    {
+      "type": "link",
+      "text": "Ver Reservas",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-bookings",
+      "status": "ok",
+      "targetTitle": "Reservas < ALQUIPRESS — WordPress",
+      "targetUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-bookings"
+    },
+    {
+      "type": "link",
+      "text": "Ver todo",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-payment-pipeline",
+      "status": "ok",
+      "targetTitle": "Pipeline de Cobros < ALQUIPRESS — WordPress",
+      "targetUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-payment-pipeline"
+    },
+    {
+      "type": "link",
+      "text": "Ver todo",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order",
+      "status": "ok",
+      "targetTitle": "Pedidos ‹ ALQUIPRESS — WordPress",
+      "targetUrl": "http://alquipress.local/wp-admin/admin.php?page=wc-orders"
+    },
+    {
+      "type": "link",
+      "text": "Ver todo",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order",
+      "status": "ok",
+      "targetTitle": "Pedidos ‹ ALQUIPRESS — WordPress",
+      "targetUrl": "http://alquipress.local/wp-admin/admin.php?page=wc-orders"
+    },
+    {
+      "type": "filter",
+      "text": "Todas",
+      "status": "ok",
+      "note": "count unchanged"
+    },
+    {
+      "type": "filter",
+      "text": "Críticas",
+      "status": "ok",
+      "note": "count unchanged"
+    },
+    {
+      "type": "filter",
+      "text": "Altas",
+      "status": "ok",
+      "note": "count unchanged"
+    },
+    {
+      "type": "filter",
+      "text": "Medias",
+      "status": "ok",
+      "note": "count unchanged"
+    },
+    {
+      "type": "toggle",
+      "text": "Ver todos (9)",
+      "status": "warn",
+      "note": "no visible change"
+    },
+    {
+      "type": "toggle",
+      "text": "Ver todos (52)",
+      "status": "warn",
+      "note": "no visible change"
+    },
+    {
+      "type": "dismiss",
+      "text": "Descartar este aviso.",
+      "status": "ok",
+      "note": "2->1"
+    }
+  ],
+  "summary": {
+    "totalButtons": 18,
+    "totalChecks": 17,
+    "ok": 13,
+    "warn": 2,
+    "error": 2
+  }
+}

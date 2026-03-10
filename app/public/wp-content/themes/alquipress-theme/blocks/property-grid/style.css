@@ -1,0 +1,127 @@
+/**
+ * Estilos para bloque Grid de Propiedades
+ */
+
+.alq-property-grid {
+    margin-bottom: var(--alq-block-spacing);
+}
+
+.alq-property-grid-items {
+    display: grid;
+    gap: var(--alq-block-spacing);
+}
+
+/* Layout Grid */
+.alq-property-grid--grid.alq-property-grid--cols-1 .alq-property-grid-items {
+    grid-template-columns: 1fr;
+}
+
+.alq-property-grid--grid.alq-property-grid--cols-2 .alq-property-grid-items {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.alq-property-grid--grid.alq-property-grid--cols-3 .alq-property-grid-items {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.alq-property-grid--grid.alq-property-grid--cols-4 .alq-property-grid-items {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+/* Layout List */
+.alq-property-grid--list .alq-property-grid-items {
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.alq-property-grid--list .alq-property-card {
+    flex-direction: row;
+}
+
+.alq-property-grid--list .alq-property-card-image-wrapper {
+    width: 300px;
+    padding-top: 0;
+    height: 200px;
+    flex-shrink: 0;
+}
+
+/* Paginación */
+.alq-property-grid-pagination {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.alq-property-grid-pagination .page-numbers {
+    display: flex;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.alq-property-grid-pagination .page-numbers li {
+    margin: 0;
+}
+
+.alq-property-grid-pagination .page-numbers a,
+.alq-property-grid-pagination .page-numbers span {
+    display: block;
+    padding: 10px 16px;
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-radius-md);
+    text-decoration: none;
+    color: var(--alq-text-primary);
+    transition: all 0.2s;
+}
+
+.alq-property-grid-pagination .page-numbers a:hover {
+    background: var(--alq-primary);
+    color: #ffffff;
+    border-color: var(--alq-primary);
+}
+
+.alq-property-grid-pagination .page-numbers .current {
+    background: var(--alq-primary);
+    color: #ffffff;
+    border-color: var(--alq-primary);
+}
+
+/* Estado vacío */
+.alq-property-grid-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--alq-surface);
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-block-radius);
+}
+
+.alq-property-grid-empty p {
+    font-size: 1.125rem;
+    color: var(--alq-text-secondary);
+    margin-bottom: 24px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .alq-property-grid--grid.alq-property-grid--cols-4 .alq-property-grid-items,
+    .alq-property-grid--grid.alq-property-grid--cols-3 .alq-property-grid-items {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .alq-property-grid--grid .alq-property-grid-items {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .alq-property-grid--list .alq-property-card {
+        flex-direction: column;
+    }
+    
+    .alq-property-grid--list .alq-property-card-image-wrapper {
+        width: 100%;
+        height: auto;
+        padding-top: 75%;
+    }
+}

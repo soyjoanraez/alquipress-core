@@ -1,0 +1,13 @@
+:where(.wc-bookings-member-selector__label) {
+	font-size: var(--wp--preset--font-size--small, 0.875rem);
+}
+:where(.wc-bookings-member-selector__required-indicator) {
+	opacity: 0.6;
+}
+:where(.wc-bookings-member-selector__select) {
+	border: 1px solid color-mix( in srgb, currentColor 20%, transparent );
+	background: transparent;
+	margin-top: 0.25em;
+	padding: 0.5em;
+	width: 100%;
+}

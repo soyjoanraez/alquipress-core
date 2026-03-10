@@ -1,0 +1,160 @@
+{
+  "heading": "Dashboard",
+  "blocks": [],
+  "buttonLike": [
+    {
+      "tag": "a",
+      "role": "",
+      "text": "Ver Pedidos",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-pending",
+      "id": "",
+      "className": "notification-action button",
+      "inMain": true
+    },
+    {
+      "tag": "button",
+      "role": "",
+      "text": "Descartar este aviso.",
+      "href": "",
+      "id": "",
+      "className": "notice-dismiss",
+      "inMain": true
+    },
+    {
+      "tag": "a",
+      "role": "",
+      "text": "Ver Revisiones",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-checkout-review",
+      "id": "",
+      "className": "notification-action button",
+      "inMain": true
+    },
+    {
+      "tag": "a",
+      "role": "",
+      "text": "",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=product",
+      "id": "",
+      "className": "ap-notif-btn",
+      "inMain": true
+    },
+    {
+      "tag": "button",
+      "role": "",
+      "text": "Todas",
+      "href": "",
+      "id": "",
+      "className": "health-filter-btn active",
+      "inMain": true
+    },
+    {
+      "tag": "button",
+      "role": "",
+      "text": "Críticas",
+      "href": "",
+      "id": "",
+      "className": "health-filter-btn",
+      "inMain": true
+    },
+    {
+      "tag": "button",
+      "role": "",
+      "text": "Altas",
+      "href": "",
+      "id": "",
+      "className": "health-filter-btn",
+      "inMain": true
+    },
+    {
+      "tag": "button",
+      "role": "",
+      "text": "Medias",
+      "href": "",
+      "id": "",
+      "className": "health-filter-btn",
+      "inMain": true
+    },
+    {
+      "tag": "a",
+      "role": "",
+      "text": "Ver Pedidos Pendientes",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-pending",
+      "id": "",
+      "className": "health-action-btn",
+      "inMain": true
+    },
+    {
+      "tag": "button",
+      "role": "",
+      "text": "Ver todos (9)",
+      "href": "",
+      "id": "",
+      "className": "health-action-btn health-view-all",
+      "inMain": true
+    },
+    {
+      "tag": "a",
+      "role": "",
+      "text": "Pedido #4017",
+      "href": "http://alquipress.local/wp-admin/post.php?post=4017&action=edit",
+      "id": "",
+      "className": "",
+      "inMain": true
+    },
+    {
+      "tag": "a",
+      "role": "",
+      "text": "Pedido #3982",
+      "href": "http://alquipress.local/wp-admin/post.php?post=3982&action=edit",
+      "id": "",
+      "className": "",
+      "inMain": true
+    },
+    {
+      "tag": "a",
+      "role": "",
+      "text": "Ver Pipeline",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-pipeline",
+      "id": "",
+      "className": "health-action-btn",
+      "inMain": true
+    },
+    {
+      "tag": "a",
+      "role": "",
+      "text": "Ver Reservas",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-bookings",
+      "id": "",
+      "className": "health-action-btn",
+      "inMain": true
+    },
+    {
+      "tag": "button",
+      "role": "",
+      "text": "Ver todos (52)",
+      "href": "",
+      "id": "",
+      "className": "health-action-btn health-view-all",
+      "inMain": true
+    },
+    {
+      "tag": "a",
+      "role": "",
+      "text": "Ver todo",
+      "href": "http://alquipress.local/wp-admin/admin.php?page=alquipress-payment-pipeline",
+      "id": "",
+      "className": "pipeline-view-all",
+      "inMain": true
+    },
+    {
+      "tag": "a",
+      "role": "",
+      "text": "Ver todo",
+      "href": "http://alquipress.local/wp-admin/edit.php?post_type=shop_order",
+      "id": "",
+      "className": "ap-recent-bookings-view-all",
+      "inMain": true
+    }
+  ],
+  "scopeSelector": "main.ap-owners-main"
+}

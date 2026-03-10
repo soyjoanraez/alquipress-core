@@ -1,0 +1,22 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "alquipress-child/property-grid",
+  "title": "Grid de propiedades",
+  "category": "alquipress",
+  "icon": "grid-view",
+  "description": "Listado de propiedades filtrable por URL (checkin, checkout, huéspedes, ubicación).",
+  "textdomain": "alquipress-child",
+  "supports": { "html": false, "align": ["wide", "full"] },
+  "attributes": {
+    "columns": { "type": "number", "default": 3 },
+    "postsPerPage": { "type": "number", "default": 12 },
+    "orderBy": { "type": "string", "default": "date", "enum": ["date", "price", "title"] },
+    "order": { "type": "string", "default": "DESC", "enum": ["ASC", "DESC"] },
+    "showPagination": { "type": "boolean", "default": true }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

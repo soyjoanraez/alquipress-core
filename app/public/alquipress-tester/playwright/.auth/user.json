@@ -1,0 +1,75 @@
+{
+  "cookies": [
+    {
+      "name": "wordpress_dcb1520a35a8bc0e8c6fc72a978b6887",
+      "value": "joanraez%7C1771673840%7CLtPnxXJJfiScbR24YFeoshBJjMH6USil75SIvhxdu0M%7C21c0d21964fcc5377427d4d9c2ba974eb7e417461844fd05a1c0014460b1e39a",
+      "domain": "alquipress.local",
+      "path": "/wp-content/plugins",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "wordpress_dcb1520a35a8bc0e8c6fc72a978b6887",
+      "value": "joanraez%7C1771673840%7CLtPnxXJJfiScbR24YFeoshBJjMH6USil75SIvhxdu0M%7C21c0d21964fcc5377427d4d9c2ba974eb7e417461844fd05a1c0014460b1e39a",
+      "domain": "alquipress.local",
+      "path": "/wp-admin",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "wordpress_test_cookie",
+      "value": "WP%20Cookie%20check",
+      "domain": "alquipress.local",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "wordpress_logged_in_dcb1520a35a8bc0e8c6fc72a978b6887",
+      "value": "joanraez%7C1771673840%7CLtPnxXJJfiScbR24YFeoshBJjMH6USil75SIvhxdu0M%7C570e1454b550fa064b4b8c92b05cff8c37b7ef4aa8733f8c12769ba87a614147",
+      "domain": "alquipress.local",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "mailpoet_subscriber",
+      "value": "%7B%22subscriber_id%22%3A1%7D",
+      "domain": "alquipress.local",
+      "path": "/",
+      "expires": 1806061041.004322,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "wp-settings-1",
+      "value": "posts_list_mode%3Dlist%26libraryContent%3Dbrowse%26mfold%3Do",
+      "domain": "alquipress.local",
+      "path": "/",
+      "expires": 1803037041.262918,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "wp-settings-time-1",
+      "value": "1771501041",
+      "domain": "alquipress.local",
+      "path": "/",
+      "expires": 1803037041.262967,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

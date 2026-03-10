@@ -1,0 +1,657 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - navigation "Menú principal":
+    - link "Saltar al contenido principal" [ref=e3] [cursor=pointer]:
+      - /url: "#wpbody-content"
+    - link "Ir a la barra de herramientas" [ref=e4] [cursor=pointer]:
+      - /url: "#wp-toolbar"
+    - list [ref=e7]:
+      - listitem [ref=e8]:
+        - link "Escritorio" [ref=e9] [cursor=pointer]:
+          - /url: index.php
+          - generic [ref=e10]: 
+          - generic [ref=e11]: Escritorio
+        - list [ref=e12]:
+          - listitem [ref=e13]:
+            - link "Inicio" [ref=e14] [cursor=pointer]:
+              - /url: index.php
+          - listitem [ref=e15]:
+            - link "Actualizaciones 10" [ref=e16] [cursor=pointer]:
+              - /url: update-core.php
+              - text: Actualizaciones
+              - generic [ref=e17]: "10"
+      - listitem [ref=e18]:
+        - link "Astra" [ref=e19] [cursor=pointer]:
+          - /url: admin.php?page=astra
+          - generic [ref=e21]: Astra
+        - list [ref=e22]:
+          - listitem [ref=e23]:
+            - link "Escritorio" [ref=e24] [cursor=pointer]:
+              - /url: admin.php?page=astra
+          - listitem [ref=e25]:
+            - link "Personalizar" [ref=e26] [cursor=pointer]:
+              - /url: customize.php
+          - listitem [ref=e27]:
+            - link "Site Builder" [ref=e28] [cursor=pointer]:
+              - /url: admin.php?page=theme-builder
+          - listitem [ref=e29]:
+            - link "WooCommerce" [ref=e30] [cursor=pointer]:
+              - /url: admin.php?page=astra&path=woocommerce
+      - listitem [ref=e31]:
+        - link "Dashboard 2" [ref=e32] [cursor=pointer]:
+          - /url: admin.php?page=alquipress-tester
+          - generic [ref=e33]: 
+          - generic [ref=e34]:
+            - text: Dashboard
+            - generic [ref=e35]: "2"
+        - list [ref=e36]:
+          - listitem [ref=e37]:
+            - link "Generador de Pruebas" [ref=e38] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-tester
+          - listitem [ref=e39]:
+            - link "Kyero Sync" [ref=e40] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-kyero
+          - listitem [ref=e41]:
+            - link [ref=e42] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-edit-property
+          - listitem [ref=e43]:
+            - link "Panel" [ref=e44] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-dashboard
+          - listitem [ref=e45]:
+            - link "Propiedades" [ref=e46] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-properties
+          - listitem [ref=e47]:
+            - link "Reservas" [ref=e48] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-bookings
+          - listitem [ref=e49]:
+            - link "Clientes" [ref=e50] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-clients
+          - listitem [ref=e51]:
+            - link "Propietarios" [ref=e52] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-owners
+          - listitem [ref=e53]:
+            - link "Finanzas" [ref=e54] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-finanzas
+          - listitem [ref=e55]:
+            - link "Facturación propietarios" [ref=e56] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-owner-invoicing
+          - listitem [ref=e57]:
+            - link "Contabilidad" [ref=e58] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-accounting
+          - listitem [ref=e59]:
+            - link "Informes" [ref=e60] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-reports
+          - listitem [ref=e61]:
+            - link "Pipeline" [ref=e62] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-pipeline
+          - listitem [ref=e63]:
+            - link "Inbox" [ref=e64] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-comunicacion
+          - listitem [ref=e65]:
+            - link "Campañas de email" [ref=e66] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-email-campaigns
+          - listitem [ref=e67]:
+            - link "Ajustes" [ref=e68] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-settings
+          - listitem [ref=e69]:
+            - link "Performance & Security" [ref=e70] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-suite
+          - listitem [ref=e71]:
+            - link "SES Hospedajes" [ref=e72] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-ses-export
+          - listitem [ref=e73]:
+            - link "Recordatorios" [ref=e74] [cursor=pointer]:
+              - /url: admin.php?page=alquipress-payment-reminders
+      - listitem [ref=e75]
+      - listitem [ref=e77]:
+        - link "Entradas" [ref=e78] [cursor=pointer]:
+          - /url: edit.php
+          - generic [ref=e79]: 
+          - generic [ref=e80]: Entradas
+        - list [ref=e81]:
+          - listitem [ref=e82]:
+            - link "Todas las entradas" [ref=e83] [cursor=pointer]:
+              - /url: edit.php
+          - listitem [ref=e84]:
+            - link "Añadir entrada" [ref=e85] [cursor=pointer]:
+              - /url: post-new.php
+          - listitem [ref=e86]:
+            - link "Categorías" [ref=e87] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=category
+          - listitem [ref=e88]:
+            - link "Etiquetas" [ref=e89] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=post_tag
+      - listitem [ref=e90]:
+        - link "Medios" [ref=e91] [cursor=pointer]:
+          - /url: upload.php
+          - generic [ref=e92]: 
+          - generic [ref=e93]: Medios
+        - list [ref=e94]:
+          - listitem [ref=e95]:
+            - link "Biblioteca" [ref=e96] [cursor=pointer]:
+              - /url: upload.php
+          - listitem [ref=e97]:
+            - link "Añadir archivo de medios" [ref=e98] [cursor=pointer]:
+              - /url: media-new.php
+      - listitem [ref=e99]:
+        - link "Páginas" [ref=e100] [cursor=pointer]:
+          - /url: edit.php?post_type=page
+          - generic [ref=e101]: 
+          - generic [ref=e102]: Páginas
+        - list [ref=e103]:
+          - listitem [ref=e104]:
+            - link "Todas las páginas" [ref=e105] [cursor=pointer]:
+              - /url: edit.php?post_type=page
+          - listitem [ref=e106]:
+            - link "Añadir página" [ref=e107] [cursor=pointer]:
+              - /url: post-new.php?post_type=page
+      - listitem [ref=e108]:
+        - link "Comentarios" [ref=e109] [cursor=pointer]:
+          - /url: edit-comments.php
+          - generic [ref=e110]: 
+          - generic [ref=e111]: Comentarios
+      - listitem [ref=e112]:
+        - link "Propietarios" [ref=e113] [cursor=pointer]:
+          - /url: edit.php?post_type=propietario
+          - generic [ref=e114]: 
+          - generic [ref=e115]: Propietarios
+        - list [ref=e116]:
+          - listitem [ref=e117]:
+            - link "Propietarios" [ref=e118] [cursor=pointer]:
+              - /url: edit.php?post_type=propietario
+          - listitem [ref=e119]:
+            - link "Añadir Nuevo Propietario" [ref=e120] [cursor=pointer]:
+              - /url: post-new.php?post_type=propietario
+      - listitem [ref=e121]:
+        - link "Spectra" [ref=e122] [cursor=pointer]:
+          - /url: admin.php?page=spectra
+          - generic [ref=e124]: Spectra
+        - list [ref=e125]:
+          - listitem [ref=e126]:
+            - link "Escritorio" [ref=e127] [cursor=pointer]:
+              - /url: admin.php?page=spectra
+          - listitem [ref=e128]:
+            - link "Bloques" [ref=e129] [cursor=pointer]:
+              - /url: admin.php?page=spectra&path=blocks
+          - listitem [ref=e130]:
+            - link "Maquetador de ventanas emergentes" [ref=e131] [cursor=pointer]:
+              - /url: edit.php?post_type=spectra-popup
+          - listitem [ref=e132]:
+            - link "Características con IA" [ref=e133] [cursor=pointer]:
+              - /url: admin.php?page=spectra&path=ai-features
+          - listitem [ref=e134]:
+            - link "Ajustes" [ref=e135] [cursor=pointer]:
+              - /url: admin.php?page=spectra&path=settings
+      - listitem [ref=e136]:
+        - link "MailPoet" [ref=e137] [cursor=pointer]:
+          - /url: admin.php?page=mailpoet-homepage
+          - generic [ref=e139]: MailPoet
+        - list [ref=e140]:
+          - listitem [ref=e141]:
+            - link "Inicio" [ref=e142] [cursor=pointer]:
+              - /url: admin.php?page=mailpoet-homepage
+          - listitem [ref=e143]:
+            - link "Correos electrónicos" [ref=e144] [cursor=pointer]:
+              - /url: admin.php?page=mailpoet-newsletters
+          - listitem [ref=e145]:
+            - link "Automatizaciones" [ref=e146] [cursor=pointer]:
+              - /url: admin.php?page=mailpoet-automation
+          - listitem [ref=e147]:
+            - link "Formularios" [ref=e148] [cursor=pointer]:
+              - /url: admin.php?page=mailpoet-forms
+          - listitem [ref=e149]:
+            - link "Suscriptores" [ref=e150] [cursor=pointer]:
+              - /url: admin.php?page=mailpoet-subscribers
+          - listitem [ref=e151]:
+            - link "Listas" [ref=e152] [cursor=pointer]:
+              - /url: admin.php?page=mailpoet-lists
+          - listitem [ref=e153]:
+            - link "Segmentos" [ref=e154] [cursor=pointer]:
+              - /url: admin.php?page=mailpoet-segments
+          - listitem [ref=e155]:
+            - link "Ajustes" [ref=e156] [cursor=pointer]:
+              - /url: admin.php?page=mailpoet-settings
+          - listitem [ref=e157]:
+            - link "Ayuda" [ref=e158] [cursor=pointer]:
+              - /url: admin.php?page=mailpoet-help
+          - listitem [ref=e159]:
+            - link "Mejorar" [ref=e160] [cursor=pointer]:
+              - /url: admin.php?page=mailpoet-upgrade
+      - listitem [ref=e161]
+      - listitem [ref=e163]:
+        - link "WooCommerce" [ref=e164] [cursor=pointer]:
+          - /url: admin.php?page=wc-admin
+          - generic [ref=e166]: WooCommerce
+        - list [ref=e167]:
+          - listitem [ref=e168]:
+            - link "Inicio 3" [ref=e169] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin
+              - text: Inicio
+              - generic [ref=e170]: "3"
+          - listitem [ref=e171]:
+            - link "Pedidos 15" [ref=e172] [cursor=pointer]:
+              - /url: admin.php?page=wc-orders
+              - text: Pedidos
+              - generic [ref=e173]: "15"
+          - listitem [ref=e174]:
+            - link "Clientes" [ref=e175] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/customers
+          - listitem [ref=e176]:
+            - link "Cupones" [ref=e177] [cursor=pointer]:
+              - /url: admin.php?page=coupons-moved
+          - listitem [ref=e178]:
+            - link "Informes" [ref=e179] [cursor=pointer]:
+              - /url: admin.php?page=wc-reports
+          - listitem [ref=e180]:
+            - link "Ajustes" [ref=e181] [cursor=pointer]:
+              - /url: admin.php?page=wc-settings
+          - listitem [ref=e182]:
+            - link "Estado" [ref=e183] [cursor=pointer]:
+              - /url: admin.php?page=wc-status
+          - listitem [ref=e184]:
+            - link "Extensiones" [ref=e185] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/extensions
+      - listitem [ref=e186]:
+        - link "Inmuebles" [ref=e187] [cursor=pointer]:
+          - /url: edit.php?post_type=product
+          - generic [ref=e188]: 
+          - generic [ref=e189]: Inmuebles
+        - list [ref=e190]:
+          - listitem [ref=e191]:
+            - link "Todos los Inmuebles" [ref=e192] [cursor=pointer]:
+              - /url: edit.php?post_type=product
+          - listitem [ref=e193]:
+            - link "Añadir Nuevo Inmueble" [ref=e194] [cursor=pointer]:
+              - /url: post-new.php?post_type=product
+          - listitem [ref=e195]:
+            - link "Marcas" [ref=e196] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=product_brand&post_type=product
+          - listitem [ref=e197]:
+            - link "Categorías" [ref=e198] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=product_cat&post_type=product
+          - listitem [ref=e199]:
+            - link "Etiquetas" [ref=e200] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=product_tag&post_type=product
+          - listitem [ref=e201]:
+            - link "Población" [ref=e202] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=poblacion&post_type=product
+          - listitem [ref=e203]:
+            - link "Zonas" [ref=e204] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=zona&post_type=product
+          - listitem [ref=e205]:
+            - link "Características" [ref=e206] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=caracteristicas&post_type=product
+          - listitem [ref=e207]:
+            - link "Exportar a Kyero" [ref=e208] [cursor=pointer]:
+              - /url: edit-tags.php?taxonomy=kyero_export&post_type=product
+          - listitem [ref=e209]:
+            - link "Atributos" [ref=e210] [cursor=pointer]:
+              - /url: edit.php?post_type=product&page=product_attributes
+          - listitem [ref=e211]:
+            - link "Valoraciones" [ref=e212] [cursor=pointer]:
+              - /url: edit.php?post_type=product&page=product-reviews
+          - listitem [ref=e213]:
+            - link "Planes de pago" [ref=e214] [cursor=pointer]:
+              - /url: edit.php?post_type=product&page=deposit_payment_plans
+      - listitem [ref=e215]:
+        - link "Reservas" [ref=e216] [cursor=pointer]:
+          - /url: edit.php?post_type=wc_booking
+          - generic [ref=e217]: 
+          - generic [ref=e218]: Reservas
+        - list [ref=e219]:
+          - listitem [ref=e220]:
+            - link "Todas las reservas" [ref=e221] [cursor=pointer]:
+              - /url: edit.php?post_type=wc_booking
+          - listitem [ref=e222]:
+            - link "Recursos" [ref=e223] [cursor=pointer]:
+              - /url: edit.php?post_type=bookable_resource
+          - listitem [ref=e224]:
+            - link "Añadir producto" [ref=e225] [cursor=pointer]:
+              - /url: edit.php?post_type=wc_booking&page=wc_bookings_product_templates
+          - listitem [ref=e226]:
+            - link "Añadir reserva" [ref=e227] [cursor=pointer]:
+              - /url: edit.php?post_type=wc_booking&page=create_booking
+          - listitem [ref=e228]:
+            - link "Calendario" [ref=e229] [cursor=pointer]:
+              - /url: edit.php?post_type=wc_booking&page=booking_calendar
+          - listitem [ref=e230]:
+            - link "Enviar aviso" [ref=e231] [cursor=pointer]:
+              - /url: edit.php?post_type=wc_booking&page=booking_notification
+          - listitem [ref=e232]:
+            - link "Ajustes" [ref=e233] [cursor=pointer]:
+              - /url: edit.php?post_type=wc_booking&page=wc_bookings_settings
+      - listitem [ref=e234]:
+        - link "Pagos" [ref=e235] [cursor=pointer]:
+          - /url: admin.php?page=wc-settings&tab=checkout&from=PAYMENTS_MENU_ITEM
+          - generic [ref=e237]: Pagos
+      - listitem [ref=e238]:
+        - link "Análisis" [ref=e239] [cursor=pointer]:
+          - /url: admin.php?page=wc-admin&path=/analytics/overview
+          - generic [ref=e240]: 
+          - generic [ref=e241]: Análisis
+        - list [ref=e242]:
+          - listitem [ref=e243]:
+            - link "Resumen" [ref=e244] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/analytics/overview
+          - listitem [ref=e245]:
+            - link "Inmuebles" [ref=e246] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/analytics/products
+          - listitem [ref=e247]:
+            - link "Ingresos" [ref=e248] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/analytics/revenue
+          - listitem [ref=e249]:
+            - link "Pedidos" [ref=e250] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/analytics/orders
+          - listitem [ref=e251]:
+            - link "Variaciones" [ref=e252] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/analytics/variations
+          - listitem [ref=e253]:
+            - link "Categorías" [ref=e254] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/analytics/categories
+          - listitem [ref=e255]:
+            - link "Cupones" [ref=e256] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/analytics/coupons
+          - listitem [ref=e257]:
+            - link "Impuestos" [ref=e258] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/analytics/taxes
+          - listitem [ref=e259]:
+            - link "Descargas" [ref=e260] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/analytics/downloads
+          - listitem [ref=e261]:
+            - link "Ajustes" [ref=e262] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/analytics/settings
+      - listitem [ref=e263]:
+        - link "Marketing" [ref=e264] [cursor=pointer]:
+          - /url: admin.php?page=wc-admin&path=/marketing
+          - generic [ref=e265]: 
+          - generic [ref=e266]: Marketing
+        - list [ref=e267]:
+          - listitem [ref=e268]:
+            - link "Resumen" [ref=e269] [cursor=pointer]:
+              - /url: admin.php?page=wc-admin&path=/marketing
+          - listitem [ref=e270]:
+            - link "Cupones" [ref=e271] [cursor=pointer]:
+              - /url: edit.php?post_type=shop_coupon
+      - listitem [ref=e272]
+      - listitem [ref=e274]:
+        - link "Apariencia" [ref=e275] [cursor=pointer]:
+          - /url: themes.php
+          - generic [ref=e276]: 
+          - generic [ref=e277]: Apariencia
+        - list [ref=e278]:
+          - listitem [ref=e279]:
+            - link "Temas 1" [ref=e280] [cursor=pointer]:
+              - /url: themes.php
+              - text: Temas
+              - generic [ref=e281]: "1"
+          - listitem [ref=e282]:
+            - link "Diseño" [ref=e283] [cursor=pointer]:
+              - /url: site-editor.php
+          - listitem [ref=e284]:
+            - link "Personalizar" [ref=e285] [cursor=pointer]:
+              - /url: customize.php?return=%2Fwp-admin%2Fedit.php%3Fpost_type%3Dwc_booking%26page%3Dcreate_booking
+          - listitem [ref=e286]:
+            - link "Widgets" [ref=e287] [cursor=pointer]:
+              - /url: widgets.php
+          - listitem [ref=e288]:
+            - link "Menús" [ref=e289] [cursor=pointer]:
+              - /url: nav-menus.php
+          - listitem
+          - listitem [ref=e290]:
+            - link "Starter Templates" [ref=e291] [cursor=pointer]:
+              - /url: themes.php?page=starter-templates
+          - listitem [ref=e292]:
+            - link "Editor de archivos de temas" [ref=e293] [cursor=pointer]:
+              - /url: theme-editor.php
+      - listitem [ref=e294]:
+        - link "Plugins 8" [ref=e295] [cursor=pointer]:
+          - /url: plugins.php
+          - generic [ref=e296]: 
+          - generic [ref=e297]:
+            - text: Plugins
+            - generic [ref=e298]: "8"
+        - list [ref=e299]:
+          - listitem [ref=e300]:
+            - link "Plugins instalados" [ref=e301] [cursor=pointer]:
+              - /url: plugins.php
+          - listitem [ref=e302]:
+            - link "Añadir plugin" [ref=e303] [cursor=pointer]:
+              - /url: plugin-install.php
+          - listitem [ref=e304]:
+            - link "Editor de archivos de plugins" [ref=e305] [cursor=pointer]:
+              - /url: plugin-editor.php
+      - listitem [ref=e306]:
+        - link "Usuarios" [ref=e307] [cursor=pointer]:
+          - /url: users.php
+          - generic [ref=e308]: 
+          - generic [ref=e309]: Usuarios
+        - list [ref=e310]:
+          - listitem [ref=e311]:
+            - link "Todos los usuarios" [ref=e312] [cursor=pointer]:
+              - /url: users.php
+          - listitem [ref=e313]:
+            - link "Añadir usuario" [ref=e314] [cursor=pointer]:
+              - /url: user-new.php
+          - listitem [ref=e315]:
+            - link "Perfil" [ref=e316] [cursor=pointer]:
+              - /url: profile.php
+          - listitem [ref=e317]:
+            - link [ref=e318] [cursor=pointer]:
+              - /url: users.php?page=alquipress-guest-profile
+          - listitem [ref=e319]:
+            - link [ref=e320] [cursor=pointer]:
+              - /url: users.php?page=alquipress-edit-guest
+      - listitem [ref=e321]:
+        - link "Herramientas" [ref=e322] [cursor=pointer]:
+          - /url: tools.php
+          - generic [ref=e323]: 
+          - generic [ref=e324]: Herramientas
+        - list [ref=e325]:
+          - listitem [ref=e326]:
+            - link "Herramientas disponibles" [ref=e327] [cursor=pointer]:
+              - /url: tools.php
+          - listitem [ref=e328]:
+            - link "Importar" [ref=e329] [cursor=pointer]:
+              - /url: import.php
+          - listitem [ref=e330]:
+            - link "Exportar" [ref=e331] [cursor=pointer]:
+              - /url: export.php
+          - listitem [ref=e332]:
+            - link "Salud del sitio 2" [ref=e333] [cursor=pointer]:
+              - /url: site-health.php
+              - text: Salud del sitio
+              - generic [ref=e334]: "2"
+          - listitem [ref=e335]:
+            - link "Exportar los datos personales" [ref=e336] [cursor=pointer]:
+              - /url: export-personal-data.php
+          - listitem [ref=e337]:
+            - link "Borrar los datos personales" [ref=e338] [cursor=pointer]:
+              - /url: erase-personal-data.php
+          - listitem [ref=e339]:
+            - link "AQ Debug Logs" [ref=e340] [cursor=pointer]:
+              - /url: tools.php?page=aq-debug-logs
+          - listitem [ref=e341]:
+            - link "Acciones programadas" [ref=e342] [cursor=pointer]:
+              - /url: tools.php?page=action-scheduler
+      - listitem [ref=e343]:
+        - link "Ajustes" [ref=e344] [cursor=pointer]:
+          - /url: options-general.php
+          - generic [ref=e345]: 
+          - generic [ref=e346]: Ajustes
+        - list [ref=e347]:
+          - listitem [ref=e348]:
+            - link "Generales" [ref=e349] [cursor=pointer]:
+              - /url: options-general.php
+          - listitem [ref=e350]:
+            - link "Escritura" [ref=e351] [cursor=pointer]:
+              - /url: options-writing.php
+          - listitem [ref=e352]:
+            - link "Lectura" [ref=e353] [cursor=pointer]:
+              - /url: options-reading.php
+          - listitem [ref=e354]:
+            - link "Comentarios" [ref=e355] [cursor=pointer]:
+              - /url: options-discussion.php
+          - listitem [ref=e356]:
+            - link "Medios" [ref=e357] [cursor=pointer]:
+              - /url: options-media.php
+          - listitem [ref=e358]:
+            - link "Enlaces permanentes" [ref=e359] [cursor=pointer]:
+              - /url: options-permalink.php
+          - listitem [ref=e360]:
+            - link "Privacidad" [ref=e361] [cursor=pointer]:
+              - /url: options-privacy.php
+      - listitem [ref=e362]:
+        - link "ACF" [ref=e363] [cursor=pointer]:
+          - /url: edit.php?post_type=acf-field-group
+          - generic [ref=e364]: 
+          - generic [ref=e365]: ACF
+        - list [ref=e366]:
+          - listitem [ref=e367]:
+            - link "Grupos de campos" [ref=e368] [cursor=pointer]:
+              - /url: edit.php?post_type=acf-field-group
+          - listitem [ref=e369]:
+            - link "Tipos de contenido" [ref=e370] [cursor=pointer]:
+              - /url: edit.php?post_type=acf-post-type
+          - listitem [ref=e371]:
+            - link "Taxonomías" [ref=e372] [cursor=pointer]:
+              - /url: edit.php?post_type=acf-taxonomy
+          - listitem [ref=e373]:
+            - link "Páginas de opciones" [ref=e374] [cursor=pointer]:
+              - /url: edit.php?post_type=acf-ui-options-page
+          - listitem [ref=e375]:
+            - link "Herramientas" [ref=e376] [cursor=pointer]:
+              - /url: edit.php?post_type=acf-field-group&page=acf-tools
+          - listitem [ref=e377]:
+            - link "Actualizaciones" [ref=e378] [cursor=pointer]:
+              - /url: edit.php?post_type=acf-field-group&page=acf-settings-updates
+      - listitem [ref=e379]
+      - text: 
+      - listitem [ref=e381]:
+        - button "Contraer el menú principal" [expanded] [ref=e382] [cursor=pointer]:
+          - generic [ref=e384]: Cerrar menú
+  - generic [ref=e385]:
+    - generic [ref=e386]:
+      - navigation "Barra de herramientas":
+        - menu:
+          - group [ref=e387]:
+            - menuitem "Acerca de WordPress" [ref=e388] [cursor=pointer]:
+              - generic [ref=e390]: Acerca de WordPress
+          - group [ref=e391]:
+            - menuitem "ALQUIPRESS" [ref=e392] [cursor=pointer]
+          - group [ref=e393]:
+            - menuitem "Visible" [ref=e394] [cursor=pointer]
+          - group [ref=e395]:
+            - menuitem "10 actualizaciones disponibles" [ref=e396] [cursor=pointer]:
+              - generic [ref=e398]: "10"
+              - generic [ref=e399]: 10 actualizaciones disponibles
+          - group [ref=e400]:
+            - menuitem "0 comentarios en moderación" [ref=e401] [cursor=pointer]:
+              - generic [ref=e403]: "0"
+              - generic [ref=e404]: 0 comentarios en moderación
+          - group [ref=e405]:
+            - menuitem "Añadir" [ref=e406] [cursor=pointer]:
+              - generic [ref=e408]: Añadir
+          - group [ref=e409]:
+            - menuitem "⚡ ALQUIPRESS" [ref=e410] [cursor=pointer]
+          - group [ref=e411]:
+            - menuitem "🏥 9 Alertas" [ref=e412] [cursor=pointer]:
+              - generic [ref=e413]: 🏥
+              - generic [ref=e414]: 9 Alertas
+          - group [ref=e415]:
+            - menuitem "AQ Debug" [ref=e416] [cursor=pointer]: AQ Debug
+        - menu [ref=e417]:
+          - group [ref=e418]:
+            - menuitem [ref=e419] [cursor=pointer]:
+              - img [ref=e421]
+          - group [ref=e425]:
+            - menuitem "Hola, joanraez" [ref=e426] [cursor=pointer]
+    - generic [ref=e428]:
+      - heading "Crear reserva" [level=1] [ref=e429]
+      - generic [ref=e430]:
+        - heading "Actividad de la tienda" [level=2] [ref=e431]
+        - complementary "Actividad de la tienda" [ref=e432]:
+          - tablist [ref=e433]:
+            - tab "Actividad actividad sin leer" [ref=e434] [cursor=pointer]:
+              - img [ref=e435]
+              - text: Actividad
+              - generic [ref=e438]: actividad sin leer
+            - tab "Finalizar configuración" [ref=e439] [cursor=pointer]:
+              - img [ref=e440]
+              - text: Finalizar configuración
+    - main [ref=e448]:
+      - generic [ref=e449]:
+        - button "Ayuda" [ref=e452] [cursor=pointer]
+        - generic [ref=e455]:
+          - heading "Añadir reserva" [level=2] [ref=e456]
+          - generic [ref=e457]:
+            - generic [ref=e458]:
+              - generic [ref=e459]: ⚠️
+              - generic [ref=e460]:
+                - heading "Pedidos Pendientes de Pago" [level=3] [ref=e461]
+                - paragraph [ref=e462]: Tienes 9 pedidos pendientes de pago. Revisa y haz seguimiento.
+                - link "Ver Pedidos" [ref=e463] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-pending
+            - button "Descartar este aviso." [ref=e464] [cursor=pointer]:
+              - generic [ref=e465]: Descartar este aviso.
+          - generic [ref=e466]:
+            - generic [ref=e467]:
+              - generic [ref=e468]: ⚠️
+              - generic [ref=e469]:
+                - heading "Propiedades en Revisión" [level=3] [ref=e470]
+                - paragraph [ref=e471]: 14 propiedad(es) están pendientes de revisión de salida.
+                - link "Ver Revisiones" [ref=e472] [cursor=pointer]:
+                  - /url: http://alquipress.local/wp-admin/edit.php?post_type=shop_order&post_status=wc-checkout-review
+            - button "Descartar este aviso." [ref=e473] [cursor=pointer]:
+              - generic [ref=e474]: Descartar este aviso.
+          - generic [ref=e475]:
+            - link "Descartar" [ref=e476] [cursor=pointer]:
+              - /url: /wp-admin/edit.php?post_type=wc_booking&page=create_booking&wc-hide-notice=woocommerce_bookings_upgrade&_wc_notice_nonce=1cbbca7cd1
+            - paragraph [ref=e477]:
+              - text: Ahora, WooCommerce Bookings incluye plantillas de productos reservables que se pueden importar para configurar más fácilmente nuevos productos reservables. Para obtener más información sobre estas plantillas,
+              - link "haz clic aquí" [ref=e478] [cursor=pointer]:
+                - /url: http://alquipress.local/wp-admin/edit.php?post_type=wc_booking&page=wc_bookings_product_templates
+              - text: .
+          - paragraph [ref=e479]: Puedes crear aquí una nueva reserva para un cliente. Este formulario crea una reserva para el usuario, y opcionalmente un pedido asociada a ella. Los pedidos creados se marcarán como pendientes de pago.
+          - table [ref=e481]:
+            - rowgroup [ref=e482]:
+              - row "Cliente Invitado" [ref=e483]:
+                - rowheader "Cliente" [ref=e484]:
+                  - generic [ref=e485]: Cliente
+                - cell "Invitado" [ref=e486]:
+                  - combobox [ref=e487] [cursor=pointer]
+                  - combobox "Invitado" [ref=e490] [cursor=pointer]:
+                    - textbox [ref=e491]
+              - row "Producto reservable Elige un producto reservable…" [ref=e492]:
+                - rowheader "Producto reservable" [ref=e493]:
+                  - generic [ref=e494]: Producto reservable
+                - cell "Elige un producto reservable…" [ref=e495]:
+                  - combobox [ref=e496] [cursor=pointer]
+                  - combobox "Elige un producto reservable…" [ref=e499] [cursor=pointer]:
+                    - textbox "Elige un producto reservable…" [ref=e500]
+              - 'row "Crear pedido Crear un nuevo pedido correspondiente a esta nueva reserva. Por favor, ten en cuenta - la reserva no estará activa hasta que se procese/complete el pedido. Asignar esta reserva a un pedido existente con este ID: No crear un pedido de esta reserva." [ref=e501]':
+                - rowheader "Crear pedido" [ref=e502]:
+                  - generic [ref=e503]: Crear pedido
+                - 'cell "Crear un nuevo pedido correspondiente a esta nueva reserva. Por favor, ten en cuenta - la reserva no estará activa hasta que se procese/complete el pedido. Asignar esta reserva a un pedido existente con este ID: No crear un pedido de esta reserva." [ref=e504]':
+                  - paragraph [ref=e505]:
+                    - generic [ref=e506]:
+                      - radio "Crear un nuevo pedido correspondiente a esta nueva reserva. Por favor, ten en cuenta - la reserva no estará activa hasta que se procese/complete el pedido." [ref=e507] [cursor=pointer]
+                      - text: Crear un nuevo pedido correspondiente a esta nueva reserva. Por favor, ten en cuenta - la reserva no estará activa hasta que se procese/complete el pedido.
+                  - paragraph [ref=e508]:
+                    - generic [ref=e509]:
+                      - radio "Asignar esta reserva a un pedido existente con este ID:" [ref=e510] [cursor=pointer]
+                      - text: "Asignar esta reserva a un pedido existente con este ID:"
+                      - spinbutton [ref=e511]
+                  - paragraph [ref=e512]:
+                    - generic [ref=e513]:
+                      - radio "No crear un pedido de esta reserva." [checked] [ref=e514] [cursor=pointer]
+                      - text: No crear un pedido de esta reserva.
+              - row "Siguiente" [ref=e515]:
+                - rowheader [ref=e516]
+                - cell "Siguiente" [ref=e517]:
+                  - button "Siguiente" [ref=e518] [cursor=pointer]
+  - contentinfo [ref=e519]:
+    - paragraph
+    - paragraph [ref=e520]: Versión 10.5.0
+```

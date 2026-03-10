@@ -1,0 +1,48 @@
+{
+  "auditedAt": "2026-02-11T19:09:43.293Z",
+  "panelUrl": "http://alquipress.local/wp-admin/admin.php?page=alquipress-dashboard",
+  "viewAllButtons": [
+    {
+      "label": "Ver todos (9)",
+      "beforeExists": 0,
+      "modalVisible": true,
+      "modalTitle": "Pagos Pendientes",
+      "itemsCount": 9,
+      "status": "ok"
+    },
+    {
+      "label": "Ver todos (52)",
+      "beforeExists": 0,
+      "modalVisible": true,
+      "modalTitle": "Reservas sin Contrato",
+      "itemsCount": 52,
+      "status": "ok"
+    }
+  ],
+  "orderLinks": [
+    {
+      "text": "Pedido #4017",
+      "href": "http://alquipress.local/wp-admin/post.php?post=4017&action=edit",
+      "target": "_blank",
+      "popupOpened": true,
+      "popupUrl": "http://alquipress.local/wp-admin/admin.php?page=wc-orders&action=edit&id=4017",
+      "popupTitle": "Editar pedido #4017 ‹ ALQUIPRESS — WordPress",
+      "status": "ok"
+    },
+    {
+      "text": "Pedido #3982",
+      "href": "http://alquipress.local/wp-admin/post.php?post=3982&action=edit",
+      "target": "_blank",
+      "popupOpened": true,
+      "popupUrl": "http://alquipress.local/wp-admin/admin.php?page=wc-orders&action=edit&id=3982",
+      "popupTitle": "Editar pedido #3982 ‹ ALQUIPRESS — WordPress",
+      "status": "ok"
+    }
+  ],
+  "summary": {
+    "viewAllOk": 2,
+    "viewAllTotal": 2,
+    "orderLinksOk": 2,
+    "orderLinksTotal": 2
+  }
+}

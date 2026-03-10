@@ -1,0 +1,142 @@
+/**
+ * Estilos para Guía de la Casa
+ */
+
+.alq-house-guide {
+    background: var(--alq-surface);
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-block-radius);
+    padding: 32px;
+    margin-bottom: var(--alq-block-spacing);
+}
+
+.alq-house-guide-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--alq-text-primary);
+    margin: 0 0 32px 0;
+}
+
+.alq-house-guide-section {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--alq-border);
+}
+
+.alq-house-guide-section:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.alq-house-guide-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--alq-text-primary);
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alq-house-guide-icon {
+    font-size: 1.5rem;
+}
+
+.alq-house-guide-content {
+    color: var(--alq-text-primary);
+    line-height: 1.7;
+}
+
+.alq-house-guide-time {
+    font-size: 1.125rem;
+    margin-bottom: 12px;
+    color: var(--alq-text-primary);
+}
+
+.alq-house-guide-instructions {
+    margin-top: 12px;
+}
+
+.alq-house-guide-instructions p {
+    margin-bottom: 12px;
+}
+
+.alq-house-guide-instructions ul,
+.alq-house-guide-instructions ol {
+    margin-left: 24px;
+    margin-bottom: 12px;
+}
+
+.alq-house-guide-info-item {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--alq-bg-light);
+    border-radius: var(--alq-radius-md);
+}
+
+.alq-house-guide-info-item strong {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--alq-text-primary);
+}
+
+.alq-house-guide-info-item code {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--alq-surface);
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-radius-sm);
+    font-family: monospace;
+    font-size: 0.9375rem;
+    color: var(--alq-primary);
+}
+
+.alq-house-guide-address {
+    margin-bottom: 16px;
+}
+
+.alq-house-guide-address strong {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--alq-text-primary);
+}
+
+.alq-house-guide-location-terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.alq-house-guide-location-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    background: var(--alq-primary);
+    color: #ffffff;
+    border-radius: var(--alq-radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.alq-house-guide-map {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--alq-bg-light);
+    border-radius: var(--alq-radius-md);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .alq-house-guide {
+        padding: 20px;
+    }
+    
+    .alq-house-guide-title {
+        font-size: 1.5rem;
+    }
+    
+    .alq-house-guide-section-title {
+        font-size: 1.125rem;
+    }
+}

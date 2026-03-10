@@ -1,0 +1,30 @@
+.ap-child-availability-calendar { margin: 1.5rem 0; }
+.ap-child-availability-calendar-title { margin: 0 0 0.75rem; font-size: 1.25rem; }
+.ap-child-availability-calendar-legend { display: flex; gap: 1rem; margin-bottom: 1rem; font-size: 0.8rem; color: var(--ap-muted, #64748b); }
+.ap-child-availability-legend-free::before,
+.ap-child-availability-legend-booked::before { content: ''; display: inline-block; width: 14px; height: 14px; margin-right: 0.35rem; vertical-align: middle; border-radius: 3px; }
+.ap-child-availability-legend-free::before { background: #e8f5e9; border: 1px solid #c8e6c9; }
+.ap-child-availability-legend-booked::before { background: #ffebee; border: 1px solid #ffcdd2; }
+.ap-child-availability-calendar-months { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; }
+.ap-child-availability-calendar-month-title { margin: 0 0 0.5rem; font-size: 0.95rem; }
+.ap-child-availability-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    font-size: 0.75rem;
+}
+.ap-child-availability-dow { font-weight: 600; color: var(--ap-muted); text-align: center; }
+.ap-child-availability-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    background: #f5f5f5;
+    color: #999;
+}
+.ap-child-availability-day--empty { background: transparent; }
+.ap-child-availability-day--past { background: #f0f0f0; color: #bbb; }
+.ap-child-availability-day--free { background: #e8f5e9; color: #2e7d32; font-weight: 500; }
+.ap-child-availability-day--booked { background: #ffebee; color: #c62828; font-weight: 500; }
+.ap-child-avail-placeholder { padding: 0.5rem; color: var(--ap-muted); }

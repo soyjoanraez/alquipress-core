@@ -1,0 +1,29 @@
+/*
+Theme Name: Alquipress Child
+Theme URI: https://alquipress.com
+Description: Theme hijo para la web de alquiler con bloques Gutenberg (buscador, grid, reservas WC Bookings).
+Author: Antigravity AI
+Author URI: https://alquipress.com
+Template: alquipress-theme
+Version: 1.0.0
+Text Domain: alquipress-child
+*/
+
+/* Variables y overrides del design system (coherente con dashboard) */
+:root {
+    --ap-primary: #0b6bcb;
+    --ap-primary-strong: #0a58a8;
+    --ap-warning: #ffc107;
+    --ap-muted: #64748b;
+    --ap-radius: 10px;
+    --ap-radius-lg: 16px;
+}
+
+/* Estilos adicionales para bloques del child theme */
+.wp-block-alquipress-child-property-search,
+.wp-block-alquipress-child-property-grid,
+.wp-block-alquipress-child-booking-widget,
+.wp-block-alquipress-child-availability-calendar,
+.wp-block-alquipress-child-owner-cta {
+    max-width: none;
+}

@@ -1,0 +1,89 @@
+TYPE,CONTENT,DESCRIPTION,PRIORITY,INDENT,AUTHOR,RESPONSIBLE,DATE,DATE_LANG,TIMEZONE
+section,"Sprint 0 (2026-02-09 a 2026-02-13)","Alineacion tecnica y preparacion",1,1,,,,
+task,"Decidir coexistencia entre product y impress_property","Bloqueante para la estrategia de datos y migracion",4,1,,,"2026-02-10",es,Europe/Madrid
+task,"Definir arquitectura de licenciamiento SaaS","Elegir modelo plugin cliente + servidor de licencias",4,1,,,"2026-02-11",es,Europe/Madrid
+task,"Definir arquitectura del panel frontend de agente","Elegir stack y estrategia de autenticacion",3,1,,,"2026-02-12",es,Europe/Madrid
+task,"Aprobar documento de decisiones y backlog refinado","Gate de salida Sprint 0",4,1,,,"2026-02-13",es,Europe/Madrid
+section,"Sprint 1 (2026-02-16 a 2026-02-27)","Fundacion de dominio Inmopress",1,1,,,,
+task,"Crear modulo inmopress-cpts en alquipress-core","Namespace y bootstrap del modulo de entidades CRM",4,1,,,"2026-02-16",es,Europe/Madrid
+task,"Registrar CPT impress_property","Entidad propiedad del CRM inmobiliario",4,1,,,"2026-02-17",es,Europe/Madrid
+task,"Registrar CPT impress_client e impress_lead","Entidades comerciales base",4,1,,,"2026-02-18",es,Europe/Madrid
+task,"Registrar CPT impress_event","Entidad unica para visita/llamada/tarea/email/reunion",4,1,,,"2026-02-19",es,Europe/Madrid
+task,"Registrar CPT impress_owner e impress_agent","Entidades de propietarios y agentes",4,1,,,"2026-02-20",es,Europe/Madrid
+task,"Registrar CPT impress_agency e impress_promotion","Entidades de agencia y promociones",4,1,,,"2026-02-23",es,Europe/Madrid
+task,"Crear modulo inmopress-taxonomies","Taxonomias SEO y de operacion",4,1,,,"2026-02-24",es,Europe/Madrid
+task,"Registrar taxonomias impress_city e impress_area","Ubicacion SEO",4,1,,,"2026-02-24",es,Europe/Madrid
+task,"Registrar taxonomias impress_property_type e impress_operation","Tipologia y operacion",4,1,,,"2026-02-25",es,Europe/Madrid
+task,"Registrar taxonomia impress_feature","Caracteristicas filtrables",4,1,,,"2026-02-25",es,Europe/Madrid
+task,"Crear ACF JSON MVP para property owner client lead event","Estructura minima de campos por entidad",4,1,,,"2026-02-26",es,Europe/Madrid
+task,"Validar entidades y taxonomias con WP-CLI","Comprobar que aparecen en post-type list y taxonomy list",4,1,,,"2026-02-27",es,Europe/Madrid
+section,"Sprint 2 (2026-03-02 a 2026-03-13)","Roles, permisos y multi-tenant base",1,1,,,,
+task,"Crear modulo roles-permissions","Base de seguridad por rol",4,1,,,"2026-03-02",es,Europe/Madrid
+task,"Crear roles agencia agente trabajador cliente","Roles objetivo de Inmopress",4,1,,,"2026-03-03",es,Europe/Madrid
+task,"Definir y aplicar capacidades por rol","Matriz de permisos por entidad y accion",4,1,,,"2026-03-04",es,Europe/Madrid
+task,"Introducir campo agency_id en entidades CRM","Scope de datos para aislamiento",4,1,,,"2026-03-05",es,Europe/Madrid
+task,"Aplicar filtros multi-tenant en pre_get_posts y consultas admin","Evitar fuga de datos entre agencias",4,1,,,"2026-03-09",es,Europe/Madrid
+task,"Aplicar filtros multi-tenant en AJAX y endpoints","Seguridad de acceso por agency_id",4,1,,,"2026-03-10",es,Europe/Madrid
+task,"Preparar datos de prueba de 2 agencias","Dataset para test de aislamiento",3,1,,,"2026-03-11",es,Europe/Madrid
+task,"Ejecutar pruebas de no-fuga entre agencias","Gate de salida Sprint 2",4,1,,,"2026-03-13",es,Europe/Madrid
+section,"Sprint 3 (2026-03-16 a 2026-03-27)","Relaciones y agenda CRM",1,1,,,,
+task,"Implementar owner_ref y validador de referencia unica","Relacion por referencia propietario-propiedad",3,1,,,"2026-03-16",es,Europe/Madrid
+task,"Implementar hook acf/save_post para resolver owner_ref a IDs","Cache de relaciones para rendimiento",3,1,,,"2026-03-17",es,Europe/Madrid
+task,"Crear vistas de relacion bidireccional owner-property","Consistencia en ambos lados de la relacion",3,1,,,"2026-03-18",es,Europe/Madrid
+task,"Implementar estados base de impress_event","Pendiente, completado, cancelado",3,1,,,"2026-03-19",es,Europe/Madrid
+task,"Crear UI admin basica para agenda de eventos","Listado y filtros por agente/fecha/tipo",3,1,,,"2026-03-23",es,Europe/Madrid
+task,"Conectar eventos con property client lead owner agent agency","Relaciones completas del evento",3,1,,,"2026-03-24",es,Europe/Madrid
+task,"Probar flujo end-to-end de eventos","Alta lead -> crear evento -> cerrar evento",3,1,,,"2026-03-27",es,Europe/Madrid
+section,"Sprint 4 (2026-03-30 a 2026-04-10)","API segura y comunicaciones CRM",1,1,,,,
+task,"Crear namespace /inmopress/v1 y rutas base","Endpoints versionados para CRM",3,1,,,"2026-03-30",es,Europe/Madrid
+task,"Aplicar permission_callback por rol y tenant","Bloquear acceso no autorizado",4,1,,,"2026-03-31",es,Europe/Madrid
+task,"Implementar rate limit/throttle para endpoints publicos","Control de abuso y estabilidad",3,1,,,"2026-04-01",es,Europe/Madrid
+task,"Extender comunicaciones con thread_id","Agrupacion de hilos de email por conversacion",3,1,,,"2026-04-06",es,Europe/Madrid
+task,"Implementar token BCC para asociacion automatica","Asociar respuestas al expediente correcto",3,1,,,"2026-04-07",es,Europe/Madrid
+task,"Reforzar asociacion por entidad en comunicaciones","Mapeo robusto a client/lead/owner/property/event",3,1,,,"2026-04-08",es,Europe/Madrid
+task,"Mover secretos SMTP/IMAP a almacenamiento mas seguro","Reducir riesgo por credenciales en texto plano",3,1,,,"2026-04-09",es,Europe/Madrid
+task,"Probar E2E API + comunicaciones","Gate de salida Sprint 4",4,1,,,"2026-04-10",es,Europe/Madrid
+section,"Sprint 5 (2026-04-13 a 2026-04-24)","Panel frontend agente V1",1,1,,,,
+task,"Crear shell del panel frontend de agente","Layout, routing y autenticacion base",3,1,,,"2026-04-13",es,Europe/Madrid
+task,"Implementar widget Mis Propiedades","Consulta scoped por agente y agency_id",3,1,,,"2026-04-14",es,Europe/Madrid
+task,"Implementar widget Mis Clientes","Listado y acceso rapido a fichas",3,1,,,"2026-04-15",es,Europe/Madrid
+task,"Implementar widget Mi Agenda","Eventos del dia y semana",3,1,,,"2026-04-16",es,Europe/Madrid
+task,"Optimizar experiencia movil task-first","Acciones rapidas de completar y anotar",3,1,,,"2026-04-20",es,Europe/Madrid
+task,"Validar operativa diaria sin admin WP","Gate de salida Sprint 5",4,1,,,"2026-04-24",es,Europe/Madrid
+section,"Sprint 6 (2026-04-27 a 2026-05-08)","Automatizaciones V1",1,1,,,,
+task,"Crear modulo automation-rules","Modelo trigger condition action",3,1,,,"2026-04-27",es,Europe/Madrid
+task,"Crear almacenamiento de reglas y estado activo/pausado","Base de workflows",3,1,,,"2026-04-28",es,Europe/Madrid
+task,"Implementar ejecutor con Action Scheduler","Cola fiable para acciones asinc",3,1,,,"2026-04-29",es,Europe/Madrid
+task,"Crear regla Lead nuevo -> asignar agente + tarea","Plantilla automatizacion 1",3,1,,,"2026-05-04",es,Europe/Madrid
+task,"Crear regla Evento visita completada -> email seguimiento","Plantilla automatizacion 2",3,1,,,"2026-05-05",es,Europe/Madrid
+task,"Crear regla Cambio estado propiedad -> notificacion interna","Plantilla automatizacion 3",3,1,,,"2026-05-06",es,Europe/Madrid
+task,"Crear regla Lead sin contacto 7 dias -> alerta","Plantilla automatizacion 4",3,1,,,"2026-05-06",es,Europe/Madrid
+task,"Crear regla Seguimiento post-visita 48h","Plantilla automatizacion 5",3,1,,,"2026-05-07",es,Europe/Madrid
+task,"Registrar logs de ejecucion de automatizaciones","Gate de salida Sprint 6",4,1,,,"2026-05-08",es,Europe/Madrid
+section,"Sprint 7 (2026-05-11 a 2026-05-22)","Activity log y KPIs basicos",1,1,,,,
+task,"Diseñar esquema de impress_activity_log","Entidad de auditoria funcional CRM",3,1,,,"2026-05-11",es,Europe/Madrid
+task,"Implementar captura de eventos de dominio","Cambios de estado, asignaciones, conversiones y eventos",3,1,,,"2026-05-12",es,Europe/Madrid
+task,"Crear timeline por entidad","Vista de auditoria en ficha",3,1,,,"2026-05-14",es,Europe/Madrid
+task,"Crear dashboard KPI minimo","Leads, conversion, agenda, cierres",3,1,,,"2026-05-18",es,Europe/Madrid
+task,"Implementar export CSV basico","Export de actividad y KPIs",2,1,,,"2026-05-20",es,Europe/Madrid
+task,"Validar trazabilidad de punta a punta","Gate de salida Sprint 7",3,1,,,"2026-05-22",es,Europe/Madrid
+section,"Sprint 8 (2026-05-25 a 2026-06-05)","SaaS baseline (licencias + billing)",1,1,,,,
+task,"Crear plugin inmopress-licensing (cliente WP)","Clave, install_id, heartbeat y estados de licencia",4,1,,,"2026-05-25",es,Europe/Madrid
+task,"Implementar servidor de validacion de licencias (MVP)","Endpoint de validacion y cambio de estado",4,1,,,"2026-05-27",es,Europe/Madrid
+task,"Definir estados active/past_due/grace/canceled/blocked","Modelo de estado comercial",4,1,,,"2026-05-28",es,Europe/Madrid
+task,"Implementar bloqueo suave del CRM por licencia","No romper web publica ni SEO",4,1,,,"2026-06-01",es,Europe/Madrid
+task,"Integrar Stripe Billing para suscripciones SaaS","Alta/cambio/cancelacion de suscripcion",3,1,,,"2026-06-03",es,Europe/Madrid
+task,"Conectar webhook Stripe -> estado de licencia","Gate de salida Sprint 8",4,1,,,"2026-06-05",es,Europe/Madrid
+section,"Sprint 9 (2026-06-08 a 2026-06-19)","Cierre V1 y estabilizacion",1,1,,,,
+task,"Corregir bugs P0 y P1 abiertos","Estabilidad previa a release",4,1,,,"2026-06-10",es,Europe/Madrid
+task,"Completar migraciones pendientes de datos","Cierre tecnico V1",3,1,,,"2026-06-12",es,Europe/Madrid
+task,"Ejecutar pase de rendimiento y optimizacion","Revisar queries y cache",3,1,,,"2026-06-16",es,Europe/Madrid
+task,"Ejecutar smoke test funcional completo","Checklist E2E del sistema",4,1,,,"2026-06-18",es,Europe/Madrid
+task,"Hacer Go/No-Go de salida V1","Gate de salida Sprint 9",4,1,,,"2026-06-19",es,Europe/Madrid
+section,"Sprint 10 (2026-06-22 a 2026-07-03)","Inicio V2 diferencial",1,1,,,,
+task,"Implementar modulo IA SEO (modo borrador)","Generacion de title/meta/faq con prompts controlados",2,1,,,"2026-06-24",es,Europe/Madrid
+task,"Implementar publicacion SEO a metacampos objetivo","Pipeline borrador -> revision -> publicar",2,1,,,"2026-06-25",es,Europe/Madrid
+task,"Implementar matching v1 con scoring","Cruce cliente-propiedad con umbral minimo",2,1,,,"2026-06-29",es,Europe/Madrid
+task,"Implementar dedupe de notificaciones de matching","Evitar repeticion de avisos",2,1,,,"2026-06-30",es,Europe/Madrid
+task,"Preparar backlog tecnico de modulo PDF","Templates y casos de uso v2",2,1,,,"2026-07-01",es,Europe/Madrid
+task,"Cierre de sprint V2 inicio","Gate de salida Sprint 10",3,1,,,"2026-07-03",es,Europe/Madrid
