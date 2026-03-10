@@ -75,22 +75,58 @@ class Alquipress_Module_Manager
         $saved = get_option('alquipress_modules', null);
 
         if (!is_array($saved) || empty($saved)) {
-            update_option('alquipress_modules', self::MODULE_DEFAULTS);
-            return self::MODULE_DEFAULTS;
+            $normalized = $this->normalize_active_modules(self::MODULE_DEFAULTS);
+            update_option('alquipress_modules', $normalized);
+            return $normalized;
         }
 
-        // Detectar módulos nuevos que no están en la opción guardada
-        $new_modules = array_diff_key(self::MODULE_DEFAULTS, $saved);
-
-        if (empty($new_modules)) {
-            return $saved;
+        $merged = [];
+        foreach ($this->modules as $module_id => $module) {
+            $merged[$module_id] = array_key_exists($module_id, $saved)
+                ? (bool) $saved[$module_id]
+                : (self::MODULE_DEFAULTS[$module_id] ?? false);
         }
 
-        // Fusionar en una sola operación y guardar una sola vez
-        $merged = array_merge(self::MODULE_DEFAULTS, $saved, $new_modules);
-        update_option('alquipress_modules', $merged);
+        $normalized = $this->normalize_active_modules($merged);
 
-        return $merged;
+        if ($normalized !== $saved) {
+            update_option('alquipress_modules', $normalized);
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * Forzar un estado coherente de módulos según sus dependencias.
+     */
+    private function normalize_active_modules(array $modules): array
+    {
+        $normalized = [];
+
+        foreach ($this->modules as $module_id => $module) {
+            $normalized[$module_id] = !empty($modules[$module_id]);
+        }
+
+        $changed = true;
+        while ($changed) {
+            $changed = false;
+
+            foreach ($normalized as $module_id => $is_active) {
+                if (!$is_active) {
+                    continue;
+                }
+
+                foreach ($this->modules[$module_id]['dependencies'] ?? [] as $dependency_id) {
+                    if (empty($normalized[$dependency_id])) {
+                        $normalized[$module_id] = false;
+                        $changed = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $normalized;
     }
 
     /**
@@ -352,13 +388,13 @@ class Alquipress_Module_Manager
                 'name' => 'Página Reservas (Pencil)',
                 'description' => 'Dashboard de reservas: KPIs, requieren atención, reservas recientes',
                 'file' => 'bookings-page/bookings-page.php',
-                'dependencies' => []
+                'dependencies' => ['ap-bookings']
             ],
             'ap-bookings-dashboard' => [
                 'name' => 'Dashboard Ap Bookings',
                 'description' => 'Próximas entradas/salidas y reservas activas desde el motor Ap_Booking',
                 'file' => 'ap-bookings-dashboard/ap-bookings-dashboard.php',
-                'dependencies' => ['bookings-page']
+                'dependencies' => ['ap-bookings', 'bookings-page']
             ],
             'clients-page' => [
                 'name' => 'Página Clientes (Huéspedes)',
@@ -370,7 +406,7 @@ class Alquipress_Module_Manager
                 'name' => 'Precios en Calendario de Reservas',
                 'description' => 'Muestra el coste por día en el calendario de WooCommerce Bookings',
                 'file' => 'booking-calendar-prices/booking-calendar-prices.php',
-                'dependencies' => []
+                'dependencies' => ['ap-bookings']
             ],
             'ses-compliance' => [
                 'name' => 'Cumplimiento SES Hospedajes',
@@ -436,7 +472,7 @@ class Alquipress_Module_Manager
                 'name' => 'Sincronización iCal',
                 'description' => 'Export/import calendarios para Airbnb, Booking.com, VRBO',
                 'file' => 'ical-sync/ical-sync.php',
-                'dependencies' => []
+                'dependencies' => ['ap-bookings']
             ],
             'frontend-blocks' => [
                 'name' => 'Bloques Gutenberg AlquiPress',
@@ -798,8 +834,9 @@ class Alquipress_Module_Manager
             foreach ($this->modules as $id => $module) {
                 $new_modules[$id] = isset($_POST['modules'][$id]);
             }
-            update_option('alquipress_modules', $new_modules);
-            $this->active_modules = $new_modules;
+            $normalized_modules = $this->normalize_active_modules($new_modules);
+            update_option('alquipress_modules', $normalized_modules);
+            $this->active_modules = $normalized_modules;
 
             $dashboard_template = isset($_POST['dashboard_template']) ? wp_unslash($_POST['dashboard_template']) : self::DASHBOARD_TEMPLATE_DEFAULT;
             $dashboard_template = self::sanitize_dashboard_template($dashboard_template);
@@ -814,6 +851,15 @@ class Alquipress_Module_Manager
                 '✓ Módulos y plantilla de dashboard actualizados correctamente.',
                 'success'
             );
+
+            if ($normalized_modules !== $new_modules) {
+                add_settings_error(
+                    'alquipress_messages',
+                    'alquipress_modules_dependencies',
+                    __('Se han desactivado automáticamente módulos que dependían de otros módulos deshabilitados.', 'alquipress'),
+                    'warning'
+                );
+            }
         } elseif (isset($_POST['alquipress_save_bookings_settings']) && check_admin_referer('alquipress_bookings_settings_nonce')) {
             $deposit = isset($_POST['ap_bookings_default_deposit_pct']) ? (float) wp_unslash($_POST['ap_bookings_default_deposit_pct']) : 40.0;
             $min_nights = isset($_POST['ap_bookings_default_min_nights']) ? (int) wp_unslash($_POST['ap_bookings_default_min_nights']) : 1;

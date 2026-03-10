@@ -1,0 +1,14 @@
+.DS_Store
+
+# Local testing secrets and browser sessions
+app/public/alquipress-tester/.env
+app/public/alquipress-tester/playwright/.auth/
+
+# Local Playwright artifacts
+app/public/alquipress-tester/playwright-report/
+app/public/alquipress-tester/test-results/
+app/public/output/playwright/
+
+# Local WordPress runtime artifacts
+app/public/wp-content/debug.log
+app/public/wp-content/ai1wm-backups/*.wpress
