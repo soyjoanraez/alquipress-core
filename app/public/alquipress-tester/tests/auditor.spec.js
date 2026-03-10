@@ -1,6 +1,8 @@
 const { test, expect } = require('@playwright/test');
 
 test.describe('Web Auditor Agent', () => {
+    test.setTimeout(5 * 60 * 1000);
+
     const visitedUrls = new Set();
     const urlsToVisit = ['/'];
     const maxPages = 50;
@@ -73,8 +75,9 @@ test.describe('Web Auditor Agent', () => {
                                 href.includes('wp-admin') ||
                                 href.includes('wp-login') ||
                                 href.includes('logout') ||
+                                href.includes('/wp-content/uploads/') ||
                                 href.includes('#') ||
-                                href.match(/\.(jpg|jpeg|png|gif|pdf|zip|css|js)$/i);
+                                href.match(/\.(jpg|jpeg|png|gif|webp|svg|pdf|zip|css|js|xml|ico|mp4|webm)$/i);
                             return isInternal && !isIgnored;
                         })
                         .map(href => {

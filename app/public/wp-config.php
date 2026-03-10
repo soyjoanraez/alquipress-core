@@ -101,8 +101,8 @@ define('WP_DEBUG_LOG', true);
 define('WP_DEBUG_DISPLAY', true);
 @ini_set('display_errors', 1);
 
-// Use dev versions of core JS and CSS files (only needed if you are modifying core JS or CSS)
-define('SCRIPT_DEBUG', true);
+// Keep minified core/theme/plugin assets to avoid dev-only admin warnings/noisy missing files.
+define('SCRIPT_DEBUG', false);
 
 define('WP_ENVIRONMENT_TYPE', 'local');
 /* That's all, stop editing! Happy publishing. */

@@ -7039,3 +7039,47 @@ Stack trace:
 [03-Mar-2026 11:16:49 UTC] Spectra: CSS/JS generation returned empty for post 12 (type: js). Keeping existing file to prevent 404.
 [03-Mar-2026 11:19:32 UTC] PHP Notice:  La función wpdb::prepare ha sido llamada <strong>de forma incorrecta</strong>. El argumento de la consulta wpdb::prepare() debe tener un marcador de posición. Por favor, ve <a href="https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/">depuración en WordPress</a> para más información. (Este mensaje fue añadido en la versión 3.9.0). in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php on line 6131
 [03-Mar-2026 11:19:36 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[03-Mar-2026 13:39:34 UTC] PHP Warning:  wp_version_check(): Ha ocurrido un error inesperado. Puede que algo vaya mal con WordPress.org o la configuración de este servidor. Si sigues teniendo problemas, por favor, prueba en los <a href="https://es.wordpress.org/support/">foros de soporte</a>. (WordPress no ha podido establecer una conexión segura con WordPress.org. Por favor, contacta con el administrador de tu servidor). in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php on line 6131
+[03-Mar-2026 14:29:59 UTC] PHP Notice:  La función wpdb::prepare ha sido llamada <strong>de forma incorrecta</strong>. El argumento de la consulta wpdb::prepare() debe tener un marcador de posición. Por favor, ve <a href="https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/">depuración en WordPress</a> para más información. (Este mensaje fue añadido en la versión 3.9.0). in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php on line 6131
+[03-Mar-2026 14:30:07 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4056)
+[04-Mar-2026 08:28:35 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[04-Mar-2026 08:28:37 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[04-Mar-2026 08:28:37 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[04-Mar-2026 08:30:07 UTC] Spectra: CSS/JS generation returned empty for post 12 (type: js). Keeping existing file to prevent 404.
+[09-Mar-2026 08:36:09 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[09-Mar-2026 08:36:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[09-Mar-2026 08:36:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[09-Mar-2026 08:36:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[09-Mar-2026 08:36:16 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[09-Mar-2026 08:41:49 UTC] PHP Notice:  La función wpdb::prepare ha sido llamada <strong>de forma incorrecta</strong>. El argumento de la consulta wpdb::prepare() debe tener un marcador de posición. Por favor, ve <a href="https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/">depuración en WordPress</a> para más información. (Este mensaje fue añadido en la versión 3.9.0). in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/functions.php on line 6131
+[09-Mar-2026 08:41:53 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[09-Mar-2026 12:09:28 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[10-Mar-2026 08:41:11 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[10-Mar-2026 08:41:12 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[10-Mar-2026 08:41:12 UTC] PHP Warning:  mysqli_real_connect(): (HY000/2002): No such file or directory in /Users/joanraez/Local Sites/alquipress/app/public/wp-includes/class-wpdb.php on line 1994
+[10-Mar-2026 12:12:11 UTC] Spectra: CSS/JS generation returned empty for post 24 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:12 UTC] Spectra: CSS/JS generation returned empty for post 6 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:14 UTC] Spectra: CSS/JS generation returned empty for post 14 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:15 UTC] Spectra: CSS/JS generation returned empty for post 3526 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:17 UTC] Spectra: CSS/JS generation returned empty for post 3527 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:18 UTC] Spectra: CSS/JS generation returned empty for post 4036 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:19 UTC] Spectra: CSS/JS generation returned empty for post 8 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:20 UTC] Spectra: CSS/JS generation returned empty for post 13 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:21 UTC] Spectra: CSS/JS generation returned empty for post 15 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:22 UTC] Spectra: CSS/JS generation returned empty for post 16 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:23 UTC] Spectra: CSS/JS generation returned empty for post 28 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:26 UTC] Spectra: CSS/JS generation returned empty for post 3873 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:27 UTC] Spectra: CSS/JS generation returned empty for post 3872 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:28 UTC] Spectra: CSS/JS generation returned empty for post 3871 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:33 UTC] Spectra: CSS/JS generation returned empty for post 99 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:35 UTC] Spectra: CSS/JS generation returned empty for post 22 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:36 UTC] Spectra: CSS/JS generation returned empty for post 3764 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:38 UTC] Spectra: CSS/JS generation returned empty for post 3765 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:12:39 UTC] Spectra: CSS/JS generation returned empty for post 3766 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 12:13:37 UTC] Spectra: CSS/JS generation returned empty for post 3763 (type: js). Keeping existing file to prevent 404.
+[10-Mar-2026 14:05:26 UTC] Automatic updates starting...
+[10-Mar-2026 14:05:27 UTC]   Automatic plugin updates starting...
+[10-Mar-2026 14:05:27 UTC]   Automatic plugin updates complete.
+[10-Mar-2026 14:05:28 UTC]   Automatic theme updates starting...
+[10-Mar-2026 14:05:28 UTC]   Automatic theme updates complete.
+[10-Mar-2026 14:05:28 UTC] Automatic updates complete.
