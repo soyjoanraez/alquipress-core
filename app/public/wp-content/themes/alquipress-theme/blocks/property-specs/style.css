@@ -1,0 +1,100 @@
+/**
+ * Estilos para Ficha Técnica
+ */
+
+.alq-property-specs {
+    background: var(--alq-surface);
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-block-radius);
+    padding: 24px;
+    margin-bottom: var(--alq-block-spacing);
+}
+
+.alq-property-specs-section {
+    margin-bottom: 32px;
+}
+
+.alq-property-specs-section:last-child {
+    margin-bottom: 0;
+}
+
+.alq-property-specs-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--alq-text-primary);
+    margin: 0 0 20px 0;
+}
+
+.alq-property-specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.alq-property-spec-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: var(--alq-bg-light);
+    border-radius: var(--alq-radius-md);
+}
+
+.alq-property-spec-item svg {
+    flex-shrink: 0;
+    color: var(--alq-primary);
+    margin-top: 2px;
+}
+
+.alq-property-spec-item > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.alq-property-spec-label {
+    font-size: 0.875rem;
+    color: var(--alq-text-secondary);
+}
+
+.alq-property-spec-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--alq-text-primary);
+}
+
+.alq-property-specs-amenities {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.alq-property-spec-amenity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--alq-bg-light);
+    border-radius: var(--alq-radius-md);
+    font-size: 0.9375rem;
+    color: var(--alq-text-primary);
+}
+
+.alq-property-spec-amenity i,
+.alq-property-spec-amenity-icon {
+    width: 20px;
+    text-align: center;
+    color: var(--alq-primary);
+    font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .alq-property-specs-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .alq-property-specs-amenities {
+        grid-template-columns: 1fr;
+    }
+}

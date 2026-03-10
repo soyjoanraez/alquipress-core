@@ -1,0 +1,185 @@
+/**
+ * ALQUIPRESS Payment Manager - Frontend Styles
+ */
+
+/* Payment Breakdown Box */
+.apm-payment-breakdown {
+    background: #f8f9fa;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    border: 1px solid #e1e5eb;
+}
+
+.apm-payment-breakdown h3 {
+    margin: 0 0 15px;
+    font-size: 1.1em;
+    color: #333;
+}
+
+/* Breakdown Table */
+.apm-breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.apm-breakdown-table td {
+    padding: 12px 0;
+    border-bottom: 1px solid #e1e5eb;
+    vertical-align: top;
+}
+
+.apm-breakdown-table tr:last-child td {
+    border-bottom: none;
+}
+
+.apm-label {
+    text-align: left;
+}
+
+.apm-amount {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Percentage Badge */
+.apm-percent {
+    background: #e7f3ff;
+    color: #0066cc;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    margin-left: 8px;
+    font-weight: 500;
+}
+
+/* Notes */
+.apm-note {
+    display: block;
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* Total Row */
+.apm-total-row {
+    border-top: 2px solid #333 !important;
+}
+
+.apm-total-row td {
+    padding-top: 15px !important;
+    font-size: 1.05em;
+}
+
+/* Security Row */
+.apm-security-row td {
+    color: #666;
+}
+
+.apm-security-row .apm-amount {
+    color: #666;
+}
+
+/* Deposit Row - Highlight */
+.apm-deposit-row {
+    background: rgba(39, 174, 96, 0.05);
+}
+
+.apm-deposit-row td {
+    padding: 15px 10px;
+    border-radius: 4px;
+}
+
+/* Full Payment Option */
+.apm-full-payment-option {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #ccc;
+}
+
+.apm-full-payment-option label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.apm-full-payment-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+}
+
+.apm-full-total {
+    color: #666;
+    font-size: 0.9em;
+}
+
+/* When full payment is selected */
+.apm-payment-breakdown.apm-full-selected .apm-breakdown-table {
+    opacity: 0.5;
+}
+
+.apm-payment-breakdown.apm-full-selected .apm-full-payment-option {
+    background: #e8f6ef;
+    margin: 15px -20px -20px;
+    padding: 15px 20px;
+    border-radius: 0 0 8px 8px;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .apm-payment-breakdown {
+        padding: 15px;
+    }
+
+    .apm-breakdown-table td {
+        padding: 10px 0;
+    }
+
+    .apm-percent {
+        display: block;
+        margin: 5px 0 0;
+        width: fit-content;
+    }
+
+    .apm-note {
+        font-size: 0.8em;
+    }
+}
+
+/* Loading State */
+.apm-payment-breakdown.apm-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.apm-payment-breakdown.apm-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Animation */
+.apm-payment-breakdown {
+    animation: apm-fade-in 0.3s ease;
+}
+
+@keyframes apm-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

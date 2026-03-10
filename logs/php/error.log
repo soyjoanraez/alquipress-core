@@ -1,0 +1,4 @@
+[10-Mar-2026 09:17:25 UTC] Error de evento de reprogramación de cron para el gancho: action_scheduler_run_queue. Código de error: invalid_schedule. Mensaje de error: El evento programado no existe.. Datos: {"schedule":"every_minute","args":["WP Cron"],"interval":60}
+[10-Mar-2026 09:17:26 UTC] Error de evento de reprogramación de cron para el gancho: alquipress_ical_sync_all. Código de error: invalid_schedule. Mensaje de error: El evento programado no existe.. Datos: {"schedule":"every_15_minutes","args":[],"interval":900}
+[10-Mar-2026 09:44:29 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[10-Mar-2026 09:44:41 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data

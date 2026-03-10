@@ -1,0 +1,10 @@
+/**
+ * Estilos del editor para Galería
+ */
+
+.wp-block-alquipress-property-gallery {
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
