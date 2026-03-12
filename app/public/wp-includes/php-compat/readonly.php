@@ -31,7 +31,11 @@
  *                              Default true.
  * @return string HTML attribute or empty string.
  */
-function readonly( $readonly_value, $current = true, $display = true ) {
-	_deprecated_function( __FUNCTION__, '5.9.0', 'wp_readonly()' );
-	return wp_readonly( $readonly_value, $current, $display );
+if (version_compare(PHP_VERSION, '8.1.0', '<')) {
+	eval('
+		function readonly( $readonly_value, $current = true, $display = true ) {
+			_deprecated_function( __FUNCTION__, \'5.9.0\', \'wp_readonly()\' );
+			return wp_readonly( $readonly_value, $current, $display );
+		}
+	');
 }

@@ -5303,7 +5303,7 @@ function wp_readonly( $readonly_value, $current = true, $display = true ) {
  * In order to avoid PHP parser errors, this function was extracted
  * to a separate file and is only included conditionally on PHP < 8.1.
  */
-if ( PHP_VERSION_ID < 80100 ) {
+if ( version_compare( PHP_VERSION, '8.1.0', '<' ) ) {
 	require_once __DIR__ . '/php-compat/readonly.php';
 }
 

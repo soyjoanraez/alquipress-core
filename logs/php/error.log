@@ -11,3 +11,36 @@
 [10-Mar-2026 10:46:17 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4059)
 [10-Mar-2026 10:54:06 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4059)
 [10-Mar-2026 11:26:47 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4059)
+[11-Mar-2026 09:37:42 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
+[11-Mar-2026 09:53:10 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 554
+[11-Mar-2026 09:54:01 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:54:01 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:41 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:41 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:43 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:43 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:45 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:45 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:47 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:47 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:48 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:48 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:48 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:55:49 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:58:32 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:58:32 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:58:33 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:58:33 UTC] PHP Parse error:  syntax error, unexpected token "<" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 564
+[11-Mar-2026 09:59:31 UTC] PHP Fatal error:  Uncaught Error: Call to undefined method Alquipress_Property_Helper::get_product_surface() in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php:566
+Stack trace:
+#0 C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php(23): Alquipress_Properties_Page->render_page()
+#1 C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-includes\class-wp-hook.php(341): Alquipress_Properties_Page->maybe_render_section('alquipress-prop...')
+#2 C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-includes\class-wp-hook.php(365): WP_Hook->apply_filters(NULL, Array)
+#3 C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+#4 C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\class-module-manager.php(761): do_action('alquipress_rend...', 'alquipress-prop...')
+#5 C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-includes\class-wp-hook.php(341): Alquipress_Module_Manager->router_render_section('')
+#6 C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-includes\class-wp-hook.php(365): WP_Hook->apply_filters('', Array)
+#7 C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+#8 C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-admin\admin.php(264): do_action('dashboard_page_...')
+#9 {main}
+  thrown in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 566
