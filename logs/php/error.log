@@ -2,3 +2,26 @@
 [10-Mar-2026 09:17:26 UTC] Error de evento de reprogramación de cron para el gancho: alquipress_ical_sync_all. Código de error: invalid_schedule. Mensaje de error: El evento programado no existe.. Datos: {"schedule":"every_15_minutes","args":[],"interval":900}
 [10-Mar-2026 09:44:29 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
 [10-Mar-2026 09:44:41 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[11-Mar-2026 09:03:27 UTC] PHP Parse error:  Unmatched '}' in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 735
+[11-Mar-2026 09:05:25 UTC] PHP Parse error:  Unmatched '}' in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 735
+[11-Mar-2026 09:07:26 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 734
+[11-Mar-2026 09:09:27 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 734
+[11-Mar-2026 09:11:28 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 734
+[11-Mar-2026 09:13:29 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 734
+[11-Mar-2026 09:15:01 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 734
+[11-Mar-2026 09:16:01 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 734
+[11-Mar-2026 09:18:02 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 735
+[11-Mar-2026 09:19:03 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 735
+[11-Mar-2026 09:21:04 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 734
+[11-Mar-2026 09:23:05 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 734
+[11-Mar-2026 09:23:07 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 734
+[11-Mar-2026 09:23:07 UTC] PHP Parse error:  Unclosed '{' on line 479 in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\includes\modules\clients-page\clients-page.php on line 734
+[12-Mar-2026 09:10:13 UTC] PHP Warning:  require_once(../../../../../wp-load.php): Failed to open stream: No such file or directory in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\debug_filter.php on line 3
+[12-Mar-2026 09:10:13 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../../../../../wp-load.php' (include_path='.:/usr/share/php:/www/wp-content/pear') in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\debug_filter.php:3
+Stack trace:
+#0 {main}
+  thrown in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\debug_filter.php on line 3
+[12-Mar-2026 09:14:10 UTC] PHP Warning:  Undefined variable $all_found_categories in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\debug_filter.php on line 57
+[12-Mar-2026 09:14:10 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\debug_filter.php on line 57
+[12-Mar-2026 09:14:10 UTC] PHP Warning:  Undefined variable $all_found_categories in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\debug_filter.php on line 57
+[12-Mar-2026 09:14:10 UTC] PHP Warning:  foreach() argument must be of type array|object, null given in C:\Users\Jimmy\Local Sites\alquipressjimmy\app\public\wp-content\plugins\alquipress-core\debug_filter.php on line 57
