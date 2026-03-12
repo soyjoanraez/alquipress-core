@@ -44,3 +44,4 @@ Stack trace:
 #8 C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-admin\admin.php(264): do_action('dashboard_page_...')
 #9 {main}
   thrown in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\properties-page\properties-page.php on line 566
+[12-Mar-2026 09:29:58 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
