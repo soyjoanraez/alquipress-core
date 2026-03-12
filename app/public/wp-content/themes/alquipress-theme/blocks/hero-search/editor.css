@@ -1,0 +1,16 @@
+/**
+ * Estilos del editor para bloque Hero con Buscador
+ */
+
+.wp-block-alquipress-hero-search {
+    padding: 20px;
+    border: 2px dashed #ccc;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.wp-block-alquipress-hero-search .block-editor-block-list__layout {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}

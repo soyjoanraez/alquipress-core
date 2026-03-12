@@ -1,0 +1,107 @@
+:where(.wc-bookings-modal-overlay) {
+	background-color: rgba(95,95,95,.35);
+	bottom: 0;
+	box-sizing: border-box;
+	left: 0;
+	opacity: 1;
+	position: fixed;
+	right: 0;
+	top: 0;
+	transition: opacity .3s;
+	z-index: 9999;
+}
+:where(.wc-bookings-modal-overlay[hidden]) {
+	display: block;
+	left: -10000px;
+	opacity: 0;
+	overflow: hidden;
+	pointer-events: none;
+	transition: opacity .3s, display 0s .3s;
+}
+:where(.wc-bookings-modal) {
+	background-color: var(--wc-bookings--calendar--background-color);
+	border: 0;
+	bottom: 0;
+	box-sizing: border-box;
+	color: var(--wc-bookings--calendar--color);
+	display: block;
+	left: 0;
+	opacity: 0;
+	padding: 0px 25px 25px 25px; // Top spacing comes from the heading block.
+	pointer-events: none;
+	position: fixed;
+	right: 0;
+	transform: translateY(50px);
+	width: 100%;
+	z-index: 10000;
+}
+:where(.wc-bookings-modal[open]) {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+	transition: all .3s;
+}
+.wc-bookings-modal:focus {
+	outline-width: 0;
+}
+:where(.wc-bookings-modal-container) {
+	max-height: 60vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	// Work-around so if a focused element inside the container shows an outline,
+	// is fully visible.
+	margin: 0 -2px;
+	padding: 0 2px;
+
+	// Hide the scrollbar.
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+@media (min-width: 782px) {
+	:where(.wc-bookings-modal) {
+		bottom: auto;
+		height: auto;
+		left: 50%;
+		max-width: 600px;
+		right: auto;
+		top: 50%;
+		transform: translate(-50%, calc(-50% + 50px));
+		width: 100%;
+	}
+	:where(.wc-bookings-modal[open]) {
+		transform: translate(-50%, -50%);
+	}
+	:where(.wc-bookings-modal-container) {
+		max-height: 630px;
+	}
+}
+:where(.wc-bookings-modal-header) {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+:where(.wc-bookings-modal-close) {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 5px;
+
+	svg {
+		fill: var(--wc-bookings--calendar--color);
+	}
+}
+:where(.wc-bookings-modal-buttons.is-disabled) {
+	pointer-events: none;
+	opacity: 0.5;
+}
+.wc-bookings-modal-buttons .wp-block-buttons {
+	// Cancel WP's default margin-top.
+	// We need control over spacing and height within the modal.
+	margin-top: 0;
+}
+.wc-bookings-modal-buttons {
+	margin-top: 3rem;
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "alquipress/property-grid",
+  "title": "Grid de Propiedades",
+  "category": "alquipress",
+  "icon": "grid-view",
+  "description": "Muestra un grid de propiedades con filtros y paginación",
+  "keywords": ["propiedades", "grid", "listado", "productos"],
+  "textdomain": "alquipress-theme",
+  "supports": {
+    "html": false,
+    "align": ["wide", "full"]
+  },
+  "attributes": {
+    "columns": {
+      "type": "number",
+      "default": 3
+    },
+    "postsPerPage": {
+      "type": "number",
+      "default": 12
+    },
+    "orderBy": {
+      "type": "string",
+      "default": "date",
+      "enum": ["date", "price", "popularity", "title"]
+    },
+    "order": {
+      "type": "string",
+      "default": "DESC",
+      "enum": ["ASC", "DESC"]
+    },
+    "layout": {
+      "type": "string",
+      "default": "grid",
+      "enum": ["grid", "list", "carousel"]
+    },
+    "showPagination": {
+      "type": "boolean",
+      "default": true
+    },
+    "useAjaxPagination": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

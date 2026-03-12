@@ -1,0 +1,63 @@
+/**
+ * Estilos para Calendario de Disponibilidad
+ */
+
+.alq-availability-calendar {
+    background: var(--alq-surface);
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-block-radius);
+    padding: 24px;
+    margin-bottom: var(--alq-block-spacing);
+}
+
+.alq-availability-calendar-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--alq-text-primary);
+    margin: 0 0 20px 0;
+}
+
+.alq-availability-calendar-wrapper {
+    margin-top: 16px;
+}
+
+/* Personalización del calendario WC Bookings */
+.alq-availability-calendar-wrapper .ui-datepicker {
+    width: 100%;
+    font-family: var(--alq-font-body);
+}
+
+.alq-availability-calendar-wrapper .ui-datepicker table {
+    width: 100%;
+}
+
+.alq-availability-calendar-wrapper .ui-datepicker td {
+    padding: 4px;
+}
+
+.alq-availability-calendar-wrapper .ui-datepicker td a {
+    padding: 8px;
+    text-align: center;
+    border-radius: var(--alq-radius-md);
+    transition: all 0.2s;
+}
+
+.alq-availability-calendar-wrapper .ui-datepicker td a:hover {
+    background: rgba(11, 107, 203, 0.1);
+    color: var(--alq-primary);
+}
+
+.alq-availability-calendar-wrapper .ui-datepicker td.ui-datepicker-other-month {
+    opacity: 0.3;
+}
+
+.alq-availability-calendar-wrapper .ui-datepicker td.bookable a {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--alq-success);
+}
+
+.alq-availability-calendar-wrapper .ui-datepicker td.not-bookable a {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--alq-danger);
+    cursor: not-allowed;
+}

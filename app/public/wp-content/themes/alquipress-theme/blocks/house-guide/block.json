@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "alquipress/house-guide",
+  "title": "Guía de la Casa",
+  "category": "alquipress",
+  "icon": "book-alt",
+  "description": "Guía informativa con contenido condicional",
+  "keywords": ["guía", "información", "instrucciones"],
+  "textdomain": "alquipress-theme",
+  "supports": {
+    "html": false
+  },
+  "attributes": {
+    "showCheckIn": {
+      "type": "boolean",
+      "default": true
+    },
+    "showCheckOut": {
+      "type": "boolean",
+      "default": true
+    },
+    "showRules": {
+      "type": "boolean",
+      "default": true
+    },
+    "showAmenities": {
+      "type": "boolean",
+      "default": true
+    },
+    "showLocation": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.css",
+  "style": "file:./style.css",
+  "render": "file:./render.php"
+}

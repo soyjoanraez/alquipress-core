@@ -1,0 +1,180 @@
+/**
+ * Estilos para tarjeta de propiedad
+ */
+
+.alq-property-card {
+    background: var(--alq-surface);
+    border: 1px solid var(--alq-border);
+    border-radius: var(--alq-block-radius);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.alq-property-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--alq-block-shadow);
+}
+
+.alq-property-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.alq-property-card-image-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 75%; /* Aspect ratio 4:3 */
+    overflow: hidden;
+    background: var(--alq-bg-light);
+}
+
+.alq-property-card-image,
+.alq-property-card-image-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.alq-property-card-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--alq-text-secondary);
+    font-size: 0.875rem;
+}
+
+.alq-property-card-wishlist {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+    color: var(--alq-text-secondary);
+}
+
+.alq-property-card-wishlist:hover {
+    background: #ffffff;
+    color: var(--alq-danger);
+    transform: scale(1.1);
+}
+
+.alq-property-card-wishlist.active {
+    color: var(--alq-danger);
+    fill: var(--alq-danger);
+}
+
+.alq-property-card-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.alq-property-card-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    color: var(--alq-text-secondary);
+    margin-bottom: 8px;
+}
+
+.alq-property-card-location svg {
+    flex-shrink: 0;
+}
+
+.alq-property-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--alq-text-primary);
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.alq-property-card-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 0.875rem;
+    color: var(--alq-text-secondary);
+}
+
+.alq-property-card-feature {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.alq-property-card-feature svg {
+    flex-shrink: 0;
+}
+
+.alq-property-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--alq-border);
+}
+
+.alq-property-card-price {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--alq-primary);
+}
+
+.alq-property-card-price .woocommerce-Price-amount {
+    font-size: 1.25rem;
+}
+
+.alq-property-card-price-label {
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--alq-text-secondary);
+}
+
+.alq-property-card-button {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--alq-primary);
+    transition: color 0.2s;
+}
+
+.alq-property-card:hover .alq-property-card-button {
+    color: var(--alq-primary-strong);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .alq-property-card-content {
+        padding: 16px;
+    }
+    
+    .alq-property-card-title {
+        font-size: 1.125rem;
+    }
+}
