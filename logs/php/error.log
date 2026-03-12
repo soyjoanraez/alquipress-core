@@ -3,3 +3,21 @@
 [10-Mar-2026 09:27:45 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
 [10-Mar-2026 09:27:53 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
 [10-Mar-2026 09:28:08 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[11-Mar-2026 08:42:27 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 541
+[11-Mar-2026 08:46:10 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 541
+[11-Mar-2026 08:46:32 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 541
+[11-Mar-2026 08:47:47 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 541
+[11-Mar-2026 08:50:23 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 08:51:05 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 08:54:53 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 08:57:38 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 08:57:52 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 08:58:17 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 08:59:08 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 09:03:36 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 09:05:32 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 09:06:27 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 09:09:58 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 09:11:34 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 09:12:12 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[11-Mar-2026 09:13:10 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
