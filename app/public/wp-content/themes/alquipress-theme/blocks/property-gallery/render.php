@@ -45,8 +45,15 @@ if (empty($gallery)) {
     }
 }
 
+// Fallback final: Si sigue vacío, usar la foto "fija" por defecto
 if (empty($gallery)) {
-    return;
+    // Usamos una imagen de stock premium de Alquipress como fallback
+    $default_image_url = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
+    $gallery[] = [
+        'ID' => 0,
+        'url' => $default_image_url,
+        'alt' => __('Propiedad Alquipress', 'alquipress-theme')
+    ];
 }
 
 $layout = isset($attributes['layout']) ? $attributes['layout'] : 'main-plus-grid';

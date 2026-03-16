@@ -218,3 +218,13 @@ table,
 .wp-block-cover h1 {
     text-shadow: 0 2px 10px rgba(0,0,0,0.5);
 }
+
+/* =========================================
+   PRICE PER NIGHT LABEL
+   ========================================= */
+.alquipress-per-night {
+    font-size: 0.75em;
+    font-weight: 400;
+    color: var(--alq-text, #516173);
+    opacity: 0.8;
+}

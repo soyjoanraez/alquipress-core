@@ -49,3 +49,36 @@ foreach ($alquipress_inc_files as $file) {
         }
     }
 }
+
+/**
+ * Añadir "/noche" al precio en el listado de la tienda (frontend).
+ * No se aplica en el admin para no interferir con WooCommerce.
+ */
+add_filter('woocommerce_get_price_html', 'alquipress_append_noche_to_price', 10, 2);
+function alquipress_append_noche_to_price($price_html, $product)
+{
+    if (is_admin() || empty($price_html)) {
+        return $price_html;
+    }
+    // Solo en listados (shop/archive), no en la ficha individual del producto
+    if (is_shop() || is_product_taxonomy() || (is_page() && !is_singular('product'))) {
+        $price_html .= ' <span class="alquipress-per-night">/noche</span>';
+    }
+    return $price_html;
+}
+
+/**
+ * Fallback: si _price está vacío, usar _regular_price.
+ * Esto asegura que todas las propiedades muestren precio en la tienda.
+ */
+add_filter('woocommerce_product_get_price', 'alquipress_fallback_price', 10, 2);
+function alquipress_fallback_price($price, $product)
+{
+    if ($price === '' || $price === null) {
+        $regular = get_post_meta($product->get_id(), '_regular_price', true);
+        if ($regular !== '' && $regular !== null) {
+            return $regular;
+        }
+    }
+    return $price;
+}
