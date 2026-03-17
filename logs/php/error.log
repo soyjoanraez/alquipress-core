@@ -1026,3 +1026,13 @@ Stack trace:
 [13-Mar-2026 10:23:33 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
 [13-Mar-2026 10:41:59 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4059)
 [16-Mar-2026 08:38:05 UTC] PHP Parse error:  syntax error, unexpected variable "$this", expecting "function" or "const" in C:\Users\yagos\Local Sites\alquipressyago\app\public\wp-content\plugins\alquipress-core\includes\modules\property-editor\property-editor.php on line 185
+[17-Mar-2026 08:30:15 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
+[17-Mar-2026 08:38:44 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
+[17-Mar-2026 08:43:17 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 3867)
+[17-Mar-2026 08:43:58 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 3867)
+[17-Mar-2026 08:45:38 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
+[17-Mar-2026 08:45:49 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
+[17-Mar-2026 08:50:24 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
+[17-Mar-2026 08:50:41 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 3867)
+[17-Mar-2026 08:57:05 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
+[17-Mar-2026 08:57:14 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
