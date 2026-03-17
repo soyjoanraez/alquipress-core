@@ -21,3 +21,31 @@
 [11-Mar-2026 09:11:34 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
 [11-Mar-2026 09:12:12 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
 [11-Mar-2026 09:13:10 UTC] PHP Warning:  Undefined variable $owners_list_url in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\owners-page\owners-page.php on line 565
+[12-Mar-2026 09:03:01 UTC] PHP Fatal error:  Uncaught TypeError: Alquipress_Owner_Metabox::render(): Argument #1 ($post) must be of type WP_Post, stdClass given, called in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\crm-owners\owner-profile.php on line 358 and defined in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\crm-owners\class-owner-metabox.php:45
+Stack trace:
+#0 C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\crm-owners\owner-profile.php(358): Alquipress_Owner_Metabox->render(Object(stdClass))
+#1 C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-includes\class-wp-hook.php(341): Alquipress_Owner_Profile->render_owner_profile('')
+#2 C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-includes\class-wp-hook.php(365): WP_Hook->apply_filters('', Array)
+#3 C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+#4 C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-admin\admin.php(264): do_action('admin_page_alqu...')
+#5 {main}
+  thrown in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\crm-owners\class-owner-metabox.php on line 45
+[12-Mar-2026 09:04:08 UTC] PHP Fatal error:  Uncaught TypeError: Alquipress_Owner_Metabox::render(): Argument #1 ($post) must be of type WP_Post, stdClass given, called in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\crm-owners\owner-profile.php on line 358 and defined in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\crm-owners\class-owner-metabox.php:45
+Stack trace:
+#0 C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\crm-owners\owner-profile.php(358): Alquipress_Owner_Metabox->render(Object(stdClass))
+#1 C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-includes\class-wp-hook.php(341): Alquipress_Owner_Profile->render_owner_profile('')
+#2 C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-includes\class-wp-hook.php(365): WP_Hook->apply_filters('', Array)
+#3 C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-includes\plugin.php(522): WP_Hook->do_action(Array)
+#4 C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-admin\admin.php(264): do_action('admin_page_alqu...')
+#5 {main}
+  thrown in C:\Users\cuchi\Local Sites\alquipressjaime\app\public\wp-content\plugins\alquipress-core\includes\modules\crm-owners\class-owner-metabox.php on line 45
+[12-Mar-2026 09:19:36 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[12-Mar-2026 09:20:02 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[12-Mar-2026 09:20:05 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[12-Mar-2026 09:22:00 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[12-Mar-2026 09:22:03 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[13-Mar-2026 08:45:04 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[13-Mar-2026 14:22:03 UTC] MailPoet: Failed to fetch translations from WordPress.com API with error: cURL error 28: Connection timed out after 10002 milliseconds
+[15-Mar-2026 19:01:50 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[15-Mar-2026 19:02:22 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
+[15-Mar-2026 19:02:24 UTC] ALQUIPRESS Rate Limit: Could not acquire lock for get_report_data
