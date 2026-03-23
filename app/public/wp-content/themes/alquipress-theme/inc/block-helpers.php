@@ -195,12 +195,15 @@ function alquipress_get_property_data($product_id) {
     $capacidad = get_field('capacidad_maxima', $product_id) ?: 0;
     $gallery = get_field('galeria_fotos', $product_id);
     
-    // Imagen principal
-    $image_id = $product->get_image_id();
-    $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'large') : wc_placeholder_img_src('large');
+    // URL por defecto (Stock premium Alquipress)
+    $default_image = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
     
-    // Si hay galería ACF, usar primera imagen
-    if ($gallery && is_array($gallery) && !empty($gallery)) {
+    // Imagen principal (Featured Image)
+    $image_id = $product->get_image_id();
+    $image_url = $image_id ? wp_get_attachment_image_url($image_id, 'large') : '';
+    
+    // Si no hay imagen destacada, probar Galería ACF
+    if (!$image_url && $gallery && is_array($gallery) && !empty($gallery)) {
         $first_image = $gallery[0];
         if (is_array($first_image) && isset($first_image['ID'])) {
             $image_url = wp_get_attachment_image_url($first_image['ID'], 'large');
@@ -209,14 +212,27 @@ function alquipress_get_property_data($product_id) {
         }
     }
     
+    // Si aún no hay, probar Galería WC
+    if (!$image_url) {
+        $attachment_ids = $product->get_gallery_image_ids();
+        if (!empty($attachment_ids)) {
+            $image_url = wp_get_attachment_image_url($attachment_ids[0], 'large');
+        }
+    }
+    
+    // Fallback final
+    if (!$image_url) {
+        $image_url = $default_image;
+    }
+    
     return [
         'id' => $product_id,
         'title' => get_the_title($product_id),
         'permalink' => get_permalink($product_id),
         'image' => $image_url,
         'gallery' => $gallery,
-        'price' => $product->get_price(),
-        'price_html' => $product->get_price_html(),
+        'price' => (float) ($product->get_price() ?: get_post_meta($product_id, '_price', true) ?: get_post_meta($product_id, '_regular_price', true)),
+        'price_html' => class_exists('Alquipress_Property_Helper') ? Alquipress_Property_Helper::get_product_price_html($product_id) : '—',
         'poblacion' => $poblacion_terms && !is_wp_error($poblacion_terms) && !empty($poblacion_terms) ? $poblacion_terms[0]->name : '',
         'zona' => $zona_terms && !is_wp_error($zona_terms) && !empty($zona_terms) ? $zona_terms[0]->name : '',
         'habitaciones' => $habitaciones,

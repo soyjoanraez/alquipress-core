@@ -1,0 +1,12 @@
+# Archivos generados localmente - no versionar
+logs/
+app/sql/local.sql
+app/public/wp-content/uploads/kyero-feed.xml
+app/public/wp-content/uploads/wc-logs/
+app/public/wp-content/uploads/uag-plugin/
+
+# Archivos de debug locales
+app/public/check-*.php
+app/public/debug-*.php
+app/public/dump-*.php
+app/public/test_*.php
