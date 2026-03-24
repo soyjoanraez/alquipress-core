@@ -1036,3 +1036,6 @@ Stack trace:
 [17-Mar-2026 08:50:41 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 3867)
 [17-Mar-2026 08:57:05 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
 [17-Mar-2026 08:57:14 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4060)
+[24-Mar-2026 08:36:45 UTC] WordPress database error Deadlock found when trying to get lock; try restarting transaction for query INSERT IGNORE INTO wp_mailpoet_subscriber_segment (subscriber_id, segment_id, created_at)
+        SELECT s.id, '1', CURRENT_TIMESTAMP() FROM wp_mailpoet_subscribers s
+        WHERE s.wp_user_id > 0 made by require('wp-blog-header.php'), require_once('wp-load.php'), require_once('wp-config.php'), require_once('wp-settings.php'), do_action('init'), WP_Hook->do_action, WP_Hook->apply_filters, MailPoet\Config\Initializer->maybeRunActivator, MailPoet\Config\Activator->activate, MailPoet\Config\Activator->processActivate, MailPoet\Config\Populator->up, MailPoet\Config\Populator->createDefaultSegment, MailPoet\Segments\WP->synchronizeUsers, MailPoet\Segments\WP->insertUsersToSegment, MailPoetVendor\Doctrine\DBAL\Connection->executeStatement, MailPoet\Doctrine\WPDB\Connection->exec, MailPoet\Doctrine\WPDB\Connection->runQuery
