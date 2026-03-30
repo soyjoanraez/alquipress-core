@@ -1056,3 +1056,8 @@ Stack trace:
 [26-Mar-2026 09:29:13 UTC] PHP Parse error:  syntax error, unexpected token ":", expecting ")" in C:\Users\yagos\Local Sites\alquipressyago2\app\public\wp-content\plugins\alquipress-core\includes\modules\ui-enhancements\ui-enhancements.php on line 96
 [26-Mar-2026 09:29:14 UTC] PHP Parse error:  syntax error, unexpected token ":", expecting ")" in C:\Users\yagos\Local Sites\alquipressyago2\app\public\wp-content\plugins\alquipress-core\includes\modules\ui-enhancements\ui-enhancements.php on line 96
 [30-Mar-2026 07:33:46 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4063)
+[30-Mar-2026 07:40:37 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 3873)
+[30-Mar-2026 07:54:32 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 3873)
+[30-Mar-2026 07:56:40 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4063)
+[30-Mar-2026 07:57:18 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4063)
+[30-Mar-2026 08:45:06 UTC] ALQUIPRESS Kyero: Nonce faltante en save_post_product (Post ID: 4063)
