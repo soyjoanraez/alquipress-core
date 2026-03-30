@@ -25,6 +25,37 @@ class Alquipress_Booking_Enforcer
 
         // 4. Asegurar que al crear uno nuevo via script o manual se guarde correctamente
         add_action('wp_insert_post', [$this, 'ensure_type_on_creation'], 10, 3);
+
+        // 5. Ejecutar conversión masiva (solo una vez o bajo demanda)
+        add_action('admin_init', [$this, 'maybe_run_bulk_conversion']);
+    }
+
+    /**
+     * Convierte todos los productos existentes a tipo 'booking' y marcarlos como virtuales.
+     */
+    public function maybe_run_bulk_conversion()
+    {
+        if (get_option('alquipress_bulk_conversion_done')) {
+            return;
+        }
+
+        $products = get_posts([
+            'post_type' => 'product',
+            'post_status' => 'any',
+            'posts_per_page' => -1,
+            'fields' => 'ids',
+        ]);
+
+        foreach ($products as $product_id) {
+            // Forzar virtual
+            update_post_meta($product_id, '_virtual', 'yes');
+            update_post_meta($product_id, '_downloadable', 'no');
+
+            // Forzar tipo de producto a 'booking'
+            wp_set_object_terms($product_id, 'booking', 'product_type');
+        }
+
+        update_option('alquipress_bulk_conversion_done', true);
     }
 
     /**
@@ -87,22 +118,28 @@ class Alquipress_Booking_Enforcer
                 display: none !important;
             }
 
-            /* (Opcional) Si quieres que solo el tipo "Reserva" sea seleccionable */
-            /* #product-type option:not([value="booking"]) { display: none; } */
+            /* Forzar que solo el tipo "Reserva" sea visible y seleccionable */
+            #product-type option:not([value="booking"]) { 
+                display: none !important; 
+            }
         </style>
         <script>
             jQuery(document).ready(function ($) {
-                // Asegurar que el checkbox de virtual esté siempre marcado visualmente si existiera
-                $('#_virtual').prop('checked', true);
+                // Asegurar que el checkbox de virtual esté siempre marcado
+                $('#_virtual').prop('checked', true).closest('label').hide();
+                $('#_downloadable').prop('checked', false).closest('label').hide();
 
-                // Si el tipo de producto cambia (por error), volver a booking
-                /*
+                // Si el tipo de producto no es booking, forzarlo inmediatamente
+                if($('#product-type').val() !== 'booking') {
+                    $('#product-type').val('booking').trigger('change');
+                }
+
+                // Prevenir cambios accidentales
                 $('#product-type').on('change', function() {
                     if($(this).val() !== 'booking') {
                         $(this).val('booking').change();
                     }
                 });
-                */
             });
         </script>
         <?php

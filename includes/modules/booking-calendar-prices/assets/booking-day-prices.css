@@ -1,0 +1,23 @@
+.wc-bookings-date-picker .ui-datepicker td {
+    vertical-align: top;
+    position: relative;
+}
+
+.wc-bookings-date-picker .ui-datepicker td a,
+.wc-bookings-date-picker .ui-datepicker td span {
+    display: block;
+}
+
+.wc-bookings-date-picker .ui-datepicker td .alq-day-price {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    line-height: 1.1;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.wc-bookings-date-picker .ui-datepicker td.ui-datepicker-unselectable .alq-day-price,
+.wc-bookings-date-picker .ui-datepicker td.ui-datepicker-other-month .alq-day-price {
+    display: none;
+}

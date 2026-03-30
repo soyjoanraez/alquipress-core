@@ -1,0 +1,196 @@
+/* ─── Alquipress Booking Widget (Frontend) ─────────────────────────────────── */
+
+.ap-bw {
+  --bw-accent:  #2563eb;
+  --bw-hover:   #1d4ed8;
+  --bw-light:   #eff6ff;
+  --bw-booked:  #fee2e2;
+  --bw-blocked: #fef9c3;
+  --bw-free:    #f0fdf4;
+  --bw-border:  #e5e7eb;
+  --bw-radius:  12px;
+  --bw-cell:    44px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  color: #111827;
+  max-width: 520px;
+}
+
+/* ── Header ── */
+.ap-bw-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.ap-bw-month {
+  font-weight: 700;
+  font-size: 15px;
+}
+.ap-bw-nav {
+  display: flex;
+  gap: 6px;
+}
+.ap-bw-nav button {
+  background: #fff;
+  border: 1px solid var(--bw-border);
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: background .15s;
+}
+.ap-bw-nav button:hover { background: var(--bw-light); }
+
+/* ── Calendar grid ── */
+.ap-bw-grid {
+  display: grid;
+  grid-template-columns: repeat(7, var(--bw-cell));
+  gap: 3px;
+  margin-bottom: 10px;
+}
+.ap-bw-dow {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+  padding: 4px 0;
+  text-transform: uppercase;
+}
+.ap-bw-day {
+  height: var(--bw-cell);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .1s, background .12s, border-color .12s;
+  border: 1.5px solid transparent;
+  background: var(--bw-free);
+  position: relative;
+}
+.ap-bw-day:hover:not(.ap-bw-past):not(.ap-bw-empty):not(.ap-bw-booked) {
+  border-color: var(--bw-accent);
+  transform: scale(1.07);
+  z-index: 2;
+}
+.ap-bw-day.ap-bw-empty  { background: transparent; cursor: default; pointer-events: none; }
+.ap-bw-day.ap-bw-past   { opacity: .35; cursor: default; pointer-events: none; }
+.ap-bw-day.ap-bw-booked { background: var(--bw-booked); cursor: not-allowed; }
+.ap-bw-day.ap-bw-blocked{ background: var(--bw-blocked); cursor: not-allowed; }
+.ap-bw-day.ap-bw-today  .ap-bw-dn { font-weight: 900; color: var(--bw-accent); }
+.ap-bw-day.ap-bw-in-range { background: var(--bw-light); }
+.ap-bw-day.ap-bw-sel-start,
+.ap-bw-day.ap-bw-sel-end {
+  background: var(--bw-accent);
+  border-color: var(--bw-accent);
+  color: #fff;
+}
+.ap-bw-day.ap-bw-sel-start .ap-bw-dn,
+.ap-bw-day.ap-bw-sel-end   .ap-bw-dn { color: #fff; }
+.ap-bw-day.ap-bw-sel-start .ap-bw-dp,
+.ap-bw-day.ap-bw-sel-end   .ap-bw-dp { color: #bfdbfe; }
+
+.ap-bw-dn { font-size: 13px; font-weight: 600; line-height: 1; }
+.ap-bw-dp { font-size: 9px; color: #6b7280; margin-top: 2px; white-space: nowrap; }
+
+/* ── Guests selector ── */
+.ap-bw-guests {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid var(--bw-border);
+}
+.ap-bw-guests label {
+  flex: 1;
+  font-weight: 600;
+  font-size: 13px;
+}
+.ap-bw-guests button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--bw-border);
+  background: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .12s;
+}
+.ap-bw-guests button:hover { background: var(--bw-light); border-color: var(--bw-accent); }
+.ap-bw-guests .ap-bw-guests-count { font-weight: 700; font-size: 15px; min-width: 24px; text-align: center; }
+
+/* ── Breakdown ── */
+.ap-bw-breakdown {
+  background: #f9fafb;
+  border: 1px solid var(--bw-border);
+  border-radius: var(--bw-radius);
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+.ap-bw-breakdown h4 {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 10px;
+  color: #374151;
+}
+.ap-bw-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  color: #374151;
+}
+.ap-bw-row.is-total {
+  border-top: 2px solid var(--bw-border);
+  margin-top: 6px;
+  padding-top: 8px;
+  font-weight: 800;
+  font-size: 15px;
+  color: #111;
+}
+.ap-bw-row .amt { font-weight: 600; }
+.ap-bw-row.is-total .amt { font-size: 16px; color: var(--bw-accent); }
+
+.ap-bw-avail-msg {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.ap-bw-avail-msg.ok  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.ap-bw-avail-msg.err { background: var(--bw-booked); color: #dc2626; border: 1px solid #fca5a5; }
+
+/* ── CTA button ── */
+.ap-bw-cta {
+  width: 100%;
+  padding: 14px;
+  background: var(--bw-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--bw-radius);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+  letter-spacing: .01em;
+}
+.ap-bw-cta:hover { background: var(--bw-hover); }
+.ap-bw-cta:disabled { background: #9ca3af; cursor: not-allowed; }
+
+/* ── Loading state ── */
+.ap-bw-loading {
+  text-align: center;
+  padding: 20px;
+  color: #9ca3af;
+  font-style: italic;
+}

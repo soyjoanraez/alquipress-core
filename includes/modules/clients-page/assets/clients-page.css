@@ -1,0 +1,464 @@
+/**
+ * Página Clientes (Huéspedes) - Diseño Pencil
+ * Datos, pagos, método de pago, estancia y documentación (DNI, etc.)
+ * Estilo consistente con Propiedades y Propietarios
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --ap-background: #f8fafb;
+    --ap-surface: #ffffff;
+    --ap-border: #e8eef3;
+    --ap-primary: #2c99e2;
+    --ap-text-primary: #0e161b;
+    --ap-text-secondary: #507a95;
+    --ap-success: #10b981;
+    --ap-warning: #f59e0b;
+    --ap-info: #3b82f6;
+    --ap-danger: #ef4444;
+    --ap-radius-lg: 12px;
+    --ap-radius-md: 8px;
+}
+
+.alquipress-clients-page {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.alquipress-clients-page .ap-owners-main {
+    max-width: 1400px;
+}
+
+/* Header */
+.ap-clients-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.ap-clients-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ap-clients-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ap-text-primary);
+}
+
+.ap-clients-subtitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ap-text-secondary);
+}
+
+.ap-clients-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ap-clients-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: var(--ap-radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ap-clients-btn-primary {
+    background: var(--ap-primary);
+    color: #fff;
+    border: none;
+}
+
+.ap-clients-btn-primary:hover {
+    background: #2380c7;
+    color: #fff;
+}
+
+/* Filtros - Estilo consistente con Propiedades */
+.ap-clients-filters {
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-lg);
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.ap-clients-filters-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px;
+}
+
+.ap-clients-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.ap-clients-filter-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ap-text-secondary);
+}
+
+.ap-clients-filter-input,
+.ap-clients-filter-select {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--ap-border);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--ap-text-primary);
+    background: #fff;
+    min-width: 140px;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ap-clients-filter-input:focus,
+.ap-clients-filter-select:focus {
+    border-color: var(--ap-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(44, 153, 226, 0.1);
+}
+
+.ap-clients-filter-input[name="filter_name"] {
+    min-width: 200px;
+}
+
+.ap-clients-filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.ap-clients-btn-filter {
+    background: var(--ap-primary);
+    color: #fff;
+    border: none;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: background 0.2s;
+}
+
+.ap-clients-btn-filter:hover {
+    background: #2380c7;
+    color: #fff;
+}
+
+.ap-clients-btn-clear {
+    background: transparent;
+    color: var(--ap-text-secondary);
+    border: 1px solid var(--ap-border);
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: background 0.2s, color 0.2s;
+}
+
+.ap-clients-btn-clear:hover {
+    background: var(--ap-background);
+    color: var(--ap-text-primary);
+    border-color: var(--ap-border);
+}
+
+@media (max-width: 900px) {
+    .ap-clients-filters-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .ap-clients-filter-input,
+    .ap-clients-filter-select {
+        min-width: 0;
+    }
+    .ap-clients-filter-input[name="filter_name"] {
+        min-width: 0;
+    }
+}
+
+/* Metrics row - Estilo consistente con Propiedades/Propietarios */
+.ap-clients-metrics-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.ap-clients-metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px;
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-lg);
+    min-width: 180px;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.ap-clients-metric-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ap-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ap-clients-metric-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ap-text-primary);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ap-clients-metric-warning {
+    border-left: 3px solid #ef4444;
+}
+
+.ap-clients-metric-warning .ap-clients-metric-value {
+    color: #ef4444;
+}
+
+.ap-clients-metric-info {
+    border-left: 3px solid var(--ap-warning);
+}
+
+.ap-clients-metric-info .ap-clients-metric-value {
+    color: var(--ap-warning);
+}
+
+/* Table - Estilo consistente con dashboard */
+.ap-clients-table-wrap {
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: var(--ap-radius-lg);
+    overflow: hidden;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.ap-clients-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ap-clients-table thead th {
+    background: var(--ap-background);
+    font-weight: 600;
+    color: var(--ap-text-secondary);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--ap-border);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ap-clients-table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--ap-border);
+    color: var(--ap-text-primary);
+    vertical-align: middle;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ap-clients-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.ap-clients-table tbody tr:hover {
+    background: rgba(44, 153, 226, 0.04);
+}
+
+.ap-clients-email {
+    display: block;
+    color: var(--ap-text-secondary);
+    font-size: 13px;
+}
+
+.ap-clients-phone {
+    font-size: 12px;
+    color: var(--ap-text-secondary);
+}
+
+.ap-clients-dates {
+    display: block;
+    font-size: 13px;
+}
+
+.ap-clients-property {
+    font-size: 12px;
+    color: var(--ap-text-secondary);
+}
+
+.ap-clients-doc-cell {
+    white-space: nowrap;
+}
+
+.ap-clients-doc-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: help;
+}
+
+.ap-clients-doc-ok {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.ap-clients-doc-expired {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.ap-clients-doc-expiring {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.ap-clients-doc-missing {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Valoración interna del cliente */
+.ap-clients-rating-cell {
+    white-space: nowrap;
+}
+.ap-clients-rating-stars {
+    color: #f59e0b;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+.ap-clients-rating-num {
+    margin-left: 6px;
+    font-weight: 600;
+    color: var(--ap-text-primary);
+    font-size: 13px;
+}
+.ap-clients-rating-none {
+    color: var(--ap-text-secondary);
+}
+
+.ap-clients-link {
+    color: var(--ap-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.ap-clients-link:hover {
+    text-decoration: underline;
+}
+
+.ap-clients-sep {
+    margin: 0 6px;
+    color: var(--ap-border);
+}
+
+.ap-clients-empty {
+    text-align: center;
+    padding: 48px 16px !important;
+    color: var(--ap-text-secondary);
+    font-size: 14px;
+}
+
+/* Paginación */
+.ap-clients-pagination {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ap-border);
+    display: flex;
+    justify-content: center;
+}
+
+.ap-clients-pagination ul.page-numbers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ap-clients-pagination .page-numbers li {
+    margin: 0;
+}
+
+.ap-clients-pagination .page-numbers a,
+.ap-clients-pagination .page-numbers span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ap-text-secondary);
+    background: var(--ap-surface);
+    border: 1px solid var(--ap-border);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.ap-clients-pagination .page-numbers a:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    color: var(--ap-text-primary);
+}
+
+.ap-clients-pagination .page-numbers .current {
+    background: var(--ap-primary);
+    border-color: var(--ap-primary);
+    color: #fff;
+}
+
+.ap-clients-pagination .page-numbers .dots {
+    border: none;
+    background: transparent;
+}
+
+@media (max-width: 1024px) {
+    .ap-clients-table-wrap {
+        overflow-x: auto;
+    }
+    .ap-clients-table {
+        min-width: 800px;
+    }
+}

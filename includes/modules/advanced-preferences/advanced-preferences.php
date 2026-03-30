@@ -17,11 +17,23 @@ class Alquipress_Advanced_Preferences
             'category' => 'restricciones',
             'description' => 'El huésped viaja con mascotas'
         ],
+        'fumador' => [
+            'icon' => '🚬',
+            'label' => 'Fumador',
+            'category' => 'restricciones',
+            'description' => 'El huésped solicita propiedades donde se permita fumar'
+        ],
         'nofumador' => [
             'icon' => '🚭',
             'label' => 'No Fumador',
             'category' => 'restricciones',
             'description' => 'El huésped prefiere ambiente sin humo'
+        ],
+        'ninos' => [
+            'icon' => '🧒',
+            'label' => 'Niños/Familia',
+            'category' => 'tipo',
+            'description' => 'Viaja con menores'
         ],
         'familia' => [
             'icon' => '👨‍👩‍👧',
@@ -181,7 +193,8 @@ class Alquipress_Advanced_Preferences
                         url: ajaxurl,
                         method: 'POST',
                         data: {
-                            action: 'alquipress_preferences_stats'
+                            action: 'alquipress_preferences_stats',
+                            nonce: '<?php echo wp_create_nonce('alquipress_preferences'); ?>'
                         },
                         success: function (response) {
                             if (response.success) {
@@ -247,6 +260,17 @@ class Alquipress_Advanced_Preferences
      */
     public function ajax_preferences_stats()
     {
+        // Verificar nonce
+        check_ajax_referer('alquipress_preferences', 'nonce');
+
+        // Verificar permisos
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error([
+                'message' => __('Permisos insuficientes', 'alquipress')
+            ]);
+            return;
+        }
+
         $stats = $this->get_preferences_statistics();
         $total_users = count(get_users());
 

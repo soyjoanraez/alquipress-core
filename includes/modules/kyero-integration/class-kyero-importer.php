@@ -21,16 +21,29 @@ class Alquipress_Kyero_Importer
     public function fetch_xml()
     {
         $sslverify = (bool) apply_filters('alquipress_kyero_sslverify', true);
-        $response = wp_remote_get($this->xml_url, [
-            'timeout' => 30,
-            'sslverify' => $sslverify
-        ]);
+        $response = function_exists('alquipress_safe_remote_get')
+            ? alquipress_safe_remote_get($this->xml_url, [
+                'timeout' => 30,
+                'sslverify' => $sslverify,
+                'limit_response_size' => 3 * MB_IN_BYTES,
+            ])
+            : wp_remote_get($this->xml_url, [
+                'timeout' => 30,
+                'sslverify' => $sslverify,
+            ]);
 
         if (is_wp_error($response)) {
             return false;
         }
 
+        if ((int) wp_remote_retrieve_response_code($response) !== 200) {
+            return false;
+        }
+
         $xml_content = wp_remote_retrieve_body($response);
+        if ($xml_content === '') {
+            return false;
+        }
 
         // Parsear XML
         libxml_use_internal_errors(true);
@@ -286,6 +299,10 @@ class Alquipress_Kyero_Importer
      */
     private function download_image($image_url, $post_id)
     {
+        if (function_exists('alquipress_is_safe_remote_url') && !alquipress_is_safe_remote_url($image_url)) {
+            return false;
+        }
+
         require_once(ABSPATH . 'wp-admin/includes/file.php');
         require_once(ABSPATH . 'wp-admin/includes/media.php');
         require_once(ABSPATH . 'wp-admin/includes/image.php');

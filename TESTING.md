@@ -24,12 +24,12 @@
 **Archivo:** `includes/modules/taxonomies/taxonomies.php`
 
 - [ ] **Población (Jerárquica)**
-  - [ ] Verificar que Marina Alta aparece con todos sus municipios
-  - [ ] Comprobar jerarquía: Comarca → Municipio
-  - [ ] Validar 33 términos creados automáticamente
+  - [ ] Verificar que Alicante aparece como término padre
+  - [ ] Comprobar jerarquía: Provincia → Municipio
+  - [ ] Validar 17 términos creados automáticamente (Alicante + 16 municipios)
 
 - [ ] **Zona (No Jerárquica)**
-  - [ ] Verificar creación de zonas (Centro, Playa, Montaña, Rural)
+  - [ ] Verificar creación de 25 zonas (Centro, Playa, Puerto, Casco Antiguo, Residencial, Montaña, etc.)
   - [ ] Asignar zona a propiedad
 
 - [ ] **Características (No Jerárquica)**
@@ -39,8 +39,8 @@
 
 **Comandos de verificación:**
 ```bash
-wp term list poblacion --format=count  # Debe devolver 33
-wp term list zona --format=count       # Debe devolver 4
+wp term list poblacion --format=count  # Debe devolver 17
+wp term list zona --format=count       # Debe devolver 25
 wp term list caracteristicas --format=count  # Debe devolver 27
 ```
 
@@ -500,8 +500,8 @@ wp post create --post_type=shop_order --post_status=wc-completed --post_title="T
 ## Checklist de Funcionalidades
 
 ### Taxonomías
-- [x] Población (33 términos Marina Alta)
-- [x] Zona (4 términos)
+- [x] Población (17 términos: Alicante + 16 municipios)
+- [x] Zona (25 términos)
 - [x] Características (27 términos con íconos)
 
 ### CPTs

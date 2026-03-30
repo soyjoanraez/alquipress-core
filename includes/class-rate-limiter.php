@@ -33,7 +33,8 @@ class Alquipress_Rate_Limiter
         // Intentar adquirir lock (máximo 5 intentos con 100ms de espera)
         $lock_acquired = false;
         for ($i = 0; $i < 5; $i++) {
-            if (add_transient($lock_key, '1', 2)) { // Lock por 2 segundos
+            if (false === get_transient($lock_key)) {
+                set_transient($lock_key, '1', 2); // Lock por 2 segundos
                 $lock_acquired = true;
                 break;
             }

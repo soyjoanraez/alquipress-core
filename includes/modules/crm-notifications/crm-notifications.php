@@ -202,18 +202,39 @@ class Alquipress_CRM_Notifications
         $notification_id = isset($_POST['notification_id']) ? sanitize_text_field($_POST['notification_id']) : '';
 
         if (empty($notification_id)) {
-            wp_send_json_error();
+            wp_send_json_error([
+                'message' => __('ID de notificación no especificado', 'alquipress')
+            ]);
+            return;
         }
 
+        // Validar que el usuario solo puede descartar sus propias notificaciones
         $user_id = get_current_user_id();
+        if (!$user_id) {
+            wp_send_json_error([
+                'message' => __('Usuario no autenticado', 'alquipress')
+            ]);
+            return;
+        }
+
+        // Validar formato del notification_id (debe ser alfanumérico con guiones/guiones bajos)
+        if (!preg_match('/^[a-z0-9_-]+$/i', $notification_id)) {
+            wp_send_json_error([
+                'message' => __('ID de notificación con formato inválido', 'alquipress')
+            ]);
+            return;
+        }
+
         $dismissed = get_user_meta($user_id, 'alquipress_dismissed_notifications', true) ?: [];
 
-        if (!in_array($notification_id, $dismissed)) {
+        if (!in_array($notification_id, $dismissed, true)) {
             $dismissed[] = $notification_id;
             update_user_meta($user_id, 'alquipress_dismissed_notifications', $dismissed);
         }
 
-        wp_send_json_success();
+        wp_send_json_success([
+            'message' => __('Notificación descartada', 'alquipress')
+        ]);
     }
 
     /**

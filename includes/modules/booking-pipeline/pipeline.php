@@ -6,6 +6,8 @@
 if (!defined('ABSPATH'))
     exit;
 
+require_once __DIR__ . '/class-pipeline-control.php';
+
 class Alquipress_Booking_Pipeline
 {
 
@@ -13,6 +15,7 @@ class Alquipress_Booking_Pipeline
     {
         add_action('init', [$this, 'register_order_statuses']);
         add_filter('wc_order_statuses', [$this, 'add_order_statuses']);
+        Alquipress_Pipeline_Control::init();
     }
 
     public function register_order_statuses()

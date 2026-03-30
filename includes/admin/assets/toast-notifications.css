@@ -1,0 +1,213 @@
+/**
+ * Estilos para Sistema de Notificaciones Toast de Alquipress
+ * 
+ * @package Alquipress
+ * @since 1.0.0
+ */
+
+/* ========== Contenedor de Toasts ========== */
+
+#alquipress-toast-container {
+    position: fixed;
+    top: 32px;
+    right: 20px;
+    z-index: 999999;
+    max-width: 400px;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* Ajuste para pantallas pequeñas */
+@media screen and (max-width: 782px) {
+    #alquipress-toast-container {
+        top: 46px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+/* ========== Toast Individual ========== */
+
+.alquipress-toast {
+    display: flex;
+    align-items: flex-start;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: #fff;
+    border-left: 4px solid;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    position: relative;
+    min-height: 50px;
+}
+
+.alquipress-toast-show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ========== Tipos de Toast ========== */
+
+.alquipress-toast-success {
+    border-left-color: #00a32a;
+}
+
+.alquipress-toast-success .alquipress-toast-icon {
+    color: #00a32a;
+}
+
+.alquipress-toast-error {
+    border-left-color: #dc3232;
+}
+
+.alquipress-toast-error .alquipress-toast-icon {
+    color: #dc3232;
+}
+
+.alquipress-toast-warning {
+    border-left-color: #dba617;
+}
+
+.alquipress-toast-warning .alquipress-toast-icon {
+    color: #dba617;
+}
+
+.alquipress-toast-info {
+    border-left-color: #2271b1;
+}
+
+.alquipress-toast-info .alquipress-toast-icon {
+    color: #2271b1;
+}
+
+/* ========== Icono ========== */
+
+.alquipress-toast-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    margin-right: 12px;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alquipress-toast-icon .dashicons {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+/* ========== Mensaje ========== */
+
+.alquipress-toast-message {
+    flex: 1;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #1d2327;
+    word-wrap: break-word;
+    padding-right: 8px;
+}
+
+/* ========== Botón de Cerrar ========== */
+
+.alquipress-toast-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: #787c82;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+    transition: color 0.2s ease;
+}
+
+.alquipress-toast-close:hover {
+    color: #1d2327;
+}
+
+.alquipress-toast-close:focus {
+    outline: 1px solid #2271b1;
+    outline-offset: 2px;
+}
+
+/* ========== Animaciones ========== */
+
+@keyframes alquipress-toast-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(400px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes alquipress-toast-slide-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(400px);
+    }
+}
+
+/* ========== Responsive ========== */
+
+@media screen and (max-width: 782px) {
+    .alquipress-toast {
+        padding: 12px 14px;
+        min-height: 44px;
+    }
+
+    .alquipress-toast-message {
+        font-size: 13px;
+    }
+
+    .alquipress-toast-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+    }
+
+    .alquipress-toast-icon .dashicons {
+        width: 18px;
+        height: 18px;
+        font-size: 18px;
+    }
+}
+
+/* ========== Compatibilidad con Temas WordPress ========== */
+
+/* Asegurar que los toasts aparezcan sobre elementos comunes */
+#wpadminbar ~ #alquipress-toast-container {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    #wpadminbar ~ #alquipress-toast-container {
+        top: 46px;
+    }
+}
+
+/* Asegurar visibilidad sobre modales comunes */
+.alq-modal ~ #alquipress-toast-container,
+#alq-quick-view-modal ~ #alquipress-toast-container {
+    z-index: 1000000;
+}

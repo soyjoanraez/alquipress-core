@@ -1,0 +1,80 @@
+/**
+ * Estilos del bloque Property Search
+ * Integrados con las variables globales de Astra
+ */
+
+.wp-block-alquipress-property-search {
+    background: #fff;
+    padding: 8px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    max-width: 900px;
+    margin: 0 auto;
+    border: 1px solid var(--ast-global-color-7, #e8eef3); /* Borde suave Astra */
+}
+
+.ap-search-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 16px;
+    border-right: 1px solid var(--ast-global-color-7, #eee);
+}
+
+.ap-search-field:last-of-type {
+    border-right: none;
+}
+
+.ap-search-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ast-global-color-2); /* Texto Astra */
+    margin-bottom: 4px;
+}
+
+.ap-search-input {
+    border: none !important;
+    padding: 0 !important;
+    font-size: 15px !important;
+    color: var(--ast-global-color-3) !important;
+    background: transparent !important;
+    width: 100%;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.ap-search-button {
+    background-color: var(--ast-global-color-0) !important; /* Primario Astra */
+    color: #fff !important;
+    border: none !important;
+    padding: 14px 28px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.ap-search-button:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .wp-block-alquipress-property-search {
+        flex-direction: column;
+        padding: 20px;
+    }
+    .ap-search-field {
+        border-right: none;
+        border-bottom: 1px solid #eee;
+        width: 100%;
+    }
+    .ap-search-button {
+        width: 100%;
+    }
+}

@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/tfxnttji/pre.alquipress.com/wp-content/plugins/alquipress-core/
+    - /bin/cp -R * $DEPLOYPATH

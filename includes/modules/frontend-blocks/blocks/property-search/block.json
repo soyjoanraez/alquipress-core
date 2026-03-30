@@ -1,0 +1,26 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "alquipress/property-search",
+    "version": "1.0.0",
+    "title": "Alquipress Property Search",
+    "category": "widgets",
+    "icon": "search",
+    "description": "Buscador avanzado de propiedades integrado con Astra y Spectra.",
+    "supports": {
+        "html": false,
+        "align": ["wide", "full"]
+    },
+    "attributes": {
+        "placeholder": {
+            "type": "string",
+            "default": "Dónde quieres ir?"
+        },
+        "buttonText": {
+            "type": "string",
+            "default": "Buscar"
+        }
+    },
+    "style": "file:./style.css",
+    "editorScript": "file:./index.js"
+}
