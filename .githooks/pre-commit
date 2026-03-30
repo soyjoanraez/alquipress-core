@@ -1,0 +1,37 @@
+#!/bin/bash
+# ============================================================
+# Pre-commit hook: solo permite archivos del plugin alquipress-core
+# ============================================================
+# Rutas permitidas (raíz del repositorio):
+#   - alquipress-core.php
+#   - includes/
+#   - docs/
+#   - conf/
+#   - .gitignore, .gitattributes, .cpanel.yml, .githooks/
+#   - *.md (documentación en la raíz)
+# ============================================================
+
+ALLOWED_PATTERN='^(alquipress-core\.php|includes/|docs/|conf/|\.gitignore|\.gitattributes|\.cpanel\.yml|\.githooks/|[A-Z][A-Z0-9_-]*\.md)'
+
+# Archivos staged para el commit (añadidos o modificados)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+INVALID_FILES=""
+for file in $STAGED_FILES; do
+    if ! echo "$file" | grep -qE "$ALLOWED_PATTERN"; then
+        INVALID_FILES="$INVALID_FILES\n  - $file"
+    fi
+done
+
+if [ -n "$INVALID_FILES" ]; then
+    echo ""
+    echo "ERROR: Se han detectado archivos que NO pertenecen al plugin alquipress-core:"
+    echo -e "$INVALID_FILES"
+    echo ""
+    echo "Este repositorio solo admite archivos del plugin."
+    echo "Si necesitas añadir una nueva ruta, actualiza .githooks/pre-commit y .gitignore"
+    echo ""
+    exit 1
+fi
+
+exit 0

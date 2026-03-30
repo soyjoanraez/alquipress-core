@@ -1,101 +1,40 @@
 # ============================================================
 # ALQUIPRESS CORE — .gitignore
 # ============================================================
+# Este repositorio SOLO contiene el plugin alquipress-core.
+# Se ignora todo por defecto y se permite solo lo necesario.
+# ============================================================
+
+# Ignorar TODO por defecto
+*
 
 # ------------------------------------------------------------
-# Sistema operativo
+# Permitir solo los archivos del plugin alquipress-core
 # ------------------------------------------------------------
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-Thumbs.db
-ehthumbs.db
-desktop.ini
+!.gitignore
+!.gitattributes
+!.cpanel.yml
+!README.md
+!DEVELOPERS.md
+!DOCUMENTATION.md
+!TESTING.md
+!TESTING-PLAN.md
+!TESTING-URGENT-FIXES.md
+!SECURITY-AUDIT.md
+!SECURITY-FIXES.md
+!PRODUCTION-CHECKLIST.md
+!CODE-REVIEW-FINAL.md
+!DESIGN-SYSTEM.md
+!alquipress-core.php
 
-# ------------------------------------------------------------
-# Editores e IDEs
-# ------------------------------------------------------------
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-*.swp
-*.swo
-*~
+# Permitir carpetas del plugin (hay que permitir la carpeta y su contenido)
+!includes/
+!includes/**
+!docs/
+!docs/**
+!conf/
+!conf/**
 
-# ------------------------------------------------------------
-# WordPress — configuración local (contiene credenciales)
-# ------------------------------------------------------------
-app/public/wp-config.php
-
-# WordPress core (no necesita versionarse, se instala aparte)
-app/public/wp-admin/
-app/public/wp-includes/
-app/public/wp-*.php
-app/public/xmlrpc.php
-app/public/index.php
-app/public/license.txt
-app/public/readme.html
-app/public/local-xdebuginfo.php
-
-# ------------------------------------------------------------
-# Plugins de terceros (se instalan via WordPress, no versionar)
-# ------------------------------------------------------------
-app/public/wp-content/plugins/
-# Excepción: el submodule del plugin propio
-!app/public/wp-content/plugins/alquipress-core
-
-# ------------------------------------------------------------
-# Themes de terceros
-# ------------------------------------------------------------
-app/public/wp-content/themes/astra/
-app/public/wp-content/themes/astra-addon/
-app/public/wp-content/themes/twentytwentyfive/
-app/public/wp-content/themes/twentytwentyfour/
-app/public/wp-content/themes/twentytwentythree/
-
-# ------------------------------------------------------------
-# Uploads y archivos generados
-# ------------------------------------------------------------
-app/public/wp-content/uploads/
-app/public/wp-content/ai1wm-backups/
-app/public/wp-content/cache/
-app/public/wp-content/upgrade/
-app/public/wp-content/backup-db/
-app/public/wp-content/advanced-cache.php
-app/public/wp-content/object-cache.php
-app/public/wp-content/wp-cache-config.php
-
-# ------------------------------------------------------------
-# Logs
-# ------------------------------------------------------------
-logs/
-*.log
-app/public/wp-content/debug.log
-app/public/wp-content/alquipress-debug.log
-
-# ------------------------------------------------------------
-# Base de datos local
-# ------------------------------------------------------------
-app/sql/local.sql
-app/sql/*.sql
-
-# ------------------------------------------------------------
-# Archivos de debug locales (scripts PHP temporales)
-# ------------------------------------------------------------
-app/public/check-*.php
-app/public/debug-*.php
-app/public/dump-*.php
-app/public/test_*.php
-app/public/local-*.php
-
-# ------------------------------------------------------------
-# Dependencias de Node (si se usan herramientas de build)
-# ------------------------------------------------------------
-node_modules/
-npm-debug.log*
-yarn-error.log
-.npm
-.yarn
+# Permitir el hook pre-commit
+!.githooks/
+!.githooks/**
